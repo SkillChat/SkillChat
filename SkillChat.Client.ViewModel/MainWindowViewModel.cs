@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using ServiceStack;
 using SignalR.EasyUse.Client;
 using SkillChat.Interface;
+using SkillChat.Server.ServiceModel;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -13,9 +15,12 @@ namespace SkillChat.Client.ViewModel
     {
         public MainWindowViewModel()
         {
+            var hostUrl = "http://localhost:5000";
             _connection = new HubConnectionBuilder()
-                .WithUrl("http://localhost:5000/ChatHub")
+                .WithUrl(hostUrl+"/ChatHub")
                 .Build();
+
+            serviceClient = new JsonServiceClient(hostUrl);
 
             _connection.Closed += async (error) =>
             {
@@ -28,6 +33,8 @@ namespace SkillChat.Client.ViewModel
             Messages = new ObservableCollection<string>();
             ConnectCommand = ReactiveCommand.CreateFromTask(async () =>
             {
+                var tokens = await serviceClient.GetAsync(new GetToken {Login = UserName});
+
                 _connection.Subscribe<ReceiveMessage>(data =>
                 {
                     var newMessage = $"{data.User}: {data.Message}";
@@ -37,6 +44,7 @@ namespace SkillChat.Client.ViewModel
                 try
                 {
                     await _connection.StartAsync();
+                    await hub.Login(tokens.AccessToken);
                     Messages.Add("Connection started");
                     IsConnected = true;
                 }
@@ -51,7 +59,7 @@ namespace SkillChat.Client.ViewModel
             {
                 try
                 {
-                    await hub.SendMessage(UserName, MessageText);
+                    await hub.SendMessage(MessageText);
                 }
                 catch (Exception ex)
                 {
@@ -63,6 +71,8 @@ namespace SkillChat.Client.ViewModel
         }
 
         readonly HubConnection _connection;
+
+        private readonly IJsonServiceClient serviceClient;
 
         [Reactive]
         public bool IsConnected { get; set; }

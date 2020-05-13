@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ServiceStack;
+using ServiceStack.Configuration;
 using SkillChat.Server.Hubs;
 
 namespace SkillChat.Server
@@ -18,6 +21,11 @@ namespace SkillChat.Server
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton(Configuration);
+            services.AddSingleton<IAppSettings, AppSettings>();
+            services.AddSingleton<AppHost>();
+            
             services.AddSignalR();
         }
 
@@ -38,6 +46,10 @@ namespace SkillChat.Server
             {
                 endpoints.MapHub<ChatHub>("/chathub");
             });
+
+            AppModelMapping.ConfigureMapping();
+            var host = (AppHostBase)app.ApplicationServices.GetService(typeof(AppHost));
+            app.UseServiceStack(host);
         }
     }
 }

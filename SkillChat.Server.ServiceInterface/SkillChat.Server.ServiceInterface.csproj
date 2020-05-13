@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ServiceStack.Server" Version="5.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SkillChat.Server.Domain\SkillChat.Server.Domain.csproj" />
+    <ProjectReference Include="..\SkillChat.Server.ServiceModel\SkillChat.Server.ServiceModel.csproj" />
+  </ItemGroup>
+
+</Project>

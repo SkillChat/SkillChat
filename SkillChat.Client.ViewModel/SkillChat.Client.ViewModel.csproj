@@ -5,13 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="3.1.3" />
-    <PackageReference Include="ReactiveUI.Fody" Version="11.3.8" />
+    <PackageReference Include="ReactiveUI.Fody" Version="11.4.1" />
+    <PackageReference Include="ServiceStack.Client" Version="5.8.0" />
     <PackageReference Include="SignalR.EasyUse.Client" Version="0.1.2" />
   </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\SkillChat.Interface\SkillChat.Interface.csproj" />
+    <ProjectReference Include="..\SkillChat.Server.ServiceModel\SkillChat.Server.ServiceModel.csproj" />
   </ItemGroup>
 
 </Project>

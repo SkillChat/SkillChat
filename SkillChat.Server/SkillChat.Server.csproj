@@ -6,11 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="ServiceStack.Api.OpenApi" Version="5.8.0" />
+    <PackageReference Include="ServiceStack.Api.Swagger" Version="5.8.0" />
     <PackageReference Include="SignalR.EasyUse.Server" Version="0.1.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SkillChat.Interface\SkillChat.Interface.csproj" />
+    <ProjectReference Include="..\SkillChat.Server.ServiceInterface\SkillChat.Server.ServiceInterface.csproj" />
   </ItemGroup>
 
 </Project>
