@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using ServiceStack;
 using ServiceStack.Auth;
 using SkillChat.Server.Domain;
@@ -18,7 +18,6 @@ namespace SkillChat.Server.ServiceInterface
 
         //public IAnonimUserRepository AnonimUserRepository { get; set; }
         //public IUserRepository UserRepository { get; set; }
-        public ILoggerFactory LoggerFactory { get; set; }
 
         public async Task<TokenResult> Post(AuthViaPassword request)
         {
@@ -226,6 +225,7 @@ namespace SkillChat.Server.ServiceInterface
 
             var token = await GenerateToken(user);
 
+            Log.Information($"Created tokens pair for {request.Login}({uid})");
             return token;
         }
 

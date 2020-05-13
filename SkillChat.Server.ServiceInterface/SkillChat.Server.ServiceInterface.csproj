@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Serilog" Version="2.9.0" />
     <PackageReference Include="ServiceStack.Server" Version="5.8.0" />
   </ItemGroup>
 

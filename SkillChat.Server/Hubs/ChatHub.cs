@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
-using ServiceStack;
+using Serilog;
 using ServiceStack.Auth;
 using ServiceStack.Host;
 using ServiceStack.Text;
 using SignalR.EasyUse.Server;
 using SkillChat.Interface;
-using SkillChat.Server.Domain;
 
 namespace SkillChat.Server.Hubs
 {
@@ -24,6 +21,7 @@ namespace SkillChat.Server.Hubs
                 User = Context.Items["login"] as string,
                 Message = message,
             });
+            Log.Information($"User {Context.Items["login"]} send message in main chat");
         }
 
         public async Task Login(string token)
@@ -38,12 +36,12 @@ namespace SkillChat.Server.Hubs
                 Context.Items["login"] = jwtPayload["name"];
                 Context.Items["uid"] = jwtPayload["sub"];
                 Context.Items["session"] = jwtPayload["session"];
+                Log.Information($"Connected {Context.Items["login"]}({Context.Items["uid"]}) with session {Context.Items["session"]}");
             }
             catch (Exception e)
             {
-                throw new HttpError(HttpStatusCode.Unauthorized, "Токен неверный");
+                Log.Warning($"Bad token from connection {Context.ConnectionId}");
             }
-
         }
     }
 }
