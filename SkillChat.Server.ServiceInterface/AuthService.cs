@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Raven.Client.Documents.Session;
 using Serilog;
 using ServiceStack;
 using ServiceStack.Auth;
@@ -14,10 +15,9 @@ namespace SkillChat.Server.ServiceInterface
     public class AuthService : Service
     {
         public const string RefreshPermission = "refresh";
-        public static string anonimPrefix = "user:";
+        public static string anonimPrefix = "User/";
 
-        //public IAnonimUserRepository AnonimUserRepository { get; set; }
-        //public IUserRepository UserRepository { get; set; }
+        public IAsyncDocumentSession RavenSession { get; set; }
 
         public async Task<TokenResult> Post(AuthViaPassword request)
         {
@@ -173,6 +173,7 @@ namespace SkillChat.Server.ServiceInterface
             return token;
         }
 
+        [Authenticate]
         public async Task<PasswordChangeResult> Post(CreatePassword request)
         {
             var session = Request.ThrowIfUnauthorized();
@@ -194,7 +195,8 @@ namespace SkillChat.Server.ServiceInterface
 
             return new PasswordChangeResult { Result = PasswordChangeResult.ChangeEnum.Created };
         }
-        
+
+        [Authenticate]
         public async Task<UserProfileMold> Get(GetMyProfile request)
         {
             var session = Request.ThrowIfUnauthorized();
@@ -224,6 +226,9 @@ namespace SkillChat.Server.ServiceInterface
             var user = await CreateUser(uid, request.Login);
 
             var token = await GenerateToken(user);
+
+            await RavenSession.StoreAsync(user);
+            await RavenSession.SaveChangesAsync();
 
             Log.Information($"Created tokens pair for {request.Login}({uid})");
             return token;

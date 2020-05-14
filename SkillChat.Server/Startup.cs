@@ -25,6 +25,8 @@ namespace SkillChat.Server
             services.AddSingleton(Configuration);
             services.AddSingleton<IAppSettings, AppSettings>();
             services.AddSingleton<AppHost>();
+
+            services.AddRavenDbServices();
             
             services.AddSignalR();
         }
