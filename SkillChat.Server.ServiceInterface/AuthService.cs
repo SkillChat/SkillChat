@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using Serilog;
 using ServiceStack;
@@ -14,23 +16,26 @@ namespace SkillChat.Server.ServiceInterface
 {
     public class AuthService : Service
     {
-        public const string RefreshPermission = "refresh";
-        public static string anonimPrefix = "User/";
+        private const string RefreshPermission = "refresh";
+        private const string UserPrefix = "User/";
+        private const string SecretPostfix = "/secret";
 
         public IAsyncDocumentSession RavenSession { get; set; }
 
         public async Task<TokenResult> Post(AuthViaPassword request)
         {
-            var email = request.Login.ToUpperInvariant();//ВАЖНО!!! Email должен быть в ВЕРХНЕМ регистре.
+            var login = request.Login.ToLowerInvariant();
 
-            var user = new User();//(await UserRepository.GetAsync(s => s.Email == email)).FirstOrDefault();
+            var user = await GetUserByLogin(login);
             if (user == null)
                 throw new HttpError(HttpStatusCode.NotFound, "User is not found");
 
-            if (string.IsNullOrWhiteSpace(user.Password))
+            var secret = await RavenSession.LoadAsync<UserSecret>(user.Id + SecretPostfix);
+
+            if (string.IsNullOrWhiteSpace(secret?.Password))
                 throw new HttpError(HttpStatusCode.NotFound, "Password is not set");
 
-            if (user.Password != request.Password)
+            if (secret.Password != request.Password)
                 throw new HttpError(HttpStatusCode.NotFound, "Password is wrong");
 
             var customAccessExpire = (request.AccessTokenExpirationPeriod.HasValue && request.AccessTokenExpirationPeriod >= 0)
@@ -39,83 +44,44 @@ namespace SkillChat.Server.ServiceInterface
                 ? TimeSpan.FromSeconds(request.RefreshTokenExpirationPeriod.Value) : (TimeSpan?)null;
 
             var tokenResult = await GenerateToken(user, customAccessExpire, customRefreshExpire);
-            if (tokenResult == null)
-                throw new HttpError(HttpStatusCode.Conflict, "Roles is not setted");
 
             return tokenResult;
         }
 
-        [Authenticate]
-        public async Task<TokenResult> Post(PostRefreshToken request)
-        {
-            var session = Request.ThrowIfUnauthorized();
-            var uid = session.UserAuthId;
+        //[Authenticate]
+        //public async Task<TokenResult> Post(PostRefreshToken request)
+        //{
+        //    var session = Request.ThrowIfUnauthorized();
+        //    var uid = session.UserAuthId;
 
-            var isAnonimUser = uid.StartsWith(anonimPrefix);
+        //    var isAnonimUser = uid.StartsWith(userPrefix);
 
-            User user = null;//isAnonimUser
-                //? (dynamic) (await AnonimUserRepository.GetAsync(anonim => anonim.Uid == uid)).FirstOrDefault()
-                //: (dynamic) (await UserRepository.GetAsync(s => s.Id == uid)).FirstOrDefault();
+        //    User user = null;//isAnonimUser
+        //                     //? (dynamic) (await AnonimUserRepository.GetAsync(anonim => anonim.Uid == uid)).FirstOrDefault()
+        //                     //: (dynamic) (await UserRepository.GetAsync(s => s.Id == uid)).FirstOrDefault();
 
-            if (user == null)
-                throw new HttpError(HttpStatusCode.NotFound, $"User {uid} is not found");
+        //    if (user == null)
+        //        throw new HttpError(HttpStatusCode.NotFound, $"User {uid} is not found");
 
-            var customAccessExpire =
-                (request.AccessTokenExpirationPeriod.HasValue && request.AccessTokenExpirationPeriod >= 0)
-                    ? TimeSpan.FromSeconds(request.AccessTokenExpirationPeriod.Value)
-                    : (TimeSpan?)null;
+        //    var customAccessExpire =
+        //        (request.AccessTokenExpirationPeriod.HasValue && request.AccessTokenExpirationPeriod >= 0)
+        //            ? TimeSpan.FromSeconds(request.AccessTokenExpirationPeriod.Value)
+        //            : (TimeSpan?)null;
 
-            var customRefreshExpire =
-                (request.RefreshTokenExpirationPeriod.HasValue && request.RefreshTokenExpirationPeriod >= 0)
-                    ? TimeSpan.FromSeconds(request.RefreshTokenExpirationPeriod.Value)
-                    : (TimeSpan?)null;
+        //    var customRefreshExpire =
+        //        (request.RefreshTokenExpirationPeriod.HasValue && request.RefreshTokenExpirationPeriod >= 0)
+        //            ? TimeSpan.FromSeconds(request.RefreshTokenExpirationPeriod.Value)
+        //            : (TimeSpan?)null;
 
-            var tokenResult = isAnonimUser
-                ? await GenerateAnonimToken(uid)
-                : await GenerateToken(user, customAccessExpire, customRefreshExpire);
+        //    var tokenResult = isAnonimUser
+        //        ? await GenerateAnonimToken(uid)
+        //        : await GenerateToken(user, customAccessExpire, customRefreshExpire);
 
-            if (tokenResult == null)
-                throw new HttpError(HttpStatusCode.Conflict, "Roles is not setted");
+        //    if (tokenResult == null)
+        //        throw new HttpError(HttpStatusCode.Conflict, "Roles is not setted");
 
-            return tokenResult;
-        }
-
-        internal async Task<TokenResult> GenerateAnonimToken(string uid)
-        {
-            var sessionId = Guid.NewGuid().ToString();
-            var token = new TokenResult();
-            var jwtProvider = (JwtAuthProvider)AuthenticateService.GetAuthProvider("jwt");
-
-            if (jwtProvider?.PublicKey == null)
-                throw new HttpError(HttpStatusCode.ServiceUnavailable, "AuthProvider does not work");
-            
-            var body = JwtAuthProvider.CreateJwtPayload(new AuthUserSession
-            {
-                UserAuthId = uid,
-                CreatedAt = DateTime.UtcNow,
-            },
-                issuer: jwtProvider.Issuer, expireIn: TimeSpan.FromDays(30));
-
-            body["useragent"] = Request.UserAgent;
-            body["session"] = sessionId;
-
-            token.AccessToken = JwtAuthProvider.CreateEncryptedJweToken(body, jwtProvider.PublicKey.Value);
-
-            var refreshBody = JwtAuthProvider.CreateJwtPayload(new AuthUserSession
-            {
-                UserAuthId = uid,
-                CreatedAt = DateTime.UtcNow,
-                Permissions = new List<string> { RefreshPermission }
-            },
-                issuer: jwtProvider.Issuer, expireIn: TimeSpan.FromDays(365));
-
-            refreshBody["useragent"] = Request.UserAgent;
-            refreshBody["session"] = body["session"];
-
-            token.RefreshToken = JwtAuthProvider.CreateEncryptedJweToken(refreshBody, jwtProvider.PublicKey.Value);
-            
-            return token;
-        }
+        //    return tokenResult;
+        //}
 
         /// <summary>
         /// Генерация пары токенов для пользователя
@@ -182,16 +148,18 @@ namespace SkillChat.Server.ServiceInterface
             if (uid == null)
                 throw new HttpError(HttpStatusCode.Unauthorized);
 
-            var user = new User(); //await UserRepository.GetFirstAsync(u => u.Id == uid);
+            var user = await GetUserById(uid);
             if (user == null)
                 throw new HttpError(HttpStatusCode.NotFound);
 
-            if (user.Password != null)
+            var secret = await GetUserSecret(uid);
+            if (secret.Password != null)
                 throw new HttpError(HttpStatusCode.Conflict);
 
-            user.Password = request.NewPassword;
+            secret.Password = request.NewPassword;
 
-            //await UserRepository.SaveAsync(user);
+            await RavenSession.StoreAsync(secret);
+            await RavenSession.SaveChangesAsync();
 
             return new PasswordChangeResult { Result = PasswordChangeResult.ChangeEnum.Created };
         }
@@ -205,44 +173,74 @@ namespace SkillChat.Server.ServiceInterface
             if (uid == null)
                 throw new HttpError(HttpStatusCode.Unauthorized);
 
-            var me = new User(); //await UserRepository.GetWithIncludesAsync(uid);
+            var me = await GetUserById(uid);
             if (me == null)
                 throw new HttpError(HttpStatusCode.NotFound);
+
+            var secret = await GetUserSecret(uid);
 
             var profile = new UserProfileMold
             {
                 UserId = session.UserAuthId,
                 Login = session.DisplayName,
-                IsPasswordSetted = me.Password != null,
+                IsPasswordSetted = secret.Password != null,
             };
 
             return profile;
         }
 
+        private async Task<UserSecret> GetUserSecret(string uid)
+        {
+            var secret = await RavenSession.LoadAsync<UserSecret>(uid + SecretPostfix);
+            return secret;
+        }
+
+        private async Task<User> GetUserById(string uid)
+        {
+            return await RavenSession.LoadAsync<User>(uid, b => b.IncludeDocuments(uid + SecretPostfix));
+        }
+
         public async Task<TokenResult> Get(GetToken request)
         {
-            var uid = $"{anonimPrefix}{Guid.NewGuid()}";
-
-            var user = await CreateUser(uid, request.Login);
+            request.Login = request.Login.ToLowerInvariant();
+            var user = await GetUserByLogin(request.Login);
+            if (user == null)
+            {
+                user = await CreateUser(request.Login);
+            }
+            else
+            {
+                var secret = await RavenSession.LoadAsync<UserSecret>(user.Id + SecretPostfix);
+                if (secret != null)
+                {
+                    throw HttpError.Unauthorized("Need a password");
+                }
+            }
 
             var token = await GenerateToken(user);
 
-            await RavenSession.StoreAsync(user);
-            await RavenSession.SaveChangesAsync();
-
-            Log.Information($"Created tokens pair for {request.Login}({uid})");
+            Log.Information($"Created tokens pair for {user.Login}({user.Id})");
             return token;
         }
 
-        internal async Task<User> CreateUser(string uid, string login)
+        private async Task<User> GetUserByLogin(string login)
         {
+            var user = await RavenSession.Query<User>().Where(x => x.Login == login).Include(x => x.Id + SecretPostfix)
+                .FirstOrDefaultAsync();
+            return user;
+        }
+
+        private async Task<User> CreateUser(string login)
+        {
+            var uid = $"{UserPrefix}{Guid.NewGuid()}";
             var user = new User
             {
                 Id = uid,
                 Login = login,
                 RegisteredTime = DateTimeOffset.UtcNow,
             };
-            //await AnonimUserRepository.SaveAsync(user);
+            await RavenSession.StoreAsync(user);
+            await RavenSession.SaveChangesAsync();
             return user;
         }
     }
