@@ -82,6 +82,7 @@ namespace SkillChat.Client.ViewModel
                 try
                 {
                     await hub.SendMessage(MessageText);
+                    MessageText = null;
                 }
                 catch (Exception ex)
                 {
