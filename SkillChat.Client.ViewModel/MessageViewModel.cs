@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using PropertyChanged;
 using ReactiveUI;
 
@@ -14,11 +14,11 @@ namespace SkillChat.Client.ViewModel
                 var local = t.ToLocalTime();
                 if (local < DateTimeOffset.Now.Date)
                 {
-                    Time = "[" + local.ToString("g") + "] ";
+                    Time = local.ToString("g");
                 }
                 else
                 {
-                    Time = "[" + local.ToString("t") + "] ";
+                    Time = local.ToString("t");
                 }
             });
         }
