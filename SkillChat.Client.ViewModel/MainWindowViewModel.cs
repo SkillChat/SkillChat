@@ -4,16 +4,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.SignalR.Client;
+using PropertyChanged;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 using ServiceStack;
 using SignalR.EasyUse.Client;
 using SkillChat.Interface;
 using SkillChat.Server.ServiceModel;
+using SkillChat.Server.ServiceModel.Molds;
 
 namespace SkillChat.Client.ViewModel
 {
-    public class MainWindowViewModel : ReactiveObject
+    [AddINotifyPropertyChangedInterface]
+    public class MainWindowViewModel
     {
         public MainWindowViewModel()
         {
@@ -27,7 +29,14 @@ namespace SkillChat.Client.ViewModel
             _connection.Closed += async (error) =>
             {
                 await Task.Delay(new Random().Next(0, 5) * 1000);
-                await _connection.StartAsync();
+                try
+                {
+                    await _connection.StartAsync();
+                }
+                catch (Exception e)
+                {
+                    IsConnected = false;
+                }
             };
 
             var hub = _connection.CreateHub<IChatHub>();
@@ -35,24 +44,27 @@ namespace SkillChat.Client.ViewModel
             Messages = new ObservableCollection<MessageViewModel>();
             ConnectCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                var tokens = await serviceClient.GetAsync(new GetToken { Login = UserName });
-                serviceClient.BearerToken = tokens.AccessToken;
-                _connection.Subscribe<ReceiveMessage>(data =>
-                {
-                    var newMessage = new MessageViewModel
-                    {
-                        Id = data.Id,
-                        Text = data.Message,
-                        PostTime = data.PostTime,
-                        UserLogin = data.UserLogin,
-                    };
-                    Messages.Add(newMessage);
-                });
-
                 try
                 {
+                    if (!IsLoggedIn)
+                    {
+                        Tokens = await serviceClient.GetAsync(new GetToken { Login = UserName });
+                    }
+                    serviceClient.BearerToken = Tokens.AccessToken;
+                    _connection.Subscribe<ReceiveMessage>(data =>
+                    {
+                        var newMessage = new MessageViewModel
+                        {
+                            Id = data.Id,
+                            Text = data.Message,
+                            PostTime = data.PostTime,
+                            UserLogin = data.UserLogin,
+                        };
+                        Messages.Add(newMessage);
+                    });
+
                     await _connection.StartAsync();
-                    await hub.Login(tokens.AccessToken);
+                    await hub.Login(Tokens.AccessToken);
                     //Messages.Add("Connection started");
                     IsConnected = true;
                 }
@@ -109,15 +121,16 @@ namespace SkillChat.Client.ViewModel
 
         private readonly IJsonServiceClient serviceClient;
 
-        [Reactive]
         public bool IsConnected { get; set; }
 
-        public ObservableCollection<MessageViewModel> Messages { get; set; }
+        public bool IsLoggedIn => Tokens != null;
 
-        [Reactive]
+        public ObservableCollection<MessageViewModel> Messages { get; set; }
+        
+        public TokenResult Tokens { get;set; }
+
         public string UserName { get; set; }
 
-        [Reactive]
         public string MessageText { get; set; }
 
         public ICommand ConnectCommand { get; }

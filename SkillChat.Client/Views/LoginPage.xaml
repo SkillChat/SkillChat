@@ -1,0 +1,63 @@
+﻿<UserControl
+    x:Class="SkillChat.Client.Views.LoginPage"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Background="White"
+    mc:Ignorable="d">
+
+
+    <Design.DataContext>
+        <viewModel:MainWindowViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="5*,Auto,*">
+        <Grid.Background>
+            <ImageBrush
+                Source="/Assets/Login_background.png"
+                Stretch="UniformToFill"
+                TileMode="Tile" />
+        </Grid.Background>
+        <Viewbox MaxWidth="300" Stretch="Uniform">
+            <Grid>
+                <Image
+                    Width="150"
+                    Margin="100"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Source="/Assets/SkillChatLogo.png" />
+            </Grid>
+        </Viewbox>
+        <StackPanel Grid.Row="1" MaxWidth="300">
+            <StackPanel Margin="15">
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    FontSize="10"
+                    Foreground="#9F81F3"
+                    Text="Логин" />
+                <TextBox
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Padding="10"
+                    Text="{Binding UserName}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+            <Button
+                x:Name="connectButton"
+                Grid.Row="2"
+                Grid.Column="2"
+                Margin="15"
+                Padding="10"
+                Command="{Binding ConnectCommand}"
+                Content="Войти" />
+        </StackPanel>
+
+    </Grid>
+</UserControl>

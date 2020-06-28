@@ -1,29 +1,36 @@
 ﻿using System;
-using System.Globalization;
-using System.Reactive.Linq;
+using PropertyChanged;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 
 namespace SkillChat.Client.ViewModel
 {
-    public class MessageViewModel: ReactiveObject
+    [AddINotifyPropertyChangedInterface]
+    public class MessageViewModel
     {
         public MessageViewModel()
         {
-            this.WhenAnyValue(x => x.PostTime).Subscribe(t => Time = "[" + t.ToLocalTime().ToString("t") + "] ");
+            this.WhenAnyValue(x => x.PostTime).Subscribe(t =>
+            {
+                var local = t.ToLocalTime();
+                if (local < DateTimeOffset.Now.Date)
+                {
+                    Time = "[" + local.ToString("g") + "] ";
+                }
+                else
+                {
+                    Time = "[" + local.ToString("t") + "] ";
+                }
+            });
         }
 
         public string Id { get; set; }
 
-        public string UserLogin { get;set; }
+        public string UserLogin { get; set; }
 
-        [Reactive]
-        public string Text { get;set; }
+        public string Text { get; set; }
 
-        [Reactive]
-        public DateTimeOffset PostTime { get;set; }
-        
-        [Reactive]
-        public string Time { get;set; }
+        public DateTimeOffset PostTime { get; set; }
+
+        public string Time { get; set; }
     }
 }
