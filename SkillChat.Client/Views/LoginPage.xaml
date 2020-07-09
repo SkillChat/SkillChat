@@ -9,51 +9,78 @@
     d:DesignWidth="800"
     Background="White"
     mc:Ignorable="d">
-
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="FontFamily" Value="OpenSans" />
+        </Style>
+        <Style Selector="TextBlock.UpperWatermark">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="#9F81F3" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="TextBox.LoginInput">
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="Foreground" Value="#7F57F0" />
+        </Style>
+        <Style Selector="TextBox.LoginInput:hover">
+            <Setter Property="Foreground" Value="#7F57F0" />
+        </Style>
+        <Style Selector="TextBox.LoginInput:focus">
+            <Setter Property="Foreground" Value="#7F57F0" />
+        </Style>
+        <Style Selector="Border">
+            <Setter Property="CornerRadius" Value="2" />
+        </Style>
+        <Style Selector="Button">
+            <Setter Property="Background" Value="#7F57F0" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="Foreground" Value="#FFFFFF" />
+        </Style>
+    </UserControl.Styles>
 
     <Design.DataContext>
         <viewModel:MainWindowViewModel />
     </Design.DataContext>
 
-    <Grid RowDefinitions="5*,Auto,*">
+    <Grid RowDefinitions="*,Auto,*">
         <Grid.Background>
             <ImageBrush
                 Source="/Assets/Login_background.png"
                 Stretch="UniformToFill"
                 TileMode="Tile" />
         </Grid.Background>
-        <Viewbox MaxWidth="300" Stretch="Uniform">
-            <Grid>
-                <Image
-                    Width="150"
-                    Margin="100"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Source="/Assets/SkillChatLogo.png" />
-            </Grid>
-        </Viewbox>
-        <StackPanel Grid.Row="1" MaxWidth="300">
-            <StackPanel Margin="15">
-                <TextBlock
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    FontSize="10"
-                    Foreground="#9F81F3"
-                    Text="Логин" />
+
+        <StackPanel
+            Grid.Row="1"
+            Width="380"
+            HorizontalAlignment="Center">
+            <Image
+                Width="180"
+                Height="241"
+                Margin="0,0,0,64"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Source="/Assets/SkillChatLogo.png"
+                Stretch="Uniform" />
+            <StackPanel>
+                <TextBlock Classes="UpperWatermark" Text="Логин / E-mail" />
                 <TextBox
-                    Grid.Row="0"
-                    Grid.Column="1"
+                    Height="50"
                     Padding="10"
+                    Background="#FFFFFF"
+                    BorderBrush="#7F57F0"
+                    BorderThickness="2"
+                    Classes="LoginInput"
                     Text="{Binding UserName}"
+                    TextAlignment="Center"
                     TextWrapping="Wrap" />
             </StackPanel>
             <Button
                 x:Name="connectButton"
                 Grid.Row="2"
                 Grid.Column="2"
-                Margin="15"
+                Margin="0,30,0,0"
                 Padding="10"
                 Command="{Binding ConnectCommand}"
                 Content="Войти" />
