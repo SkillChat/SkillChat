@@ -23,19 +23,21 @@
             <Setter Property="FontSize" Value="18" />
             <Setter Property="Foreground" Value="#7F57F0" />
         </Style>
-        <Style Selector="TextBox.LoginInput:hover">
-            <Setter Property="Foreground" Value="#7F57F0" />
-        </Style>
-        <Style Selector="TextBox.LoginInput:focus">
-            <Setter Property="Foreground" Value="#7F57F0" />
-        </Style>
         <Style Selector="Border">
             <Setter Property="CornerRadius" Value="2" />
         </Style>
+        <Style Selector="Button /template/ ContentPresenter">
+            <Setter Property="CornerRadius" Value="2" />
+        </Style>
         <Style Selector="Button">
-            <Setter Property="Background" Value="#7F57F0" />
             <Setter Property="FontSize" Value="18" />
             <Setter Property="Foreground" Value="#FFFFFF" />
+        </Style>
+
+        <Style Selector="Button:disabled">
+            <Setter Property="Opacity" Value="1" />
+            <Setter Property="Background" Value="#D1C0FF" />
+            <Setter Property="BorderBrush" Value="#D1C0FF" />
         </Style>
     </UserControl.Styles>
 

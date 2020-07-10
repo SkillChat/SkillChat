@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -13,9 +13,10 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.9.10" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.9.10" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.10" />
+    <PackageReference Include="Avalonia" Version="0.10.0-preview1" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.0-preview1" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0-preview1" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0-preview1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SkillChat.Client.ViewModel\SkillChat.Client.ViewModel.csproj" />

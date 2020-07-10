@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SignalR.EasyUse.Interface" Version="0.1.2" />
+    <PackageReference Include="SignalR.EasyUse.Interface" Version="0.2.1" />
   </ItemGroup>
 
 </Project>
