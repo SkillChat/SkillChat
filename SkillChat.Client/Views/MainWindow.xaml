@@ -4,11 +4,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
     xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
     xmlns:views="clr-namespace:SkillChat.Client.Views"
     Title="SkillChat.Client"
     d:DesignHeight="600"
     d:DesignWidth="800"
+    MinWidth="300"
     Icon="/Assets/avalonia-logo.ico"
     mc:Ignorable="d">
 
@@ -16,12 +18,13 @@
         <viewModel:MainWindowViewModel />
     </Design.DataContext>
     <Grid>
-        <Grid ColumnDefinitions="72, *">
+        <Grid ColumnDefinitions="100, *">
             <StackPanel Background="#7F57F0">
-                <Image
-                    Height="64"
-                    Margin="16,10"
-                    Source="/Assets/SkillChatLogo_small.png" />
+                <Image Width="60" Margin="20">
+                    <Image.Source>
+                        <svg:SvgImage Source="/Assets/SkillChat_small.svg" />
+                    </Image.Source>
+                </Image>
             </StackPanel>
             <Grid Grid.Column="1">
                 <Grid.Background>
@@ -96,28 +99,77 @@
                         </ItemsControl>
                     </ScrollViewer>
                 </Grid>
-                <Grid
+                <Border
                     Grid.Row="2"
-                    Height="50"
-                    Margin="20,10">
-                    <TextBox
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Text="{Binding MessageText}"
-                        TextWrapping="Wrap" />
+                    MinHeight="50"
+                    MaxHeight="270"
+                    Margin="0"
+                    Background="#F2F2F2"
+                    BorderBrush="#F2F2F2"
+                    BorderThickness="10">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBox
+                            Grid.Column="0"
+                            Padding="10,5"
+                            AcceptsReturn="True"
+                            BorderThickness="0"
+                            FontFamily="Open Sans"
+                            FontSize="14"
+                            Text="{Binding MessageText}"
+                            TextWrapping="Wrap"
+                            Watermark="Сообщение" />
 
-                    <Button
-                        x:Name="sendButton"
-                        Width="30"
-                        Height="30"
-                        Margin="10"
-                        Padding="0"
-                        HorizontalAlignment="Right"
-                        BorderThickness="0"
-                        Command="{Binding SendCommand}">
-                        <Image Source="/Assets/Arrow.png" Stretch="Fill" />
-                    </Button>
-                </Grid>
+                        <Button
+                            x:Name="sendButton"
+                            Grid.Column="1"
+                            Width="30"
+                            Height="30"
+                            Padding="0"
+                            VerticalAlignment="Bottom"
+                            Background="#C4C4C4"
+                            BorderThickness="0"
+                            Command="{Binding SendCommand}">
+                            <Image
+                                Name="buttonImage"
+                                Width="20"
+                                Height="20" />
+                            <Button.Styles>
+                                <Style Selector="Button /template/ ContentPresenter">
+                                    <Setter Property="CornerRadius" Value="2" />
+                                </Style>
+                                <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#FFFFFF" />
+                                    <Setter Property="BorderThickness" Value="1" />
+                                    <Setter Property="BorderBrush" Value="#FF9133" />
+                                </Style>
+                                <Style Selector="Button Image#buttonImage">
+                                    <Setter Property="Source">
+                                        <Setter.Value>
+                                            <svg:SvgImage Source="/Assets/arrow.svg" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                                <Style Selector="Button:pointerover Image#buttonImage">
+                                    <Setter Property="Source">
+                                        <Setter.Value>
+                                            <svg:SvgImage Source="/Assets/arrow_orange.svg" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                                <Style Selector="Button:pressed Image#buttonImage">
+                                    <Setter Property="Source">
+                                        <Setter.Value>
+                                            <svg:SvgImage Source="/Assets/arrow.svg" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                                <Style Selector="Button:pressed /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#FF9133" />
+                                </Style>
+                            </Button.Styles>
+                        </Button>
+                    </Grid>
+                </Border>
 
 
 
