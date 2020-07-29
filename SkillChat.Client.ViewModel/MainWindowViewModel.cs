@@ -20,13 +20,175 @@ namespace SkillChat.Client.ViewModel
         public MainWindowViewModel()
         {
             var hostUrl = "http://localhost:5000";
-            _connection = new HubConnectionBuilder()
-                .WithUrl(hostUrl + "/ChatHub")
-                .Build();
+            
 
             serviceClient = new JsonServiceClient(hostUrl);
+            
+            
 
-            _connection.Closed += async (error) =>
+            Messages = new ObservableCollection<IMessagesContainerViewModel>();
+            ConnectCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                try
+                {
+                    _connection = new HubConnectionBuilder()
+                        .WithUrl(hostUrl + "/ChatHub")
+                        .Build();
+
+                    _hub = _connection.CreateHub<IChatHub>();
+
+                    if (!IsSignedIn)
+                    {
+                        Tokens = await serviceClient.GetAsync(new GetToken { Login = UserName });
+                    }
+                    serviceClient.BearerToken = Tokens.AccessToken;
+                    _connection.Subscribe<ReceiveMessage>(data =>
+                    {
+                        var isMyMessage = UserName.ToLowerInvariant() == data.UserLogin;
+                        var newMessage = isMyMessage
+                            ? (MessageViewModel)new MyMessageViewModel()
+                            : new UserMessageViewModel();
+                        newMessage.Id = data.Id;
+                        newMessage.Text = data.Message;
+                        newMessage.PostTime = data.PostTime;
+                        newMessage.UserLogin = data.UserLogin;
+                        var container = Messages.LastOrDefault();
+                        if (isMyMessage)
+                        {
+                            if (!(container is MyMessagesContainerViewModel))
+                            {
+                                container = new MyMessagesContainerViewModel();
+                                Messages.Add(container);
+                            }
+                        }
+                        else
+                        {
+                            if (container is UserMessagesContainerViewModel)
+                            {
+                                var lastMessage = container.Messages.LastOrDefault();
+                                if (lastMessage?.UserLogin != newMessage.UserLogin)
+                                {
+                                    container = new UserMessagesContainerViewModel();
+                                    Messages.Add(container);
+                                }
+                            }
+                            else
+                            {
+                                container = new UserMessagesContainerViewModel();
+                                Messages.Add(container);
+                            }
+                        }
+                        container.Messages.Add(newMessage);
+                    });
+                    
+                    _connection.Closed += connectionOnClosed();
+                    await _connection.StartAsync();
+                    await _hub.Login(Tokens.AccessToken);
+                    //Messages.Add("Connection started");
+                    IsConnected = true;
+                }
+                catch (Exception ex)
+                {
+                    IsConnected = _connection.State == HubConnectionState.Connected;
+                    //Messages.Add(ex.Message);
+                }
+
+                LoadMessageHistoryCommand.Execute(null);
+            }, this.WhenAnyValue(m => m.IsConnected, b => b == false));
+
+            SendCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                try
+                {
+                    await _hub.SendMessage(MessageText);
+                    MessageText = null;
+                }
+                catch (Exception ex)
+                {
+                    IsConnected = false;
+                    //Messages.Add(ex.Message);
+                }
+            }, this.WhenAnyValue(m => m.IsConnected, m => m.MessageText, (b, m) => b == true && !string.IsNullOrEmpty(m)));
+
+            LoadMessageHistoryCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                try
+                {
+                    var first = Messages.FirstOrDefault()?.Messages.FirstOrDefault();
+                    var request = new GetMessages();
+                    request.BeforePostTime = first?.PostTime;
+                    var result = await serviceClient.GetAsync(request);
+                    foreach (var item in result.Messages)
+                    {
+                        var isMyMessage = UserName.ToLowerInvariant() == item.UserLogin;
+                        var newMessage = isMyMessage
+                            ? (MessageViewModel)new MyMessageViewModel()
+                            : new UserMessageViewModel();
+                        newMessage.Id = item.Id;
+                        newMessage.Text = item.Text;
+                        newMessage.PostTime = item.PostTime;
+                        newMessage.UserLogin = item.UserLogin;
+                        var container = Messages.FirstOrDefault();
+                        if (isMyMessage)
+                        {
+                            if (!(container is MyMessagesContainerViewModel))
+                            {
+                                container = new MyMessagesContainerViewModel();
+                                Messages.Insert(0, container);
+                            }
+                        }
+                        else
+                        {
+                            if (container is UserMessagesContainerViewModel)
+                            {
+                                var firstMessage = container.Messages.FirstOrDefault();
+                                if (firstMessage?.UserLogin != newMessage.UserLogin)
+                                {
+                                    container = new UserMessagesContainerViewModel();
+                                    Messages.Insert(0, container);
+                                }
+                            }
+                            else
+                            {
+                                container = new UserMessagesContainerViewModel();
+                                Messages.Insert(0, container);
+                            }
+                        }
+                        container.Messages.Insert(0, newMessage);
+                    }
+                }
+                catch (Exception e)
+                {
+                }
+            });
+
+            SignOutCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                try
+                {
+                    Messages.Clear();
+                    MessageText = null;
+                    Tokens = null;
+                    serviceClient.BearerToken = null;
+                    _connection.Closed -= connectionOnClosed();
+                    await _connection.StopAsync();
+                    _connection = null;
+                    _hub = null;
+                }
+                catch (Exception ex)
+                {
+                }
+                finally
+                {
+                    IsConnected = false;
+                }
+            });
+            IsConnected = false;
+        }
+
+        private Func<Exception, Task> connectionOnClosed()
+        {
+            return async (error) =>
             {
                 await Task.Delay(new Random().Next(0, 5) * 1000);
                 try
@@ -38,106 +200,32 @@ namespace SkillChat.Client.ViewModel
                     IsConnected = false;
                 }
             };
-
-            var hub = _connection.CreateHub<IChatHub>();
-
-            Messages = new ObservableCollection<MessageViewModel>();
-            ConnectCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                try
-                {
-                    if (!IsLoggedIn)
-                    {
-                        Tokens = await serviceClient.GetAsync(new GetToken { Login = UserName });
-                    }
-                    serviceClient.BearerToken = Tokens.AccessToken;
-                    _connection.Subscribe<ReceiveMessage>(data =>
-                    {
-                        var newMessage = new MessageViewModel
-                        {
-                            Id = data.Id,
-                            Text = data.Message,
-                            PostTime = data.PostTime,
-                            UserLogin = data.UserLogin,
-                        };
-                        Messages.Add(newMessage);
-                    });
-
-                    await _connection.StartAsync();
-                    await hub.Login(Tokens.AccessToken);
-                    //Messages.Add("Connection started");
-                    IsConnected = true;
-                }
-                catch (Exception ex)
-                {
-                    IsConnected = false;
-                    //Messages.Add(ex.Message);
-                }
-
-                LoadMessageHistoryCommand.Execute(null);
-            }, this.WhenAnyValue(m => m.IsConnected, b => b == false));
-
-            SendCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                try
-                {
-                    await hub.SendMessage(MessageText);
-                    MessageText = null;
-                }
-                catch (Exception ex)
-                {
-                    IsConnected = false;
-                    //Messages.Add(ex.Message);
-                }
-            }, this.WhenAnyValue(m => m.IsConnected, b => b == true));
-
-            LoadMessageHistoryCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                try
-                {
-                    var first = Messages.FirstOrDefault();
-                    var request = new GetMessages();
-                    request.BeforePostTime = first?.PostTime;
-                    var result = await serviceClient.GetAsync(request);
-                    foreach (var item in result.Messages)
-                    {
-                        var vm = new MessageViewModel
-                        {
-                            Id = item.Id,
-                            Text = item.Text,
-                            PostTime = item.PostTime,
-                            UserLogin = item.UserLogin,
-                        };
-                        Messages.Insert(0, vm);
-                    }
-                }
-                catch (Exception e)
-                {
-                }
-            });
-            IsConnected = false;
         }
 
-        readonly HubConnection _connection;
+        private HubConnection _connection;
 
         private readonly IJsonServiceClient serviceClient;
+        private IChatHub _hub;
 
         public bool IsConnected { get; set; }
 
-        public bool IsLoggedIn => Tokens != null;
+        public bool IsSignedIn => Tokens != null;
 
-        public ObservableCollection<MessageViewModel> Messages { get; set; }
-        
-        public TokenResult Tokens { get;set; }
+        public ObservableCollection<IMessagesContainerViewModel> Messages { get; set; }
+
+        public TokenResult Tokens { get; set; }
 
         public string UserName { get; set; }
+        public string Title => IsSignedIn ? $"SkillChat - {UserName}" : $"SkillChat";
 
         public string MessageText { get; set; }
+        public string MembersCaption { get; set; } //= "Вы, Кристина Петрова, Стас Верещагин, Иван";
 
         public ICommand ConnectCommand { get; }
 
         public ICommand SendCommand { get; }
 
         public ICommand LoadMessageHistoryCommand { get; }
+        public ICommand SignOutCommand { get; }
     }
 }

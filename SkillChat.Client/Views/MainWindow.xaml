@@ -7,9 +7,9 @@
     xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
     xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
     xmlns:views="clr-namespace:SkillChat.Client.Views"
-    Title="SkillChat.Client"
-    d:DesignHeight="600"
-    d:DesignWidth="800"
+    Title="{Binding Title}"
+    Width="600"
+    Height="600"
     MinWidth="300"
     Icon="/Assets/avalonia-logo.ico"
     mc:Ignorable="d">
@@ -34,26 +34,49 @@
                         TileMode="Tile" />
                 </Grid.Background>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="56" />
+                    <RowDefinition Height="80" />
                     <RowDefinition />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Grid Background="#F2F2F2" ColumnDefinitions="Auto, *">
+                <Grid Background="#F2F2F2" ColumnDefinitions="*,Auto">
 
-                    <TextBlock
+                    <StackPanel
                         Grid.Row="1"
                         Grid.Column="0"
                         Margin="20,0"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        FontWeight="Medium"
-                        Text="Чат" />
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center">
+                        <TextBlock
+                            FontSize="16"
+                            FontWeight="SemiBold"
+                            Text="Чат" />
+                        <TextBlock
+                            FontSize="14"
+                            FontWeight="Regular"
+                            Foreground="#828282"
+                            Text="{Binding MembersCaption}"
+                            TextTrimming="WordEllipsis" />
+                    </StackPanel>
+
 
                     <StackPanel
                         Grid.Column="1"
                         HorizontalAlignment="Right"
                         Orientation="Horizontal">
-                        <Button Command="{Binding LoadMessageHistoryCommand}" Content="Загрузить более старые сообщения" />
+                        <Button
+                            VerticalAlignment="Center"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Command="{Binding LoadMessageHistoryCommand}"
+                            Content="Cтарые сообщения"
+                            FontSize="12" />
+                        <Button
+                            VerticalAlignment="Center"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Command="{Binding SignOutCommand}"
+                            Content="Выйти из профиля"
+                            FontSize="12" />
                     </StackPanel>
                 </Grid>
                 <Grid Grid.Row="1">
@@ -67,9 +90,21 @@
                             Background="Transparent"
                             BorderThickness="0"
                             Items="{Binding Messages}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Margin="0,5" HorizontalAlignment="Left">
+                            <ItemsControl.DataTemplates>
+                                <DataTemplate DataType="{x:Type viewModel:UserMessagesContainerViewModel}">
+                                    <ItemsControl
+                                        Margin="0,17,0,0"
+                                        HorizontalAlignment="Left"
+                                        Items="{Binding Messages}" />
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type viewModel:MyMessagesContainerViewModel}">
+                                    <ItemsControl
+                                        Margin="0,17,0,0"
+                                        HorizontalAlignment="Right"
+                                        Items="{Binding Messages}" />
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type viewModel:UserMessageViewModel}">
+                                    <StackPanel Margin="0,0,0,3" HorizontalAlignment="Left">
                                         <Border
                                             Padding="10,5"
                                             Background="White"
@@ -88,13 +123,31 @@
                                                     TextWrapping="Wrap" />
                                             </Grid>
                                         </Border>
-                                        <Polyline
-                                            Fill="White"
-                                            Points="0,0 50,0 0,10"
-                                            StrokeThickness="0" />
                                     </StackPanel>
                                 </DataTemplate>
-                            </ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type viewModel:MyMessageViewModel}">
+                                    <StackPanel Margin="0,0,0,3" HorizontalAlignment="Right">
+                                        <Border
+                                            Padding="10,5"
+                                            Background="#DDD5F4"
+                                            BorderThickness="0">
+                                            <Grid RowDefinitions="Auto,Auto">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock FontWeight="Medium" Text="{Binding UserLogin}" />
+                                                    <TextBlock
+                                                        Margin="10,0,0,0"
+                                                        Foreground="#828282"
+                                                        Text="{Binding Time}" />
+                                                </StackPanel>
+                                                <TextBlock
+                                                    Grid.Row="1"
+                                                    Text="{Binding Text}"
+                                                    TextWrapping="Wrap" />
+                                            </Grid>
+                                        </Border>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.DataTemplates>
 
                         </ItemsControl>
                     </ScrollViewer>
@@ -176,6 +229,6 @@
             </Grid>
         </Grid>
 
-        <views:LoginPage VerticalAlignment="Stretch" IsVisible="{Binding !IsLoggedIn, Mode=OneWay}" />
+        <views:LoginPage VerticalAlignment="Stretch" IsVisible="{Binding !IsSignedIn, Mode=OneWay}" />
     </Grid>
 </Window>
