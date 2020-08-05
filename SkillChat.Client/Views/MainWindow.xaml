@@ -11,7 +11,7 @@
     Width="600"
     Height="600"
     MinWidth="300"
-    Icon="/Assets/avalonia-logo.ico"
+    Icon="/Assets/skillchat-logo.ico"
     mc:Ignorable="d">
 
     <Design.DataContext>
