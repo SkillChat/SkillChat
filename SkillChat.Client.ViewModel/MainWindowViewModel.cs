@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -79,8 +79,12 @@ namespace SkillChat.Client.ViewModel
                             }
                         }
                         container.Messages.Add(newMessage);
+                        if (container.Messages.First() == newMessage)
+                        {
+                            newMessage.ShowLogin = true;
+                        }
                     });
-                    
+
                     _connection.Closed += connectionOnClosed();
                     await _connection.StartAsync();
                     await _hub.Login(Tokens.AccessToken);
@@ -155,6 +159,12 @@ namespace SkillChat.Client.ViewModel
                             }
                         }
                         container.Messages.Insert(0, newMessage);
+
+                        var firstInBlock = container.Messages.First();
+                        foreach (var message in container.Messages)
+                        {
+                            message.ShowLogin = firstInBlock == message;
+                        }
                     }
                 }
                 catch (Exception e)

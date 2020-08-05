@@ -51,7 +51,13 @@ namespace SkillChat.Client.ViewModel
 
         public string UserLogin { get; set; }
 
+        public string DisplayLogin => ShowLogin ? UserLogin : null;
+
+        public bool ShowLogin { get; set; }
+
         public string Text { get; set; }
+
+        public string TextAligned => $"{Text}{Time}";
         
         public DateTimeOffset PostTime { get; set; }
 
