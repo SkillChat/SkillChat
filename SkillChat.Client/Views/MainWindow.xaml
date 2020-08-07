@@ -16,6 +16,42 @@
     <Design.DataContext>
         <viewModel:DesignMainWindowViewModel />
     </Design.DataContext>
+    <Window.Styles>
+        <Style Selector="ScrollBar:vertical">
+            <Setter Property="Width" Value="12" />
+            <Setter Property="Margin" Value="-12,0,0,0" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="Transparent" UseLayoutRounding="False">
+                        <Grid>
+                            <Track
+                                IsDirectionReversed="True"
+                                Maximum="{TemplateBinding Maximum}"
+                                Minimum="{TemplateBinding Minimum}"
+                                Orientation="{TemplateBinding Orientation}"
+                                ViewportSize="{TemplateBinding ViewportSize}"
+                                Value="{TemplateBinding Value,
+                                                        Mode=TwoWay}">
+
+                                <Thumb Name="thumb">
+                                    <Thumb.Template>
+                                        <ControlTemplate>
+                                            <Border />
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        <Style Selector="ScrollBar:vertical /template/ Thumb Border">
+            <Setter Property="Background" Value="#BDBDBD" />
+            <Setter Property="CornerRadius" Value="2" />
+            <Setter Property="Width" Value="6" />
+        </Style>
+    </Window.Styles>
     <Grid>
         <Grid ColumnDefinitions="100, *">
             <StackPanel Background="#7F57F0">
@@ -201,7 +237,7 @@
                     <Grid ColumnDefinitions="*,Auto">
                         <TextBox
                             Grid.Column="0"
-                            Padding="10,5"
+                            Padding="10,5,2,5"
                             AcceptsReturn="True"
                             BorderThickness="0"
                             FontSize="14"
