@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,11 +20,7 @@ namespace SkillChat.Client.ViewModel
         public MainWindowViewModel()
         {
             var hostUrl = "http://localhost:5000";
-            
-
             serviceClient = new JsonServiceClient(hostUrl);
-            
-            
 
             Messages = new ObservableCollection<IMessagesContainerViewModel>();
             ConnectCommand = ReactiveCommand.CreateFromTask(async () =>
@@ -229,7 +225,7 @@ namespace SkillChat.Client.ViewModel
         public string Title => IsSignedIn ? $"SkillChat - {UserName}" : $"SkillChat";
 
         public string MessageText { get; set; }
-        public string MembersCaption { get; set; } //= "Вы, Кристина Петрова, Стас Верещагин, Иван";
+        public string MembersCaption { get; set; }
 
         public ICommand ConnectCommand { get; }
 
