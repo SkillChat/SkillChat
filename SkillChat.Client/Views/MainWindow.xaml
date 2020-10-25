@@ -10,7 +10,8 @@
     Title="{Binding Title}"
     Width="600"
     Height="600"
-    MinWidth="300"
+    MinWidth="360"
+    MinHeight="530"
     Icon="/Assets/skillchat-logo.ico"
     mc:Ignorable="d">
     <Design.DataContext>

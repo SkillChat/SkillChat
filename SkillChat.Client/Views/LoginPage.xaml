@@ -4,12 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
     xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
     Background="White"
     mc:Ignorable="d">
-    <UserControl.Styles>        
+    <UserControl.Styles>
         <Style Selector="TextBlock.UpperWatermark">
             <Setter Property="FontSize" Value="12" />
             <Setter Property="Foreground" Value="#9F81F3" />
@@ -42,48 +41,58 @@
         <viewModel:MainWindowViewModel />
     </Design.DataContext>
 
-    <Grid RowDefinitions="*,Auto,*">
+    <Grid>
         <Grid.Background>
             <ImageBrush
                 Source="/Assets/Login_background.png"
                 Stretch="UniformToFill"
                 TileMode="Tile" />
         </Grid.Background>
-
-        <StackPanel
-            Grid.Row="1"
-            Width="380"
-            HorizontalAlignment="Center">
+        <Grid
+            MaxWidth="380"
+            MaxHeight="620"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            RowDefinitions="*,Auto">
             <Image
-                Width="180"
-                Height="241"
-                Margin="0,0,0,64"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Source="/Assets/SkillChatLogo.png"
-                Stretch="Uniform" />
-            <StackPanel>
-                <TextBlock Classes="UpperWatermark" Text="Логин / E-mail" />
-                <TextBox
-                    Height="50"
-                    Padding="10"
-                    Background="#FFFFFF"
-                    BorderBrush="#7F57F0"
-                    BorderThickness="2"
-                    Classes="LoginInput"
-                    Text="{Binding UserName}"
-                    TextAlignment="Center"
-                    TextWrapping="Wrap" />
-            </StackPanel>
-            <Button
-                x:Name="connectButton"
-                Grid.Row="2"
-                Grid.Column="2"
-                Margin="0,30,0,0"
-                Padding="10"
-                Command="{Binding ConnectCommand}"
-                Content="Войти" />
-        </StackPanel>
+                MaxWidth="180"
+                MaxHeight="241"
+                Margin="86,86,86,66"
+                Stretch="Uniform">
+                <Image.Source>
+                    <svg:SvgImage Source="/Assets/SkillChat_big.svg" />
+                </Image.Source>
+            </Image>
+            <StackPanel
+                Grid.Row="1"
+                MaxWidth="380"
+                HorizontalAlignment="Center">
 
+                <StackPanel>
+                    <TextBlock Classes="UpperWatermark" Text="Логин / E-mail" />
+                    <TextBox
+                        Height="50"
+                        MinWidth="300"
+                        Padding="10"
+                        Background="#FFFFFF"
+                        BorderBrush="#7F57F0"
+                        BorderThickness="2"
+                        Classes="LoginInput"
+                        Text="{Binding UserName}"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+                <Button
+                    x:Name="connectButton"
+                    Grid.Row="2"
+                    Grid.Column="2"
+                    MinWidth="300"
+                    Margin="0,30,0,58"
+                    Padding="10"
+                    Command="{Binding ConnectCommand}"
+                    Content="Войти" />
+            </StackPanel>
+
+        </Grid>
     </Grid>
 </UserControl>
