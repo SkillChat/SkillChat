@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PropertyChanged.Fody" Version="3.2.8" />
-    <PackageReference Include="ReactiveUI" Version="11.4.17" />
-    <PackageReference Include="ServiceStack.Client" Version="5.9.0" />
+    <PackageReference Include="PropertyChanged.Fody" Version="3.2.10" />
+    <PackageReference Include="ReactiveUI" Version="12.1.1" />
+    <PackageReference Include="ServiceStack.Client" Version="5.9.2" />
     <PackageReference Include="SignalR.EasyUse.Client" Version="0.2.1" />
   </ItemGroup>
   
