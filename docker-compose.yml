@@ -1,0 +1,9 @@
+version: '3.4'
+services:
+  skillchat.server:
+    image: '${DOCKER_REGISTRY-}skillchatserver'
+    build:
+      context: .
+      dockerfile: SkillChat.Server/Dockerfile      
+    volumes:
+      - './RavenDB:/app/RavenDB'
