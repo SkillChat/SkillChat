@@ -21,7 +21,7 @@ namespace SkillChat.Server.ServiceInterface
             var result = new MessagePage();
             if(request.BeforePostTime != null)
             {
-                messages = messages.Where(x => x.PostTime < request.BeforePostTime);
+                messages = messages.Where(x => x.PostTime.UtcDateTime < request.BeforePostTime.Value.UtcDateTime);
             }
             var pageSize = request.PageSize ?? 10;
             var docs = await messages.Take(pageSize).Include(x => x.UserId).ToListAsync();
