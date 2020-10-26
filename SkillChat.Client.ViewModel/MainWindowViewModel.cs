@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Configuration;
 using PropertyChanged;
 using ReactiveUI;
 using ServiceStack;
@@ -11,16 +12,31 @@ using SignalR.EasyUse.Client;
 using SkillChat.Interface;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
+using Splat;
 
 namespace SkillChat.Client.ViewModel
 {
     [AddINotifyPropertyChangedInterface]
     public class MainWindowViewModel
     {
+        IConfiguration configuration;
+        ChatClientSettings settings;
+
         public MainWindowViewModel()
         {
-            var hostUrl = "http://localhost:5000";
-            serviceClient = new JsonServiceClient(hostUrl);
+            configuration = Locator.Current.GetService<IConfiguration>();
+            settings = configuration.GetSection("ChatClientSettings").Get<ChatClientSettings>();
+            if (settings == null)
+            {
+                settings = new ChatClientSettings();
+            }
+            if (settings.HostUrl.IsNullOrEmpty())
+            {
+                settings.HostUrl = "http://localhost:5000";
+            }
+            serviceClient = new JsonServiceClient(settings.HostUrl);
+            UserName = settings.UserName;
+            Tokens = new TokenResult{AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken};
 
             Messages = new ObservableCollection<IMessagesContainerViewModel>();
             ConnectCommand = ReactiveCommand.CreateFromTask(async () =>
@@ -28,16 +44,56 @@ namespace SkillChat.Client.ViewModel
                 try
                 {
                     _connection = new HubConnectionBuilder()
-                        .WithUrl(hostUrl + "/ChatHub")
+                        .WithUrl(settings.HostUrl + "/ChatHub")
                         .Build();
 
                     _hub = _connection.CreateHub<IChatHub>();
 
-                    if (!IsSignedIn)
+                    if (Tokens == null || Tokens.AccessToken.IsNullOrEmpty())
                     {
                         Tokens = await serviceClient.GetAsync(new GetToken { Login = UserName });
+                        settings.AccessToken = Tokens.AccessToken;
+                        settings.RefreshToken = Tokens.RefreshToken;
+                        settings.UserName = UserName;
+                        configuration.GetSection("ChatClientSettings").Set(settings);
                     }
                     serviceClient.BearerToken = Tokens.AccessToken;
+                    this.ObservableForProperty(m => m.ExpireTime).Subscribe(change =>
+                    {
+                        if (change.Value != null)
+                        {
+                            //TODO запуск обновления токена
+                        }
+                    });
+
+                    _connection.Subscribe<LogOn>(async data =>
+                    {
+                        if (data.Error)
+                        {
+                            IsSignedIn = false;
+                            serviceClient.BearerToken = Tokens.RefreshToken;
+                            try
+                            {
+                                Tokens = await serviceClient.PostAsync(new PostRefreshToken());
+                                settings.AccessToken = Tokens.AccessToken;
+                                settings.RefreshToken = Tokens.RefreshToken;
+                                configuration.GetSection("ChatClientSettings").Set(configuration);
+                                await _hub.Login(Tokens.AccessToken);
+                            }
+                            catch (Exception e)
+                            {
+                                Tokens = null;
+                            }
+                        }
+                        else
+                        {
+                            IsSignedIn = true;
+                            UserName = data.UserLogin;
+                            ExpireTime = data.ExpireTime;
+                            LoadMessageHistoryCommand.Execute(null);
+                        }
+                    });
+
                     _connection.Subscribe<ReceiveMessage>(data =>
                     {
                         var isMyMessage = UserName.ToLowerInvariant() == data.UserLogin;
@@ -93,8 +149,12 @@ namespace SkillChat.Client.ViewModel
                     //Messages.Add(ex.Message);
                 }
 
-                LoadMessageHistoryCommand.Execute(null);
             }, this.WhenAnyValue(m => m.IsConnected, b => b == false));
+
+            if (Tokens.AccessToken.IsNullOrEmpty() == false)
+            {
+                ConnectCommand.Execute(null);
+            }
 
             SendCommand = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -175,11 +235,20 @@ namespace SkillChat.Client.ViewModel
                     Messages.Clear();
                     MessageText = null;
                     Tokens = null;
+                    IsSignedIn = false;
                     serviceClient.BearerToken = null;
-                    _connection.Closed -= connectionOnClosed();
-                    await _connection.StopAsync();
+                    if (_connection != null)
+                    {
+                        _connection.Closed -= connectionOnClosed();
+                        await _connection.StopAsync();
+                    }
+
                     _connection = null;
                     _hub = null;
+
+                    settings.AccessToken = null;
+                    settings.RefreshToken = null;
+                    configuration.GetSection("ChatClientSettings").Set(settings);
                 }
                 catch (Exception ex)
                 {
@@ -191,6 +260,8 @@ namespace SkillChat.Client.ViewModel
             });
             IsConnected = false;
         }
+
+        public DateTimeOffset ExpireTime { get; set; }
 
         private Func<Exception, Task> connectionOnClosed()
         {
@@ -215,7 +286,7 @@ namespace SkillChat.Client.ViewModel
 
         public bool IsConnected { get; set; }
 
-        public bool IsSignedIn => Tokens != null;
+        public bool IsSignedIn { get; set; }
 
         public ObservableCollection<IMessagesContainerViewModel> Messages { get; set; }
 

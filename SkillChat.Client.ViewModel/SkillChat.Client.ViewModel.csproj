@@ -9,6 +9,7 @@
     <PackageReference Include="ReactiveUI" Version="12.1.1" />
     <PackageReference Include="ServiceStack.Client" Version="5.9.2" />
     <PackageReference Include="SignalR.EasyUse.Client" Version="0.2.1" />
+    <PackageReference Include="WritableJsonConfiguration" Version="3.1.9" />
   </ItemGroup>
   
   <ItemGroup>

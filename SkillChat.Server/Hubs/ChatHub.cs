@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Raven.Client.Documents.Session;
 using Serilog;
+using ServiceStack;
 using ServiceStack.Auth;
 using ServiceStack.Host;
 using ServiceStack.Text;
@@ -57,10 +58,31 @@ namespace SkillChat.Server.Hubs
                 Context.Items["login"] = jwtPayload["name"];
                 Context.Items["uid"] = jwtPayload["sub"];
                 Context.Items["session"] = jwtPayload["session"];
+                
+
+                var logOn = new LogOn
+                {
+                    Id = jwtPayload["sub"],
+                    UserLogin = jwtPayload["name"],
+                };
+                if (long.TryParse(jwtPayload["exp"], out long expire))
+                {
+                    logOn.ExpireTime = DateTimeOffset.FromUnixTimeSeconds(expire);
+                    if (logOn.ExpireTime < DateTimeOffset.UtcNow)
+                    {
+                        throw new TokenException("Token is expired");
+                    }
+                }
+
+                await Clients.Caller.SendAsync(logOn);
                 Log.Information($"Connected {Context.Items["login"]}({Context.Items["uid"]}) with session {Context.Items["session"]}");
             }
             catch (Exception e)
             {
+                await Clients.Caller.SendAsync(new LogOn
+                {
+                    Error = true
+                });
                 Log.Warning($"Bad token from connection {Context.ConnectionId}");
             }
         }

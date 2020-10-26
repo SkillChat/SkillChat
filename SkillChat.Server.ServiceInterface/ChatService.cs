@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
-using Serilog;
 using ServiceStack;
 using SkillChat.Server.Domain;
 using SkillChat.Server.ServiceModel;
@@ -37,7 +34,7 @@ namespace SkillChat.Server.ServiceInterface
                     Id = doc.Id,
                     PostTime = doc.PostTime,
                     Text = doc.Text,
-                    UserLogin = user.Login,                    
+                    UserLogin = user?.Login??doc.UserId,                    
                 };
                 result.Messages.Add(message);
             }

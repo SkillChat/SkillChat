@@ -290,3 +290,4 @@ __pycache__/
 SkillChat.Server/RavenDB/
 
 SkillChat.Client.ViewModel/FodyWeavers.xsd
+RavenDB

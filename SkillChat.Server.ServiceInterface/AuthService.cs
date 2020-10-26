@@ -48,40 +48,34 @@ namespace SkillChat.Server.ServiceInterface
             return tokenResult;
         }
 
-        //[Authenticate]
-        //public async Task<TokenResult> Post(PostRefreshToken request)
-        //{
-        //    var session = Request.ThrowIfUnauthorized();
-        //    var uid = session.UserAuthId;
+        [Authenticate]
+        public async Task<TokenResult> Post(PostRefreshToken request)
+        {
+            var session = Request.ThrowIfUnauthorized();
+            var uid = session.UserAuthId;
+            
+            User user = await GetUserById(uid);
 
-        //    var isAnonimUser = uid.StartsWith(userPrefix);
+            if (user == null)
+                throw new HttpError(HttpStatusCode.NotFound, $"User {uid} is not found");
 
-        //    User user = null;//isAnonimUser
-        //                     //? (dynamic) (await AnonimUserRepository.GetAsync(anonim => anonim.Uid == uid)).FirstOrDefault()
-        //                     //: (dynamic) (await UserRepository.GetAsync(s => s.Id == uid)).FirstOrDefault();
+            var customAccessExpire =
+                (request.AccessTokenExpirationPeriod.HasValue && request.AccessTokenExpirationPeriod >= 0)
+                    ? TimeSpan.FromSeconds(request.AccessTokenExpirationPeriod.Value)
+                    : (TimeSpan?)null;
 
-        //    if (user == null)
-        //        throw new HttpError(HttpStatusCode.NotFound, $"User {uid} is not found");
+            var customRefreshExpire =
+                (request.RefreshTokenExpirationPeriod.HasValue && request.RefreshTokenExpirationPeriod >= 0)
+                    ? TimeSpan.FromSeconds(request.RefreshTokenExpirationPeriod.Value)
+                    : (TimeSpan?)null;
 
-        //    var customAccessExpire =
-        //        (request.AccessTokenExpirationPeriod.HasValue && request.AccessTokenExpirationPeriod >= 0)
-        //            ? TimeSpan.FromSeconds(request.AccessTokenExpirationPeriod.Value)
-        //            : (TimeSpan?)null;
+            var tokenResult = await GenerateToken(user, customAccessExpire, customRefreshExpire);
 
-        //    var customRefreshExpire =
-        //        (request.RefreshTokenExpirationPeriod.HasValue && request.RefreshTokenExpirationPeriod >= 0)
-        //            ? TimeSpan.FromSeconds(request.RefreshTokenExpirationPeriod.Value)
-        //            : (TimeSpan?)null;
+            if (tokenResult == null)
+                throw new HttpError(HttpStatusCode.Conflict, "Roles is not setted");
 
-        //    var tokenResult = isAnonimUser
-        //        ? await GenerateAnonimToken(uid)
-        //        : await GenerateToken(user, customAccessExpire, customRefreshExpire);
-
-        //    if (tokenResult == null)
-        //        throw new HttpError(HttpStatusCode.Conflict, "Roles is not setted");
-
-        //    return tokenResult;
-        //}
+            return tokenResult;
+        }
 
         /// <summary>
         /// Генерация пары токенов для пользователя
