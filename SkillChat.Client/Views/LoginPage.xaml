@@ -36,10 +36,7 @@
             <Setter Property="BorderBrush" Value="#D1C0FF" />
         </Style>
     </UserControl.Styles>
-
-    <Design.DataContext>
-        <viewModel:MainWindowViewModel />
-    </Design.DataContext>
+	
 
     <Grid>
         <Grid.Background>
