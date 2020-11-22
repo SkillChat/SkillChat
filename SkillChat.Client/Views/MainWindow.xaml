@@ -14,9 +14,7 @@
     MinHeight="530"
     Icon="/Assets/skillchat-logo.ico"
     mc:Ignorable="d">
-    <Design.DataContext>
-        <viewModel:DesignMainWindowViewModel />
-    </Design.DataContext>
+
     <Window.Styles>
         <Style Selector="ScrollBar:vertical">
             <Setter Property="Width" Value="12" />
