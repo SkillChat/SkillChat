@@ -75,7 +75,7 @@
                         MinWidth="300"
                         Padding="10"
                         Background="#FFFFFF"
-                        BorderBrush="#7F57F0"
+                        BorderBrush="#9976FB"
                         BorderThickness="2"
                         Classes="LoginInput"
                         Text="{Binding UserName}"
@@ -89,6 +89,7 @@
                     MinWidth="300"
                     Margin="0,30,0,58"
                     Padding="10"
+                    BorderThickness="3"
                     Command="{Binding ConnectCommand}"
                     Content="Войти" />
             </StackPanel>

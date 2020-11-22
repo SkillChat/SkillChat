@@ -232,8 +232,8 @@
                     MinHeight="50"
                     MaxHeight="270"
                     Margin="0"
-                    Background="#F2F2F2"
-                    BorderBrush="#F2F2F2"
+                    Background="#E0E0E0"
+                    BorderBrush="#E0E0E0"
                     BorderThickness="10">
                     <Grid ColumnDefinitions="*,Auto">
                         <TextBox
