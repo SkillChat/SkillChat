@@ -245,7 +245,11 @@
                             FontSize="14"
                             Text="{Binding MessageText}"
                             TextWrapping="Wrap"
-                            Watermark="Сообщение" />
+                            Watermark="Сообщение">
+                            <TextBox.KeyBindings>
+                                <KeyBinding Command="{Binding SendCommand}" Gesture="Enter" />
+                            </TextBox.KeyBindings>
+                        </TextBox>
 
                         <Button
                             x:Name="sendButton"
