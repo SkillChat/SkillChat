@@ -258,6 +258,7 @@ namespace SkillChat.Client.ViewModel
                     IsConnected = false;
                 }
             });
+
             IsConnected = false;
         }
 
