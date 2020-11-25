@@ -37,9 +37,9 @@
         </Style>
     </UserControl.Styles>
 
-    <Design.DataContext>
+    <!--<Design.DataContext>
         <viewModel:MainWindowViewModel />
-    </Design.DataContext>
+    </Design.DataContext>-->
 
     <Grid>
         <Grid.Background>
@@ -70,7 +70,7 @@
 
                 <StackPanel>
                     <TextBlock Classes="UpperWatermark" Text="Логин / E-mail" />
-                    <TextBox
+					<TextBox
                         Height="50"
                         MinWidth="300"
                         Padding="10"
@@ -80,7 +80,12 @@
                         Classes="LoginInput"
                         Text="{Binding UserName}"
                         TextAlignment="Center"
-                        TextWrapping="Wrap" />
+                        TextWrapping="Wrap">
+						<TextBox.KeyBindings>
+							<KeyBinding Gesture="Enter" 
+										Command="{Binding ConnectCommand}" />
+						</TextBox.KeyBindings>
+					</TextBox>
                 </StackPanel>
                 <Button
                     x:Name="connectButton"
