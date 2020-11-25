@@ -1,0 +1,17 @@
+﻿using PropertyChanged;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace SkillChat.Client.ViewModel
+{
+    [AddINotifyPropertyChangedInterface]
+    public class RegisterUserViewModel
+    {
+        public string Password { get; set; }
+        public bool Consent { get; set; }
+
+        public string RegUserName { get; set; }
+
+    }
+}

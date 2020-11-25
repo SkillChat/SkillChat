@@ -1,0 +1,116 @@
+﻿<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
+  mc:Ignorable="d"
+  Width="1600" 
+  Height="900"
+  Background="White"
+  x:Class="SkillChat.Client.Views.RegisterPage">
+  <UserControl.Styles>
+    <Style Selector="TextBlock.UpperWatermark">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="Foreground" Value="#9F81F3" />
+      <Setter Property="HorizontalAlignment" Value="Left" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="TextBox.RegisterParam">
+      <Setter Property="FontSize" Value="18" />
+      <Setter Property="Foreground" Value="#7F57F0" />
+      <Setter Property="Height" Value="50"/>
+      <Setter Property="Width" Value="380"/>
+      <Setter Property="BorderThickness" Value="2"/>
+      <Setter Property="BorderBrush" Value="#7F57F0"/>
+      <Setter Property="Background" Value="#FFFFFF"/>
+      <Setter Property="Padding" Value="10"/>
+      <Setter Property="TextAlignment" Value="Center"/>
+      <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+    <Style Selector="Border">
+      <Setter Property="CornerRadius" Value="2" />
+    </Style>
+    <Style Selector="Button /template/ ContentPresenter">
+      <Setter Property="CornerRadius" Value="2" />
+    </Style>
+    <Style Selector="Button">
+      <Setter Property="FontSize" Value="18" />
+      <Setter Property="Foreground" Value="#FFFFFF" />
+      <Setter Property="Background" Value="#FFA85E" />
+    </Style>
+
+    <Style Selector="Button:disabled">
+      <Setter Property="Opacity" Value="1" />
+      <Setter Property="Background" Value="#FFA85E" />
+      <Setter Property="BorderBrush" Value="#D1C0FF" />
+    </Style>
+  </UserControl.Styles>
+  <Grid>
+    <Grid.Background>
+      <ImageBrush
+          Source="/Assets/Login_background.png"
+          Stretch="UniformToFill"
+          TileMode="Tile" />
+    </Grid.Background>
+    <Grid
+          MaxWidth="1600"
+          MaxHeight="900"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Center"
+          RowDefinitions="*,Auto">
+      <Image
+          MaxWidth="140"
+          MaxHeight="186"
+          Margin="86,86,86,29.16"
+          Stretch="Uniform">
+        <Image.Source>
+          <svg:SvgImage Source="/Assets/SkillChat_big.svg" />
+        </Image.Source>
+      </Image>
+      <StackPanel
+          Grid.Row="1"
+          MaxWidth="380"
+          HorizontalAlignment="Center">
+
+        <StackPanel>
+          <TextBlock Classes="UpperWatermark" Text="Логин" />
+          <TextBox
+              Classes="RegisterParam"
+              Text="{Binding RegisterUser.RegUserName}"/>
+        </StackPanel>
+        <StackPanel
+          Margin="0,7,0,0">
+          <TextBlock Classes="UpperWatermark" Text="Пароль" />
+          <TextBox
+              Classes="RegisterParam"
+               PasswordChar="*"
+              Text="{Binding RegisterUser.Password}"/>
+        </StackPanel>
+        <StackPanel
+          Orientation="Horizontal"
+          Margin="0,19,0,0">
+          <CheckBox
+            Foreground="#9F81F3"
+            FontStyle="Italic"
+            BorderBrush="#9976FB"
+            BorderThickness="1"
+            IsChecked="{Binding RegisterUser.Consent}"
+            Margin="0,0,12,0"
+            Content="Я согласен на обработку персональныx данныx">
+          </CheckBox>
+
+        </StackPanel>
+        <Button
+            Grid.Column="2"
+            MinWidth="300"
+            Margin="0,30,0,58"
+            Padding="10"
+            Command="{Binding RegisterCommand}"
+            Content="Зарегистрироваться"
+            IsEnabled="{Binding RegisterUser.Consent}"/>
+      </StackPanel>
+
+    </Grid>
+  </Grid>
+</UserControl>

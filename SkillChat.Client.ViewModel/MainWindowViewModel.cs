@@ -24,6 +24,7 @@ namespace SkillChat.Client.ViewModel
 
         public MainWindowViewModel()
         {
+
             configuration = Locator.Current.GetService<IConfiguration>();
             settings = configuration.GetSection("ChatClientSettings").Get<ChatClientSettings>();
             if (settings == null)
@@ -36,7 +37,7 @@ namespace SkillChat.Client.ViewModel
             }
             serviceClient = new JsonServiceClient(settings.HostUrl);
             UserName = settings.UserName;
-            Tokens = new TokenResult{AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken};
+            Tokens = new TokenResult { AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken };
 
             Messages = new ObservableCollection<IMessagesContainerViewModel>();
             ConnectCommand = ReactiveCommand.CreateFromTask(async () =>
@@ -260,6 +261,24 @@ namespace SkillChat.Client.ViewModel
             });
 
             IsConnected = false;
+
+            #region Task4  Для теста
+            RegisterUser = new RegisterUserViewModel();
+            IsConnected = false;
+            IsSignedIn = false;
+            OpenReg = true;
+            RegisterCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                var userN = RegisterUser.RegUserName;
+                var pass = RegisterUser.Password;
+                var ch = RegisterUser.Consent;
+                await _connection.StartAsync();
+            });
+
+
+
+            #endregion
+
         }
 
         public DateTimeOffset ExpireTime { get; set; }
@@ -305,5 +324,16 @@ namespace SkillChat.Client.ViewModel
 
         public ICommand LoadMessageHistoryCommand { get; }
         public ICommand SignOutCommand { get; }
+
+        #region Task_#4
+
+        public bool OpenReg { get; set; }
+        public RegisterUserViewModel RegisterUser { get; set; }
+
+        public ICommand RegisterCommand { get; }
+        public ICommand GoRegCommand { get; }
+
+
+        #endregion
     }
 }
