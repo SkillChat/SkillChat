@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Input;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -12,6 +13,8 @@ namespace SkillChat.Client.ViewModel
         public bool Consent { get; set; }
 
         public string RegUserName { get; set; }
+
+        public ICommand RegisterCommand { get; }
 
     }
 }

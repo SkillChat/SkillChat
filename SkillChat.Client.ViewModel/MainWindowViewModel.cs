@@ -262,11 +262,9 @@ namespace SkillChat.Client.ViewModel
 
             IsConnected = false;
 
-            #region Task4  Для теста
+            #region Task4  Для теста 
             RegisterUser = new RegisterUserViewModel();
-            IsConnected = false;
-            IsSignedIn = false;
-            OpenReg = true;
+            IsConnected = false; //Скрывает окно чата
             RegisterCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 var userN = RegisterUser.RegUserName;
@@ -326,12 +324,8 @@ namespace SkillChat.Client.ViewModel
         public ICommand SignOutCommand { get; }
 
         #region Task_#4
-
-        public bool OpenReg { get; set; }
         public RegisterUserViewModel RegisterUser { get; set; }
-
         public ICommand RegisterCommand { get; }
-        public ICommand GoRegCommand { get; }
 
 
         #endregion

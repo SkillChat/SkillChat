@@ -308,6 +308,6 @@
                 </Border>
             </Grid>
         </Grid>
-      <views:RegisterPage VerticalAlignment="Stretch" IsVisible="{Binding OpenReg, Mode=OneWay}" />
+      <views:RegisterPage VerticalAlignment="Stretch" />
     </Grid>
 </Window>
