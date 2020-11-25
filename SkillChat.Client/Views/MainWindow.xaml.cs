@@ -27,13 +27,9 @@ namespace SkillChat.Client.Views
 		private void InputMessageTB_KeyDown(object sender, KeyEventArgs e)
 		{
             var textBox = sender as TextBox;
-            if (e.Key == Key.Enter)
+            if (e.Key == Key.Enter && e.KeyModifiers == KeyModifiers.Control)
 			{
-                if (e.KeyModifiers == KeyModifiers.Control)
-				{
-                    textBox.Text += Environment.NewLine;
-                    return;
-                }
+                textBox.Text += Environment.NewLine;
 			}
 
 		}
