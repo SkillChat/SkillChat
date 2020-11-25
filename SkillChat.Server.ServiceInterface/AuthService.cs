@@ -22,6 +22,26 @@ namespace SkillChat.Server.ServiceInterface
 
         public IAsyncDocumentSession RavenSession { get; set; }
 
+        public async Task<TokenResult> Post(RegisterNewUser request)
+        {
+            var login = request.Login.ToLowerInvariant();
+
+            var user = await GetUserByLogin(login);
+            if (user != null)
+                throw new HttpError(HttpStatusCode.BadRequest, "Пользователь с таким логином уже существует");
+            if (string.IsNullOrWhiteSpace(request.Password))
+                throw new HttpError(HttpStatusCode.BadRequest, "Пароль не может быть пустым");
+            user = await CreateUser(login, request.Password);
+
+            // Поставил час туда и сюда, потомучто не понимаю логику по которой определяется это время
+            var customAccessExpire = TimeSpan.FromSeconds(1 * 60 * 60);
+            var customRefreshExpire = TimeSpan.FromSeconds(1 * 60 * 60);
+
+            var tokenResult = await GenerateToken(user, customAccessExpire, customRefreshExpire);
+
+            return tokenResult;
+        }
+
         public async Task<TokenResult> Post(AuthViaPassword request)
         {
             var login = request.Login.ToLowerInvariant();
@@ -224,7 +244,7 @@ namespace SkillChat.Server.ServiceInterface
             return user;
         }
 
-        private async Task<User> CreateUser(string login)
+        private async Task<User> CreateUser(string login, string password = null)
         {
             var uid = $"{UserPrefix}{Guid.NewGuid()}";
             var user = new User
@@ -232,6 +252,7 @@ namespace SkillChat.Server.ServiceInterface
                 Id = uid,
                 Login = login,
                 RegisteredTime = DateTimeOffset.UtcNow,
+                Password = password
             };
             await RavenSession.StoreAsync(user);
             await RavenSession.SaveChangesAsync();
