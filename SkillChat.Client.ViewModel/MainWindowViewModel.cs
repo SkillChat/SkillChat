@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -267,14 +268,29 @@ namespace SkillChat.Client.ViewModel
             IsConnected = false; //Скрывает окно чата
             RegisterCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                var userN = RegisterUser.RegUserName;
-                var pass = RegisterUser.Password;
-                var ch = RegisterUser.Consent;
-                await _connection.StartAsync();
+                var request = new RegisterNewUser();
+                request.Login = RegisterUser.RegUserName;
+                request.Password = RegisterUser.Password;
+                try
+                {
+                    Tokens = await serviceClient.PostAsync(request);
+
+                    settings.AccessToken = Tokens.AccessToken;
+                    settings.RefreshToken = Tokens.RefreshToken;
+                    settings.UserName = RegisterUser.RegUserName;
+                    configuration.GetSection("ChatClientSettings").Set(settings);
+
+                    // Здесь написать редирект на страницу чата с токеном или как там это устроено. Нужно наверно вызвать тоже что и при старом входе
+
+                }
+                catch(Exception ex)
+                {
+                    Debug.WriteLine($"ОШибка регистрации {ex.Message}");
+                    // ТОлько беда в том что Сервис стэк ошибку не отдает ту что прописана а выдает свою дичь
+                    // Это по идее нужно отражать на фронте как ошибки валидации 
+                    // например такой пользователь существует или какието другие ошибки? 
+                }
             });
-
-
-
             #endregion
 
         }
