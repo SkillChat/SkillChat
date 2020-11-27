@@ -228,6 +228,7 @@
                         </ItemsControl>
                     </ScrollViewer>
                 </Grid>
+                <!--  Блок отправки сообщения  -->
                 <Border
                     Grid.Row="2"
                     MinHeight="50"
@@ -237,16 +238,23 @@
                     BorderBrush="#E0E0E0"
                     BorderThickness="10">
                     <Grid ColumnDefinitions="*,Auto">
+                        <!--  Текстовое поле ввода сообщения  -->
                         <TextBox
+                            Name="InputMessageTB"
                             Grid.Column="0"
                             Padding="10,5,2,5"
                             AcceptsReturn="True"
                             BorderThickness="0"
                             FontSize="14"
+                            KeyDown="InputMessageTB_KeyDown"
                             Text="{Binding MessageText}"
                             TextWrapping="Wrap"
-                            Watermark="Сообщение" />
-
+                            Watermark="Сообщение">
+                            <TextBox.KeyBindings>
+                                <KeyBinding Command="{Binding SendCommand}" Gesture="Enter" />
+                            </TextBox.KeyBindings>
+                        </TextBox>
+                        <!--  Кнопка отправки сообщения  -->
                         <Button
                             x:Name="sendButton"
                             Grid.Column="1"
