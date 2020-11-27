@@ -9,6 +9,7 @@ namespace SkillChat.Client.ViewModel
     [AddINotifyPropertyChangedInterface]
     public class RegisterUserViewModel
     {
+
         public string Password { get; set; }
         public bool Consent { get; set; }
 

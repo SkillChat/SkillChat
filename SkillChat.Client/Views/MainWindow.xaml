@@ -308,6 +308,7 @@
                 </Border>
             </Grid>
         </Grid>
-      <views:RegisterPage VerticalAlignment="Stretch" />
+       <views:LoginPage VerticalAlignment="Stretch" IsVisible="{Binding !IsSignedIn, Mode=OneWay}" />       
+       <views:RegisterPage  IsVisible="{Binding !IsRegistration, Mode=OneWay}" VerticalAlignment="Stretch" />
     </Grid>
 </Window>
