@@ -267,8 +267,9 @@ namespace SkillChat.Client.ViewModel
             /// RegisterUser = new RegisterUserViewModel();
 
             
-            IsSignedIn = true; //Скрывает окно авторизации (Оно должно быти изменено с возможностью авторизации )
+            IsSignedIn = false; //Скрывает окно авторизации (Оно должно быти изменено с возможностью авторизации )
             RegisterUser = new RegisterUserViewModel();
+            IsRegistration = true;//Скрывает окно регистрации (Оно должно быти изменено с возможностью авторизации )
             RegisterCommand = ReactiveCommand.CreateFromTask(async () =>
             {               
                 
@@ -277,14 +278,14 @@ namespace SkillChat.Client.ViewModel
                     var request = new RegisterNewUser();
                     request.Login = RegisterUser.RegUserName;
                     request.Password = RegisterUser.Password;
-                    
+                   /* 
                     Tokens = await serviceClient.PostAsync(request);
 
                     settings.AccessToken = Tokens.AccessToken;
                     settings.RefreshToken = Tokens.RefreshToken;
                     settings.UserName = RegisterUser.RegUserName;
                     configuration.GetSection("ChatClientSettings").Set(settings);
-                    
+                    */
                     // Здесь написать редирект на страницу чата с токеном или как там это устроено. Нужно наверно вызвать тоже что и при старом входе
                     UserName = RegisterUser.RegUserName;
                     IsRegistration = true;//скроет окно регистрации
@@ -292,7 +293,7 @@ namespace SkillChat.Client.ViewModel
                 }
                 catch(Exception ex)
                 {
-                    /*Для того чтобы не придумывать велосипед для вывода сообщений используется https://www.nuget.org/packages/MessageBox.Avalonia/#*/
+                    /*Для того чтобы не придумывать велосипед для вывода сообщений можно использовать https://www.nuget.org/packages/MessageBox.Avalonia/#*/
                     Debug.WriteLine($"ОШибка регистрации {ex.Message}");                   
                     // ТОлько беда в том что Сервис стэк ошибку не отдает ту что прописана а выдает свою дичь
                     // Это по идее нужно отражать на фронте как ошибки валидации 
