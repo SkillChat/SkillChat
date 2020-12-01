@@ -32,13 +32,9 @@ namespace SkillChat.Server.ServiceInterface
                 throw new HttpError(HttpStatusCode.BadRequest, "Пользователь с таким логином уже существует");
             if (string.IsNullOrWhiteSpace(request.Password))
                 throw new HttpError(HttpStatusCode.BadRequest, "Пароль не может быть пустым");
+
             user = await CreateUser(login, request.Password);
-
-            // Поставил час туда и сюда, потомучто не понимаю логику по которой определяется это время
-            var customAccessExpire = TimeSpan.FromSeconds(1 * 60 * 60);
-            var customRefreshExpire = TimeSpan.FromSeconds(1 * 60 * 60);
-
-            var tokenResult = await GenerateToken(user, customAccessExpire, customRefreshExpire);
+            var tokenResult = await GenerateToken(user);
 
             return tokenResult;
         }

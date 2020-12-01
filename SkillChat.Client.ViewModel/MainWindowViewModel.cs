@@ -25,7 +25,7 @@ namespace SkillChat.Client.ViewModel
 
         public MainWindowViewModel()
         {
-
+            
             configuration = Locator.Current.GetService<IConfiguration>();
             settings = configuration.GetSection("ChatClientSettings").Get<ChatClientSettings>();
             if (settings == null)
@@ -143,11 +143,14 @@ namespace SkillChat.Client.ViewModel
                     await _connection.StartAsync();
                     await _hub.Login(Tokens.AccessToken);
                     //Messages.Add("Connection started");
+                    IsShowingLoginPage = false;
+                    IsShowingRegisterPage = false;
+                    ValidationError = "";
                     IsConnected = true;
                 }
                 catch (Exception ex)
                 {
-                    IsConnected = _connection.State == HubConnectionState.Connected;
+                    IsShowingLoginPage = _connection.State == HubConnectionState.Connected;
                     //Messages.Add(ex.Message);
                 }
 
@@ -167,7 +170,7 @@ namespace SkillChat.Client.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    IsConnected = false;
+                    IsShowingLoginPage = true;
                     //Messages.Add(ex.Message);
                 }
             }, this.WhenAnyValue(m => m.IsConnected, m => m.MessageText, (b, m) => b == true && !string.IsNullOrEmpty(m)));
@@ -257,51 +260,46 @@ namespace SkillChat.Client.ViewModel
                 }
                 finally
                 {
-                    IsConnected = false;
+                    IsShowingLoginPage = true;
                 }
             });
+            IsShowingLoginPage = true;
 
-            #region Task4  Для Регистрации
-            ///В команде отрывающей окно регистрации необходиммо:
-            /// IsRegistration Изменить на true
-            /// RegisterUser = new RegisterUserViewModel();
+            // Скрывает окно регистрации
+            IsShowingRegisterPage = false;
+            IsShowingLoginPage = true;
+            GoToRegisterCommand = ReactiveCommand.CreateFromTask(async () => {
+                IsShowingRegisterPage = true;
+                IsShowingLoginPage = false;
+            });
 
-            
-            IsSignedIn = false; //Скрывает окно авторизации (Оно должно быти изменено с возможностью авторизации )
             RegisterUser = new RegisterUserViewModel();
-            IsRegistration = true;//Скрывает окно регистрации (Оно должно быти изменено с возможностью авторизации )
+            IsConnected = false; //Скрывает окно чата            
             RegisterCommand = ReactiveCommand.CreateFromTask(async () =>
-            {               
-                
+            {
+                var request = new RegisterNewUser();
                 try
                 {
-                    var request = new RegisterNewUser();
+                    ValidationError = "";
+                    if (string.IsNullOrWhiteSpace(RegisterUser.RegUserName) || string.IsNullOrWhiteSpace(RegisterUser.Password))
+                        throw new Exception("Не заполнены логин и/или пароль");
                     request.Login = RegisterUser.RegUserName;
                     request.Password = RegisterUser.Password;
-                   /* 
+                    
                     Tokens = await serviceClient.PostAsync(request);
 
                     settings.AccessToken = Tokens.AccessToken;
                     settings.RefreshToken = Tokens.RefreshToken;
                     settings.UserName = RegisterUser.RegUserName;
                     configuration.GetSection("ChatClientSettings").Set(settings);
-                    */
-                    // Здесь написать редирект на страницу чата с токеном или как там это устроено. Нужно наверно вызвать тоже что и при старом входе
-                    UserName = RegisterUser.RegUserName;
-                    IsRegistration = true;//скроет окно регистрации
-                    IsSignedIn = false;
+                    ConnectCommand.Execute(null);
                 }
                 catch(Exception ex)
                 {
-                    /*Для того чтобы не придумывать велосипед для вывода сообщений можно использовать https://www.nuget.org/packages/MessageBox.Avalonia/#*/
-                    Debug.WriteLine($"ОШибка регистрации {ex.Message}");                   
-                    // ТОлько беда в том что Сервис стэк ошибку не отдает ту что прописана а выдает свою дичь
-                    // Это по идее нужно отражать на фронте как ошибки валидации 
-                    // например такой пользователь существует или какието другие ошибки? 
+                    Debug.WriteLine($"Ошибка регистрации {ex.Message}");
+                    ValidationError = ex.Message;
                 }
             });
-            #endregion
-
         }
             
         public DateTimeOffset ExpireTime { get; set; }
@@ -317,7 +315,7 @@ namespace SkillChat.Client.ViewModel
                 }
                 catch (Exception e)
                 {
-                    IsConnected = false;
+                    IsShowingLoginPage = true;
                 }
             };
         }
@@ -348,12 +346,12 @@ namespace SkillChat.Client.ViewModel
         public ICommand LoadMessageHistoryCommand { get; }
         public ICommand SignOutCommand { get; }
 
-        #region Для регистрации
+        public bool IsShowingLoginPage { get; set; }
+        public bool IsShowingRegisterPage { get; set; }
+
+        public string ValidationError { get; set; }
+        public ICommand GoToRegisterCommand { get; }
         public RegisterUserViewModel RegisterUser { get; set; }
         public ICommand RegisterCommand { get; }
-
-        public bool IsRegistration { get; set; }
-
-        #endregion
     }
 }

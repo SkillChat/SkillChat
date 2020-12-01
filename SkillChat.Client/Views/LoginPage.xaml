@@ -34,12 +34,14 @@
             <Setter Property="Opacity" Value="1" />
             <Setter Property="Background" Value="#D1C0FF" />
             <Setter Property="BorderBrush" Value="#D1C0FF" />
+        </Style>      
+        <Style Selector="TextBlock:ClearContainer">
+              <Setter Property="FontSize" Value="16" />
+              <Setter Property="Background" Value="#ffffff00" />
+              <Setter Property="Foreground" Value="#FFA85E" />
+              <Setter Property="Margin" Value="0,0,0,40" />
         </Style>
     </UserControl.Styles>
-
-    <!--<Design.DataContext>
-        <viewModel:MainWindowViewModel />
-    </Design.DataContext>-->
 
     <Grid>
         <Grid.Background>
@@ -70,7 +72,7 @@
 
                 <StackPanel>
                     <TextBlock Classes="UpperWatermark" Text="Логин / E-mail" />
-					<TextBox
+					          <TextBox
                         Height="50"
                         MinWidth="300"
                         Padding="10"
@@ -81,22 +83,33 @@
                         Text="{Binding UserName}"
                         TextAlignment="Center"
                         TextWrapping="Wrap">
-						<TextBox.KeyBindings>
-							<KeyBinding Gesture="Enter" 
-										Command="{Binding ConnectCommand}" />
-						</TextBox.KeyBindings>
-					</TextBox>
+						        <TextBox.KeyBindings>
+							          <KeyBinding Gesture="Enter" 
+										      Command="{Binding ConnectCommand}" />
+						            </TextBox.KeyBindings>
+					          </TextBox>
                 </StackPanel>
                 <Button
                     x:Name="connectButton"
                     Grid.Row="2"
                     Grid.Column="2"
                     MinWidth="300"
-                    Margin="0,30,0,58"
+                    Margin="0,30,0,20"
                     Padding="10"
                     BorderThickness="3"
                     Command="{Binding ConnectCommand}"
                     Content="Войти" />
+              <Button
+                Classes="ClearContainer"
+                Content="Зарегестрироваться"
+                Background="#0000"
+                BorderThickness="0"
+                Foreground="#FFA85E"
+                FontWeight="600"
+                FontSize="16"
+                Margin="0,0,0,32"
+                Cursor="Hand"
+                Command="{Binding GoToRegisterCommand}"/>
             </StackPanel>
 
         </Grid>

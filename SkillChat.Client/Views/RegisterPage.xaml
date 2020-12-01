@@ -101,6 +101,10 @@
           </CheckBox>
 
         </StackPanel>
+        <TextBlock 
+          Foreground="Red"
+          Text="{Binding ValidationError}"
+          />
         <Button
             Grid.Column="2"
             MinWidth="300"
