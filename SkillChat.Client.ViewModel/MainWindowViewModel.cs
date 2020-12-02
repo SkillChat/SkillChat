@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Controls;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
 using PropertyChanged;
@@ -45,6 +46,8 @@ namespace SkillChat.Client.ViewModel
             Tokens = new TokenResult { AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken };
 
             Messages = new ObservableCollection<IMessagesContainerViewModel>();
+          
+
             ConnectCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 try
@@ -108,11 +111,11 @@ namespace SkillChat.Client.ViewModel
                         }
                     });
 
-                    _connection.Subscribe<ReceiveMessage>(data =>
+                    _connection.Subscribe<ReceiveMessage>(async data =>
                     {
                         var isMyMessage = User.UserName.ToLowerInvariant() == data.UserLogin;
                         var newMessage = isMyMessage
-                            ? (MessageViewModel)new MyMessageViewModel()
+                            ? (MessageViewModel) new MyMessageViewModel()
                             : new UserMessageViewModel();
                         newMessage.Id = data.Id;
                         newMessage.Text = data.Message;
@@ -143,7 +146,13 @@ namespace SkillChat.Client.ViewModel
                                 container = new UserMessagesContainerViewModel();
                                 Messages.Add(container);
                             }
+
+                            if (!windowIsFocused)
+                                await Notification.Notification.Manager.Show(
+                                    $"{(newMessage.UserLogin != null && newMessage.UserLogin.Length > 10 ? string.Concat(newMessage.UserLogin.Remove(10, newMessage.UserLogin.Length - 10), "...") : newMessage.UserLogin)} : ",
+                                    $"\"{(newMessage.Text.Length > 10 ? string.Concat(newMessage.Text.Remove(10, newMessage.Text.Length - 10), "...") : newMessage.Text)}\"");
                         }
+
 
                         container.Messages.Add(newMessage);
                         if (container.Messages.First() == newMessage)
@@ -171,7 +180,6 @@ namespace SkillChat.Client.ViewModel
                     IsShowingLoginPage = _connection.State != HubConnectionState.Connected ? true : false;
                     //Messages.Add(ex.Message);
                 }
-
             }, this.WhenAnyValue(m => m.IsConnected, b => b == false));
 
             if (Tokens.AccessToken.IsNullOrEmpty() == false)
@@ -210,7 +218,7 @@ namespace SkillChat.Client.ViewModel
                     {
                         var isMyMessage = User.UserName.ToLowerInvariant() == item.UserLogin;
                         var newMessage = isMyMessage
-                            ? (MessageViewModel)new MyMessageViewModel()
+                            ? (MessageViewModel) new MyMessageViewModel()
                             : new UserMessageViewModel();
                         newMessage.Id = item.Id;
                         newMessage.Text = item.Text;
@@ -335,6 +343,15 @@ namespace SkillChat.Client.ViewModel
                     Debug.WriteLine($"Ошибка регистрации {ex.Message}");
                     ValidationError = ex.Message;
                 }
+
+            });
+
+            NotifyCommand = ReactiveCommand.Create<object>(obj =>
+            {
+                if (obj is Window win)
+                {
+                    Notify.WindowIsActive = win.IsActive;
+                }
             });
             //Изменение параеметров TextBox в в начальное положение
             ResetErrorCommand = ReactiveCommand.Create<object>(_ => { User.Reset(); });
@@ -386,6 +403,8 @@ namespace SkillChat.Client.ViewModel
 
         public ICommand LoadMessageHistoryCommand { get; }
         public ICommand SignOutCommand { get; }
+        public bool windowIsFocused { get; set; }
+        public static ReactiveCommand<object, Unit> NotifyCommand { get; set; }
 
         public ProfileViewModel ProfileViewModel { get; set; }
 

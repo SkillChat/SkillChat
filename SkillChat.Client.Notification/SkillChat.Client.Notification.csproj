@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+	</PropertyGroup>
+
+  <ItemGroup>
+    <Compile Update="**\*.xaml.cs">
+      <DependentUpon>%(Filename)</DependentUpon>
+    </Compile>
+    <AvaloniaResource Include="**\*.xaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+  
+  <ItemGroup>
+	  <PackageReference Include="Avalonia" Version="0.10.0-preview6" />
+	  <PackageReference Include="Avalonia.Desktop" Version="0.10.0-preview6" />
+	  <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0-preview6" />
+	  <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0-preview6" />
+	  <PackageReference Include="Svg.Skia.Avalonia" Version="0.10.0-preview7" />
+	</ItemGroup>
+
+	
+
+</Project>
