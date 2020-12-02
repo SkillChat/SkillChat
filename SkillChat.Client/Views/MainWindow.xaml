@@ -113,6 +113,7 @@
                             FontSize="12" />
                     </StackPanel>
                 </Grid>
+                <!--  Блок списка сообщений  -->
                 <Grid Grid.Row="1">
                     <ScrollViewer HorizontalScrollBarVisibility="Disabled">
                         <ItemsControl
@@ -138,7 +139,6 @@
                                     <Setter Property="BorderThickness" Value="0" />
                                     <Setter Property="TextWrapping" Value="Wrap" />
                                 </Style>
-
                                 <Style Selector="TextBlock.time">
                                     <Setter Property="FontSize" Value="12" />
                                     <Setter Property="FontWeight" Value="SemiBold" />

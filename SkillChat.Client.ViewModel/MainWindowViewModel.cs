@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -268,12 +269,12 @@ namespace SkillChat.Client.ViewModel
             // Скрывает окно регистрации
             IsShowingRegisterPage = false;
             IsShowingLoginPage = true;
-            GoToRegisterCommand = ReactiveCommand.CreateFromTask(async () => {
-                IsShowingRegisterPage = true;
-                IsShowingLoginPage = false;
-            });
-
-            RegisterUser = new RegisterUserViewModel();
+			GoToRegisterCommand = ReactiveCommand.Create<object>( _ =>
+			{
+				IsShowingRegisterPage = true;
+				IsShowingLoginPage = false;
+			});
+			RegisterUser = new RegisterUserViewModel();
             IsConnected = false; //Скрывает окно чата            
             RegisterCommand = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -350,7 +351,7 @@ namespace SkillChat.Client.ViewModel
         public bool IsShowingRegisterPage { get; set; }
 
         public string ValidationError { get; set; }
-        public ICommand GoToRegisterCommand { get; }
+        public ReactiveCommand<object, Unit> GoToRegisterCommand { get; }
         public RegisterUserViewModel RegisterUser { get; set; }
         public ICommand RegisterCommand { get; }
     }
