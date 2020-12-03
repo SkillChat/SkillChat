@@ -13,7 +13,7 @@ namespace SkillChat.Client.ViewModel
         public string Password { get; set; }
         public bool Consent { get; set; }
 
-        public string RegUserName { get; set; }
+        public string Login { get; set; }
 
         public ICommand RegisterCommand { get; }
 

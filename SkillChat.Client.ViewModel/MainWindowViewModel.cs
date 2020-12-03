@@ -242,6 +242,7 @@ namespace SkillChat.Client.ViewModel
                     MessageText = null;
                     Tokens = null;
                     IsSignedIn = false;
+                    IsConnected = false;
                     serviceClient.BearerToken = null;
                     if (_connection != null)
                     {
@@ -282,16 +283,16 @@ namespace SkillChat.Client.ViewModel
                 try
                 {
                     ValidationError = "";
-                    if (string.IsNullOrWhiteSpace(RegisterUser.RegUserName) || string.IsNullOrWhiteSpace(RegisterUser.Password))
+                    if (string.IsNullOrWhiteSpace(RegisterUser.Login) || string.IsNullOrWhiteSpace(RegisterUser.Password))
                         throw new Exception("Не заполнены логин и/или пароль");
-                    request.Login = RegisterUser.RegUserName;
+                    request.Login = RegisterUser.Login;
                     request.Password = RegisterUser.Password;
                     
                     Tokens = await serviceClient.PostAsync(request);
 
                     settings.AccessToken = Tokens.AccessToken;
                     settings.RefreshToken = Tokens.RefreshToken;
-                    settings.UserName = RegisterUser.RegUserName;
+                    settings.UserName = RegisterUser.Login;
                     configuration.GetSection("ChatClientSettings").Set(settings);
                     ConnectCommand.Execute(null);
                 }
