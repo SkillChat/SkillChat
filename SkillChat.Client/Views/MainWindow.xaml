@@ -14,9 +14,6 @@
     MinHeight="530"
     Icon="/Assets/skillchat-logo.ico"
     mc:Ignorable="d">
-    <!--<Design.DataContext>
-        <viewModel:DesignMainWindowViewModel />
-    </Design.DataContext>-->
 
     <Window.Styles>
         <Style Selector="ScrollBar:vertical">
@@ -116,6 +113,7 @@
                             FontSize="12" />
                     </StackPanel>
                 </Grid>
+                <!--  Блок списка сообщений  -->
                 <Grid Grid.Row="1">
                     <ScrollViewer HorizontalScrollBarVisibility="Disabled">
                         <ItemsControl
@@ -141,7 +139,6 @@
                                     <Setter Property="BorderThickness" Value="0" />
                                     <Setter Property="TextWrapping" Value="Wrap" />
                                 </Style>
-
                                 <Style Selector="TextBlock.time">
                                     <Setter Property="FontSize" Value="12" />
                                     <Setter Property="FontWeight" Value="SemiBold" />
@@ -308,6 +305,6 @@
                 </Border>
             </Grid>
         </Grid>
-        <views:LoginPage VerticalAlignment="Stretch" IsVisible="{Binding !IsSignedIn, Mode=OneWay}" />
-    </Grid>
+      <views:LoginPage VerticalAlignment="Stretch" IsVisible="{Binding IsShowingLoginPage, Mode=OneWay}" />
+      <views:RegisterPage VerticalAlignment="Stretch" IsVisible="{Binding IsShowingRegisterPage, Mode=OneWay}" /></Grid>
 </Window>

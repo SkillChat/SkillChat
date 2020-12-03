@@ -68,4 +68,18 @@ namespace SkillChat.Server.ServiceModel
     [ApiResponse(HttpStatusCode.NotFound, "Пользователь не найден", ResponseType = typeof(void))]
     [Route("/me", "GET", Summary = "Получить сведения своего профиля", Notes = "Возвращаются актуальные сведения из базы данных")]
     public class GetMyProfile : IReturn<UserProfileMold> { }
+
+    [Api("Auth")]
+    [ApiResponse(HttpStatusCode.BadRequest, "Неверно составлен запрос", ResponseType = typeof(void))]
+    [ApiResponse(HttpStatusCode.ServiceUnavailable, "Сервис авторизации недоступен", ResponseType = typeof(void))]
+    [Route("/register", "POST", Summary = "Создать пользователя", Notes = "Получение JWT токена через регистрацию нового пользователя.")]
+    public class RegisterNewUser : IReturn<TokenResult>
+    {
+        [ApiMember(IsRequired = true, Description = "Логин")]
+        public string Login { get; set; }
+
+        [ApiMember(IsRequired = true, Description = "Пароль")]
+        public string Password { get; set; }
+    }
+
 }

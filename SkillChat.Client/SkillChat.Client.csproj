@@ -18,6 +18,7 @@
     <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0-preview6" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0-preview6" />
     <PackageReference Include="Svg.Skia.Avalonia" Version="0.10.0-preview7" />
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.0-preview6" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SkillChat.Client.ViewModel\SkillChat.Client.ViewModel.csproj" />

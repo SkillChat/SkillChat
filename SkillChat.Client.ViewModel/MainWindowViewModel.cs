@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -24,6 +26,7 @@ namespace SkillChat.Client.ViewModel
 
         public MainWindowViewModel()
         {
+            
             configuration = Locator.Current.GetService<IConfiguration>();
             settings = configuration.GetSection("ChatClientSettings").Get<ChatClientSettings>();
             if (settings == null)
@@ -36,7 +39,7 @@ namespace SkillChat.Client.ViewModel
             }
             serviceClient = new JsonServiceClient(settings.HostUrl);
             UserName = settings.UserName;
-            Tokens = new TokenResult{AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken};
+            Tokens = new TokenResult { AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken };
 
             Messages = new ObservableCollection<IMessagesContainerViewModel>();
             ConnectCommand = ReactiveCommand.CreateFromTask(async () =>
@@ -141,11 +144,14 @@ namespace SkillChat.Client.ViewModel
                     await _connection.StartAsync();
                     await _hub.Login(Tokens.AccessToken);
                     //Messages.Add("Connection started");
+                    IsShowingLoginPage = false;
+                    IsShowingRegisterPage = false;
+                    ValidationError = "";
                     IsConnected = true;
                 }
                 catch (Exception ex)
                 {
-                    IsConnected = _connection.State == HubConnectionState.Connected;
+                    IsShowingLoginPage = _connection.State == HubConnectionState.Connected;
                     //Messages.Add(ex.Message);
                 }
 
@@ -165,7 +171,7 @@ namespace SkillChat.Client.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    IsConnected = false;
+                    IsShowingLoginPage = true;
                     //Messages.Add(ex.Message);
                 }
             }, this.WhenAnyValue(m => m.IsConnected, m => m.MessageText, (b, m) => b == true && !string.IsNullOrEmpty(m)));
@@ -236,6 +242,7 @@ namespace SkillChat.Client.ViewModel
                     MessageText = null;
                     Tokens = null;
                     IsSignedIn = false;
+                    IsConnected = false;
                     serviceClient.BearerToken = null;
                     if (_connection != null)
                     {
@@ -255,13 +262,48 @@ namespace SkillChat.Client.ViewModel
                 }
                 finally
                 {
-                    IsConnected = false;
+                    IsShowingLoginPage = true;
                 }
             });
+            IsShowingLoginPage = true;
 
-            IsConnected = false;
+            // Скрывает окно регистрации
+            IsShowingRegisterPage = false;
+            IsShowingLoginPage = true;
+			GoToRegisterCommand = ReactiveCommand.Create<object>( _ =>
+			{
+				IsShowingRegisterPage = true;
+				IsShowingLoginPage = false;
+			});
+			RegisterUser = new RegisterUserViewModel();
+            IsConnected = false; //Скрывает окно чата            
+            RegisterCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                var request = new RegisterNewUser();
+                try
+                {
+                    ValidationError = "";
+                    if (string.IsNullOrWhiteSpace(RegisterUser.Login) || string.IsNullOrWhiteSpace(RegisterUser.Password))
+                        throw new Exception("Не заполнены логин и/или пароль");
+                    request.Login = RegisterUser.Login;
+                    request.Password = RegisterUser.Password;
+                    
+                    Tokens = await serviceClient.PostAsync(request);
+
+                    settings.AccessToken = Tokens.AccessToken;
+                    settings.RefreshToken = Tokens.RefreshToken;
+                    settings.UserName = RegisterUser.Login;
+                    configuration.GetSection("ChatClientSettings").Set(settings);
+                    ConnectCommand.Execute(null);
+                }
+                catch(Exception ex)
+                {
+                    Debug.WriteLine($"Ошибка регистрации {ex.Message}");
+                    ValidationError = ex.Message;
+                }
+            });
         }
-
+            
         public DateTimeOffset ExpireTime { get; set; }
 
         private Func<Exception, Task> connectionOnClosed()
@@ -275,7 +317,7 @@ namespace SkillChat.Client.ViewModel
                 }
                 catch (Exception e)
                 {
-                    IsConnected = false;
+                    IsShowingLoginPage = true;
                 }
             };
         }
@@ -305,5 +347,13 @@ namespace SkillChat.Client.ViewModel
 
         public ICommand LoadMessageHistoryCommand { get; }
         public ICommand SignOutCommand { get; }
+
+        public bool IsShowingLoginPage { get; set; }
+        public bool IsShowingRegisterPage { get; set; }
+
+        public string ValidationError { get; set; }
+        public ReactiveCommand<object, Unit> GoToRegisterCommand { get; }
+        public RegisterUserViewModel RegisterUser { get; set; }
+        public ICommand RegisterCommand { get; }
     }
 }

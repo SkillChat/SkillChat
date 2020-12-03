@@ -22,6 +22,22 @@ namespace SkillChat.Server.ServiceInterface
 
         public IAsyncDocumentSession RavenSession { get; set; }
 
+        #region Методы эндпоинтов
+        public async Task<TokenResult> Post(RegisterNewUser request)
+        {
+            var login = request.Login.ToLowerInvariant();
+
+            var user = await GetUserByLogin(login);
+            if (user != null)
+                throw new HttpError(HttpStatusCode.BadRequest, "Пользователь с таким логином уже существует");
+            if (string.IsNullOrWhiteSpace(request.Password))
+                throw new HttpError(HttpStatusCode.BadRequest, "Пароль не может быть пустым");
+
+            user = await CreateUser(login, request.Password);
+            var tokenResult = await GenerateToken(user);
+
+            return tokenResult;
+        }
         public async Task<TokenResult> Post(AuthViaPassword request)
         {
             var login = request.Login.ToLowerInvariant();
@@ -53,7 +69,7 @@ namespace SkillChat.Server.ServiceInterface
         {
             var session = Request.ThrowIfUnauthorized();
             var uid = session.UserAuthId;
-            
+
             User user = await GetUserById(uid);
 
             if (user == null)
@@ -77,6 +93,83 @@ namespace SkillChat.Server.ServiceInterface
             return tokenResult;
         }
 
+        [Authenticate]
+        public async Task<PasswordChangeResult> Post(CreatePassword request)
+        {
+            var session = Request.ThrowIfUnauthorized();
+
+            var uid = session?.UserAuthId;
+            if (uid == null)
+                throw new HttpError(HttpStatusCode.Unauthorized);
+
+            var user = await GetUserById(uid);
+            if (user == null)
+                throw new HttpError(HttpStatusCode.NotFound);
+
+            var secret = await GetUserSecret(uid);
+            if (secret.Password != null)
+                throw new HttpError(HttpStatusCode.Conflict);
+
+            secret.Password = request.NewPassword;
+
+            await RavenSession.StoreAsync(secret);
+            await RavenSession.SaveChangesAsync();
+
+            return new PasswordChangeResult { Result = PasswordChangeResult.ChangeEnum.Created };
+        }
+
+        [Authenticate]
+        public async Task<UserProfileMold> Get(GetMyProfile request)
+        {
+            var session = Request.ThrowIfUnauthorized();
+
+            var uid = session?.UserAuthId;
+            if (uid == null)
+                throw new HttpError(HttpStatusCode.Unauthorized);
+
+            var me = await GetUserById(uid);
+            if (me == null)
+                throw new HttpError(HttpStatusCode.NotFound);
+
+            var secret = await GetUserSecret(uid);
+
+            var profile = new UserProfileMold
+            {
+                UserId = session.UserAuthId,
+                Login = session.DisplayName,
+                IsPasswordSetted = secret.Password != null,
+            };
+
+            return profile;
+        }
+
+        public async Task<TokenResult> Get(GetToken request)
+        {
+            request.Login = request.Login.ToLowerInvariant();
+            var user = await GetUserByLogin(request.Login);
+            if (user == null)
+            {
+                user = await CreateUser(request.Login);
+            }
+            else
+            {
+                var secret = await RavenSession.LoadAsync<UserSecret>(user.Id + SecretPostfix);
+                if (secret != null)
+                {
+                    throw HttpError.Unauthorized("Need a password");
+                }
+            }
+
+            var token = await GenerateToken(user);
+
+            Log.Information($"Created tokens pair for {user.Login}({user.Id})");
+            return token;
+        }
+
+
+        #endregion
+
+        #region Внутренние методы
         /// <summary>
         /// Генерация пары токенов для пользователя
         /// </summary>
@@ -133,55 +226,7 @@ namespace SkillChat.Server.ServiceInterface
             return token;
         }
 
-        [Authenticate]
-        public async Task<PasswordChangeResult> Post(CreatePassword request)
-        {
-            var session = Request.ThrowIfUnauthorized();
-
-            var uid = session?.UserAuthId;
-            if (uid == null)
-                throw new HttpError(HttpStatusCode.Unauthorized);
-
-            var user = await GetUserById(uid);
-            if (user == null)
-                throw new HttpError(HttpStatusCode.NotFound);
-
-            var secret = await GetUserSecret(uid);
-            if (secret.Password != null)
-                throw new HttpError(HttpStatusCode.Conflict);
-
-            secret.Password = request.NewPassword;
-
-            await RavenSession.StoreAsync(secret);
-            await RavenSession.SaveChangesAsync();
-
-            return new PasswordChangeResult { Result = PasswordChangeResult.ChangeEnum.Created };
-        }
-
-        [Authenticate]
-        public async Task<UserProfileMold> Get(GetMyProfile request)
-        {
-            var session = Request.ThrowIfUnauthorized();
-
-            var uid = session?.UserAuthId;
-            if (uid == null)
-                throw new HttpError(HttpStatusCode.Unauthorized);
-
-            var me = await GetUserById(uid);
-            if (me == null)
-                throw new HttpError(HttpStatusCode.NotFound);
-
-            var secret = await GetUserSecret(uid);
-
-            var profile = new UserProfileMold
-            {
-                UserId = session.UserAuthId,
-                Login = session.DisplayName,
-                IsPasswordSetted = secret.Password != null,
-            };
-
-            return profile;
-        }
+        
 
         private async Task<UserSecret> GetUserSecret(string uid)
         {
@@ -194,28 +239,7 @@ namespace SkillChat.Server.ServiceInterface
             return await RavenSession.LoadAsync<User>(uid, b => b.IncludeDocuments(uid + SecretPostfix));
         }
 
-        public async Task<TokenResult> Get(GetToken request)
-        {
-            request.Login = request.Login.ToLowerInvariant();
-            var user = await GetUserByLogin(request.Login);
-            if (user == null)
-            {
-                user = await CreateUser(request.Login);
-            }
-            else
-            {
-                var secret = await RavenSession.LoadAsync<UserSecret>(user.Id + SecretPostfix);
-                if (secret != null)
-                {
-                    throw HttpError.Unauthorized("Need a password");
-                }
-            }
-
-            var token = await GenerateToken(user);
-
-            Log.Information($"Created tokens pair for {user.Login}({user.Id})");
-            return token;
-        }
+       
 
         private async Task<User> GetUserByLogin(string login)
         {
@@ -224,7 +248,7 @@ namespace SkillChat.Server.ServiceInterface
             return user;
         }
 
-        private async Task<User> CreateUser(string login)
+        private async Task<User> CreateUser(string login, string password = null)
         {
             var uid = $"{UserPrefix}{Guid.NewGuid()}";
             var user = new User
@@ -232,10 +256,13 @@ namespace SkillChat.Server.ServiceInterface
                 Id = uid,
                 Login = login,
                 RegisteredTime = DateTimeOffset.UtcNow,
+                Password = password
             };
             await RavenSession.StoreAsync(user);
             await RavenSession.SaveChangesAsync();
             return user;
         }
+
+        #endregion
     }
 }
