@@ -101,8 +101,10 @@
   <Grid>
     <Grid.Background>
       <ImageBrush
-          Source="/Assets/Login_background.png"
-          Stretch="UniformToFill"
+          Source="/Assets/background.png"
+          Stretch="None"
+          SourceRect="0,0,152,152"
+          DestinationRect="0,0,152,152"
           TileMode="Tile" />
     </Grid.Background>
     <Grid

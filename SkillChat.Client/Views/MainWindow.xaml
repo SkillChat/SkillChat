@@ -81,8 +81,10 @@
 			<Grid Grid.Column="1" ColumnDefinitions="*,Auto">
 				<Grid.Background>
 					<ImageBrush
-                        Source="/Assets/Chat_background.png"
-                        Stretch="UniformToFill"
+                        Source="/Assets/background.png"
+                        Stretch="None"
+                        SourceRect="0,0,152,152"
+                        DestinationRect="0,0,152,152"
                         TileMode="Tile" />
 				</Grid.Background>
 				<Grid.RowDefinitions>
