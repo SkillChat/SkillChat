@@ -240,77 +240,11 @@
                     Background="#E0E0E0"
                     BorderBrush="#E0E0E0"
                     BorderThickness="10">
-                    <Grid ColumnDefinitions="*,Auto">
-                        <!--  Текстовое поле ввода сообщения  -->
-                        <TextBox
-                            Name="InputMessageTB"
-                            Grid.Column="0"
-                            Padding="10,5,2,5"
-                            AcceptsReturn="True"
-                            BorderThickness="0"
-                            FontSize="14"
-                            KeyDown="InputMessageTB_KeyDown"
-                            Text="{Binding MessageText}"
-                            TextWrapping="Wrap"
-                            Watermark="Сообщение">
-                            <TextBox.KeyBindings>
-                                <KeyBinding Command="{Binding SendCommand}" Gesture="Enter" />
-                            </TextBox.KeyBindings>
-                        </TextBox>
-                        <!--  Кнопка отправки сообщения  -->
-                        <Button
-                            x:Name="sendButton"
-                            Grid.Column="1"
-                            Width="30"
-                            Height="30"
-                            Padding="0"
-                            VerticalAlignment="Bottom"
-                            Background="#C4C4C4"
-                            BorderThickness="0"
-                            Command="{Binding SendCommand}">
-                            <Image
-                                Name="buttonImage"
-                                Width="20"
-                                Height="20" />
-                            <Button.Styles>
-                                <Style Selector="Button /template/ ContentPresenter">
-                                    <Setter Property="CornerRadius" Value="2" />
-                                </Style>
-                                <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                    <Setter Property="Background" Value="#FFFFFF" />
-                                    <Setter Property="BorderThickness" Value="1" />
-                                    <Setter Property="BorderBrush" Value="#FF9133" />
-                                </Style>
-                                <Style Selector="Button Image#buttonImage">
-                                    <Setter Property="Source">
-                                        <Setter.Value>
-                                            <svg:SvgImage Source="/Assets/arrow.svg" />
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                                <Style Selector="Button:pointerover Image#buttonImage">
-                                    <Setter Property="Source">
-                                        <Setter.Value>
-                                            <svg:SvgImage Source="/Assets/arrow_orange.svg" />
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                                <Style Selector="Button:pressed Image#buttonImage">
-                                    <Setter Property="Source">
-                                        <Setter.Value>
-                                            <svg:SvgImage Source="/Assets/arrow.svg" />
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                                <Style Selector="Button:pressed /template/ ContentPresenter">
-                                    <Setter Property="Background" Value="#FF9133" />
-                                </Style>
-                            </Button.Styles>
-                        </Button>
-                    </Grid>
+                    <views:SendMessageControl />
                 </Border>
             </Grid>
         </Grid>
-      <views:LoginPage VerticalAlignment="Stretch" IsVisible="{Binding IsShowingLoginPage, Mode=OneWay}" />
-      <views:RegisterPage VerticalAlignment="Stretch" IsVisible="{Binding IsShowingRegisterPage, Mode=OneWay}" /></Grid>
+        <views:LoginPage VerticalAlignment="Stretch" IsVisible="{Binding IsShowingLoginPage, Mode=OneWay}" />
+        <views:RegisterPage VerticalAlignment="Stretch" IsVisible="{Binding IsShowingRegisterPage, Mode=OneWay}" />
+    </Grid>
 </Window>

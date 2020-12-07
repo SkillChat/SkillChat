@@ -1,0 +1,92 @@
+﻿<UserControl
+    x:Class="SkillChat.Client.Views.SendMessageControl"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:custom="clr-namespace:SkillChat.Client.Extentions"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
+    xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
+    xmlns:views="clr-namespace:SkillChat.Client.Views"
+    Name="sendMessageControl"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid ColumnDefinitions="*,Auto">
+        <!--  Текстовое поле ввода сообщения  -->
+        <TextBox
+            Name="inputMessageTB"
+            Grid.Column="0"
+            Padding="10,5,2,5"
+            AcceptsReturn="True"
+            BorderThickness="0"
+            FontSize="14"
+            Text="{Binding MessageText}"
+            TextWrapping="Wrap"
+            Watermark="Сообщение">
+            <i:Interaction.Behaviors>
+                <custom:FocusOnPropertyChangedBehavior />
+            </i:Interaction.Behaviors>
+
+            <i:Interaction.Behaviors>
+                <custom:TextBoxInputMessageBehavior />
+            </i:Interaction.Behaviors>
+            <TextBox.KeyBindings>
+                <KeyBinding Command="{Binding SendCommand}" Gesture="Enter" />
+            </TextBox.KeyBindings>
+        </TextBox>
+        <!--  Кнопка отправки сообщения  -->
+        <Button
+            x:Name="sendButton"
+            Grid.Column="1"
+            Width="30"
+            Height="30"
+            Padding="0"
+            VerticalAlignment="Bottom"
+            Background="#C4C4C4"
+            BorderThickness="0"
+            Command="{Binding SendCommand}">
+            <Image
+                Name="buttonImage"
+                Width="20"
+                Height="20" />
+
+            <Button.Styles>
+                <Style Selector="Button /template/ ContentPresenter">
+                    <Setter Property="CornerRadius" Value="2" />
+                </Style>
+                <Style Selector="Button:pointerover /template/ ContentPresenter">
+                    <Setter Property="Background" Value="#FFFFFF" />
+                    <Setter Property="BorderThickness" Value="1" />
+                    <Setter Property="BorderBrush" Value="#FF9133" />
+                </Style>
+                <Style Selector="Button Image#buttonImage">
+                    <Setter Property="Source">
+                        <Setter.Value>
+                            <svg:SvgImage Source="/Assets/arrow.svg" />
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+                <Style Selector="Button:pointerover Image#buttonImage">
+                    <Setter Property="Source">
+                        <Setter.Value>
+                            <svg:SvgImage Source="/Assets/arrow_orange.svg" />
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+                <Style Selector="Button:pressed Image#buttonImage">
+                    <Setter Property="Source">
+                        <Setter.Value>
+                            <svg:SvgImage Source="/Assets/arrow.svg" />
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+                <Style Selector="Button:pressed /template/ ContentPresenter">
+                    <Setter Property="Background" Value="#FF9133" />
+                </Style>
+            </Button.Styles>
+        </Button>
+    </Grid>
+</UserControl>
