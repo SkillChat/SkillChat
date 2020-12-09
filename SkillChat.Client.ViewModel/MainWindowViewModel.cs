@@ -166,7 +166,7 @@ namespace SkillChat.Client.ViewModel
             {
                 try
                 {
-                    await _hub.SendMessage(MessageText);
+                    await _hub.SendMessage(MessageText, ChatId);
                     MessageText = null;
                 }
                 catch (Exception ex)
@@ -182,6 +182,7 @@ namespace SkillChat.Client.ViewModel
                 {
                     var first = Messages.FirstOrDefault()?.Messages.FirstOrDefault();
                     var request = new GetMessages();
+                    // Логика выбора сообщений по id чата
                     request.BeforePostTime = first?.PostTime;
                     var result = await serviceClient.GetAsync(request);
                     foreach (var item in result.Messages)
@@ -339,6 +340,8 @@ namespace SkillChat.Client.ViewModel
         public string Title => IsSignedIn ? $"SkillChat - {UserName}" : $"SkillChat";
 
         public string MessageText { get; set; }
+
+        public string ChatId { get; set; }
         public string MembersCaption { get; set; }
 
         public ICommand ConnectCommand { get; }

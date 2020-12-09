@@ -34,6 +34,14 @@ namespace SkillChat.Server.ServiceInterface
                 throw new HttpError(HttpStatusCode.BadRequest, "Пароль не может быть пустым");
 
             user = await CreateUser(login, request.Password);
+            var defaultChat = await RavenSession.Query<Chat>().FirstAsync(e => e.ChatName == "SkillBoxChat");
+            if(defaultChat.Members == null)
+            {
+                defaultChat.Members = new List<ChatMember>();
+            }
+            defaultChat.Members.Add(new ChatMember() { UserId = user.Id, UserRole = ChatMemberRole.Participient });
+            await RavenSession.SaveChangesAsync();
+
             var tokenResult = await GenerateToken(user);
 
             return tokenResult;
@@ -166,7 +174,6 @@ namespace SkillChat.Server.ServiceInterface
             return token;
         }
 
-
         #endregion
 
         #region Внутренние методы
@@ -226,8 +233,6 @@ namespace SkillChat.Server.ServiceInterface
             return token;
         }
 
-        
-
         private async Task<UserSecret> GetUserSecret(string uid)
         {
             var secret = await RavenSession.LoadAsync<UserSecret>(uid + SecretPostfix);
@@ -238,8 +243,6 @@ namespace SkillChat.Server.ServiceInterface
         {
             return await RavenSession.LoadAsync<User>(uid, b => b.IncludeDocuments(uid + SecretPostfix));
         }
-
-       
 
         private async Task<User> GetUserByLogin(string login)
         {

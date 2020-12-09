@@ -7,6 +7,7 @@ using ServiceStack;
 using SkillChat.Server.Domain;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
+using SkillChat.Server.ServiceModel.Molds.Chats;
 
 namespace SkillChat.Server.ServiceInterface
 {
@@ -17,9 +18,9 @@ namespace SkillChat.Server.ServiceInterface
         [Authenticate]
         public async Task<MessagePage> Get(GetMessages request)
         {
-            var messages = RavenSession.Query<Message>().OrderByDescending(x => x.PostTime);
+            var messages = RavenSession.Query<Message>().Where(e => e.ChatId == request.ChatId).OrderByDescending(x => x.PostTime);
             var result = new MessagePage();
-            if(request.BeforePostTime != null)
+            if (request.BeforePostTime != null)
             {
                 messages = messages.Where(x => x.PostTime.UtcDateTime < request.BeforePostTime.Value.UtcDateTime);
             }
@@ -34,11 +35,24 @@ namespace SkillChat.Server.ServiceInterface
                     Id = doc.Id,
                     PostTime = doc.PostTime,
                     Text = doc.Text,
-                    UserLogin = user?.Login??doc.UserId,                    
+                    UserLogin = user?.Login ?? doc.UserId,
+                    ChatId = doc.ChatId,
                 };
                 result.Messages.Add(message);
             }
             return result;
+        }
+
+        public async Task<ChatPage> Get(GetChatsList request)
+        {
+            var chats = await RavenSession.Query<Chat>().Select(e => new ChatMold()
+            {
+                ChatType = (ChatTypeMold)(int)e.ChatType,
+                Id = e.Id,
+                OwnerId = e.OwnerId,
+                ChatName = e.ChatName
+            }).ToListAsync();
+            return new ChatPage() { Chats = chats };
         }
     }
 }

@@ -1,6 +1,9 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,6 +14,7 @@ using Raven.Client.Documents.Session;
 using Raven.Client.ServerWide;
 using Raven.Client.ServerWide.Operations;
 using Raven.Embedded;
+using SkillChat.Server.Domain;
 
 namespace SkillChat.Server
 {
@@ -83,6 +87,20 @@ namespace SkillChat.Server
                 if (databaseRecord.Revisions == null)
                 {
                     documentStore.ConfigureRevisions();
+                }
+                var session = documentStore.OpenSession();
+                var haveAnyChat = session.Query<Chat>().Any();
+                if (!haveAnyChat)
+                {
+                    var firstChat = new Chat()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        ChatName = "SkillBoxChat",
+                        ChatType = ChatType.Public,
+                        OwnerId = ""
+                    };
+                    session.Store(firstChat);
+                    session.SaveChanges();
                 }
 
                 return documentStore;
