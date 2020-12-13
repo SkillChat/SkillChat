@@ -34,18 +34,25 @@ namespace SkillChat.Server.ServiceInterface
                 throw new HttpError(HttpStatusCode.BadRequest, "Пароль не может быть пустым");
 
             user = await CreateUser(login, request.Password);
-            var defaultChat = await RavenSession.Query<Chat>().FirstAsync(e => e.ChatName == "SkillBoxChat");
-            if(defaultChat.Members == null)
-            {
-                defaultChat.Members = new List<ChatMember>();
-            }
-            defaultChat.Members.Add(new ChatMember() { UserId = user.Id, UserRole = ChatMemberRole.Participient });
-            await RavenSession.SaveChangesAsync();
+            await AddMemberInDefaultChat(user);
 
             var tokenResult = await GenerateToken(user);
 
             return tokenResult;
         }
+
+        private async Task AddMemberInDefaultChat(User user)
+        {
+            var defaultChat = await RavenSession.Query<Chat>().FirstAsync(e => e.ChatName == "SkillBoxChat");
+            if (defaultChat.Members == null)
+            {
+                defaultChat.Members = new List<ChatMember>();
+            }
+
+            defaultChat.Members.Add(new ChatMember() {UserId = user.Id, UserRole = ChatMemberRole.Participient});
+            await RavenSession.SaveChangesAsync();
+        }
+
         public async Task<TokenResult> Post(AuthViaPassword request)
         {
             var login = request.Login.ToLowerInvariant();
@@ -158,6 +165,7 @@ namespace SkillChat.Server.ServiceInterface
             if (user == null)
             {
                 user = await CreateUser(request.Login);
+                await AddMemberInDefaultChat(user);
             }
             else
             {
@@ -237,8 +245,8 @@ namespace SkillChat.Server.ServiceInterface
         {
             var secret = await RavenSession.LoadAsync<UserSecret>(uid + SecretPostfix);
             return secret;
-        }
-
+        }       
+        
         private async Task<User> GetUserById(string uid)
         {
             return await RavenSession.LoadAsync<User>(uid, b => b.IncludeDocuments(uid + SecretPostfix));
