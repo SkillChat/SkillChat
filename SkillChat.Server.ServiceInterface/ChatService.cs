@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Raven.Client.Documents;
@@ -42,16 +43,18 @@ namespace SkillChat.Server.ServiceInterface
             return result;
         }
 
+        [Authenticate]
         public async Task<ChatPage> Get(GetChatsList request)
         {
-            var chats = await RavenSession.Query<Chat>().Select(e => new ChatMold()
+            var session = Request.ThrowIfUnauthorized();
+            var uid = session.UserAuthId;
+            var chats = await RavenSession.Query<Chat>()
+                .Where(chat => chat.Members.Any(member => member.UserId == uid))
+                .ToListAsync();
+            return new ChatPage
             {
-                ChatType = (ChatTypeMold)(int)e.ChatType,
-                Id = e.Id,
-                OwnerId = e.OwnerId,
-                ChatName = e.ChatName
-            }).ToListAsync();
-            return new ChatPage() { Chats = chats };
+                Chats = chats.Select(e => Mapper.Map<ChatMold>(e)).ToList()
+            };
         }
     }
 }
