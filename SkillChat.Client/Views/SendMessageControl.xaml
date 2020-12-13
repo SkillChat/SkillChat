@@ -26,13 +26,6 @@
             Text="{Binding MessageText}"
             TextWrapping="Wrap"
             Watermark="Сообщение">
-            <i:Interaction.Behaviors>
-                <custom:FocusOnPropertyChangedBehavior />
-            </i:Interaction.Behaviors>
-
-            <i:Interaction.Behaviors>
-                <custom:TextBoxInputMessageBehavior />
-            </i:Interaction.Behaviors>
             <TextBox.KeyBindings>
                 <KeyBinding Command="{Binding SendCommand}" Gesture="Enter" />
             </TextBox.KeyBindings>
