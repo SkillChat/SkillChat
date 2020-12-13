@@ -32,14 +32,11 @@ namespace SkillChat.Server.ServiceInterface
             foreach (var doc in docs)
             {
                 var user = await RavenSession.LoadAsync<User>(doc.UserId);
-                var message = new MessageMold
+                var message = Mapper.Map<MessageMold>(doc);
+                if (user?.Login!= null)
                 {
-                    Id = doc.Id,
-                    PostTime = doc.PostTime,
-                    Text = doc.Text,
-                    UserLogin = user?.Login ?? doc.UserId,
-                    ChatId = doc.ChatId,
-                };
+                    message.UserLogin = user.Login;
+                }
                 result.Messages.Add(message);
             }
             return result;
