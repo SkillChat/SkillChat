@@ -54,7 +54,7 @@ namespace SkillChat.Server.ServiceInterface
             if (user == null)
                 throw new HttpError(HttpStatusCode.NotFound, "User is not found");
 
-            var secret = await RavenSession.LoadAsync<UserSecret>(user.Id + SecretPostfix);
+            var secret = await GetUserSecret(user.Id);
 
             if (string.IsNullOrWhiteSpace(secret?.Password))
                 throw new HttpError(HttpStatusCode.NotFound, "Password is not set");
@@ -145,7 +145,7 @@ namespace SkillChat.Server.ServiceInterface
             {
                 UserId = session.UserAuthId,
                 Login = session.DisplayName,
-                IsPasswordSetted = secret.Password != null,
+                IsPasswordSetted = secret?.Password != null,
             };
 
             return profile;
@@ -161,7 +161,7 @@ namespace SkillChat.Server.ServiceInterface
             }
             else
             {
-                var secret = await RavenSession.LoadAsync<UserSecret>(user.Id + SecretPostfix);
+                var secret = await GetUserSecret(user.Id);
                 if (secret != null)
                 {
                     throw HttpError.Unauthorized("Need a password");
@@ -259,9 +259,19 @@ namespace SkillChat.Server.ServiceInterface
                 Id = uid,
                 Login = login,
                 RegisteredTime = DateTimeOffset.UtcNow,
-                Password = password
             };
             await RavenSession.StoreAsync(user);
+
+            if (password!=null)
+            {
+                var secret = new UserSecret
+                {
+                    Id = uid+SecretPostfix,
+                    Password = password,
+                };
+                await RavenSession.StoreAsync(secret);
+            }
+            
             await RavenSession.SaveChangesAsync();
             return user;
         }
