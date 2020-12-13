@@ -67,7 +67,7 @@ namespace SkillChat.Server.ServiceModel
     [ApiResponse(HttpStatusCode.Unauthorized, "Токен неверный или сессия закрыта", ResponseType = typeof(void))]
     [ApiResponse(HttpStatusCode.NotFound, "Пользователь не найден", ResponseType = typeof(void))]
     [Route("/me", "GET", Summary = "Получить сведения своего профиля", Notes = "Возвращаются актуальные сведения из базы данных")]
-    public class GetMyProfile : IReturn<UserProfileMold> { }
+    public class GetMyProfile : IReturn<MyUserProfileMold> { }
 
     [Api("Auth")]
     [ApiResponse(HttpStatusCode.BadRequest, "Неверно составлен запрос", ResponseType = typeof(void))]

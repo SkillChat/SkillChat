@@ -38,6 +38,7 @@ namespace SkillChat.Client.ViewModel
                 settings.HostUrl = "http://localhost:5000";
             }
             serviceClient = new JsonServiceClient(settings.HostUrl);
+            ProfileViewModel = new ProfileViewModel(serviceClient);
             UserName = settings.UserName;
             Tokens = new TokenResult { AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken };
 
@@ -98,6 +99,8 @@ namespace SkillChat.Client.ViewModel
                             ChatId = chat?.Id;
                             ChatName = chat?.ChatName;
                             LoadMessageHistoryCommand.Execute(null);
+                            //Получаем профиль
+                            ProfileViewModel.Profile = await serviceClient.GetAsync(new GetMyProfile());
                         }
                     });
 
@@ -310,7 +313,7 @@ namespace SkillChat.Client.ViewModel
                 }
             });
         }
-            
+
         public DateTimeOffset ExpireTime { get; set; }
 
         private Func<Exception, Task> connectionOnClosed()
@@ -357,6 +360,8 @@ namespace SkillChat.Client.ViewModel
 
         public ICommand LoadMessageHistoryCommand { get; }
         public ICommand SignOutCommand { get; }
+
+        public ProfileViewModel ProfileViewModel { get; set; }
 
         public bool IsShowingLoginPage { get; set; }
         public bool IsShowingRegisterPage { get; set; }
