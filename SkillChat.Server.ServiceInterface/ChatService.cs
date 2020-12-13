@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -14,6 +15,7 @@ namespace SkillChat.Server.ServiceInterface
     public class ChatService : Service
     {
         public IAsyncDocumentSession RavenSession { get; set; }
+        public IMapper Mapper { get; set; }
 
         [Authenticate]
         public async Task<MessagePage> Get(GetMessages request)

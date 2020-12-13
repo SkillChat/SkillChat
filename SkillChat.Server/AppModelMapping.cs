@@ -2,6 +2,7 @@
 using AutoMapper.Configuration;
 using SkillChat.Server.Domain;
 using SkillChat.Server.ServiceModel.Molds;
+using SkillChat.Server.ServiceModel.Molds.Chats;
 
 namespace SkillChat.Server
 {
@@ -21,9 +22,11 @@ namespace SkillChat.Server
 
         private static void ConfigureModelMapping(MapperConfigurationExpression cfg)
         {
-            //cfg.CreateMap<User, UserProfileMold>()
-            //    .ForMember(mold => mold.IsPasswordSetted, e => e.MapFrom(model => model.Password != null))
-            //    ;
+            cfg.CreateMap<Chat, ChatMold>();
+            cfg.CreateMap<ChatMember, ChatMemberMold>();
+
+            cfg.CreateMap<Message, MessageMold>()
+                .ForMember(m => m.UserLogin, e => e.MapFrom(m => m.UserId));
         }
     }
 }
