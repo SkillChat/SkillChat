@@ -171,8 +171,7 @@ namespace SkillChat.Client.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    IsShowingLoginPage = true;
-                    //Messages.Add(ex.Message);
+                    SignOutCommand.Execute(null);
                 }
             }, this.WhenAnyValue(m => m.IsConnected, m => m.MessageText, (b, m) => b == true && !string.IsNullOrEmpty(m)));
 
