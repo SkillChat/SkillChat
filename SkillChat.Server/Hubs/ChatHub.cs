@@ -24,13 +24,14 @@ namespace SkillChat.Server.Hubs
 
         private readonly IAsyncDocumentSession _ravenSession;
         
-        public async Task SendMessage(string message)
+        public async Task SendMessage(string message, string chatId)
         {
             var messageItem = new Message
             {
                 UserId = Context.Items["uid"] as string,
                 Text = message,
                 PostTime = DateTimeOffset.UtcNow,
+                ChatId = chatId,
             };
 
             await _ravenSession.StoreAsync(messageItem);
@@ -42,6 +43,7 @@ namespace SkillChat.Server.Hubs
                 UserLogin = Context.Items["login"] as string,
                 Message = message,
                 PostTime = messageItem.PostTime,
+                ChatId = chatId,
             });
             
             Log.Information($"User {Context.Items["login"]} send message in main chat");

@@ -9,5 +9,6 @@ namespace SkillChat.Interface
         public string UserLogin { get;set; }
         public string Message{ get;set; }
         public DateTimeOffset PostTime { get;set; }
+        public string ChatId { get; set; }
     }
 }

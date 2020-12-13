@@ -93,6 +93,10 @@ namespace SkillChat.Client.ViewModel
                             IsSignedIn = true;
                             UserName = data.UserLogin;
                             ExpireTime = data.ExpireTime;
+                            var chats = await serviceClient.GetAsync(new GetChatsList());
+                            var chat = chats.Chats.FirstOrDefault();
+                            ChatId = chat?.Id;
+                            ChatName = chat?.ChatName;
                             LoadMessageHistoryCommand.Execute(null);
                         }
                     });
@@ -166,13 +170,12 @@ namespace SkillChat.Client.ViewModel
             {
                 try
                 {
-                    await _hub.SendMessage(MessageText);
+                    await _hub.SendMessage(MessageText, ChatId);
                     MessageText = null;
                 }
                 catch (Exception ex)
                 {
-                    IsShowingLoginPage = true;
-                    //Messages.Add(ex.Message);
+                    SignOutCommand.Execute(null);
                 }
             }, this.WhenAnyValue(m => m.IsConnected, m => m.MessageText, (b, m) => b == true && !string.IsNullOrEmpty(m)));
 
@@ -181,7 +184,11 @@ namespace SkillChat.Client.ViewModel
                 try
                 {
                     var first = Messages.FirstOrDefault()?.Messages.FirstOrDefault();
-                    var request = new GetMessages();
+                    var request = new GetMessages()
+                    {
+                        ChatId = ChatId
+                    };
+                    // Логика выбора сообщений по id чата
                     request.BeforePostTime = first?.PostTime;
                     var result = await serviceClient.GetAsync(request);
                     foreach (var item in result.Messages)
@@ -336,9 +343,12 @@ namespace SkillChat.Client.ViewModel
         public TokenResult Tokens { get; set; }
 
         public string UserName { get; set; }
-        public string Title => IsSignedIn ? $"SkillChat - {UserName}" : $"SkillChat";
+        public string Title => IsSignedIn ? $"SkillChat - {UserName}[{ChatName}]" : $"SkillChat";
 
         public string MessageText { get; set; }
+
+        public string ChatId { get; set; }
+        public string ChatName { get; set; }
         public string MembersCaption { get; set; }
 
         public ICommand ConnectCommand { get; }

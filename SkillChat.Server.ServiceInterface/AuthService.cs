@@ -34,10 +34,25 @@ namespace SkillChat.Server.ServiceInterface
                 throw new HttpError(HttpStatusCode.BadRequest, "Пароль не может быть пустым");
 
             user = await CreateUser(login, request.Password);
+            await AddMemberInDefaultChat(user);
+
             var tokenResult = await GenerateToken(user);
 
             return tokenResult;
         }
+
+        private async Task AddMemberInDefaultChat(User user)
+        {
+            var defaultChat = await RavenSession.Query<Chat>().FirstAsync(e => e.ChatName == "SkillBoxChat");
+            if (defaultChat.Members == null)
+            {
+                defaultChat.Members = new List<ChatMember>();
+            }
+
+            defaultChat.Members.Add(new ChatMember() {UserId = user.Id, UserRole = ChatMemberRole.Participient});
+            await RavenSession.SaveChangesAsync();
+        }
+
         public async Task<TokenResult> Post(AuthViaPassword request)
         {
             var login = request.Login.ToLowerInvariant();
@@ -46,7 +61,7 @@ namespace SkillChat.Server.ServiceInterface
             if (user == null)
                 throw new HttpError(HttpStatusCode.NotFound, "User is not found");
 
-            var secret = await RavenSession.LoadAsync<UserSecret>(user.Id + SecretPostfix);
+            var secret = await GetUserSecret(user.Id);
 
             if (string.IsNullOrWhiteSpace(secret?.Password))
                 throw new HttpError(HttpStatusCode.NotFound, "Password is not set");
@@ -137,7 +152,7 @@ namespace SkillChat.Server.ServiceInterface
             {
                 UserId = session.UserAuthId,
                 Login = session.DisplayName,
-                IsPasswordSetted = secret.Password != null,
+                IsPasswordSetted = secret?.Password != null,
             };
 
             return profile;
@@ -150,10 +165,11 @@ namespace SkillChat.Server.ServiceInterface
             if (user == null)
             {
                 user = await CreateUser(request.Login);
+                await AddMemberInDefaultChat(user);
             }
             else
             {
-                var secret = await RavenSession.LoadAsync<UserSecret>(user.Id + SecretPostfix);
+                var secret = await GetUserSecret(user.Id);
                 if (secret != null)
                 {
                     throw HttpError.Unauthorized("Need a password");
@@ -165,7 +181,6 @@ namespace SkillChat.Server.ServiceInterface
             Log.Information($"Created tokens pair for {user.Login}({user.Id})");
             return token;
         }
-
 
         #endregion
 
@@ -226,20 +241,16 @@ namespace SkillChat.Server.ServiceInterface
             return token;
         }
 
-        
-
         private async Task<UserSecret> GetUserSecret(string uid)
         {
             var secret = await RavenSession.LoadAsync<UserSecret>(uid + SecretPostfix);
             return secret;
-        }
-
+        }       
+        
         private async Task<User> GetUserById(string uid)
         {
             return await RavenSession.LoadAsync<User>(uid, b => b.IncludeDocuments(uid + SecretPostfix));
         }
-
-       
 
         private async Task<User> GetUserByLogin(string login)
         {
@@ -256,9 +267,19 @@ namespace SkillChat.Server.ServiceInterface
                 Id = uid,
                 Login = login,
                 RegisteredTime = DateTimeOffset.UtcNow,
-                Password = password
             };
             await RavenSession.StoreAsync(user);
+
+            if (password!=null)
+            {
+                var secret = new UserSecret
+                {
+                    Id = uid+SecretPostfix,
+                    Password = password,
+                };
+                await RavenSession.StoreAsync(secret);
+            }
+            
             await RavenSession.SaveChangesAsync();
             return user;
         }

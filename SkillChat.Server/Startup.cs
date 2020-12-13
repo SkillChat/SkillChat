@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -29,6 +30,9 @@ namespace SkillChat.Server
             services.AddRavenDbServices();
             
             services.AddSignalR();
+
+            var mapper = AppModelMapping.ConfigureMapping();
+            services.AddSingleton<IMapper>(mapper);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -48,8 +52,7 @@ namespace SkillChat.Server
             {
                 endpoints.MapHub<ChatHub>("/chathub");
             });
-
-            AppModelMapping.ConfigureMapping();
+            
             var host = (AppHostBase)app.ApplicationServices.GetService(typeof(AppHost));
             app.UseServiceStack(host);
         }
