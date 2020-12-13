@@ -77,7 +77,7 @@
           <TextBlock Classes="UpperWatermark" Text="Логин" />
           <TextBox
               Classes="RegisterParam"
-              Text="{Binding RegisterUser.RegUserName}"/>
+              Text="{Binding RegisterUser.Login}"/>
         </StackPanel>
         <StackPanel
           Margin="0,7,0,0">
