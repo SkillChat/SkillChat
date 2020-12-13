@@ -7,116 +7,125 @@
     xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
     xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
     xmlns:views="clr-namespace:SkillChat.Client.Views"
+    xmlns:profile="clr-namespace:SkillChat.Client.Views.Profile"
+    xmlns:interactivity="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
     Title="{Binding Title}"
-    Width="600"
+	Name="WindowChat"
+    Width="800"
     Height="600"
     MinWidth="360"
     MinHeight="530"
     Icon="/Assets/skillchat-logo.ico"
     mc:Ignorable="d">
 
-    <Window.Styles>
-        <Style Selector="ScrollBar:vertical">
-            <Setter Property="Width" Value="12" />
-            <Setter Property="Margin" Value="-12,0,0,0" />
-            <Setter Property="Template">
-                <ControlTemplate>
-                    <Border Background="Transparent" UseLayoutRounding="False">
-                        <Grid>
-                            <Track
+	<!--  Profile  -->
+	<interactivity:Interaction.Behaviors>
+		<core:EventTriggerBehavior EventName="LayoutUpdated" SourceObject="{Binding #WindowChat}">
+			<core:InvokeCommandAction Command="{Binding ProfileViewModel.LayoutUpdatedWindow}" CommandParameter="{Binding #WindowChat}" />
+		</core:EventTriggerBehavior>
+	</interactivity:Interaction.Behaviors>
+
+	<Window.Styles>
+		<Style Selector="ScrollBar:vertical">
+			<Setter Property="Width" Value="12" />
+			<Setter Property="Margin" Value="-12,0,0,0" />
+			<Setter Property="Template">
+				<ControlTemplate>
+					<Border Background="Transparent" UseLayoutRounding="False">
+						<Grid>
+							<Track
                                 IsDirectionReversed="True"
                                 Maximum="{TemplateBinding Maximum}"
                                 Minimum="{TemplateBinding Minimum}"
                                 Orientation="{TemplateBinding Orientation}"
                                 ViewportSize="{TemplateBinding ViewportSize}"
-                                Value="{TemplateBinding Value,
-                                                        Mode=TwoWay}">
+                                Value="{TemplateBinding Value, Mode=TwoWay}">
 
-                                <Thumb Name="thumb">
-                                    <Thumb.Template>
-                                        <ControlTemplate>
-                                            <Border />
-                                        </ControlTemplate>
-                                    </Thumb.Template>
-                                </Thumb>
-                            </Track>
-                        </Grid>
-                    </Border>
-                </ControlTemplate>
-            </Setter>
-        </Style>
-        <Style Selector="ScrollBar:vertical /template/ Thumb Border">
-            <Setter Property="Background" Value="#BDBDBD" />
-            <Setter Property="CornerRadius" Value="2" />
-            <Setter Property="Width" Value="6" />
-        </Style>
+								<Thumb Name="thumb">
+									<Thumb.Template>
+										<ControlTemplate>
+											<Border />
+										</ControlTemplate>
+									</Thumb.Template>
+								</Thumb>
+							</Track>
+						</Grid>
+					</Border>
+				</ControlTemplate>
+			</Setter>
+		</Style>
+		<Style Selector="ScrollBar:vertical /template/ Thumb Border">
+			<Setter Property="Background" Value="#BDBDBD" />
+			<Setter Property="CornerRadius" Value="2" />
+			<Setter Property="Width" Value="6" />
+		</Style>
     </Window.Styles>
-    <Grid>
-        <Grid ColumnDefinitions="100, *">
-            <StackPanel Background="#7F57F0">
-                <Image Width="60" Margin="20">
-                    <Image.Source>
-                        <svg:SvgImage Source="/Assets/SkillChat_small.svg" />
-                    </Image.Source>
-                </Image>
-            </StackPanel>
-            <Grid Grid.Column="1">
-                <Grid.Background>
-                    <ImageBrush
+	<Grid>
+		<Grid ColumnDefinitions="100, *">
+			<StackPanel Background="#7F57F0">
+				<Image Width="60" Margin="20">
+					<Image.Source>
+						<svg:SvgImage Source="/Assets/SkillChat_small.svg" />
+					</Image.Source>
+				</Image>
+				<Button Background="Transparent" BorderBrush="Transparent" BorderThickness="0"
+                        Command="{Binding ProfileViewModel.SetOpenProfileCommand}">
+					<Image Width="13.33" Height="18.65" Margin="20">
+						<Image.Source>
+							<svg:SvgImage Source="/Assets/Profile.svg" />
+						</Image.Source>
+					</Image>
+				</Button>
+			</StackPanel>
+			<Grid Grid.Column="1" ColumnDefinitions="*,Auto">
+				<Grid.Background>
+					<ImageBrush
                         Source="/Assets/Chat_background.png"
                         Stretch="UniformToFill"
                         TileMode="Tile" />
-                </Grid.Background>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="80" />
-                    <RowDefinition />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid Background="#F2F2F2" ColumnDefinitions="*,Auto">
+				</Grid.Background>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="80" />
+					<RowDefinition />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+	
+				<!--Header-->
+                <Grid ColumnDefinitions="*,Auto" 
+                      Grid.ColumnSpan="2" 
+                      Background="#F2F2F2" >
 
-                    <StackPanel
+					<StackPanel
                         Grid.Row="1"
                         Grid.Column="0"
                         Margin="20,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center">
-                        <TextBlock
+						<TextBlock
                             FontSize="16"
                             FontWeight="SemiBold"
                             Text="Чат" />
-                        <TextBlock
+						<TextBlock
                             FontSize="14"
                             FontWeight="Regular"
                             Foreground="#828282"
                             Text="{Binding MembersCaption}"
                             TextTrimming="WordEllipsis" />
-                    </StackPanel>
+					</StackPanel>
 
-
-                    <StackPanel
-                        Grid.Column="1"
-                        HorizontalAlignment="Right"
-                        Orientation="Horizontal">
-                        <Button
-                            VerticalAlignment="Center"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Command="{Binding LoadMessageHistoryCommand}"
-                            Content="Cтарые сообщения"
-                            FontSize="12" />
-                        <Button
-                            VerticalAlignment="Center"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Command="{Binding SignOutCommand}"
-                            Content="Выйти из профиля"
-                            FontSize="12" />
-                    </StackPanel>
-                </Grid>
+					<!--Profile - Шапка профиля-->
+					<Grid Grid.Column="1" Width="390">
+                        <profile:Header DataContext="{Binding ProfileViewModel}" />
+					</Grid>
+				</Grid>
                 <!--  Блок списка сообщений  -->
-                <Grid Grid.Row="1">
-                    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-                        <ItemsControl
+				<Grid 
+                    Grid.Row="1" 
+                    Grid.Column="0" 
+                    IsVisible="{Binding ProfileViewModel.isShowChat}">
+					<ScrollViewer HorizontalScrollBarVisibility="Disabled">
+						<ItemsControl
                             Grid.Row="3"
                             Grid.Column="0"
                             Grid.ColumnSpan="3"
@@ -151,72 +160,71 @@
                                         Margin="0,17,20,0"
                                         HorizontalAlignment="Left"
                                         Items="{Binding Messages}" />
-                                </DataTemplate>
-                                <DataTemplate DataType="{x:Type viewModel:MyMessagesContainerViewModel}">
-                                    <ItemsControl
+								</DataTemplate>
+								<DataTemplate DataType="{x:Type viewModel:MyMessagesContainerViewModel}">
+									<ItemsControl
                                         Margin="20,17,0,0"
                                         HorizontalAlignment="Right"
                                         Items="{Binding Messages}" />
-                                </DataTemplate>
-                                <DataTemplate DataType="{x:Type viewModel:UserMessageViewModel}">
-                                    <StackPanel Margin="0,0,0,3" HorizontalAlignment="Left">
-                                        <Border
+								</DataTemplate>
+								<DataTemplate DataType="{x:Type viewModel:UserMessageViewModel}">
+									<StackPanel Margin="0,0,0,3" HorizontalAlignment="Left">
+										<Border
                                             Padding="10,5"
                                             Background="White"
                                             BorderThickness="0">
-                                            <Grid RowDefinitions="Auto,Auto">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock
+											<Grid RowDefinitions="Auto,Auto">
+												<StackPanel Orientation="Horizontal">
+													<TextBlock
                                                         Padding="10,0,0,0"
                                                         FontSize="14"
                                                         FontWeight="SemiBold"
                                                         Text="{Binding DisplayLogin}" />
-
-                                                </StackPanel>
-                                                <TextBlock
+												</StackPanel>
+												<TextBlock
                                                     Grid.Row="1"
                                                     Classes="message"
                                                     Text="{Binding TextAligned}"
                                                     TextWrapping="Wrap" />
-                                                <TextBox
+												<TextBox
                                                     Grid.Row="1"
                                                     Classes="message"
                                                     IsReadOnly="True"
                                                     Text="{Binding Text}" />
-                                                <TextBlock
+												<TextBlock
                                                     Grid.Row="1"
                                                     HorizontalAlignment="Right"
                                                     VerticalAlignment="Bottom"
                                                     Classes="time"
                                                     Text="{Binding Time}" />
-                                            </Grid>
-                                        </Border>
-                                    </StackPanel>
-                                </DataTemplate>
-                                <DataTemplate DataType="{x:Type viewModel:MyMessageViewModel}">
-                                    <StackPanel Margin="0,0,0,3" HorizontalAlignment="Right">
-                                        <Border
+											</Grid>
+										</Border>
+									</StackPanel>
+								</DataTemplate>
+								<DataTemplate DataType="{x:Type viewModel:MyMessageViewModel}">
+									<StackPanel Margin="0,0,0,3" HorizontalAlignment="Right">
+										<Border
                                             Padding="10,5"
                                             Background="#DDD5F4"
                                             BorderThickness="0"
                                             CornerRadius="2">
-                                            <Grid>
-                                                <TextBlock
+											<Grid>
+												<TextBlock
                                                     Grid.Row="1"
                                                     Classes="message"
                                                     Text="{Binding TextAligned}"
                                                     TextWrapping="Wrap" />
-                                                <TextBox
+												<TextBox
                                                     Grid.Row="1"
                                                     Classes="message"
                                                     IsReadOnly="True"
                                                     Text="{Binding Text}" />
-                                                <TextBlock
+												<TextBlock
                                                     HorizontalAlignment="Right"
                                                     VerticalAlignment="Bottom"
                                                     Classes="time"
                                                     Text="{Binding Time}" />
-                                            </Grid>
+											</Grid>
                                         </Border>
                                     </StackPanel>
                                 </DataTemplate>
@@ -226,11 +234,12 @@
                     </ScrollViewer>
                 </Grid>
                 <!--  Блок отправки сообщения  -->
-                <Border
+                <Border Grid.Column="0"
                     Grid.Row="2"
                     MinHeight="50"
                     MaxHeight="270"
                     Margin="0"
+					IsVisible="{Binding ProfileViewModel.isShowChat}"
                     Background="#E0E0E0"
                     BorderBrush="#E0E0E0"
                     BorderThickness="10">
