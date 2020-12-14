@@ -6,12 +6,12 @@ namespace SkillChat.Server.ServiceModel.Molds
     public class UserProfileMold
     {
         [Description("Идентификатор пользователя")]
-        public string UserId { get; set; }
-        
+        public string Id { get; set; }
+
         [Description("Псевдоним пользователя")]
         public string Login { get; set; }
 
-        [Description("Наличие пароля")]
-        public bool IsPasswordSetted { get; set; }
+        [Description("Имя пользователя")]
+        public string DisplayName { get; set; }
     }
 }

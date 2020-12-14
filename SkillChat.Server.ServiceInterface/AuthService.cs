@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -21,6 +22,7 @@ namespace SkillChat.Server.ServiceInterface
         private const string SecretPostfix = "/secret";
 
         public IAsyncDocumentSession RavenSession { get; set; }
+        public IMapper Mapper { get; set; }
 
         #region Методы эндпоинтов
         public async Task<TokenResult> Post(RegisterNewUser request)
@@ -134,7 +136,7 @@ namespace SkillChat.Server.ServiceInterface
         }
 
         [Authenticate]
-        public async Task<UserProfileMold> Get(GetMyProfile request)
+        public async Task<MyUserProfileMold> Get(GetMyProfile request)
         {
             var session = Request.ThrowIfUnauthorized();
 
@@ -148,12 +150,8 @@ namespace SkillChat.Server.ServiceInterface
 
             var secret = await GetUserSecret(uid);
 
-            var profile = new UserProfileMold
-            {
-                UserId = session.UserAuthId,
-                Login = session.DisplayName,
-                IsPasswordSetted = secret?.Password != null,
-            };
+            var profile = Mapper.Map<MyUserProfileMold>(me);
+            profile.IsPasswordSetted = secret?.Password != null;
 
             return profile;
         }

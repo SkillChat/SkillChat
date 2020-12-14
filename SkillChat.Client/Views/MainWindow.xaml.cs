@@ -1,12 +1,13 @@
-﻿using Avalonia;
+﻿using System;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
-using System;
+using SkillChat.Client.ViewModel;
 
 namespace SkillChat.Client.Views
 {
-    public class MainWindow : Window
+    public class MainWindow : Window, IHaveWidth
     {
         public MainWindow()
         {
@@ -31,7 +32,6 @@ namespace SkillChat.Client.Views
 			{
                 textBox.Text += Environment.NewLine;
 			}
-
-		}
+        }
 	}
 }

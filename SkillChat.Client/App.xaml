@@ -2,6 +2,7 @@
     x:Class="SkillChat.Client.App"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
     xmlns:local="clr-namespace:SkillChat.Client">
     <Application.DataTemplates>
         <local:ViewLocator />
@@ -17,5 +18,50 @@
         <Style Selector="TextBox">
             <Setter Property="FontFamily" Value="Open Sans" />
         </Style>
-    </Application.Styles>
+		
+		<!--Кнопка оповещения-->
+			<Style Selector="Button.bell Image#bell">
+				<Setter Property="Source">
+					<Setter.Value>
+						<svg:SvgImage Source="/Assets/notification.svg" />
+					</Setter.Value>
+				</Setter>
+			</Style>
+
+		<!--Кнопка открыть профиль-->
+			<Style Selector="Button.profile Image#arrow_to_down">
+				<Setter Property="Source">
+					<Setter.Value>
+						<svg:SvgImage Source="/Assets/showArrow.svg" />
+					</Setter.Value>
+				</Setter>
+			</Style>
+		<!--Кнопка редактирование профиля-->
+		<Style Selector="Button.profile_edit Image#buttonImagePencil">
+			<Setter Property="Source">
+				<Setter.Value>
+					<svg:SvgImage Source="/Assets/pencil.svg" />
+				</Setter.Value>
+			</Setter>
+		</Style>
+		
+		<!--Кнопка сохранения профиля-->
+		<Style Selector="Button.profile_save Image#buttonImageSave">
+			<Setter Property="Source">
+				<Setter.Value>
+					<svg:SvgImage Source="/Assets/ok.svg" />
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<!--Кнопка скрыть профиль-->
+		<Style Selector="Button.profile_dd Image#arrow_to_up">
+			<Setter Property="Source">
+				<Setter.Value>
+					<svg:SvgImage Source="/Assets/arrow_to_up.svg" />
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+	</Application.Styles>
 </Application>

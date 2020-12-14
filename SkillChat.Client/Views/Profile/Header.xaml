@@ -1,0 +1,73 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
+             xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
+             x:Class="SkillChat.Client.Views.Profile.Header">
+
+  <!--Profile - Шапка профиля-->
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="2"/>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="20"/>
+      <ColumnDefinition Width="60"/>
+    </Grid.ColumnDefinitions>
+
+    <Grid Grid.Column="0" Background="#E0E0E0"/>
+
+	  <StackPanel Orientation="Horizontal">
+		  <Button
+			  VerticalAlignment="Center"
+			  Background="Transparent"
+			  BorderThickness="0"
+			  Command="{Binding WindowViewModel.LoadMessageHistoryCommand}"
+			  Content="Cтарые сообщения"
+			  FontSize="12"
+			  Grid.Column="2"
+			  HorizontalAlignment="Left"/>
+	  </StackPanel>
+
+    <Button
+			VerticalAlignment="Center"
+			Background="Transparent"
+			BorderThickness="0"
+			Classes="bell"
+			Grid.Column="2">
+      <Image Name="bell" Width="17.33" Height="18.67" />
+    </Button>
+
+    <Button
+			IsVisible="{Binding !isOpenProfile}"
+			VerticalAlignment="Center"
+			Background="Transparent"
+			BorderThickness="0"
+			ToolTip.Tip="Свой профиль"
+			Classes="profile"
+			ToolTip.Placement="Bottom"
+			ToolTip.HorizontalOffset="-70"
+			ToolTip.VerticalOffset="1"
+			Command="{Binding SetOpenProfileCommand}"
+			Grid.Column="3">
+      <Image Name="arrow_to_down" Width="20" Height="11"/>
+    </Button>
+
+    <Button
+			IsVisible="{Binding isOpenProfile}"
+			VerticalAlignment="Center"
+			Background="Transparent"
+			BorderThickness="0"
+			ToolTip.Tip="Скрыть свой профиль"
+			Classes="profile_dd"
+			ToolTip.Placement="Bottom"
+			ToolTip.HorizontalOffset="-100"
+			ToolTip.VerticalOffset="1"
+			Command="{Binding SetOpenProfileCommand}"
+			Grid.Column="3">
+      <Image Name="arrow_to_up" Width="20" Height="11"/>
+    </Button>
+
+  </Grid>
+</UserControl>
