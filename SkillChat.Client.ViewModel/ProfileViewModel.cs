@@ -18,8 +18,11 @@ namespace SkillChat.Client.ViewModel
     [AddINotifyPropertyChangedInterface]
     public class ProfileViewModel
     {
-        public ProfileViewModel(IJsonServiceClient serviceClient)
+        public ProfileViewModel(IJsonServiceClient serviceClient, MainWindowViewModel mainWindow)
         {
+
+            WindowViewModel = mainWindow;
+
             //Показать/скрыть панель профиля
             SetOpenProfileCommand = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -58,6 +61,8 @@ namespace SkillChat.Client.ViewModel
         public static double windowWidth { get; set; }
 
         public UserProfileMold Profile { get; set; }
+
+        public MainWindowViewModel WindowViewModel { get; set; }
 
         public ICommand ApplyProfileCommand { get; }
 

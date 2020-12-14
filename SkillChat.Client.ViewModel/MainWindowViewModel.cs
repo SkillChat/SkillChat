@@ -38,7 +38,7 @@ namespace SkillChat.Client.ViewModel
                 settings.HostUrl = "http://localhost:5000";
             }
             serviceClient = new JsonServiceClient(settings.HostUrl);
-            ProfileViewModel = new ProfileViewModel(serviceClient);
+            ProfileViewModel = new ProfileViewModel(serviceClient,this);
             UserName = settings.UserName;
             Tokens = new TokenResult { AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken };
 
