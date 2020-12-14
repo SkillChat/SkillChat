@@ -18,11 +18,6 @@
         <Style Selector="TextBox">
             <Setter Property="FontFamily" Value="Open Sans" />
         </Style>
-
-
-		<Style Selector="Button.bell /template/ ContentPresenter">
-			<Setter Property="Background" Value="Transparent" />
-		</Style>
 		
 		<!--Кнопка оповещения-->
 			<Style Selector="Button.bell Image#bell">
