@@ -145,6 +145,8 @@ namespace SkillChat.Client.ViewModel
                         {
                             newMessage.ShowLogin = true;
                         }
+
+                        MessageReceived?.Invoke(new ReceivedMessageArgs(newMessage));
                     });
 
                     _connection.Closed += connectionOnClosed();
@@ -370,5 +372,19 @@ namespace SkillChat.Client.ViewModel
         public ReactiveCommand<object, Unit> GoToRegisterCommand { get; }
         public RegisterUserViewModel RegisterUser { get; set; }
         public ICommand RegisterCommand { get; }
+
+        /// <summary>Происходит при добавлении нового сообщения в коллекцию сообщений</summary>
+        public event Action<ReceivedMessageArgs> MessageReceived;
     }
+
+
+    /// <summary>Хранилище аргументов соытия MessageReceived</summary>
+    public class ReceivedMessageArgs
+	{
+		public ReceivedMessageArgs(MessageViewModel message)
+		{
+			Message = message;
+		}
+		public MessageViewModel Message { get; set; }
+	}
 }
