@@ -124,7 +124,7 @@
                     Grid.Row="1" 
                     Grid.Column="0" 
                     IsVisible="{Binding ProfileViewModel.isShowChat}">
-					<ScrollViewer HorizontalScrollBarVisibility="Disabled">
+					<ScrollViewer Name="MessagesSV" HorizontalScrollBarVisibility="Disabled">
 						<ItemsControl
                             Grid.Row="3"
                             Grid.Column="0"
