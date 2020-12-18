@@ -297,9 +297,18 @@ namespace SkillChat.Client.ViewModel
            {
                IsShowingRegisterPage = true;
                IsShowingLoginPage = false;
+               RegisterUser.Login = User.UserName;
                User.Password = "";
-           });
+           }); 
+            
             RegisterUser = new RegisterUserViewModel();
+            RegisterUser.GoToLoginCommand = ReactiveCommand.Create<object>(_ =>
+            {
+                IsShowingRegisterPage = false;
+                IsShowingLoginPage = true;
+                RegisterUser.Password = "";
+                User.UserName = RegisterUser.Login;
+            });
             IsConnected = false; //Скрывает окно чата            
             RegisterCommand = ReactiveCommand.CreateFromTask(async () =>
             {

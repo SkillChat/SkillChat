@@ -16,6 +16,7 @@ namespace SkillChat.Client.ViewModel
         public string Login { get; set; }
 
         public ICommand RegisterCommand { get; }
+        public ICommand GoToLoginCommand { get; set; }
 
     }
 }

@@ -3,9 +3,11 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-  xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
+  xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+    xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
   mc:Ignorable="d"
-  Width="1600" 
+  Width="1600"
   Height="900"
   Background="White"
   x:Class="SkillChat.Client.Views.RegisterPage">
@@ -101,18 +103,35 @@
           </CheckBox>
 
         </StackPanel>
-        <TextBlock 
+        <TextBlock
           Foreground="Red"
           Text="{Binding ValidationError}"
           />
         <Button
             Grid.Column="2"
             MinWidth="300"
-            Margin="0,30,0,58"
+            Margin="0,30,0,20"
             Padding="10"
             Command="{Binding RegisterCommand}"
             Content="Зарегистрироваться"
             IsEnabled="{Binding RegisterUser.Consent}"/>
+        <TextBlock
+            x:Name="registerLinkTB"
+            Margin="0,0,0,32"
+            HorizontalAlignment="Center"
+            Background="#0000"
+            Classes="ClearContainer"
+            Cursor="Hand"
+            FontSize="16"
+            FontWeight="600"
+            Foreground="#FFA85E"
+            Text="Войти">
+          <i:Interaction.Behaviors>
+            <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #registerLinkTB}">
+              <ia:InvokeCommandAction Command="{Binding RegisterUser.GoToLoginCommand}" CommandParameter="{x:Null}" />
+            </ia:EventTriggerBehavior>
+          </i:Interaction.Behaviors>
+        </TextBlock>
       </StackPanel>
 
     </Grid>
