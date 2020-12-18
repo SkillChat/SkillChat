@@ -6,15 +6,6 @@ namespace SkillChat.Server.ServiceModel
 {
     [Api("Auth")]
     [ApiResponse(HttpStatusCode.BadRequest, "Неверно составлен запрос", ResponseType = typeof(void))]
-    [Route("/token", "GET", Summary = "Получение анонимного токена", Notes = "Для любых вызовов методов необходимо сначала получить токен")]
-    public class GetToken : IReturn<TokenResult>
-    {
-        [ApiMember(IsRequired = true, Description = "Псевдоним пользователя")]
-        public string Login { get; set; }
-    }
-
-    [Api("Auth")]
-    [ApiResponse(HttpStatusCode.BadRequest, "Неверно составлен запрос", ResponseType = typeof(void))]
     [ApiResponse(HttpStatusCode.NotFound, "Пара пользователя и пароля не найдена", ResponseType = typeof(void))]
     [ApiResponse(HttpStatusCode.ServiceUnavailable, "Сервис авторизации недоступен", ResponseType = typeof(void))]
     [Route("/password/login", "POST", Summary = "Логин с паролем", Notes = "Получение JWT токена через логин и пароль. Если пароля нет, то не пустит.")]

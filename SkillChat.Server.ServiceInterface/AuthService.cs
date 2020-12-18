@@ -156,30 +156,6 @@ namespace SkillChat.Server.ServiceInterface
             return profile;
         }
 
-        public async Task<TokenResult> Get(GetToken request)
-        {
-            request.Login = request.Login.ToLowerInvariant();
-            var user = await GetUserByLogin(request.Login);
-            if (user == null)
-            {
-                user = await CreateUser(request.Login);
-                await AddMemberInDefaultChat(user);
-            }
-            else
-            {
-                var secret = await GetUserSecret(user.Id);
-                if (secret != null)
-                {
-                    throw HttpError.Unauthorized("Need a password");
-                }
-            }
-
-            var token = await GenerateToken(user);
-
-            Log.Information($"Created tokens pair for {user.Login}({user.Id})");
-            return token;
-        }
-
         #endregion
 
         #region Внутренние методы
