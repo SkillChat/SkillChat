@@ -54,6 +54,7 @@ namespace SkillChat.Server
             });
             
             var host = (AppHostBase)app.ApplicationServices.GetService(typeof(AppHost));
+            ServiceStackHelper.Help();
             app.UseServiceStack(host);
         }
     }
