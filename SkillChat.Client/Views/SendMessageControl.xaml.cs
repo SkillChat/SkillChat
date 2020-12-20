@@ -1,12 +1,14 @@
-﻿using Avalonia;
+﻿using System;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using SkillChat.Client.ViewModel;
 
 namespace SkillChat.Client.Views
 {
 	public class SendMessageControl : UserControl
 	{
-		public SendMessageControl()
+        public SendMessageControl()
 		{
 			this.InitializeComponent();
 		}
@@ -15,5 +17,5 @@ namespace SkillChat.Client.Views
 		{
 			AvaloniaXamlLoader.Load(this);
 		}
-	}
+    }
 }

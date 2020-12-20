@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration;
 using SkillChat.Server.Domain;
+using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
 using SkillChat.Server.ServiceModel.Molds.Chats;
 
@@ -32,6 +33,10 @@ namespace SkillChat.Server
             cfg.CreateMap<User, MyUserProfileMold>()
                 .IncludeBase<User, UserProfileMold>()
                 .ForMember(m => m.IsPasswordSetted, e => e.Ignore());
+
+            cfg.CreateMap<Settings, UserChatSettings>();
+            cfg.CreateMap<SetSettings, Settings>()
+                .ForMember(m => m.Id, e => e.Ignore());
         }
     }
 }

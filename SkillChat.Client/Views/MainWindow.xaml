@@ -8,6 +8,7 @@
     xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
     xmlns:views="clr-namespace:SkillChat.Client.Views"
     xmlns:profile="clr-namespace:SkillChat.Client.Views.Profile"
+	xmlns:settings="clr-namespace:SkillChat.Client.Views.Settings"
     xmlns:interactivity="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
     xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
     Title="{Binding Title}"
@@ -28,6 +29,10 @@
     <core:EventTriggerBehavior EventName="LayoutUpdated" SourceObject="{Binding #WindowChat}">
       <core:InvokeCommandAction Command="{Binding ProfileViewModel.LayoutUpdatedWindow}" CommandParameter="{Binding #WindowChat}" />
     </core:EventTriggerBehavior>
+	  <!--  Settings  -->
+	  <core:EventTriggerBehavior EventName="PointerPressed"  SourceObject="{Binding #WindowChat}">
+		  <core:InvokeCommandAction Command="{Binding MorePointerPressedCommand}" CommandParameter="{Binding #WindowChat}" />
+	  </core:EventTriggerBehavior>
   </interactivity:Interaction.Behaviors>
 
   <Window.Styles>
@@ -46,61 +51,104 @@
                   ViewportSize="{TemplateBinding ViewportSize}"
                   Value="{TemplateBinding Value, Mode=TwoWay}">
 
-                <Thumb Name="thumb">
-                  <Thumb.Template>
-                    <ControlTemplate>
-                      <Border />
-                    </ControlTemplate>
-                  </Thumb.Template>
-                </Thumb>
-              </Track>
-            </Grid>
-          </Border>
-        </ControlTemplate>
-      </Setter>
-    </Style>
-    <Style Selector="ScrollBar:vertical /template/ Thumb Border">
-      <Setter Property="Background" Value="#BDBDBD" />
-      <Setter Property="CornerRadius" Value="2" />
-      <Setter Property="Width" Value="6" />
-    </Style>
-  </Window.Styles>
-  <Grid>
-    <Grid ColumnDefinitions="100, *">
-      <StackPanel Background="#7F57F0">
-        <Image Width="60" Margin="20">
-          <Image.Source>
-            <svg:SvgImage Source="/Assets/SkillChat_small.svg" />
-          </Image.Source>
-        </Image>
-        <Button Background="Transparent" BorderBrush="Transparent" BorderThickness="0"
+								<Thumb Name="thumb">
+									<Thumb.Template>
+										<ControlTemplate>
+											<Border />
+										</ControlTemplate>
+									</Thumb.Template>
+								</Thumb>
+							</Track>
+						</Grid>
+					</Border>
+				</ControlTemplate>
+			</Setter>
+		</Style>
+		<Style Selector="ScrollBar:vertical /template/ Thumb Border">
+			<Setter Property="Background" Value="#BDBDBD" />
+			<Setter Property="CornerRadius" Value="2" />
+			<Setter Property="Width" Value="6" />
+		</Style>
+    </Window.Styles>
+	<Grid>
+		<Grid ColumnDefinitions="100,*">
+			<StackPanel Background="#7F57F0">
+				<Image Width="60" Margin="20">
+					<Image.Source>
+						<svg:SvgImage Source="/Assets/SkillChat_small.svg" />
+					</Image.Source>
+				</Image>
+				<Button Background="Transparent"
+						IsVisible="{Binding !ProfileViewModel.isOpenProfile}"  
+						BorderBrush="Transparent" 
+						BorderThickness="0" 
+						Cursor="Hand"
+						Classes="profile"
                         Command="{Binding ProfileViewModel.SetOpenProfileCommand}">
-          <Image Width="13.33" Height="18.65" Margin="20">
-            <Image.Source>
-              <svg:SvgImage Source="/Assets/Profile.svg" />
-            </Image.Source>
-          </Image>
-        </Button>
-      </StackPanel>
-      <Grid Grid.Column="1" ColumnDefinitions="*,Auto">
-        <Grid.Background>
-          <ImageBrush
+					<Image Width="13.33" Height="18.65" Margin="20" Name="profile_white_icon"/>
+				</Button>
+				<Button
+		            IsVisible="{Binding ProfileViewModel.isOpenProfile}"
+		            Background="Transparent"
+					BorderBrush="Transparent" 
+		            BorderThickness="0"
+		            Cursor="Hand"
+		            Classes="profile_dd"
+		            Command="{Binding ProfileViewModel.SetOpenProfileCommand}">
+					<Image Name="profile_orange_icon" Margin="20" Width="13.33" Height="18.65"/>
+				</Button>
+			</StackPanel>
+	
+			<Button Background="Transparent" 
+						VerticalAlignment="Bottom" 
+						Margin="0 0 0 30" 
+						BorderBrush="Transparent" 
+						BorderThickness="0"
+						IsVisible="{Binding !SettingsViewModel.IsWindowSettings}"
+					    Command="{Binding SettingsViewModel.GoToSettingsCommand}" 
+						Classes="settings" 
+						Cursor="Hand">
+				<Image Width="18.67" Height="18.65" Margin="20" Name="settings"/>
+			</Button>
+			<Button Background="Transparent"
+				    VerticalAlignment="Bottom"
+					Margin="0 0 0 30"
+					BorderBrush="Transparent"
+					BorderThickness="0"
+					IsVisible="{Binding SettingsViewModel.IsWindowSettings}"
+					Command="{Binding SettingsViewModel.GoToSettingsCommand}"
+					Classes="settings_active"
+					Cursor="Hand">
+				<Image Width="18.67" Height="18.65" Margin="20" Name="settings_active"/>
+			</Button>
+			
+				
+			
+            <!--Settings-->
+			<Grid Grid.Column="1" ZIndex="10" IsVisible="{Binding SettingsViewModel.IsWindowSettings}">
+				<settings:Settings DataContext="{Binding SettingsViewModel}"/>
+			</Grid>
+			
+			
+			<Grid Grid.Column="1" ColumnDefinitions="*,Auto" >
+				<Grid.Background>
+					<ImageBrush
                         Source="/Assets/background.png"
                         Stretch="None"
                         SourceRect="0,0,152,152"
                         DestinationRect="0,0,152,152"
                         TileMode="Tile" />
-        </Grid.Background>
-        <Grid.RowDefinitions>
-          <RowDefinition Height="80" />
-          <RowDefinition />
-          <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-
-        <!--Header-->
-        <Grid ColumnDefinitions="*,Auto"
-              Grid.ColumnSpan="2"
-              Background="#F2F2F2" >
+				</Grid.Background>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="80" />
+					<RowDefinition />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+	
+				<!--Header-->
+                <Grid ColumnDefinitions="*,Auto" 
+                      Grid.ColumnSpan="2" 
+                      Background="#F2F2F2">
 
           <StackPanel
                         Grid.Row="1"
@@ -120,16 +168,26 @@
                             TextTrimming="WordEllipsis" />
           </StackPanel>
 
-          <!--Profile - Шапка профиля-->
-          <Grid Grid.Column="1" Width="390">
-            <profile:Header DataContext="{Binding ProfileViewModel}" />
-          </Grid>
-        </Grid>
-        <!--  Блок списка сообщений  -->
-        <Grid
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    IsVisible="{Binding ProfileViewModel.isShowChat}">
+					<!--Profile - Шапка профиля-->
+					<Grid Grid.Column="1" Width="390">
+                        <profile:Header DataContext="{Binding ProfileViewModel}" />
+						<!--Settings - Header -->
+						<Grid HorizontalAlignment="Right" VerticalAlignment="Top" 
+							  Margin="0 20 28 0" Width="40" Height="40" Background="Transparent">
+							<settings:Header DataContext="{Binding SettingsViewModel}" />
+						</Grid>
+						<!--Settings - Panel -->
+						<Grid  HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Height="62"  Margin="0 47 47 0" Background="Transparent">
+							<settings:More DataContext="{Binding SettingsViewModel}" />
+						</Grid>
+						
+					</Grid>
+				</Grid>
+                <!--  Блок списка сообщений  -->
+				<Grid 
+                    Grid.Row="1" 
+                    Grid.Column="0" 
+                    IsVisible="{Binding ProfileViewModel.isShowChat}" ZIndex="-1">
           <ScrollViewer Name="MessagesSV" HorizontalScrollBarVisibility="Disabled">
             <ItemsControl
                             Grid.Row="3"
@@ -230,34 +288,33 @@
                                                     VerticalAlignment="Bottom"
                                                     Classes="time"
                                                     Text="{Binding Time}" />
-                      </Grid>
-                    </Border>
-                  </StackPanel>
-                </DataTemplate>
-              </ItemsControl.DataTemplates>
-
-            </ItemsControl>
-          </ScrollViewer>
+											</Grid>
+                                        </Border>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.DataTemplates>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+                <!--  Блок отправки сообщения  -->
+                <Border Grid.Column="0"
+                    Grid.Row="2"
+                    MinHeight="50"
+                    MaxHeight="270"
+                    Margin="0"
+					IsVisible="{Binding ProfileViewModel.isShowChat}"
+                    Background="#E0E0E0"
+                    BorderBrush="#E0E0E0"
+                    BorderThickness="10">
+                    <views:SendMessageControl />
+                </Border>
+				<!--Profile - panel -->
+				<Grid Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Background="#ffffff" ZIndex="-1">
+					<profile:Settings DataContext="{Binding ProfileViewModel}" />
+				</Grid> 
+			</Grid>
         </Grid>
-        <!--  Блок отправки сообщения  -->
-        <Border Grid.Column="0"
-            Grid.Row="2"
-            MinHeight="50"
-            MaxHeight="270"
-            Margin="0"
-  IsVisible="{Binding ProfileViewModel.isShowChat}"
-            Background="#E0E0E0"
-            BorderBrush="#E0E0E0"
-            BorderThickness="10">
-          <views:SendMessageControl />
-        </Border>
-        <!--Profile - panel -->
-        <Grid Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Background="#ffffff">
-          <profile:Settings DataContext="{Binding ProfileViewModel}" />
-        </Grid>
-      </Grid>
+		<views:LoginPage VerticalAlignment="Stretch" IsVisible="{Binding IsShowingLoginPage, Mode=OneWay}" />
+        <views:RegisterPage VerticalAlignment="Stretch" IsVisible="{Binding IsShowingRegisterPage, Mode=OneWay}" />
     </Grid>
-    <views:LoginPage VerticalAlignment="Stretch" IsVisible="{Binding IsShowingLoginPage, Mode=OneWay}" />
-    <views:RegisterPage VerticalAlignment="Stretch" IsVisible="{Binding IsShowingRegisterPage, Mode=OneWay}" />
-  </Grid>
 </Window>

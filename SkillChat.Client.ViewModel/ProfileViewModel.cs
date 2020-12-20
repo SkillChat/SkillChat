@@ -20,9 +20,7 @@ namespace SkillChat.Client.ViewModel
     {
         public ProfileViewModel(IJsonServiceClient serviceClient, MainWindowViewModel mainWindow)
         {
-
             WindowViewModel = mainWindow;
-
             //Показать/скрыть панель профиля
             SetOpenProfileCommand = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -32,6 +30,7 @@ namespace SkillChat.Client.ViewModel
                     isEditProfile = false;
                 }
                 isOpenProfile = !isOpenProfile;
+                WindowViewModel.SettingsViewModel.IsWindowSettings = false;
             });
             //Показать/скрыть редактирование профиля
             SetEditProfileCommand = ReactiveCommand.CreateFromTask(async () => { isEditProfile = true; });
@@ -50,7 +49,6 @@ namespace SkillChat.Client.ViewModel
                     isShowChat = !isOpenProfile || window.Width > 650;
                 }
             });
-            
         }
 
         //Profile
@@ -69,8 +67,6 @@ namespace SkillChat.Client.ViewModel
         public ICommand SetOpenProfileCommand { get; }
 
         public ICommand SetEditProfileCommand { get; }
-
-        public double WindowWidth { get; set; }
 
         public ReactiveCommand<object, Unit> LayoutUpdatedWindow { get; }
     }

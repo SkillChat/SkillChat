@@ -1,6 +1,7 @@
 <Style
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
   
     <Style.Resources>
@@ -54,6 +55,9 @@
         <SolidColorBrush x:Key="ThemeAccentBrush4" Color="{DynamicResource ThemeAccentColor4}" />
         <SolidColorBrush x:Key="ErrorBrush" Color="{DynamicResource ErrorColor}" />
         <SolidColorBrush x:Key="ErrorLowBrush" Color="{DynamicResource ErrorLowColor}" />
+
+		<SolidColorBrush x:Key="White" Color="#FFFFFF"/>
+		<SolidColorBrush x:Key="Orange" Color="#FF9337"/>
 
         <Thickness x:Key="ThemeBorderThickness">2</Thickness>
         <sys:Double x:Key="ThemeDisabledOpacity">0.5</sys:Double>

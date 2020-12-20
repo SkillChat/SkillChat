@@ -1,0 +1,111 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:settings="clr-namespace:SkillChat.Client.Views.Settings"
+             xmlns:profile="clr-namespace:SkillChat.Client.Views.Profile"
+             xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
+             xmlns:interactivity="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+             x:Class="SkillChat.Client.Views.Settings.Settings"
+			 Name="Settings">
+	
+	<interactivity:Interaction.Behaviors>
+		<!--  Settings  -->
+		<core:EventTriggerBehavior EventName="PointerPressed"  SourceObject="{Binding #Settings}">
+			<core:InvokeCommandAction Command="{Binding MorePointerPressedCommand}" CommandParameter="{Binding #Settings}" />
+		</core:EventTriggerBehavior>
+	</interactivity:Interaction.Behaviors>
+
+    <Grid Grid.Column="1" ColumnDefinitions="*,Auto">
+        <Grid.Background>
+            <ImageBrush
+                Source="/Assets/background.png"
+                Stretch="None"
+                SourceRect="0,0,152,152"
+                DestinationRect="0,0,152,152" />
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80" />
+            <RowDefinition Height="2" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Grid Background="#E0E0E0" Grid.Row="1" />
+
+        <!--Header-->
+        <Grid Grid.Row="0">
+            <Grid Background="#F2F2F2" ColumnDefinitions="310,*">
+                <Grid
+                    Grid.Column="0"
+                    Margin="20,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center">
+                    <TextBlock
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Text="Настройки" />
+                    <TextBlock
+                        FontSize="14"
+                        FontWeight="Regular"
+                        Foreground="#828282"
+                        Text="{Binding MembersCaption}"
+                        TextTrimming="WordEllipsis" />
+                </Grid>
+
+                <Grid Grid.Column="1">
+                    <profile:Header DataContext="{Binding ProfileViewModel}" />
+                    <!--Settings - Header -->
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 20 28 0" Width="40" Height="40"
+                          Background="Transparent">
+                        <settings:Header />
+                    </Grid>
+                    <!--Settings - Panel -->
+                    <Grid HorizontalAlignment="Right" IsVisible="{Binding IsOpenSettings}" Width="200" Height="62"
+                          VerticalAlignment="Top" Margin="0 47 47 0" Background="Transparent">
+                        <settings:More />
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+
+
+        <Grid Background="#E0E0E0" Grid.Row="2" Grid.Column="0" ZIndex="-1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="310" />
+                <ColumnDefinition Width="2" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid Background="#F2F2F2" Grid.Column="0">
+                <TextBlock
+                    Margin="20 10 0 0"
+                    Background="#0000"
+                    Cursor="Hand"
+                    FontSize="15"
+                    FontWeight="600"
+                    Foreground="Black"
+                    Text="Сообщения и чаты" />
+            </Grid>
+            <Grid Background="#FFFFFF" Grid.Column="3" ZIndex="10">
+                <WrapPanel>
+                    <TextBlock
+                        Margin="20 10 0 0"
+                        Background="#0000"
+                        Cursor="Hand"
+                        FontSize="15"
+                        FontWeight="600"
+                        Foreground="Black"
+                        Text="Отправлять сообщения клавишей" />
+                    <RadioButton Margin="25 6 0 0" Cursor="Hand" Command="{Binding SettingsCommand}" Content="Enter"
+                                 GroupName="TypeMessages" IsChecked="{Binding TypeEnter}" FontWeight="600"
+                                 FontSize="16" />
+                    <RadioButton Margin="25 6 0 0" Cursor="Hand" Command="{Binding SettingsCommand}" Content="Ctrl+Enter"
+                                 GroupName="TypeMessages" IsChecked="{Binding !TypeEnter}" FontWeight="600"
+                                 FontSize="16" />
+                </WrapPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>
