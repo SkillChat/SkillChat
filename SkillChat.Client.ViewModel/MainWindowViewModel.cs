@@ -173,9 +173,10 @@ namespace SkillChat.Client.ViewModel
                     User.Password = "";
                 }
                 catch (Exception ex)
-                {
+                {                    
                     //Изменение параеметров TextBox в случае ошибки                    
                     User.Error("неверный логин или пароль");
+                    ErrorBe?.Invoke();
                     IsShowingLoginPage = _connection.State != HubConnectionState.Connected ? true : false;
                     //Messages.Add(ex.Message);
                 }
@@ -352,9 +353,6 @@ namespace SkillChat.Client.ViewModel
                     Notify.WindowIsActive = win.IsActive;
                 }
             });
-            //Изменение параеметров TextBox в в начальное положение
-            ResetErrorCommand = ReactiveCommand.Create<object>(_ => { User.Reset(); });
-
         }
 
         public DateTimeOffset ExpireTime { get; set; }
@@ -423,7 +421,14 @@ namespace SkillChat.Client.ViewModel
         /// <summary>
         /// Сброс параметров
         /// </summary>
-        public ICommand ResetErrorCommand { get; }
+        public void ResetErrorCommand()
+        {
+            User.Reset();
+            ResetError?.Invoke();
+        }
+
+        public event Action ErrorBe;
+        public event Action ResetError;
     }
 
     /// <summary>Хранилище аргументов соытия MessageReceived</summary>

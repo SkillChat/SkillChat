@@ -17,8 +17,6 @@ namespace SkillChat.Client.ViewModel
         {
             IsPassword = false;
             PassError = false;
-            CurrentColor = BaseColor;
-            ForegroundColor = BaseForegroundColor;
         }
         public string UserName { get; set; }
 
@@ -43,49 +41,23 @@ namespace SkillChat.Client.ViewModel
         /// <summary>
         /// Текст ошибки
         /// </summary>
-        public string ErrorMsg { get; set; }
+        public string ErrorMsg { get; set; }        
         /// <summary>
-        /// текущий Цвет для TerxtBox
-        /// </summary>
-        public string CurrentColor { get; set; }
-        /// <summary>
-        /// Цвет текста
-        /// </summary>
-        public string ForegroundColor { get; set; }
-        /// <summary>
-        /// Цвет при ошибке
-        /// </summary>
-        public readonly string ErrorColor = "#FFA85E";
-        /// <summary>
-        /// Базовый цвет
-        /// </summary>
-        public readonly string BaseColor = "#9976FB";
-        /// <summary>
-        /// Цвет foreground
-        /// </summary>
-        public readonly string BaseForegroundColor = "#7F57F0";
-        /// <summary>
-        /// Цвет foregroundпри ошибке
-        /// </summary>
-        public readonly string ErrorForegroundColor = "#FFC797";
-        /// <summary>
-        /// Сброс свойств при 
+        /// Сброс свойств на исходные
         /// </summary>
         public void Reset()
         {
             PassError = false;
-            CurrentColor = BaseColor;
             ErrorMsg = "";
-            ForegroundColor = BaseForegroundColor;
         }
-
+        /// <summary>
+        /// Изменение при ошибке
+        /// </summary>
+        /// <param name="errorMsg">Текст сообщения об ошибке</param>
         public void Error(string errorMsg)
         {
             PassError = true;
-            CurrentColor = ErrorColor;
-            ForegroundColor = ErrorForegroundColor;
             ErrorMsg = errorMsg;
         }
-
     }
 }
