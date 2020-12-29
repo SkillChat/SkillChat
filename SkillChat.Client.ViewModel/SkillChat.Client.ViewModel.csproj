@@ -12,8 +12,8 @@
     <PackageReference Include="SignalR.EasyUse.Client" Version="0.2.1" />
     <PackageReference Include="WritableJsonConfiguration" Version="3.1.9" />
   </ItemGroup>
-
-	<ItemGroup>
+  
+  <ItemGroup>
     <ProjectReference Include="..\SkillChat.Interface\SkillChat.Interface.csproj" />
     <ProjectReference Include="..\SkillChat.Server.ServiceModel\SkillChat.Server.ServiceModel.csproj" />
   </ItemGroup>

@@ -1,0 +1,50 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="SkillChat.Client.Views.NotifyWindow"
+		xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
+		Height="70"
+        Width="340"
+		TransparencyLevelHint="Transparent"
+		Background="Transparent"
+		HasSystemDecorations="False"
+        Title="Notify">
+	<Border CornerRadius="8,0,0,8"  Background="#F2EEFF"  Width="340" Height="70">
+		<Grid Background="Transparent" ColumnDefinitions="60,*,60" >
+
+
+			<Image Grid.Column="0" Width="40" Height="40" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10 15 0 0">
+				<Image.Source>
+					<svg:SvgImage Source="/Assets/smallLogoChat.svg" />
+				</Image.Source>
+			</Image>
+
+
+			<StackPanel Grid.Column="1">
+				<WrapPanel Margin="0 14 0 0">
+					<Image  Width="10" Height="10" >
+						<Image.Source>
+							<svg:SvgImage Source="/Assets/smallIconGroup.svg" />
+						</Image.Source>
+					</Image>
+
+					<TextBlock Margin="5 0 0 0" FontSize="15" FontWeight="600">Общий чат</TextBlock>
+
+				</WrapPanel>
+				<WrapPanel>
+					<TextBlock  Margin="0 2 0 0" FontSize="14" FontWeight="400" Text="{Binding UserLogin}"/>
+					<TextBlock  Margin="0 2 0 0" FontSize="14" FontWeight="400" Text="{Binding Text}"/>
+				</WrapPanel>
+			</StackPanel>
+
+
+			<Image Grid.Column="2" Width="40" Height="40" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10 15 0 0">
+				<Image.Source>
+					<svg:SvgImage Source="/Assets/smallLogoChat.svg" />
+				</Image.Source>
+			</Image>
+		</Grid>
+	</Border>
+</Window>

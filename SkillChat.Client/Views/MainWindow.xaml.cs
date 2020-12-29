@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -8,7 +7,7 @@ using SkillChat.Client.ViewModel;
 
 namespace SkillChat.Client.Views
 {
-    public class MainWindow : Window, IHaveWidth
+    public class MainWindow : Window, IHaveWidth, IHaveIsActive
     {
         public MainWindow()
         {
@@ -18,6 +17,14 @@ namespace SkillChat.Client.Views
 #if DEBUG
             this.AttachDevTools();
 #endif
+        }
+
+        public void LayoutUpdated_window(object sender, EventArgs e)
+        {
+            if (sender is MainWindow window && DataContext is MainWindowViewModel dataContext)
+            {
+                dataContext.windowIsFocused = window.IsFocused;
+            }
         }
 
         /// <summary>Контрол скролла для списка сообщений</summary>
