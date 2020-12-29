@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using ReactiveUI;
-using SkillChat.Client.Notification.Views;
+﻿using ReactiveUI;
+using SkillChat.Client.ViewModel;
 
 namespace SkillChat.Client.Notification.ViewModels
 {
@@ -10,7 +7,7 @@ namespace SkillChat.Client.Notification.ViewModels
     {
         private string _userLogin = "";
         private string _text = "";
-        private Notify _window;
+        private INotify _window;
 
         public string UserLogin
         {
@@ -24,7 +21,7 @@ namespace SkillChat.Client.Notification.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _text, value);
         }
 
-        public NotifyViewModel(string title, string text, Notify window)
+        public NotifyViewModel(string title, string text, INotify window)
         {
             (UserLogin, Text, _window) = (title, text, window);
         }

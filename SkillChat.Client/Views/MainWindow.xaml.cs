@@ -7,7 +7,7 @@ using SkillChat.Client.ViewModel;
 
 namespace SkillChat.Client.Views
 {
-    public class MainWindow : Window, IHaveWidth
+    public class MainWindow : Window, IHaveWidth, IHaveIsActive
     {
         public MainWindow()
         {

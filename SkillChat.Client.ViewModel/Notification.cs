@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Avalonia;
 using SkillChat.Client.Notification.ViewModels;
+using Splat;
 
-namespace SkillChat.Client.Notification
+namespace SkillChat.Client.ViewModel
 {
     public class Notification
     {
         private static Notification _manager;
-        private List<Views.Notify> _notificationWindows = new List<Views.Notify>();
+        private List<INotify> _notificationWindows = new List<INotify>();
 
 
         //Добавление увдеомлений в очередь
-        private void Add(Views.Notify window)
+        private void Add(INotify window)
         {
             _notificationWindows.Add(window);
             Reposition();
@@ -27,10 +27,8 @@ namespace SkillChat.Client.Notification
                 if (!window.IsClosed)
                 {
                     count++;
-                    window.Position = new PixelPoint(
-                        window.Screens.Primary.WorkingArea.BottomRight.X - (int) window.Width,
-                        window.Screens.Primary.WorkingArea.BottomRight.Y - count * (int) window.Height - 50 -
-                        10 * count);
+                    window.SetPosition(window.ScreenBottomRightX - (int)window.Width, window.ScreenBottomRightY - count * (int)window.Height - 50 -
+                            10 * count);
                 }
             }
         }
@@ -43,12 +41,12 @@ namespace SkillChat.Client.Notification
         //Вызов окна
         public async Task Show(string title, string text, int? timeShow = 10000)
         {
-            var w = new Views.Notify();
+            var w = Locator.Current.GetService<INotify>();
             w.ShowInTaskbar = false;
             w.Topmost = true;
             w.DataContext = new NotifyViewModel(title, text, w);
             w.Show();
-            w.Closed += delegate { Reposition(); };
+            w.OnClosed(Reposition);
             Add(w);
 
             if (timeShow != null)

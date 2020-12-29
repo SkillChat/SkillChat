@@ -14,7 +14,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\SkillChat.Client.Notification\SkillChat.Client.Notification.csproj" />
     <ProjectReference Include="..\SkillChat.Interface\SkillChat.Interface.csproj" />
     <ProjectReference Include="..\SkillChat.Server.ServiceModel\SkillChat.Server.ServiceModel.csproj" />
   </ItemGroup>

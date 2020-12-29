@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia.Controls;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
 using PropertyChanged;
@@ -148,7 +147,7 @@ namespace SkillChat.Client.ViewModel
                             }
 
                             if (!windowIsFocused)
-                                await Notification.Notification.Manager.Show(
+                                await Notification.Manager.Show(
                                     $"{(newMessage.UserLogin != null && newMessage.UserLogin.Length > 10 ? string.Concat(newMessage.UserLogin.Remove(10, newMessage.UserLogin.Length - 10), "...") : newMessage.UserLogin)} : ",
                                     $"\"{(newMessage.Text.Length > 10 ? string.Concat(newMessage.Text.Remove(10, newMessage.Text.Length - 10), "...") : newMessage.Text)}\"");
                         }
@@ -348,7 +347,7 @@ namespace SkillChat.Client.ViewModel
 
             NotifyCommand = ReactiveCommand.Create<object>(obj =>
             {
-                if (obj is Window win)
+                if (obj is IHaveIsActive win)
                 {
                     Notify.WindowIsActive = win.IsActive;
                 }

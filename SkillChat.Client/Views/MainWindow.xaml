@@ -19,12 +19,12 @@
     Icon="/Assets/skillchat-logo.ico"
     mc:Ignorable="d">
 
-  <!--  Profile  -->
-  <!--  Notify  -->
   <interactivity:Interaction.Behaviors>
+    <!--  Notify  -->
     <core:EventTriggerBehavior EventName="LayoutUpdated" SourceObject="{Binding #WindowChat}">
       <core:InvokeCommandAction Command="{Binding NotifyCommand}" CommandParameter="{Binding #WindowChat}" />
     </core:EventTriggerBehavior>
+    <!--  Profile  -->
     <core:EventTriggerBehavior EventName="LayoutUpdated" SourceObject="{Binding #WindowChat}">
       <core:InvokeCommandAction Command="{Binding ProfileViewModel.LayoutUpdatedWindow}" CommandParameter="{Binding #WindowChat}" />
     </core:EventTriggerBehavior>
