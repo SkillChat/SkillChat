@@ -21,7 +21,7 @@
                     Width="18">
               <Panel>
                 <Path x:Name="PART_GlyphElement_Reveal"
-                      Fill="{Binding User.CurrentColor}"
+                      Fill="{Binding #PasswordBr.BorderBrush}"
                       Data="{DynamicResource PasswordBoxRevealButtonData}"
                       Height="10"
                       Width="18"
@@ -29,7 +29,7 @@
                       VerticalAlignment="Center"
                       HorizontalAlignment="Center" />
                 <Path x:Name="PART_GlyphElement_Hide"
-                      Fill="{Binding User.CurrentColor}"
+                      Fill="{Binding #PasswordBr.BorderBrush}"
                       Data="{DynamicResource PasswordBoxHideButtonData}"
                       Height="12"
                       Width="18"
@@ -51,7 +51,7 @@
     <Style Selector="ToggleButton.passwordBoxRevealButtonSkillChat:checked /template/ Path#PART_GlyphElement_Reveal">
       <Setter Property="IsVisible" Value="False" />
     </Style>
-    <!--End Password Style-->
+    <!--End Password Style    -->
 
 
     <Style Selector="TextBlock.UpperWatermark">
@@ -61,11 +61,27 @@
       <Setter Property="VerticalAlignment" Value="Center" />
       <Setter Property="FontStyle" Value="Italic" />
     </Style>
+    <Style Selector="TextBlock.Error">
+      <Setter Property="Foreground" Value="#FFA85E" />
+    </Style>
     <Style Selector="TextBox">
       <Setter Property="FontSize" Value="18" />
-      <Setter Property="Foreground" Value="{Binding User.ForegroundColor}" />
       <Setter Property="BorderBrush" Value="#FFFFFF"/>
       <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Margin" Value="0,2" />
+      <Setter Property="Height" Value="42" />
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Width" Value="220"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Background" Value="#FFFFFF"/>
+      <Setter Property="TextAlignment" Value="Center"/>
+      <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+    <Style Selector="TextBox.Base">
+      <Setter Property="Foreground" Value="#7F57F0" />
+    </Style>
+    <Style Selector="TextBox.Error">
+      <Setter Property="Foreground" Value="#FFC797" />
     </Style>
 
     <Style Selector="Image.ImageTbx">
@@ -73,9 +89,18 @@
       <Setter Property="Height" Value="20" />
       <Setter Property="IsVisible" Value="{Binding User.PassError}"/>
     </Style>
-
     <Style Selector="Border">
       <Setter Property="CornerRadius" Value="2" />
+      <Setter Property="BorderThickness" Value="2" />
+      <Setter Property="Width" Value="300" />
+      <Setter Property="Height" Value="50" />
+    </Style>
+    
+    <Style Selector="Border.Base">
+      <Setter Property="BorderBrush" Value="#9976FB"></Setter>
+    </Style>
+    <Style Selector="Border.Error">
+      <Setter Property="BorderBrush" Value="#FFA85E"></Setter>
     </Style>
     <Style Selector="Button /template/ ContentPresenter">
       <Setter Property="CornerRadius" Value="2" />
@@ -127,52 +152,42 @@
           MaxWidth="380"
           HorizontalAlignment="Center">
         <StackPanel>
-          <TextBlock Classes="UpperWatermark" Text="Логин"  />
+          <TextBlock Classes="UpperWatermark" 
+                     x:Name="LoginTB"
+                     Text="Логин"  />
           <Border Background="White"
-             BorderBrush="{Binding User.CurrentColor}"
-             BorderThickness="2"
-             Height="50"
-             MaxWidth="300"
-                        >
+                  Name="LoginBr"
+                  Classes="Base">
             <StackPanel  Orientation="Horizontal">
-              <Panel Margin="16,16,5 ,16"
-                     Width="20">
-              </Panel>
-              <TextBox
-              Margin="0,2"
-              Height="42"
-              VerticalContentAlignment="Center"
-              Width="220"
-              VerticalAlignment="Center"
-              Background="#FFFFFF"
-              Text="{Binding User.UserName}"
-              TextAlignment="Center"
-              TextWrapping="Wrap">
-                <i:Interaction.Behaviors>
-                  <ia:EventTriggerBehavior EventName="KeyDown" SourceObject="{Binding #PasswordTB}">
-                    <ia:InvokeCommandAction Command="{Binding ResetErrorCommand}" CommandParameter="{x:Null}" />
-                  </ia:EventTriggerBehavior>
-                </i:Interaction.Behaviors>
-              </TextBox>
-              <Panel Margin="5,15,16,15">
-                <Image
-                  Classes="ImageTbx">
-                  <Image.Source>
-                    <svg:SvgImage Source="/Assets/atention.svg" />
-                  </Image.Source>
-                </Image>
-              </Panel>
-            </StackPanel>
+                    <Panel Margin="16,16,5 ,16"
+                           Width="20">
+                    </Panel>
+                    <TextBox x:Name="LoginTbx"
+                             Classes="Base"
+                             Text="{Binding User.UserName}">
+                             <i:Interaction.Behaviors>
+                              <ia:EventTriggerBehavior EventName="KeyDown" SourceObject="{Binding #PasswordTB}">
+                               <ia:InvokeCommandAction Command="{Binding ResetErrorCommand}" CommandParameter="{x:Null}" />
+                              </ia:EventTriggerBehavior>
+                            </i:Interaction.Behaviors>
+                     </TextBox>
+                     <Panel Margin="5,15,16,15">
+                      <Image Classes="ImageTbx">
+                             <Image.Source>
+                               <svg:SvgImage Source="/Assets/atention.svg" />
+                             </Image.Source>
+                           </Image>
+                         </Panel>
+              </StackPanel>
           </Border>
         </StackPanel>
         <StackPanel Margin="0,7,0,0">
-          <TextBlock Classes="UpperWatermark" Text="Пароль" />
+          <TextBlock Classes="UpperWatermark"
+                     x:Name="PasswordTBL"
+                     Text="Пароль" />
           <Border Background="White"
-            BorderBrush="{Binding User.CurrentColor}"
-            BorderThickness="2"
-            Height="50"
-            MaxWidth="300"
-                        >
+                  x:Name="PasswordBr"
+                  Classes="Base">
             <StackPanel  Orientation="Horizontal">
               <Panel Margin="16,16,5 ,16"
                      Width="18">
@@ -181,20 +196,13 @@
                      Classes="passwordBoxRevealButtonSkillChat"
                      Background="Transparent" 
                      Cursor="Hand"
-                     IsChecked="{Binding #PasswordTB.RevealPassword, Mode=TwoWay}" />
+                     IsChecked="{Binding #PasswordTB.RevealPassword, Mode=TwoWay}"/>
               </Panel>
               <TextBox
               x:Name="PasswordTB"
-              Margin="0,2"
-              Height="42"
-              VerticalContentAlignment="Center"
-              Width="220"
-              VerticalAlignment="Center"
-              Background="#FFFFFF"
+              Classes="Base"              
               Text="{Binding User.Password}"
-              PasswordChar="*"
-              TextAlignment="Center"
-              TextWrapping="Wrap">
+              PasswordChar="*">
                 <TextBox.KeyBindings>
                   <KeyBinding Command="{Binding ConnectCommand}" Gesture="Enter" />
                 </TextBox.KeyBindings>
@@ -217,6 +225,7 @@
         </StackPanel>
         <TextBlock
             HorizontalAlignment="Center"
+            Name="ErrorTbx"
             Height="30"
             Background="#0000"
             Classes="ClearContainer"
@@ -255,7 +264,6 @@
           </i:Interaction.Behaviors>
         </TextBlock>
       </StackPanel>
-
     </Grid>
   </Grid>
 </UserControl>
