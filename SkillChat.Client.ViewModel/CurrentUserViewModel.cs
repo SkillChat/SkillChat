@@ -31,11 +31,11 @@ namespace SkillChat.Client.ViewModel
             }
         }
         /// <summary>
-        /// Состояние для возможности отобажения пароля
+        /// Состояние для возможности отображения пароля
         /// </summary>
         public bool IsPassword { get; set; }
         /// <summary>
-        /// Состояние для возможности отобажения - произошла ошибкаы
+        /// Состояние для возможности отображения - произошла ошибка
         /// </summary>
         public bool PassError { get; set; }
         /// <summary>

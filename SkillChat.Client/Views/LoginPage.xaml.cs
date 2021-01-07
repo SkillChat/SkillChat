@@ -44,11 +44,6 @@ namespace SkillChat.Client.Views
             }
         }
 
-        void SetStyle()
-        {
-
-        }
-
         //Коллекция контролов для изменения стилей
         List<Control> controlsStyles;
     }
