@@ -14,6 +14,7 @@ namespace SkillChat.Client.ViewModel
         public bool Consent { get; set; }
 
         public string Login { get; set; }
+        public string UserName { get; set; }
 
         public ICommand RegisterCommand { get; }
         public ICommand GoToLoginCommand { get; set; }
