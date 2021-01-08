@@ -20,11 +20,64 @@
 	<UserControl.Resources>
 		<utils:KeyConverter x:Key="keyConverter"/>
 	</UserControl.Resources>
-    <Grid ColumnDefinitions="*,Auto">
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="30"></ColumnDefinition>
+        <ColumnDefinition Width="*"></ColumnDefinition>
+        <ColumnDefinition Width="30"></ColumnDefinition>
+      </Grid.ColumnDefinitions>
+      <Button
+            x:Name="OpenEmoji"
+            Grid.Column="0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            Width="30"
+            Height="30"
+            Background="#C4C4C4"
+            BorderThickness="0"
+            Command = "{Binding OpenEmojiCommand}">
+        <Image
+                Name="buttonImageEmoji"
+                Height="20" />
+        <Button.Styles>
+          <Style Selector="Button /template/ ContentPresenter">
+            <Setter Property="CornerRadius" Value="2" />
+          </Style>
+          <Style Selector="Button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#FFFFFF" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#FF9133" />
+          </Style>
+          <Style Selector="Button Image#buttonImageEmoji">
+            <Setter Property="Source">
+              <Setter.Value>
+                <svg:SvgImage Source="/Assets/smile.svg" />
+              </Setter.Value>
+            </Setter>
+          </Style>
+          <Style Selector="Button:pointerover Image#buttonImageEmoji">
+            <Setter Property="Source">
+              <Setter.Value>
+                <svg:SvgImage Source="/Assets/smile_orange.svg" />
+              </Setter.Value>
+            </Setter>
+          </Style>
+          <Style Selector="Button:pressed Image#buttonImageEmoji">
+            <Setter Property="Source">
+              <Setter.Value>
+                <svg:SvgImage Source="/Assets/smile.svg" />
+              </Setter.Value>
+            </Setter>
+          </Style>
+          <Style Selector="Button:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#FF9133" />
+          </Style>
+        </Button.Styles>
+      </Button>
         <!--  Текстовое поле ввода сообщения  -->
 		<TextBox
             Name="inputMessageTB"
-            Grid.Column="0"
+            Grid.Column="1"
             Padding="10,5,2,5"
             AcceptsReturn="True"
             BorderThickness="0"
@@ -39,7 +92,7 @@
         <!--  Кнопка отправки сообщения  -->
         <Button
             x:Name="sendButton"
-            Grid.Column="1"
+            Grid.Column="2"
             Width="30"
             Height="30"
             Padding="0"
