@@ -7,6 +7,7 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="10.1.1" />
+	    <PackageReference Include="InputSimulatorCore" Version="1.0.5" />
         <PackageReference Include="PropertyChanged.Fody" Version="3.3.3" />
         <PackageReference Include="ReactiveUI" Version="13.2.18" />
         <PackageReference Include="ServiceStack.Client" Version="5.11.0" />

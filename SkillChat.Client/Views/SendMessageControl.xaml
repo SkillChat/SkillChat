@@ -22,14 +22,65 @@
 
 
   <Grid ColumnDefinitions="Auto,*,Auto">
-    <Button Grid.Column="0"
-            x:Name="attachButton"
-            Margin="0 0 5 0"
+    <StackPanel Orientation="Horizontal" Grid.Column="0">
+      <Button
+         x:Name="OpenEmoji"
+         Grid.Column="0"
+         HorizontalAlignment="Left"
+         VerticalAlignment="Bottom"
+         Width="30"
+         Height="30"
+         Background="#C4C4C4"
+         BorderThickness="0"
+         Command = "{Binding OpenEmojiCommand}">
+        <Image
+            Name="buttonImageEmoji"
+            Height="20" />
+        <Button.Styles>
+          <Style Selector="Button /template/ ContentPresenter">
+            <Setter Property="CornerRadius" Value="2" />
+          </Style>
+          <Style Selector="Button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#FFFFFF" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#FF9133" />
+          </Style>
+          <Style Selector="Button Image#buttonImageEmoji">
+            <Setter Property="Source">
+              <Setter.Value>
+                <svg:SvgImage Source="/Assets/smile.svg" />
+              </Setter.Value>
+            </Setter>
+          </Style>
+          <Style Selector="Button:pointerover Image#buttonImageEmoji">
+            <Setter Property="Source">
+              <Setter.Value>
+                <svg:SvgImage Source="/Assets/smile_orange.svg" />
+              </Setter.Value>
+            </Setter>
+          </Style>
+          <Style Selector="Button:pressed Image#buttonImageEmoji">
+            <Setter Property="Source">
+              <Setter.Value>
+                <svg:SvgImage Source="/Assets/smile.svg" />
+              </Setter.Value>
+            </Setter>
+          </Style>
+          <Style Selector="Button:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#FF9133" />
+          </Style>
+        </Button.Styles>
+      </Button>
+   
+      <Button 
+          x:Name="attachButton"
+          Margin="0 0 5 0"
           Command="{Binding AttachMenuCommand}" Classes="attachBtn Send-Btn">
-      <Image Name="AttachImage"
+        <Image Name="AttachImage"
              Width="20"
              Height="20"/>
-    </Button>
+      </Button>
+    </StackPanel>
     <!--Текстовое поле ввода сообщения  -->
     <TextBox
       Name="InputMessageTB"

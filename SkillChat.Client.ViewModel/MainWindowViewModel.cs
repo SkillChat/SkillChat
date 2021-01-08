@@ -279,6 +279,11 @@ namespace SkillChat.Client.ViewModel
                 ConnectCommand.Execute(null);
             }
 
+            OpenEmojiCommand = ReactiveCommand.Create(() =>
+            {
+                Emoji.OpenEmoji();
+            });
+
             SendCommand = ReactiveCommand.CreateFromTask(async () =>
                 {
                     try
@@ -522,6 +527,7 @@ namespace SkillChat.Client.ViewModel
         public string MembersCaption { get; set; }
 
         public ICommand ConnectCommand { get; }
+        public ICommand OpenEmojiCommand { get; }
 
         public ICommand SendCommand { get; }
 
