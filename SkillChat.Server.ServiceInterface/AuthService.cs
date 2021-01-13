@@ -35,7 +35,7 @@ namespace SkillChat.Server.ServiceInterface
             if (string.IsNullOrWhiteSpace(request.Password))
                 throw new HttpError(HttpStatusCode.BadRequest, "Пароль не может быть пустым");
 
-            user = await CreateUser(login, request.Password);
+            user = await CreateUser(login, request.UserName, request.Password );
             await AddMemberInDefaultChat(user);
 
             var tokenResult = await GenerateToken(user);
@@ -233,13 +233,14 @@ namespace SkillChat.Server.ServiceInterface
             return user;
         }
 
-        private async Task<User> CreateUser(string login, string password = null)
+        private async Task<User> CreateUser(string login, string userName, string password = null)
         {
             var uid = $"{UserPrefix}{Guid.NewGuid()}";
             var user = new User
             {
                 Id = uid,
                 Login = login,
+                DisplayName = String.IsNullOrWhiteSpace(userName)? null: userName,
                 RegisteredTime = DateTimeOffset.UtcNow,
             };
             await RavenSession.StoreAsync(user);

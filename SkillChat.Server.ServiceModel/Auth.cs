@@ -71,6 +71,10 @@ namespace SkillChat.Server.ServiceModel
 
         [ApiMember(IsRequired = true, Description = "Пароль")]
         public string Password { get; set; }
+
+        [ApiMember(IsRequired = false, Description = "Имя пользователя")]
+        public string UserName { get; set; }
+
     }
 
 }

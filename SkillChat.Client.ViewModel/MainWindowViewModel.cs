@@ -329,6 +329,7 @@ namespace SkillChat.Client.ViewModel
                         throw new Exception("Не заполнены логин и/или пароль");
                     request.Login = RegisterUser.Login;
                     request.Password = RegisterUser.Password;
+                    request.UserName = RegisterUser.UserName;
 
                     Tokens = await serviceClient.PostAsync(request);
 

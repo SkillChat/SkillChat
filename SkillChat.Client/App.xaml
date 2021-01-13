@@ -18,6 +18,9 @@
         <Style Selector="TextBox">
             <Setter Property="FontFamily" Value="Open Sans" />
         </Style>
+      <Style Selector="CheckBox">
+        <Setter Property="FontFamily" Value="Open Sans" />
+      </Style>
 		
 		<!--Кнопка оповещения-->
 			<Style Selector="Button.bell Image#bell">
