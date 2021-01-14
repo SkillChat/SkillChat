@@ -29,6 +29,7 @@ namespace SkillChat.Client.ViewModel
             User = new CurrentUserViewModel();
             configuration = Locator.Current.GetService<IConfiguration>();
             settings = configuration.GetSection("ChatClientSettings").Get<ChatClientSettings>();
+
             if (settings == null)
             {
                 settings = new ChatClientSettings();
@@ -41,8 +42,14 @@ namespace SkillChat.Client.ViewModel
 
             serviceClient = new JsonServiceClient(settings.HostUrl);
             ProfileViewModel = new ProfileViewModel(serviceClient, this);
+
+            SettingsViewModel = new SettingsViewModel(serviceClient);
+            SettingsViewModel.ProfileViewModel = ProfileViewModel;
+            SettingsViewModel.IsWindowSettingsEvent += (e) => { ProfileViewModel.isOpenProfile = false; };
+            SettingsViewModel.TypeEnterEvent += (e) => { KeySendMessage = e; };
+     
             User.UserName = settings.UserName;
-            Tokens = new TokenResult { AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken };
+            Tokens = new TokenResult {AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken};
 
             Messages = new ObservableCollection<IMessagesContainerViewModel>();
           
@@ -60,7 +67,7 @@ namespace SkillChat.Client.ViewModel
                     if (Tokens == null || Tokens.AccessToken.IsNullOrEmpty())
                     {
                         Tokens = await serviceClient.PostAsync(new AuthViaPassword
-                        { Login = User.UserName, Password = User.Password });
+                            {Login = User.UserName, Password = User.Password});
                         settings.AccessToken = Tokens.AccessToken;
                         settings.RefreshToken = Tokens.RefreshToken;
                         settings.UserName = User.UserName;
@@ -107,8 +114,11 @@ namespace SkillChat.Client.ViewModel
                             LoadMessageHistoryCommand.Execute(null);
                             //Получаем профиль
                             ProfileViewModel.Profile = await serviceClient.GetAsync(new GetMyProfile());
+                            //Получаем настройки
+                            SettingsViewModel.ChatSettings = await serviceClient.GetAsync(new GetMySettings());
                         }
                     });
+
 
                     _connection.Subscribe<ReceiveMessage>(async data =>
                     {
@@ -302,13 +312,13 @@ namespace SkillChat.Client.ViewModel
             IsShowingRegisterPage = false;
             IsShowingLoginPage = true;
             GoToRegisterCommand = ReactiveCommand.Create<object>(_ =>
-           {
-               IsShowingRegisterPage = true;
-               IsShowingLoginPage = false;
-               RegisterUser.Login = User.UserName;
-               User.Password = "";
-           }); 
-            
+            {
+                IsShowingRegisterPage = true;
+                IsShowingLoginPage = false;
+                RegisterUser.Login = User.UserName;
+                User.Password = "";
+            });
+
             RegisterUser = new RegisterUserViewModel();
             RegisterUser.GoToLoginCommand = ReactiveCommand.Create<object>(_ =>
             {
@@ -353,6 +363,10 @@ namespace SkillChat.Client.ViewModel
                 {
                     Notify.WindowIsActive = win.IsActive;
                 }
+            });
+            MorePointerPressedCommand = ReactiveCommand.Create<object>(obj =>
+            {
+                SettingsViewModel.IsOpenSettings = false;
             });
         }
 
@@ -399,10 +413,14 @@ namespace SkillChat.Client.ViewModel
 
         public ICommand SendCommand { get; }
 
+        public bool KeySendMessage { get; set; }
+
         public ICommand LoadMessageHistoryCommand { get; }
         public ICommand SignOutCommand { get; }
         public bool windowIsFocused { get; set; }
         public static ReactiveCommand<object, Unit> NotifyCommand { get; set; }
+
+        public static ReactiveCommand<object, Unit> MorePointerPressedCommand { get; set; }
 
         public ProfileViewModel ProfileViewModel { get; set; }
 
@@ -413,6 +431,8 @@ namespace SkillChat.Client.ViewModel
         public ReactiveCommand<object, Unit> GoToRegisterCommand { get; }
         public RegisterUserViewModel RegisterUser { get; set; }
         public ICommand RegisterCommand { get; }
+
+        public SettingsViewModel SettingsViewModel { get; set; }
 
         /// <summary>Происходит при добавлении нового сообщения в коллекцию сообщений</summary>
         public event Action<ReceivedMessageArgs> MessageReceived;

@@ -54,16 +54,6 @@ namespace SkillChat.Client.Views
             AvaloniaXamlLoader.Load(this);
         }
 
-        /// <summary>Переопределение стандартного поеведения по нажатиям на клавиши клавиатуры у поля ввода сообщений</summary>
-        /// <param name="sender">Инициатор (ТекстБокс)</param>
-        /// <param name="e">Переданные параметры</param>
-		public void InputMessageTB_KeyDown(object sender, KeyEventArgs e)
-		{
-            var textBox = sender as TextBox;
-            if (e.Key == Key.Enter && e.KeyModifiers == KeyModifiers.Control)
-			{
-                textBox.Text += Environment.NewLine;
-			}
-        }
-	}
+    
+    }
 }

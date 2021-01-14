@@ -12,59 +12,13 @@
         <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml" />
         <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml" />
         <StyleInclude Source="/Assets/SkillChat.xaml" />
+		<StyleInclude Source="/Styles/ProfileStyle.xaml" />
+		<StyleInclude Source="/Styles/SettingsStyle.xaml" />
         <Style Selector="TextBlock">
             <Setter Property="FontFamily" Value="Open Sans" />
         </Style>
         <Style Selector="TextBox">
             <Setter Property="FontFamily" Value="Open Sans" />
         </Style>
-      <Style Selector="CheckBox">
-        <Setter Property="FontFamily" Value="Open Sans" />
-      </Style>
-		
-		<!--Кнопка оповещения-->
-			<Style Selector="Button.bell Image#bell">
-				<Setter Property="Source">
-					<Setter.Value>
-						<svg:SvgImage Source="/Assets/notification.svg" />
-					</Setter.Value>
-				</Setter>
-			</Style>
-
-		<!--Кнопка открыть профиль-->
-			<Style Selector="Button.profile Image#arrow_to_down">
-				<Setter Property="Source">
-					<Setter.Value>
-						<svg:SvgImage Source="/Assets/showArrow.svg" />
-					</Setter.Value>
-				</Setter>
-			</Style>
-		<!--Кнопка редактирование профиля-->
-		<Style Selector="Button.profile_edit Image#buttonImagePencil">
-			<Setter Property="Source">
-				<Setter.Value>
-					<svg:SvgImage Source="/Assets/pencil.svg" />
-				</Setter.Value>
-			</Setter>
-		</Style>
-		
-		<!--Кнопка сохранения профиля-->
-		<Style Selector="Button.profile_save Image#buttonImageSave">
-			<Setter Property="Source">
-				<Setter.Value>
-					<svg:SvgImage Source="/Assets/ok.svg" />
-				</Setter.Value>
-			</Setter>
-		</Style>
-
-		<!--Кнопка скрыть профиль-->
-		<Style Selector="Button.profile_dd Image#arrow_to_up">
-			<Setter Property="Source">
-				<Setter.Value>
-					<svg:SvgImage Source="/Assets/arrow_to_up.svg" />
-				</Setter.Value>
-			</Setter>
-		</Style>
-
 	</Application.Styles>
 </Application>

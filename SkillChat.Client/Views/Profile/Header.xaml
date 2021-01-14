@@ -13,7 +13,7 @@
       <ColumnDefinition Width="2"/>
       <ColumnDefinition Width="*"/>
       <ColumnDefinition Width="20"/>
-      <ColumnDefinition Width="60"/>
+	  <ColumnDefinition Width="40"/>
     </Grid.ColumnDefinitions>
 
     <Grid Grid.Column="0" Background="#E0E0E0"/>
@@ -26,24 +26,15 @@
 			  Command="{Binding WindowViewModel.LoadMessageHistoryCommand}"
 			  Content="Cтарые сообщения"
 			  FontSize="12"
-			  Grid.Column="2"
 			  HorizontalAlignment="Left"/>
 	  </StackPanel>
-
-    <Button
-			VerticalAlignment="Center"
-			Background="Transparent"
-			BorderThickness="0"
-			Classes="bell"
-			Grid.Column="2">
-      <Image Name="bell" Width="17.33" Height="18.67" />
-    </Button>
-
+	  
     <Button
 			IsVisible="{Binding !isOpenProfile}"
 			VerticalAlignment="Center"
 			Background="Transparent"
 			BorderThickness="0"
+			Cursor="Hand"
 			ToolTip.Tip="Свой профиль"
 			Classes="profile"
 			ToolTip.Placement="Bottom"
@@ -51,7 +42,7 @@
 			ToolTip.VerticalOffset="1"
 			Command="{Binding SetOpenProfileCommand}"
 			Grid.Column="3">
-      <Image Name="arrow_to_down" Width="20" Height="11"/>
+      <Image Name="profile_icon" Width="13.33" Height="18.65"/>
     </Button>
 
     <Button
@@ -59,14 +50,15 @@
 			VerticalAlignment="Center"
 			Background="Transparent"
 			BorderThickness="0"
+			Cursor="Hand"
 			ToolTip.Tip="Скрыть свой профиль"
 			Classes="profile_dd"
 			ToolTip.Placement="Bottom"
-			ToolTip.HorizontalOffset="-100"
+			ToolTip.HorizontalOffset="-115"
 			ToolTip.VerticalOffset="1"
 			Command="{Binding SetOpenProfileCommand}"
 			Grid.Column="3">
-      <Image Name="arrow_to_up" Width="20" Height="11"/>
+      <Image Name="profile_orange_icon" Width="13.33" Height="18.65"/>
     </Button>
 
   </Grid>
