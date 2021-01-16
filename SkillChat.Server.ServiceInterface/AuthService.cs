@@ -68,7 +68,7 @@ namespace SkillChat.Server.ServiceInterface
             if (string.IsNullOrWhiteSpace(secret?.Password))
                 throw new HttpError(HttpStatusCode.NotFound, "Password is not set");
 
-            if (secret.Password != request.Password)
+            if (secret.Password != Hashing.CreateHashPassword(request.Password, secret.Salt))
                 throw new HttpError(HttpStatusCode.NotFound, "Password is wrong");
 
             var customAccessExpire = (request.AccessTokenExpirationPeriod.HasValue && request.AccessTokenExpirationPeriod >= 0)
@@ -247,10 +247,13 @@ namespace SkillChat.Server.ServiceInterface
 
             if (password!=null)
             {
+                byte[] salt = Hashing.CreateSalt();
+
                 var secret = new UserSecret
                 {
                     Id = uid+SecretPostfix,
-                    Password = password,
+                    Salt = salt,
+                    Password = Hashing.CreateHashPassword(password, salt),
                 };
                 await RavenSession.StoreAsync(secret);
             }
