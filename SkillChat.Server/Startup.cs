@@ -54,7 +54,8 @@ namespace SkillChat.Server
             });
             
             var host = (AppHostBase)app.ApplicationServices.GetService(typeof(AppHost));
-            ServiceStackHelper.Help();
+            var ssKey = Configuration.GetSection("ServiceStack")["LicenseKey"];
+            Licensing.RegisterLicense(ssKey);
             app.UseServiceStack(host);
         }
     }
