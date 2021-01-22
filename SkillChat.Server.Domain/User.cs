@@ -19,5 +19,6 @@ namespace SkillChat.Server.Domain
     {
         public string Id { get; set; }
         public string Password { get; set; }
+        public byte[] Salt { get; set; }
     }
 }
