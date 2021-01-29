@@ -24,15 +24,15 @@ namespace SkillChat.Client.ViewModel
                     {
                         new MyMessageViewModel
                         {
-                            UserLogin = "kibnet",
+                            UserNickname = "kibnet",
                             Text = "Привет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\n",
                             PostTime = DateTimeOffset.Now.AddDays(-1),
                             Id = "1",
-                            ShowLogin = true,
+                            ShowNickname = true,
                         }
                         ,new MyMessageViewModel
                         {
-                            UserLogin = "kibnet",
+                            UserNickname = "kibnet",
                             Text = "Есть кто?",
                             PostTime = DateTimeOffset.Now,
                             Id = "2"
@@ -45,15 +45,15 @@ namespace SkillChat.Client.ViewModel
                     {
                         new UserMessageViewModel
                         {
-                            UserLogin = "alice",
+                            UserNickname = "alice",
                             Text = "Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? ",
                             PostTime = DateTimeOffset.Now.AddDays(-1),
                             Id = "1",
-                            ShowLogin = true,
+                            ShowNickname = true,
                         }
                         ,new UserMessageViewModel
                         {
-                            UserLogin = "alice",
+                            UserNickname = "alice",
                             Text = "Есть кто?",
                             PostTime = DateTimeOffset.Now,
                             Id = "2"
@@ -67,15 +67,15 @@ namespace SkillChat.Client.ViewModel
                     {
                         new MyMessageViewModel
                         {
-                            UserLogin = "kibnet",
+                            UserNickname = "kibnet",
                             Text = "Привет, как дела?",
                             PostTime = DateTimeOffset.Now.AddDays(-1),
                             Id = "1",
-                            ShowLogin = true,
+                            ShowNickname = true,
                         }
                         ,new MyMessageViewModel
                         {
-                            UserLogin = "kibnet",
+                            UserNickname = "kibnet",
                             Text = "Есть кто?",
                             PostTime = DateTimeOffset.Now,
                             Id = "2"
@@ -88,15 +88,15 @@ namespace SkillChat.Client.ViewModel
                     {
                         new UserMessageViewModel
                         {
-                            UserLogin = "alice",
+                            UserNickname = "alice",
                             Text = "Привет, как дела?",
                             PostTime = DateTimeOffset.Now.AddDays(-1),
                             Id = "1",
-                            ShowLogin = true,
+                            ShowNickname = true,
                         }
                         ,new UserMessageViewModel
                         {
-                            UserLogin = "alice",
+                            UserNickname = "alice",
                             Text = "Есть кто?",
                             PostTime = DateTimeOffset.Now,
                             Id = "2"
@@ -110,11 +110,11 @@ namespace SkillChat.Client.ViewModel
                     {
                         new UserMessageViewModel
                         {
-                            UserLogin = "bob",
+                            UserNickname = "bob",
                             Text = "Привет, как дела?",
                             PostTime = DateTimeOffset.Now,
                             Id = "1",
-                            ShowLogin = true,
+                            ShowNickname = true,
                         }
                     }
                 }
