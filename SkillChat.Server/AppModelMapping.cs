@@ -33,6 +33,10 @@ namespace SkillChat.Server
             cfg.CreateMap<User, MyUserProfileMold>()
                 .IncludeBase<User, UserProfileMold>()
                 .ForMember(m => m.IsPasswordSetted, e => e.Ignore());
+            cfg.CreateMap<SetProfile, User>()
+                .ForMember(m => m.Id, e => e.Ignore())
+                .ForMember(m => m.RegisteredTime, e => e.Ignore())
+                .ForMember(m => m.Login, e => e.Ignore());
 
             cfg.CreateMap<Settings, UserChatSettings>();
             cfg.CreateMap<SetSettings, Settings>()

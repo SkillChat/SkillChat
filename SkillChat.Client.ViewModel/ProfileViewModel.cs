@@ -36,8 +36,16 @@ namespace SkillChat.Client.ViewModel
             ApplyProfileNameCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 Profile = await serviceClient.PostAsync(new SetProfile
-                    {DisplayName = Profile.DisplayName});
+                    {DisplayName = Profile.DisplayName, AboutMe = Profile.AboutMe });
                 IsEditNameProfile = false;
+            });
+
+            //Сохранить изменения AboutMe профиля
+            ApplyProfileAboutMeCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                Profile = await serviceClient.PostAsync(new SetProfile
+                    { AboutMe = Profile.AboutMe, DisplayName = Profile.DisplayName });
+                IsEditAboutMeProfile = false;
             });
 
             //Скрытие окна 
@@ -52,6 +60,10 @@ namespace SkillChat.Client.ViewModel
 
             //Показать/скрыть редактирование профиля
             SetEditNameProfileCommand = ReactiveCommand.CreateFromTask(async () => { IsEditNameProfile = true; });
+            SetEditAboutMeProfileCommand = ReactiveCommand.CreateFromTask(async () => { IsEditAboutMeProfile = true; });
+
+            //Показать/скрыть PopupMenuProfile
+            PopupMenuProfile = ReactiveCommand.Create<object>(obj => { IsOpenMenu = !IsOpenMenu; });
 
             //Показать/скрыть PopupMenuProfile
             PopupMenuProfile = ReactiveCommand.Create<object>(obj => { IsOpenMenu = !IsOpenMenu; });
@@ -74,23 +86,27 @@ namespace SkillChat.Client.ViewModel
         public bool IsOpenProfile { get; set; }
         public bool IsOpenMenu { get; set; }
         public bool IsEditNameProfile { get; set; }
+        public bool IsEditAboutMeProfile { get; set; }
         public bool IsShowChat { get; set; } = false;
         public static double WindowWidth { get; set; }
         public bool SignOut { get; set; }
         public bool LoadMessageHistory { get; set; }
 
         public ICommand ApplyProfileNameCommand { get; }
+        public ICommand ApplyProfileAboutMeCommand { get; }
         public ICommand SetOpenProfileCommand { get; }
         public ICommand SetEditNameProfileCommand { get; }
         public ICommand SignOutCommand { get; }
         public ICommand LoadMessageHistoryCommand { get; }
+        public ICommand SetEditAboutMeProfileCommand { get; }
+
 
         public UserProfileMold Profile { get; set; }
 
         public event Action<bool> IsOpenProfileEvent;
         public event Action<bool> SignOutEvent;
         public event Action<bool> LoadMessageHistoryEvent;
-
+  
 
         public ReactiveCommand<object, Unit> LayoutUpdatedWindow { get; }
         public ReactiveCommand<object, Unit> PopupMenuProfile { get; }
