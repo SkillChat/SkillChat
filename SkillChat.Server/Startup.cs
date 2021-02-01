@@ -28,7 +28,7 @@ namespace SkillChat.Server
             services.AddSingleton<AppHost>();
 
             services.AddRavenDbServices();
-            
+
             services.AddSignalR();
 
             var mapper = AppModelMapping.ConfigureMapping();
@@ -52,10 +52,11 @@ namespace SkillChat.Server
             {
                 endpoints.MapHub<ChatHub>("/chathub");
             });
-            
+
             var host = (AppHostBase)app.ApplicationServices.GetService(typeof(AppHost));
-            var ssKey = Configuration.GetSection("ServiceStack")["LicenseKey"];
-            Licensing.RegisterLicense(ssKey);
+
+            new ServiceStackKey().Register(Configuration);
+
             app.UseServiceStack(host);
         }
     }
