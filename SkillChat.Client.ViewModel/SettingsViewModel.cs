@@ -15,16 +15,24 @@ namespace SkillChat.Client.ViewModel
         public SettingsViewModel(IJsonServiceClient serviceClient)
         {
             ChatSettings = new UserChatSettings();
-            OpenSettingsCommand = ReactiveCommand.CreateFromTask(async () => { IsOpenSettings = !IsOpenSettings; });
+            OpenSettingsCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                IsHeaderMenuPopup = !IsHeaderMenuPopup;
+                IsHeaderMenuPopupEvent?.Invoke(IsHeaderMenuPopup);
+            });
 
             GoToSettingsCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                IsOpenSettings = false;
+                IsHeaderMenuPopup = false;
                 IsWindowSettings = !IsWindowSettings;
+                IsWindowSettingsEvent?.Invoke(IsWindowSettings);
                 var settings = await serviceClient.GetAsync(new GetMySettings());
 
                 if (settings.SendingMessageByEnterKey)
+                {
                     TypeEnter = settings.SendingMessageByEnterKey;
+                    TypeEnterEvent?.Invoke(TypeEnter);
+                }
             });
 
             SettingsCommand = ReactiveCommand.CreateFromTask(async () =>
@@ -33,47 +41,25 @@ namespace SkillChat.Client.ViewModel
                 ChatSettings = settings;
             });
 
-            MorePointerPressedCommand = ReactiveCommand.Create<object>(obj =>
-            {
-                IsOpenSettings = false;
-            });
-
+            MorePointerPressedCommand = ReactiveCommand.Create<object>(obj => { IsHeaderMenuPopup = false; });
         }
 
         public ICommand OpenSettingsCommand { get; }
         public ICommand GoToSettingsCommand { get; }
         public ICommand SettingsCommand { get; }
 
-        public bool IsOpenSettings { get; set; }
 
-        private bool _typeEnter;
-        public bool TypeEnter
-        {
-            get => _typeEnter;
-            set
-            {
-                _typeEnter = value;
-                TypeEnterEvent?.Invoke(value);
-            }
-            
-        }
+        public bool IsHeaderMenuPopup { get; set; }
+        public bool TypeEnter { get; set; }
+        public bool IsWindowSettings { get; set; }
 
-        private bool _isWindowSettings;
-        public bool IsWindowSettings
-        {
-            get => _isWindowSettings;
-            set
-            {
-                _isWindowSettings = value;
-                IsWindowSettingsEvent?.Invoke(value);
-            }
-        }
 
         public event Action<bool> IsWindowSettingsEvent;
         public event Action<bool> TypeEnterEvent;
+        public event Action<bool> IsHeaderMenuPopupEvent;
+
 
         public UserChatSettings ChatSettings { get; set; }
-        public ProfileViewModel ProfileViewModel { get; set; }
         public static ReactiveCommand<object, Unit> MorePointerPressedCommand { get; set; }
     }
 }

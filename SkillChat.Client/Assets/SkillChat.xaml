@@ -58,6 +58,8 @@
 
         <SolidColorBrush x:Key="White" Color="#FFFFFF"/>
         <SolidColorBrush x:Key="Orange" Color="#FF9337"/>
+        <SolidColorBrush x:Key="Violet" Color="#6B3FE7"/>
+        <SolidColorBrush x:Key="Transparent" Color="Transparent"/>
 
         <Thickness x:Key="ThemeBorderThickness">2</Thickness>
         <sys:Double x:Key="ThemeDisabledOpacity">0.5</sys:Double>

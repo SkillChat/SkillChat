@@ -3,9 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             xmlns:settings="clr-namespace:SkillChat.Client.Views.Settings"
-             xmlns:profile="clr-namespace:SkillChat.Client.Views.Profile"
-             xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
              xmlns:interactivity="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              x:Class="SkillChat.Client.Views.Settings.Settings"
@@ -18,60 +15,15 @@
         </core:EventTriggerBehavior>
     </interactivity:Interaction.Behaviors>
 
-    <Grid Grid.Column="1" ColumnDefinitions="*,Auto">
-        <Grid.Background>
-            <ImageBrush
-                Source="/Assets/background.png"
-                Stretch="None"
-                SourceRect="0,0,152,152"
-                DestinationRect="0,0,152,152" />
-        </Grid.Background>
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="80" />
             <RowDefinition Height="2" />
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <Grid Background="#E0E0E0" Grid.Row="1" />
+        <Grid Background="#E0E0E0" Grid.Row="0" />
 
-        <!--Header-->
-        <Grid Grid.Row="0">
-            <Grid Background="#F2F2F2" ColumnDefinitions="310,*">
-                <Grid
-                    Grid.Column="0"
-                    Margin="20,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center">
-                    <TextBlock
-                        FontSize="16"
-                        FontWeight="SemiBold"
-                        Text="Настройки" />
-                    <TextBlock
-                        FontSize="14"
-                        FontWeight="Regular"
-                        Foreground="#828282"
-                        Text="{Binding MembersCaption}"
-                        TextTrimming="WordEllipsis" />
-                </Grid>
-
-                <Grid Grid.Column="1">
-                    <profile:Header DataContext="{Binding ProfileViewModel}" />
-                    <!--Settings - Header -->
-                    <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 20 28 0" Width="40" Height="40"
-                          Background="Transparent">
-                        <settings:Header />
-                    </Grid>
-                    <!--Settings - Panel -->
-                    <Grid HorizontalAlignment="Right" IsVisible="{Binding IsOpenSettings}" Width="200" Height="62"
-                          VerticalAlignment="Top" Margin="0 47 47 0" Background="Transparent">
-                        <settings:More />
-                    </Grid>
-                </Grid>
-            </Grid>
-        </Grid>
-
-
-        <Grid Background="#E0E0E0" Grid.Row="2" Grid.Column="0" ZIndex="-1">
+        <Grid Background="#E0E0E0" Grid.Row="2" Grid.Column="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="310" />
                 <ColumnDefinition Width="2" />
@@ -88,7 +40,7 @@
                     Foreground="Black"
                     Text="Сообщения и чаты" />
             </Grid>
-            <Grid Background="#FFFFFF" Grid.Column="3" ZIndex="10">
+            <Grid Background="#FFFFFF" Grid.Column="3">
                 <WrapPanel>
                     <TextBlock
                         Margin="20 10 0 0"
