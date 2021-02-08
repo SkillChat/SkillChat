@@ -23,10 +23,58 @@ namespace SkillChat.Client.ViewModel
     }
 
     [AddINotifyPropertyChangedInterface]
-    public class MyMessageViewModel : MessageViewModel { }
+    public class MyMessageViewModel : MessageViewModel
+    {
+        public MyMessageViewModel() : base()
+        {
+            this.WhenAnyValue(r => r.ReadCount).Subscribe(ri =>
+            {
+                if (ri > 0) IsRead = true;
+            });
+
+            this.WhenAnyValue(r => r.ReceivedCount).Subscribe(re =>
+            {
+                if (re > 0) IsReceived = true;
+            });
+        }
+        /// <summary>Отправлено ли на сервер</summary>
+        public bool IsSended { get; set; }
+        /// <summary>Сколько раз прочитали</summary>
+        public long ReadCount { get; set; }
+        /// <summary>Сколько раз получили</summary>
+        public long ReceivedCount { get; set; }
+        /// <summary>Получено ли</summary>
+        public bool IsReceived { get; set; }
+        /// <summary>Прочитано ли</summary>
+        public bool IsRead { get; set; }
+    }
 
     [AddINotifyPropertyChangedInterface]
-    public class UserMessageViewModel : MessageViewModel { }
+    public class UserMessageViewModel : MessageViewModel
+    {
+        public UserMessageViewModel()
+        {
+            this.WhenAnyValue(r => r.Received).Subscribe(_ =>
+            {
+                ReceiveAction?.Invoke(this);
+            });
+            this.WhenAnyValue(r => r.Read).Subscribe(_ =>
+            {
+                ReadAction?.Invoke(this);
+            });
+        }
+
+        /// <summary>Получено ли</summary>
+        public bool Received { get; set; }
+
+        /// <summary>Прочитано ли</summary>
+        public bool Read { get; set; }
+
+        /// <summary>Возникает при изменении статуса о получении</summary>
+        public Action<UserMessageViewModel> ReceiveAction;
+        /// <summary>Возникает при измененении статуса о прочтении</summary>
+        public Action<UserMessageViewModel> ReadAction;
+    }
 
     [AddINotifyPropertyChangedInterface]
     public class MessageViewModel

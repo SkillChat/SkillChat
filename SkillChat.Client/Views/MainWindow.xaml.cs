@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using SkillChat.Client.Utils;
 using SkillChat.Client.ViewModel;
 
 namespace SkillChat.Client.Views
@@ -36,13 +37,24 @@ namespace SkillChat.Client.Views
 			if (this.DataContext is MainWindowViewModel vm)
 			{
                 vm.MessageReceived += x => MessagesScroller.PropertyChanged += ScrollToEndMethod;
-			}
+                vm.MessageReceived += ReceivedMessageArgs =>
+                {
+                    if (ReceivedMessageArgs.Message is UserMessageViewModel userMessage)
+                    {
+                        MessageStatusesSetter.SetReceived(userMessage);
+                    }
+                    else if (ReceivedMessageArgs.Message is MyMessageViewModel myMessage)
+                    {
+                        MessageStatusesSetter.SetSended(myMessage);
+                    }
+                };
+            }
 		}
 
         /// <summary>При изменении размеров ScrollView скролит его вниз</summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-		private void ScrollToEndMethod(object sender, AvaloniaPropertyChangedEventArgs e)
+        private void ScrollToEndMethod(object sender, AvaloniaPropertyChangedEventArgs e)
 		{
 			if (e.Property.PropertyType.Name == "Size")
 				MessagesScroller.ScrollToEnd();
