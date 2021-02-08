@@ -7,7 +7,16 @@
     <Application.DataTemplates>
         <local:ViewLocator />
     </Application.DataTemplates>
-
+    <!--<Application.Resources>
+        <ResourceInclude Source="/Styles/MessageStatuseMark.xaml" />
+    </Application.Resources>-->
+    <Application.Resources>
+        <ResourceDictionary>
+            <svg:SvgImage x:Key="ReadMessageMark" Source="/Assets/Images/MessageStatus/Message_Read_Mark.svg" />
+            <svg:SvgImage x:Key="ReceivedMessageMark" Source="/Assets/Images/MessageStatus/Message_Received_Mark.svg" />
+            <svg:SvgImage x:Key="SendedMessageMark" Source="/Assets/Images/MessageStatus/Message_Sended_Mark.svg" />
+        </ResourceDictionary>
+    </Application.Resources>
     <Application.Styles>
         <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml" />
         <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml" />
