@@ -30,8 +30,11 @@ namespace SkillChat.Server
 
             cfg.CreateMap<Message, MessageMold>()
                 .ForMember(m => m.UserNickName, e => e.Ignore())
-                .ForMember(m => m.Attachments, e => e.Ignore());
-
+                .ForMember(m => m.Attachments, e => e.Ignore())
+                .ForMember(m => m.ReadCount, e => e.Ignore())
+                .ForMember(m => m.Read, e => e.Ignore())
+                .ForMember(m => m.ReceivedCount, e => e.Ignore())
+                .ForMember(m => m.Received, e => e.Ignore());
             cfg.CreateMap<User, UserProfileMold>();
             cfg.CreateMap<User, MyUserProfileMold>()
                 .IncludeBase<User, UserProfileMold>()

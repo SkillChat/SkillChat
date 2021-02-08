@@ -45,6 +45,7 @@
 
     <Window.Resources>
         <utils:GridLengthValueConverter x:Key="GridLengthValueConverter" />
+        <utils:MessageStatusMarkConverter x:Key="MarkConverter" />
     </Window.Resources>
 
     <Window.Styles>
@@ -588,11 +589,16 @@
                                                         Classes="message"
                                                         IsReadOnly="True"
                                                         Text="{Binding Text}" />
-                                                    <TextBlock
+                                                    <StackPanel
+                                                        Orientation="Horizontal"
+                                                        Grid.Row="2"
                                                         HorizontalAlignment="Right"
-                                                        VerticalAlignment="Bottom"
-                                                        Classes="time"
-                                                        Text="{Binding Time}" />
+                                                        VerticalAlignment="Bottom">
+                                                        <Image Source ="{Binding ., Converter={StaticResource MarkConverter}}" />
+                                                        <TextBlock
+                                                            Classes="time"
+                                                            Text="{Binding Time}" />
+                                                    </StackPanel>
                                                 </Grid>
                                             </Border>
                                         </StackPanel>

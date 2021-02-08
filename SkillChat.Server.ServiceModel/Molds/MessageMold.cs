@@ -28,5 +28,18 @@ namespace SkillChat.Server.ServiceModel.Molds
 
         [Description("Вложения")]
         public List<AttachmentMold> Attachments { get; set; }
+
+        /// <summary>Сколько раз прочитали</summary>
+        [Description("Сколько раз прочитали")]
+        public long? ReadCount { get; set; }
+        /// <summary>Сколько раз получили</summary>
+        [Description("Сколько раз получили")]
+        public long? ReceivedCount { get; set; }
+        /// <summary>Прочтено ли?</summary>
+        [Description("Прочтено ли?")]
+        public bool Read { get; set; }
+        /// <summary>Получено ли?</summary>
+        [Description("Получено ли?")]
+        public bool Received { get; set; }
     }
 }
