@@ -18,7 +18,12 @@ namespace SkillChat.Client.ViewModel
             IsPassword = false;
             PassError = false;
         }
+
         public string UserName { get; set; }
+        
+        public string Login { get; set; }
+
+        public string Id { get; set; }
 
         string password;
         public string Password

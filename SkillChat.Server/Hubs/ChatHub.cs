@@ -41,12 +41,14 @@ namespace SkillChat.Server.Hubs
             {
                 Id = messageItem.Id,
                 UserLogin = Context.Items["login"] as string,
+                UserNickname = Context.Items["nickname"] as string,
                 Message = message,
                 PostTime = messageItem.PostTime,
                 ChatId = chatId,
+                UserId = messageItem.UserId
             });
             
-            Log.Information($"User {Context.Items["login"]} send message in main chat");
+            Log.Information($"User {Context.Items["nickname"]}({Context.Items["login"]}) send message in main chat");
         }
 
         public async Task Login(string token)
@@ -61,6 +63,11 @@ namespace SkillChat.Server.Hubs
                 Context.Items["uid"] = jwtPayload["sub"];
                 Context.Items["session"] = jwtPayload["session"];
                 
+                var user = await _ravenSession.LoadAsync<User>(jwtPayload["sub"]);
+                if (user!= null)
+                {
+                    Context.Items["nickname"] = user.DisplayName;
+                }
 
                 var logOn = new LogOn
                 {

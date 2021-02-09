@@ -8,8 +8,12 @@ namespace SkillChat.Server.ServiceModel.Molds
     {
         [Description("Идентификатор сообщения")]
         public string Id { get; set; }
-        [Description("Логин пользователя")]
-        public string UserLogin { get; set; }
+
+        [Description("Идентификатор пользователя")]
+        public string UserId { get; set; }
+
+        [Description("Имя пользователя")]
+        public string UserNickName { get; set; }
         [Description("Текст сообщения")]
         public string Text { get; set; }
         [Description("Время публикации")]

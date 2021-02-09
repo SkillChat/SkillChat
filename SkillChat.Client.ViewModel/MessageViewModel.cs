@@ -49,11 +49,13 @@ namespace SkillChat.Client.ViewModel
 
         public string Id { get; set; }
 
-        public string UserLogin { get; set; }
+        public string UserId { get; set; }
 
-        public string DisplayLogin => ShowLogin ? UserLogin : null;
+        public string UserNickname { get; set; }
 
-        public bool ShowLogin { get; set; }
+        public string DisplayNickname => ShowNickname ? UserNickname : null;
+
+        public bool ShowNickname { get; set; }
 
         public string Text { get; set; }
 

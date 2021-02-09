@@ -27,7 +27,7 @@ namespace SkillChat.Server
             cfg.CreateMap<ChatMember, ChatMemberMold>();
 
             cfg.CreateMap<Message, MessageMold>()
-                .ForMember(m => m.UserLogin, e => e.MapFrom(m => m.UserId));
+                .ForMember(m => m.UserNickName, e => e.Ignore());
 
             cfg.CreateMap<User, UserProfileMold>();
             cfg.CreateMap<User, MyUserProfileMold>()

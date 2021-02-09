@@ -105,7 +105,8 @@ namespace SkillChat.Client.ViewModel
                         else
                         {
                             IsSignedIn = true;
-                            User.UserName = data.UserLogin;
+                            User.Id = data.Id;
+                            User.Login = data.UserLogin;
                             ExpireTime = data.ExpireTime;
                             var chats = await serviceClient.GetAsync(new GetChatsList());
                             var chat = chats.Chats.FirstOrDefault();
@@ -122,14 +123,15 @@ namespace SkillChat.Client.ViewModel
 
                     _connection.Subscribe<ReceiveMessage>(async data =>
                     {
-                        var isMyMessage = User.UserName.ToLowerInvariant() == data.UserLogin;
+                        var isMyMessage = User.Id == data.UserId;
                         var newMessage = isMyMessage
                             ? (MessageViewModel) new MyMessageViewModel()
                             : new UserMessageViewModel();
                         newMessage.Id = data.Id;
                         newMessage.Text = data.Message;
                         newMessage.PostTime = data.PostTime;
-                        newMessage.UserLogin = data.UserLogin;
+                        newMessage.UserNickname = data.UserNickname;
+                        newMessage.UserId = data.UserId;
                         var container = Messages.LastOrDefault();
                         if (isMyMessage)
                         {
@@ -144,7 +146,7 @@ namespace SkillChat.Client.ViewModel
                             if (container is UserMessagesContainerViewModel)
                             {
                                 var lastMessage = container.Messages.LastOrDefault();
-                                if (lastMessage?.UserLogin != newMessage.UserLogin)
+                                if (lastMessage?.UserId != newMessage.UserId)
                                 {
                                     container = new UserMessagesContainerViewModel();
                                     Messages.Add(container);
@@ -158,7 +160,7 @@ namespace SkillChat.Client.ViewModel
 
                             if (!windowIsFocused)
                                 await Notification.Manager.Show(
-                                    $"{(newMessage.UserLogin != null && newMessage.UserLogin.Length > 10 ? string.Concat(newMessage.UserLogin.Remove(10, newMessage.UserLogin.Length - 10), "...") : newMessage.UserLogin)} : ",
+                                    $"{(newMessage.UserNickname != null && newMessage.UserNickname.Length > 10 ? string.Concat(newMessage.UserNickname.Remove(10, newMessage.UserNickname.Length - 10), "...") : newMessage.UserNickname)} : ",
                                     $"\"{(newMessage.Text.Length > 10 ? string.Concat(newMessage.Text.Remove(10, newMessage.Text.Length - 10), "...") : newMessage.Text)}\"");
                         }
 
@@ -166,7 +168,7 @@ namespace SkillChat.Client.ViewModel
                         container.Messages.Add(newMessage);
                         if (container.Messages.First() == newMessage)
                         {
-                            newMessage.ShowLogin = true;
+                            newMessage.ShowNickname = true;
                         }
 
                         MessageReceived?.Invoke(new ReceivedMessageArgs(newMessage));
@@ -226,14 +228,15 @@ namespace SkillChat.Client.ViewModel
                     var result = await serviceClient.GetAsync(request);
                     foreach (var item in result.Messages)
                     {
-                        var isMyMessage = User.UserName.ToLowerInvariant() == item.UserLogin;
+                        var isMyMessage = User.Id == item.UserId;
                         var newMessage = isMyMessage
                             ? (MessageViewModel) new MyMessageViewModel()
                             : new UserMessageViewModel();
                         newMessage.Id = item.Id;
                         newMessage.Text = item.Text;
                         newMessage.PostTime = item.PostTime;
-                        newMessage.UserLogin = item.UserLogin;
+                        newMessage.UserNickname = item.UserNickName;
+                        newMessage.UserId = item.UserId;
                         var container = Messages.FirstOrDefault();
                         if (isMyMessage)
                         {
@@ -248,7 +251,7 @@ namespace SkillChat.Client.ViewModel
                             if (container is UserMessagesContainerViewModel)
                             {
                                 var firstMessage = container.Messages.FirstOrDefault();
-                                if (firstMessage?.UserLogin != newMessage.UserLogin)
+                                if (firstMessage?.UserId != newMessage.UserId)
                                 {
                                     container = new UserMessagesContainerViewModel();
                                     Messages.Insert(0, container);
@@ -266,7 +269,7 @@ namespace SkillChat.Client.ViewModel
                         var firstInBlock = container.Messages.First();
                         foreach (var message in container.Messages)
                         {
-                            message.ShowLogin = firstInBlock == message;
+                            message.ShowNickname = firstInBlock == message;
                         }
                     }
                 }

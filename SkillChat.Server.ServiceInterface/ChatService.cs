@@ -34,9 +34,9 @@ namespace SkillChat.Server.ServiceInterface
             {
                 var user = await RavenSession.LoadAsync<User>(doc.UserId);
                 var message = Mapper.Map<MessageMold>(doc);
-                if (user?.Login!= null)
+                if (user != null)
                 {
-                    message.UserLogin = user.Login;
+                    message.UserNickName = string.IsNullOrWhiteSpace(user.DisplayName) ? user.Login: user.DisplayName;
                 }
                 result.Messages.Add(message);
             }
