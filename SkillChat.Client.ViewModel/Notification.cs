@@ -39,7 +39,7 @@ namespace SkillChat.Client.ViewModel
         }
 
         //Вызов окна
-        public async Task Show(string title, string text, int? timeShow = 10000)
+        public async void Show(string title, string text, int? timeShow = 10000)
         {
             var w = Locator.Current.GetService<INotify>();
             w.ShowInTaskbar = false;
