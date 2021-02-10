@@ -3,8 +3,8 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Raven.Client.Documents.Session;
-using Raven.Embedded;
 using Serilog;
+using WritableJsonConfiguration;
 
 namespace SkillChat.Server
 {
@@ -39,6 +39,10 @@ namespace SkillChat.Server
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
+                .ConfigureAppConfiguration(builder =>
+                {
+                    builder.Add(new WritableJsonConfigurationSource { Path = "appsettings.json" });
+                })
                 .UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration
                     .ReadFrom.Configuration(hostingContext.Configuration));
     }
