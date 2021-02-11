@@ -10,19 +10,19 @@
     xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
     xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
     xmlns:views="clr-namespace:SkillChat.Client.Views"
-	xmlns:utils="clr-namespace:SkillChat.Client.Utils"
-	xmlns:interactivity="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:utils="clr-namespace:SkillChat.Client.Utils"
+    xmlns:interactivity="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
     xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
     Name="sendMessageControl"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-	<UserControl.Resources>
-		<utils:KeyConverter x:Key="keyConverter"/>
-	</UserControl.Resources>
+    <UserControl.Resources>
+        <utils:KeyConverter x:Key="keyConverter"/>
+    </UserControl.Resources>
     <Grid ColumnDefinitions="*,Auto">
         <!--  Текстовое поле ввода сообщения  -->
-		<TextBox
+        <TextBox
             Name="inputMessageTB"
             Grid.Column="0"
             Padding="10,5,2,5"
@@ -32,10 +32,10 @@
             Text="{Binding MessageText}"
             TextWrapping="Wrap"
             Watermark="Сообщение" >
-			<TextBox.KeyBindings>
-				<KeyBinding Command="{Binding SendCommand}" Gesture="{Binding Path=KeySendMessage,Converter={StaticResource keyConverter}}" />
-			</TextBox.KeyBindings>
-		</TextBox>
+            <TextBox.KeyBindings>
+                <KeyBinding Command="{Binding SendCommand}" Gesture="{Binding Path=KeySendMessage,Converter={StaticResource keyConverter}}" />
+            </TextBox.KeyBindings>
+        </TextBox>
         <!--  Кнопка отправки сообщения  -->
         <Button
             x:Name="sendButton"

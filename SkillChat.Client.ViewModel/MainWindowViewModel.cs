@@ -46,8 +46,8 @@ namespace SkillChat.Client.ViewModel
             SettingsViewModel = new SettingsViewModel(serviceClient);
             SettingsViewModel.ProfileViewModel = ProfileViewModel;
             SettingsViewModel.IsWindowSettingsEvent += (e) => { ProfileViewModel.isOpenProfile = false; };
-            SettingsViewModel.TypeEnterEvent += (e) => { KeySendMessage = e; };
-     
+            SettingsViewModel.TypeEnterEvent += (e) => {KeySendMessage = e;};
+
             User.UserName = settings.UserName;
             Tokens = new TokenResult {AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken};
 

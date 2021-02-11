@@ -7,59 +7,59 @@
              xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
              x:Class="SkillChat.Client.Views.Profile.Header">
 
-  <!--Profile - Шапка профиля-->
-  <Grid>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="2"/>
-      <ColumnDefinition Width="*"/>
-      <ColumnDefinition Width="20"/>
-	  <ColumnDefinition Width="40"/>
-    </Grid.ColumnDefinitions>
+    <!--Profile - Шапка профиля-->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="20" />
+      <ColumnDefinition Width="40"/>
+        </Grid.ColumnDefinitions>
 
-    <Grid Grid.Column="0" Background="#E0E0E0"/>
+        <Grid Grid.Column="0" Background="#E0E0E0" />
 
-	  <StackPanel Orientation="Horizontal">
-		  <Button
-			  VerticalAlignment="Center"
-			  Background="Transparent"
-			  BorderThickness="0"
-			  Command="{Binding WindowViewModel.LoadMessageHistoryCommand}"
-			  Content="Cтарые сообщения"
-			  FontSize="12"
-			  HorizontalAlignment="Left"/>
-	  </StackPanel>
-	  
-    <Button
-			IsVisible="{Binding !isOpenProfile}"
-			VerticalAlignment="Center"
-			Background="Transparent"
-			BorderThickness="0"
-			Cursor="Hand"
-			ToolTip.Tip="Свой профиль"
-			Classes="profile"
-			ToolTip.Placement="Bottom"
-			ToolTip.HorizontalOffset="-70"
-			ToolTip.VerticalOffset="1"
-			Command="{Binding SetOpenProfileCommand}"
-			Grid.Column="3">
-      <Image Name="profile_icon" Width="13.33" Height="18.65"/>
-    </Button>
+        <StackPanel Orientation="Horizontal">
+            <Button
+                VerticalAlignment="Center"
+                Background="Transparent"
+                BorderThickness="0"
+              Command="{Binding WindowViewModel.LoadMessageHistoryCommand}"
+                Content="Cтарые сообщения"
+                FontSize="12"
+                HorizontalAlignment="Left" />
+        </StackPanel>
+      
+            <Button
+            IsVisible="{Binding !isOpenProfile}"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                BorderThickness="0"
+                Cursor="Hand"
+                ToolTip.Tip="Свой профиль"
+                Classes="profile"
+                ToolTip.Placement="Bottom"
+            ToolTip.HorizontalOffset="-70"
+                ToolTip.VerticalOffset="1"
+            Command="{Binding SetOpenProfileCommand}"
+            Grid.Column="3">
+                <Image Name="profile_icon" Width="13.33" Height="18.65" />
+            </Button>
 
-    <Button
-			IsVisible="{Binding isOpenProfile}"
-			VerticalAlignment="Center"
-			Background="Transparent"
-			BorderThickness="0"
-			Cursor="Hand"
-			ToolTip.Tip="Скрыть свой профиль"
-			Classes="profile_dd"
-			ToolTip.Placement="Bottom"
-			ToolTip.HorizontalOffset="-115"
-			ToolTip.VerticalOffset="1"
-			Command="{Binding SetOpenProfileCommand}"
-			Grid.Column="3">
-      <Image Name="profile_orange_icon" Width="13.33" Height="18.65"/>
-    </Button>
+            <Button
+            IsVisible="{Binding isOpenProfile}"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                BorderThickness="0"
+                Cursor="Hand"
+                ToolTip.Tip="Скрыть свой профиль"
+                Classes="profile_dd"
+                ToolTip.Placement="Bottom"
+            ToolTip.HorizontalOffset="-115"
+                ToolTip.VerticalOffset="1"
+            Command="{Binding SetOpenProfileCommand}"
+            Grid.Column="3">
+                <Image Name="profile_orange_icon" Width="13.33" Height="18.65" />
+            </Button>
 
-  </Grid>
+        </Grid>
 </UserControl>

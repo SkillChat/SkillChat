@@ -43,7 +43,7 @@ namespace SkillChat.Client.ViewModel
         public ICommand OpenSettingsCommand { get; }
         public ICommand GoToSettingsCommand { get; }
         public ICommand SettingsCommand { get; }
-        
+
         public bool IsOpenSettings { get; set; }
 
         private bool _typeEnter;

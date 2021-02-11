@@ -7,60 +7,60 @@
              xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
              x:Class="SkillChat.Client.Views.Profile.Settings">
 
-  <!--Profile - panel -->
+    <!--Profile - panel -->
   <Grid IsVisible="{Binding isOpenProfile}" Background="#ffffff" HorizontalAlignment="Right">
-    <Grid Width="2" Background="#E0E0E0" HorizontalAlignment="Left"/>
+        <Grid Width="2" Background="#E0E0E0" HorizontalAlignment="Left" />
 
     <Grid Width="390">
       <TextBlock Margin="0 43 0 0" FontStyle="Normal" IsVisible="{Binding !isEditProfile}" HorizontalAlignment="Center"
-			           Foreground="#000000" FontWeight="600" FontSize="16" Text="{Binding Profile.DisplayName}" />
-      <Button
-				IsVisible="{Binding !isEditProfile}"
-				VerticalAlignment="Top"
-				HorizontalAlignment="Right"
-				Background="Transparent"
-				Margin="0 35.67 20 0"
-				Classes="profile_edit"
-				BorderThickness="0"
-				Command="{Binding SetEditProfileCommand}">
-        <Image
-					Name="buttonImagePencil"
-					Width="19.33"
-					Height="18.67" />
-      </Button>
+                       Foreground="#000000" FontWeight="600" FontSize="16" Text="{Binding Profile.DisplayName}" />
+            <Button
+                IsVisible="{Binding !isEditProfile}"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Right"
+                Background="Transparent"
+                Margin="0 35.67 20 0"
+                Classes="profile_edit"
+                BorderThickness="0"
+                Command="{Binding SetEditProfileCommand}">
+                <Image
+                    Name="buttonImagePencil"
+                    Width="19.33"
+                    Height="18.67" />
+            </Button>
 
       <TextBlock Margin="50 5 0 0" IsVisible="{Binding isEditProfile}" FontStyle="Italic" Foreground="#BDBDBD"
-			           FontWeight="400" FontSize="14" Text="Имя"/>
+                       FontWeight="400" FontSize="14" Text="Имя"/>
 
       <TextBox Width="290" IsVisible="{Binding isEditProfile}" Height="50" Text="{Binding Profile.DisplayName}"
-			         Foreground="#828282" FontWeight="600" FontSize="16" VerticalContentAlignment="Center"
-			         HorizontalContentAlignment="Center" BorderBrush="#BDBDBD" Margin="0 29 0 0" VerticalAlignment="Top"/>
-      <Button
-				IsVisible="{Binding isEditProfile}"
-				VerticalAlignment="Top"
-				HorizontalAlignment="Right"
-				Background="Transparent"
-				Margin="0 48 21.33 0"
-				Classes="profile_save"
-				BorderThickness="0"
-				Command="{Binding ApplyProfileCommand}">
-        <Image
-					Name="buttonImageSave"
-					Width="17.33"
-					Height="11.33" />
-      </Button>
-    </Grid>
-    <TextBlock Margin="0 89 0 0" Padding="0 0 1 0" HorizontalAlignment="Center" FontStyle="Italic" Foreground="#BDBDBD"
-		           FontWeight="400" FontSize="16" Text="{Binding Profile.Login}"/>
+                     Foreground="#828282" FontWeight="600" FontSize="16" VerticalContentAlignment="Center"
+                     HorizontalContentAlignment="Center" BorderBrush="#BDBDBD" Margin="0 29 0 0" VerticalAlignment="Top"/>
+            <Button
+                IsVisible="{Binding isEditProfile}"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Right"
+                Background="Transparent"
+                Margin="0 48 21.33 0"
+                Classes="profile_save"
+                BorderThickness="0"
+                Command="{Binding ApplyProfileCommand}">
+                <Image
+                    Name="buttonImageSave"
+                    Width="17.33"
+                    Height="11.33" />
+            </Button>
+        </Grid>
+        <TextBlock Margin="0 89 0 0" Padding="0 0 1 0" HorizontalAlignment="Center" FontStyle="Italic" Foreground="#BDBDBD"
+               FontWeight="400" FontSize="16" Text="{Binding Profile.Login}"/>
 
-		  <Button
-						  VerticalAlignment="Top"
-						  HorizontalAlignment="Center"
-						  Margin="0 150 0 0"
-						  Background="Transparent"
-						  BorderThickness="0"
-						  Command="{Binding WindowViewModel.SignOutCommand}"
-						  Content="Выйти из профиля"
-						  FontSize="12" />
-  </Grid>
+        <Button
+            VerticalAlignment="Top"
+            HorizontalAlignment="Center"
+                          Margin="0 150 0 0"
+            Background="Transparent"
+            BorderThickness="0"
+                          Command="{Binding WindowViewModel.SignOutCommand}"
+            Content="Выйти из профиля"
+                          FontSize="12" />
+    </Grid>
 </UserControl>

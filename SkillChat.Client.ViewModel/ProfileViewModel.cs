@@ -36,10 +36,10 @@ namespace SkillChat.Client.ViewModel
             SetEditProfileCommand = ReactiveCommand.CreateFromTask(async () => { isEditProfile = true; });
             //Сохранить изменения профиля
             ApplyProfileCommand = ReactiveCommand.CreateFromTask(async () =>
-                {
+            {
                     Profile = await serviceClient.PostAsync(new SetProfile { DisplayName = Profile.DisplayName });
                     isEditProfile = false;
-                });
+            });
             //Скрытие окна 
             LayoutUpdatedWindow = ReactiveCommand.Create<object>(obj =>
             {
@@ -54,7 +54,7 @@ namespace SkillChat.Client.ViewModel
         //Profile
         public bool isOpenProfile { get; set; }
         public bool isEditProfile { get; set; }
-        
+
         public bool isShowChat { get; set; } = false;
         public static double windowWidth { get; set; }
 

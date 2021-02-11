@@ -8,11 +8,11 @@
     xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
     xmlns:views="clr-namespace:SkillChat.Client.Views"
     xmlns:profile="clr-namespace:SkillChat.Client.Views.Profile"
-	xmlns:settings="clr-namespace:SkillChat.Client.Views.Settings"
+    xmlns:settings="clr-namespace:SkillChat.Client.Views.Settings"
     xmlns:interactivity="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
     xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
     Title="{Binding Title}"
-	Name="WindowChat"
+    Name="WindowChat"
     Width="800"
     Height="600"
     MinWidth="360"
@@ -20,301 +20,301 @@
     Icon="/Assets/skillchat-logo.ico"
     mc:Ignorable="d">
 
-  <interactivity:Interaction.Behaviors>
-    <!--  Notify  -->
-    <core:EventTriggerBehavior EventName="LayoutUpdated" SourceObject="{Binding #WindowChat}">
-      <core:InvokeCommandAction Command="{Binding NotifyCommand}" CommandParameter="{Binding #WindowChat}" />
-    </core:EventTriggerBehavior>
-    <!--  Profile  -->
-    <core:EventTriggerBehavior EventName="LayoutUpdated" SourceObject="{Binding #WindowChat}">
-      <core:InvokeCommandAction Command="{Binding ProfileViewModel.LayoutUpdatedWindow}" CommandParameter="{Binding #WindowChat}" />
-    </core:EventTriggerBehavior>
-	  <!--  Settings  -->
-	  <core:EventTriggerBehavior EventName="PointerPressed"  SourceObject="{Binding #WindowChat}">
-		  <core:InvokeCommandAction Command="{Binding MorePointerPressedCommand}" CommandParameter="{Binding #WindowChat}" />
-	  </core:EventTriggerBehavior>
-  </interactivity:Interaction.Behaviors>
+    <interactivity:Interaction.Behaviors>
+        <!--  Notify  -->
+        <core:EventTriggerBehavior EventName="LayoutUpdated" SourceObject="{Binding #WindowChat}">
+            <core:InvokeCommandAction Command="{Binding NotifyCommand}" CommandParameter="{Binding #WindowChat}" />
+        </core:EventTriggerBehavior>
+        <!--  Profile  -->
+        <core:EventTriggerBehavior EventName="LayoutUpdated" SourceObject="{Binding #WindowChat}">
+            <core:InvokeCommandAction Command="{Binding ProfileViewModel.LayoutUpdatedWindow}" CommandParameter="{Binding #WindowChat}" />
+        </core:EventTriggerBehavior>
+        <!--  Settings  -->
+        <core:EventTriggerBehavior EventName="PointerPressed" SourceObject="{Binding #WindowChat}">
+          <core:InvokeCommandAction Command="{Binding MorePointerPressedCommand}" CommandParameter="{Binding #WindowChat}" />
+        </core:EventTriggerBehavior>
+    </interactivity:Interaction.Behaviors>
 
-  <Window.Styles>
-    <Style Selector="ScrollBar:vertical">
-      <Setter Property="Width" Value="12" />
-      <Setter Property="Margin" Value="-12,0,0,0" />
-      <Setter Property="Template">
-        <ControlTemplate>
-          <Border Background="Transparent" UseLayoutRounding="False">
-            <Grid>
-              <Track
-                  IsDirectionReversed="True"
-                  Maximum="{TemplateBinding Maximum}"
-                  Minimum="{TemplateBinding Minimum}"
-                  Orientation="{TemplateBinding Orientation}"
-                  ViewportSize="{TemplateBinding ViewportSize}"
-                  Value="{TemplateBinding Value, Mode=TwoWay}">
+    <Window.Styles>
+        <Style Selector="ScrollBar:vertical">
+            <Setter Property="Width" Value="12" />
+            <Setter Property="Margin" Value="-12,0,0,0" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="Transparent" UseLayoutRounding="False">
+                        <Grid>
+                            <Track
+                                IsDirectionReversed="True"
+                                Maximum="{TemplateBinding Maximum}"
+                                Minimum="{TemplateBinding Minimum}"
+                                Orientation="{TemplateBinding Orientation}"
+                                ViewportSize="{TemplateBinding ViewportSize}"
+                                Value="{TemplateBinding Value, Mode=TwoWay}">
 
-								<Thumb Name="thumb">
-									<Thumb.Template>
-										<ControlTemplate>
-											<Border />
-										</ControlTemplate>
-									</Thumb.Template>
-								</Thumb>
-							</Track>
-						</Grid>
-					</Border>
-				</ControlTemplate>
-			</Setter>
-		</Style>
-		<Style Selector="ScrollBar:vertical /template/ Thumb Border">
-			<Setter Property="Background" Value="#BDBDBD" />
-			<Setter Property="CornerRadius" Value="2" />
-			<Setter Property="Width" Value="6" />
-		</Style>
+                                <Thumb Name="thumb">
+                                    <Thumb.Template>
+                                        <ControlTemplate>
+                                            <Border />
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        <Style Selector="ScrollBar:vertical /template/ Thumb Border">
+            <Setter Property="Background" Value="#BDBDBD" />
+            <Setter Property="CornerRadius" Value="2" />
+            <Setter Property="Width" Value="6" />
+        </Style>
     </Window.Styles>
-	<Grid>
-		<Grid ColumnDefinitions="100,*">
-			<StackPanel Background="#7F57F0">
-				<Image Width="60" Margin="20">
-					<Image.Source>
-						<svg:SvgImage Source="/Assets/SkillChat_small.svg" />
-					</Image.Source>
-				</Image>
-				<Button Background="Transparent"
-						IsVisible="{Binding !ProfileViewModel.isOpenProfile}"  
-						BorderBrush="Transparent" 
-						BorderThickness="0" 
-						Cursor="Hand"
-						Classes="profile"
+    <Grid>
+        <Grid ColumnDefinitions="100,*">
+            <StackPanel Background="#7F57F0">
+                <Image Width="60" Margin="20">
+                    <Image.Source>
+                        <svg:SvgImage Source="/Assets/SkillChat_small.svg" />
+                    </Image.Source>
+                </Image>
+                <Button Background="Transparent"
+                        IsVisible="{Binding !ProfileViewModel.isOpenProfile}"  
+                        BorderBrush="Transparent"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        Classes="profile"
                         Command="{Binding ProfileViewModel.SetOpenProfileCommand}">
-					<Image Width="13.33" Height="18.65" Margin="20" Name="profile_white_icon"/>
-				</Button>
-				<Button
-		            IsVisible="{Binding ProfileViewModel.isOpenProfile}"
-		            Background="Transparent"
-					BorderBrush="Transparent" 
-		            BorderThickness="0"
-		            Cursor="Hand"
-		            Classes="profile_dd"
-		            Command="{Binding ProfileViewModel.SetOpenProfileCommand}">
-					<Image Name="profile_orange_icon" Margin="20" Width="13.33" Height="18.65"/>
-				</Button>
-			</StackPanel>
-	
-			<Button Background="Transparent" 
-						VerticalAlignment="Bottom" 
-						Margin="0 0 0 30" 
-						BorderBrush="Transparent" 
-						BorderThickness="0"
-						IsVisible="{Binding !SettingsViewModel.IsWindowSettings}"
-					    Command="{Binding SettingsViewModel.GoToSettingsCommand}" 
-						Classes="settings" 
-						Cursor="Hand">
-				<Image Width="18.67" Height="18.65" Margin="20" Name="settings"/>
-			</Button>
-			<Button Background="Transparent"
-				    VerticalAlignment="Bottom"
-					Margin="0 0 0 30"
-					BorderBrush="Transparent"
-					BorderThickness="0"
-					IsVisible="{Binding SettingsViewModel.IsWindowSettings}"
-					Command="{Binding SettingsViewModel.GoToSettingsCommand}"
-					Classes="settings_active"
-					Cursor="Hand">
-				<Image Width="18.67" Height="18.65" Margin="20" Name="settings_active"/>
-			</Button>
-			
-				
-			
+                    <Image Width="13.33" Height="18.65" Margin="20" Name="profile_white_icon" />
+                </Button>
+                <Button
+                    IsVisible="{Binding ProfileViewModel.isOpenProfile}"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    Classes="profile_dd"
+                    Command="{Binding ProfileViewModel.SetOpenProfileCommand}">
+                    <Image Name="profile_orange_icon" Margin="20" Width="13.33" Height="18.65" />
+                </Button>
+            </StackPanel>
+
+            <Button Background="Transparent"
+                    VerticalAlignment="Bottom"
+                    Margin="0 0 0 30"
+                    BorderBrush="Transparent"
+                    BorderThickness="0"
+                    IsVisible="{Binding !SettingsViewModel.IsWindowSettings}"
+                    Command="{Binding SettingsViewModel.GoToSettingsCommand}"
+                    Classes="settings"
+                    Cursor="Hand">
+                <Image Width="18.67" Height="18.65" Margin="20" Name="settings" />
+            </Button>
+            <Button Background="Transparent"
+                    VerticalAlignment="Bottom"
+                    Margin="0 0 0 30"
+                    BorderBrush="Transparent"
+                    BorderThickness="0"
+                    IsVisible="{Binding SettingsViewModel.IsWindowSettings}"
+                    Command="{Binding SettingsViewModel.GoToSettingsCommand}"
+                    Classes="settings_active"
+                    Cursor="Hand">
+                <Image Width="18.67" Height="18.65" Margin="20" Name="settings_active" />
+            </Button>
+
+                
+            
             <!--Settings-->
-			<Grid Grid.Column="1" ZIndex="10" IsVisible="{Binding SettingsViewModel.IsWindowSettings}">
-				<settings:Settings DataContext="{Binding SettingsViewModel}"/>
-			</Grid>
-			
-			
-			<Grid Grid.Column="1" ColumnDefinitions="*,Auto" >
-				<Grid.Background>
-					<ImageBrush
+            <Grid Grid.Column="1" ZIndex="10" IsVisible="{Binding SettingsViewModel.IsWindowSettings}">
+                <settings:Settings DataContext="{Binding SettingsViewModel}"/>
+            </Grid>
+            
+            
+            <Grid Grid.Column="1" ColumnDefinitions="*,Auto" >
+                <Grid.Background>
+                    <ImageBrush
                         Source="/Assets/background.png"
                         Stretch="None"
                         SourceRect="0,0,152,152"
                         DestinationRect="0,0,152,152"
                         TileMode="Tile" />
-				</Grid.Background>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="80" />
-					<RowDefinition />
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
-	
-				<!--Header-->
+                </Grid.Background>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="80" />
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!--Header-->
                 <Grid ColumnDefinitions="*,Auto" 
                       Grid.ColumnSpan="2" 
                       Background="#F2F2F2">
 
-          <StackPanel
+                    <StackPanel
                         Grid.Row="1"
                         Grid.Column="0"
                         Margin="20,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center">
-            <TextBlock
+                        <TextBlock
                             FontSize="16"
                             FontWeight="SemiBold"
                             Text="Чат" />
-            <TextBlock
+                        <TextBlock
                             FontSize="14"
                             FontWeight="Regular"
                             Foreground="#828282"
                             Text="{Binding MembersCaption}"
                             TextTrimming="WordEllipsis" />
-          </StackPanel>
+                    </StackPanel>
 
-					<!--Profile - Шапка профиля-->
-					<Grid Grid.Column="1" Width="390">
+                    <!--Profile - Шапка профиля -->
+                    <Grid Grid.Column="1" Width="390">
                         <profile:Header DataContext="{Binding ProfileViewModel}" />
-						<!--Settings - Header -->
-						<Grid HorizontalAlignment="Right" VerticalAlignment="Top" 
-							  Margin="0 20 28 0" Width="40" Height="40" Background="Transparent">
-							<settings:Header DataContext="{Binding SettingsViewModel}" />
-						</Grid>
-						<!--Settings - Panel -->
-						<Grid  HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Height="62"  Margin="0 47 47 0" Background="Transparent">
-							<settings:More DataContext="{Binding SettingsViewModel}" />
-						</Grid>
-						
-					</Grid>
-				</Grid>
-                <!--  Блок списка сообщений  -->
-				<Grid 
-                    Grid.Row="1" 
-                    Grid.Column="0" 
-                    IsVisible="{Binding ProfileViewModel.isShowChat}" ZIndex="-1">
-          <ScrollViewer Name="MessagesSV" HorizontalScrollBarVisibility="Disabled">
-            <ItemsControl
-                            Grid.Row="3"
-                            Grid.Column="0"
-                            Grid.ColumnSpan="3"
-                            Margin="20,0"
-                            VerticalAlignment="Bottom"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Items="{Binding Messages}">
-              <ItemsControl.Styles>
-                <Style Selector="TextBlock.message">
-                  <Setter Property="Padding" Value="10,0,10,5" />
-                  <Setter Property="FontSize" Value="14" />
-                  <Setter Property="Foreground" Value="Transparent" />
-                </Style>
-                <Style Selector="TextBox.message">
-                  <Setter Property="Padding" Value="10,0,10,5" />
-                  <Setter Property="FontSize" Value="14" />
-                  <Setter Property="AcceptsReturn" Value="True" />
-                  <Setter Property="Background" Value="Transparent" />
-                  <Setter Property="BorderThickness" Value="0" />
-                  <Setter Property="TextWrapping" Value="Wrap" />
-                </Style>
-                <Style Selector="TextBlock.time">
-                  <Setter Property="FontSize" Value="12" />
-                  <Setter Property="FontWeight" Value="SemiBold" />
-                  <Setter Property="Foreground" Value="#828282" />
-                </Style>
-              </ItemsControl.Styles>
-              <ItemsControl.DataTemplates>
-                <DataTemplate DataType="{x:Type viewModel:UserMessagesContainerViewModel}">
-                  <ItemsControl
-                      Margin="0,17,20,0"
-                      HorizontalAlignment="Left"
-                      Items="{Binding Messages}" />
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type viewModel:MyMessagesContainerViewModel}">
-                  <ItemsControl
-                                        Margin="20,17,0,0"
-                                        HorizontalAlignment="Right"
-                                        Items="{Binding Messages}" />
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type viewModel:UserMessageViewModel}">
-                  <StackPanel Margin="0,0,0,3" HorizontalAlignment="Left">
-                    <Border
-                                            Padding="10,5"
-                                            Background="White"
-                                            BorderThickness="0">
-                      <Grid RowDefinitions="Auto,Auto">
-                        <StackPanel Orientation="Horizontal">
-                          <TextBlock
-                                                        Padding="10,0,0,0"
-                                                        FontSize="14"
-                                                        FontWeight="SemiBold"
-                                                        Text="{Binding DisplayNickname}" />
-                        </StackPanel>
-                        <TextBlock
-                                                    Grid.Row="1"
-                                                    Classes="message"
-                                                    Text="{Binding TextAligned}"
-                                                    TextWrapping="Wrap" />
-                        <TextBox
-                                                    Grid.Row="1"
-                                                    Classes="message"
-                                                    IsReadOnly="True"
-                                                    Text="{Binding Text}" />
-                        <TextBlock
-                                                    Grid.Row="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Bottom"
-                                                    Classes="time"
-                                                    Text="{Binding Time}" />
-                      </Grid>
-                    </Border>
-                  </StackPanel>
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type viewModel:MyMessageViewModel}">
-                  <StackPanel Margin="0,0,0,3" HorizontalAlignment="Right">
-                    <Border
-                                            Padding="10,5"
-                                            Background="#DDD5F4"
-                                            BorderThickness="0"
-                                            CornerRadius="2">
-                      <Grid>
-                        <TextBlock
-                                                    Grid.Row="1"
-                                                    Classes="message"
-                                                    Text="{Binding TextAligned}"
-                                                    TextWrapping="Wrap" />
-                        <TextBox
-                                                    Grid.Row="1"
-                                                    Classes="message"
-                                                    IsReadOnly="True"
-                                                    Text="{Binding Text}" />
-                        <TextBlock
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Bottom"
-                                                    Classes="time"
-                                                    Text="{Binding Time}" />
-											</Grid>
-                                        </Border>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ItemsControl.DataTemplates>
-                        </ItemsControl>
-                    </ScrollViewer>
+                        <!--Settings - Header -->
+                        <Grid HorizontalAlignment="Right" VerticalAlignment="Top" 
+                              Margin="0 20 28 0" Width="40" Height="40" Background="Transparent">
+                            <settings:Header DataContext="{Binding SettingsViewModel}" />
+                        </Grid>
+                        <!--Settings - Panel -->
+                        <Grid  HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Height="62"  Margin="0 47 47 0" Background="Transparent">
+                            <settings:More DataContext="{Binding SettingsViewModel}" />
+                        </Grid>
+                        
+                    </Grid>
                 </Grid>
-                <!--  Блок отправки сообщения  -->
-                <Border Grid.Column="0"
+                    <!--  Блок списка сообщений  -->
+                    <Grid
+                    Grid.Row="1" 
+                        Grid.Column="0"
+                    IsVisible="{Binding ProfileViewModel.isShowChat}" ZIndex="-1">
+                        <ScrollViewer Name="MessagesSV" HorizontalScrollBarVisibility="Disabled">
+                            <ItemsControl
+                                Grid.Row="3"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
+                                Margin="20,0"
+                                VerticalAlignment="Bottom"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Items="{Binding Messages}">
+                                <ItemsControl.Styles>
+                                    <Style Selector="TextBlock.message">
+                                        <Setter Property="Padding" Value="10,0,10,5" />
+                                        <Setter Property="FontSize" Value="14" />
+                                        <Setter Property="Foreground" Value="Transparent" />
+                                    </Style>
+                                    <Style Selector="TextBox.message">
+                                        <Setter Property="Padding" Value="10,0,10,5" />
+                                        <Setter Property="FontSize" Value="14" />
+                                        <Setter Property="AcceptsReturn" Value="True" />
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="BorderThickness" Value="0" />
+                                        <Setter Property="TextWrapping" Value="Wrap" />
+                                    </Style>
+                                    <Style Selector="TextBlock.time">
+                                        <Setter Property="FontSize" Value="12" />
+                                        <Setter Property="FontWeight" Value="SemiBold" />
+                                        <Setter Property="Foreground" Value="#828282" />
+                                    </Style>
+                                </ItemsControl.Styles>
+                                <ItemsControl.DataTemplates>
+                                    <DataTemplate DataType="{x:Type viewModel:UserMessagesContainerViewModel}">
+                                        <ItemsControl
+                                            Margin="0,17,20,0"
+                                            HorizontalAlignment="Left"
+                                            Items="{Binding Messages}" />
+                                    </DataTemplate>
+                                    <DataTemplate DataType="{x:Type viewModel:MyMessagesContainerViewModel}">
+                                        <ItemsControl
+                                            Margin="20,17,0,0"
+                                            HorizontalAlignment="Right"
+                                            Items="{Binding Messages}" />
+                                    </DataTemplate>
+                                    <DataTemplate DataType="{x:Type viewModel:UserMessageViewModel}">
+                                        <StackPanel Margin="0,0,0,3" HorizontalAlignment="Left">
+                                            <Border
+                                                Padding="10,5"
+                                                Background="White"
+                                                BorderThickness="0">
+                                                <Grid RowDefinitions="Auto,Auto">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock
+                                                            Padding="10,0,0,0"
+                                                            FontSize="14"
+                                                            FontWeight="SemiBold"
+                                                        Text="{Binding DisplayNickname}" />
+                                                    </StackPanel>
+                                                    <TextBlock
+                                                        Grid.Row="1"
+                                                        Classes="message"
+                                                        Text="{Binding TextAligned}"
+                                                        TextWrapping="Wrap" />
+                                                    <TextBox
+                                                        Grid.Row="1"
+                                                        Classes="message"
+                                                        IsReadOnly="True"
+                                                        Text="{Binding Text}" />
+                                                    <TextBlock
+                                                        Grid.Row="1"
+                                                        HorizontalAlignment="Right"
+                                                        VerticalAlignment="Bottom"
+                                                        Classes="time"
+                                                        Text="{Binding Time}" />
+                                                </Grid>
+                                            </Border>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                    <DataTemplate DataType="{x:Type viewModel:MyMessageViewModel}">
+                                        <StackPanel Margin="0,0,0,3" HorizontalAlignment="Right">
+                                            <Border
+                                                Padding="10,5"
+                                                Background="#DDD5F4"
+                                                BorderThickness="0"
+                                                CornerRadius="2">
+                                                <Grid>
+                                                    <TextBlock
+                                                        Grid.Row="1"
+                                                        Classes="message"
+                                                        Text="{Binding TextAligned}"
+                                                        TextWrapping="Wrap" />
+                                                    <TextBox
+                                                        Grid.Row="1"
+                                                        Classes="message"
+                                                        IsReadOnly="True"
+                                                        Text="{Binding Text}" />
+                                                    <TextBlock
+                                                        HorizontalAlignment="Right"
+                                                        VerticalAlignment="Bottom"
+                                                        Classes="time"
+                                                        Text="{Binding Time}" />
+                                                </Grid>
+                                            </Border>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.DataTemplates>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+                    <!--  Блок отправки сообщения  -->
+                    <Border Grid.Column="0"
                     Grid.Row="2"
-                    MinHeight="50"
-                    MaxHeight="270"
-                    Margin="0"
-					IsVisible="{Binding ProfileViewModel.isShowChat}"
-                    Background="#E0E0E0"
-                    BorderBrush="#E0E0E0"
-                    BorderThickness="10">
-                    <views:SendMessageControl />
-                </Border>
-				<!--Profile - panel -->
-				<Grid Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Background="#ffffff" ZIndex="-1">
-					<profile:Settings DataContext="{Binding ProfileViewModel}" />
-				</Grid> 
-			</Grid>
-        </Grid>
-		<views:LoginPage VerticalAlignment="Stretch" IsVisible="{Binding IsShowingLoginPage, Mode=OneWay}" />
+                            MinHeight="50"
+                            MaxHeight="270"
+                            Margin="0"
+                    IsVisible="{Binding ProfileViewModel.isShowChat}"
+                            Background="#E0E0E0"
+                            BorderBrush="#E0E0E0"
+                            BorderThickness="10">
+                        <views:SendMessageControl />
+                    </Border>
+                    <!--Profile - panel -->
+                <Grid Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Background="#ffffff" ZIndex="-1">
+                        <profile:Settings DataContext="{Binding ProfileViewModel}" />
+                    </Grid>
+                </Grid>
+            </Grid>
+        <views:LoginPage VerticalAlignment="Stretch" IsVisible="{Binding IsShowingLoginPage, Mode=OneWay}" />
         <views:RegisterPage VerticalAlignment="Stretch" IsVisible="{Binding IsShowingRegisterPage, Mode=OneWay}" />
     </Grid>
 </Window>

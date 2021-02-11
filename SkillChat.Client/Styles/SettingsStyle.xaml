@@ -1,68 +1,68 @@
 ﻿<Styles 
-	xmlns="https://github.com/avaloniaui"
+    xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia">
+    xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia">
 
-	<!--Кнопка больше-->
-	<Style Selector="Button.more Image#more">
-		<Setter Property="Source">
-			<Setter.Value>
-				<svg:SvgImage Source="/Assets/more.svg" />
-			</Setter.Value>
-		</Setter>
-	</Style>
-	<Style Selector="Button.more:pointerover Image#more">
-		<Setter Property="Source">
-			<Setter.Value>
-				<svg:SvgImage Source="/Assets/more_orange.svg" />
-			</Setter.Value>
-		</Setter>
-	</Style>
-	<Style Selector="Button.more /template/ ContentPresenter">
-		<Setter Property="Background" Value="Transparent"/>
-	</Style>
+    <!--Кнопка больше-->
+    <Style Selector="Button.more Image#more">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/more.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style Selector="Button.more:pointerover Image#more">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/more_orange.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style Selector="Button.more /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
 
-	<!--Кнопка Settings-->
-	<Style Selector="Button.settings Image#settings">
-		<Setter Property="Source">
-			<Setter.Value>
-				<svg:SvgImage Source="/Assets/settings.svg" />
-			</Setter.Value>
-		</Setter>
-	</Style>
-	<Style Selector="Button.settings:pointerover Image#settings">
-		<Setter Property="Source">
-			<Setter.Value>
-				<svg:SvgImage Source="/Assets/settings_orange.svg" />
-			</Setter.Value>
-		</Setter>
-	</Style>
-	<Style Selector="Button.settings /template/ ContentPresenter">
-		<Setter Property="Background" Value="Transparent"/>
-	</Style>
+    <!--Кнопка Settings-->
+    <Style Selector="Button.settings Image#settings">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/settings.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style Selector="Button.settings:pointerover Image#settings">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/settings_orange.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style Selector="Button.settings /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
 
-	<!--Кнопка Settings Active-->
-	<Style Selector="Button.settings_active Image#settings_active">
-		<Setter Property="Source">
-			<Setter.Value>
-				<svg:SvgImage Source="/Assets/settings_orange.svg" />
-			</Setter.Value>
-		</Setter>
-	</Style>
+    <!--Кнопка Settings Active-->
+    <Style Selector="Button.settings_active Image#settings_active">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/settings_orange.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-	<Style Selector="Button.settings_active /template/ ContentPresenter">
-		<Setter Property="Background" Value="Transparent"/>
-	</Style>
+    <Style Selector="Button.settings_active /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
 
-	<!--Кнопка выбора Selected More-->
-	<Style Selector="Button.SelectedMore:pointerover /template/ ContentPresenter">
-		<Setter Property="BorderBrush" Value="{DynamicResource Orange}"/>
-		<Setter Property="Background" Value="{DynamicResource Orange}"/>
-	</Style>
-	
-	<Style Selector="Button.SelectedMore:pointerover TextBlock">
-		<Setter Property="Foreground" Value="{DynamicResource White}"/>
-	</Style>
-	
+    <!--Кнопка выбора Selected More-->
+    <Style Selector="Button.SelectedMore:pointerover /template/ ContentPresenter">
+        <Setter Property="BorderBrush" Value="{DynamicResource Orange}"/>
+        <Setter Property="Background" Value="{DynamicResource Orange}"/>
+    </Style>
+    
+    <Style Selector="Button.SelectedMore:pointerover TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource White}"/>
+    </Style>
+    
 </Styles>
 
