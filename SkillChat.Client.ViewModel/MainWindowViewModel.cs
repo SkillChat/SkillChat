@@ -163,9 +163,7 @@ namespace SkillChat.Client.ViewModel
                             }
 
                             if (!windowIsFocused)
-                                Notification.Manager.Show(
-                                    $"{(newMessage.UserNickname != null && newMessage.UserNickname.Length > 10 ? string.Concat(newMessage.UserNickname.Remove(10, newMessage.UserNickname.Length - 10), "...") : newMessage.UserNickname)} : ",
-                                    $"\"{(newMessage.Text.Length > 10 ? string.Concat(newMessage.Text.Remove(10, newMessage.Text.Length - 10), "...") : newMessage.Text)}\"");
+                                Notify.NewMessage(newMessage.UserNickname, newMessage.Text.Replace("\r\n", " "));
                         }
 
 
@@ -370,7 +368,7 @@ namespace SkillChat.Client.ViewModel
             {
                 if (obj is IHaveIsActive win)
                 {
-                    Notify.WindowIsActive = win.IsActive;
+                    windowIsFocused = win.IsActive;
                 }
             });
             PointerPressedCommand = ReactiveCommand.Create<object>(obj =>

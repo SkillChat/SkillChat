@@ -1,7 +1,9 @@
 ﻿using System;
 using Avalonia;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform;
 using Avalonia.ReactiveUI;
+using Avalonia.VisualTree;
 using SkillChat.Client.Notification.ViewModels;
 using SkillChat.Client.ViewModel;
 
@@ -14,6 +16,8 @@ namespace SkillChat.Client.Views
         public int ScreenBottomRightX => Screens.Primary.WorkingArea.BottomRight.X;
 
         public int ScreenBottomRightY => Screens.Primary.WorkingArea.BottomRight.Y;
+
+        public double PrimaryPixelDensity => Screens.Primary.PixelDensity;
 
         public void SetPosition(int x, int y)
         {

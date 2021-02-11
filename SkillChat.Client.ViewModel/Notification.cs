@@ -14,7 +14,7 @@ namespace SkillChat.Client.ViewModel
         //Добавление увдеомлений в очередь
         private void Add(INotify window)
         {
-            _notificationWindows.Add(window);
+            _notificationWindows.Insert(0,window);
             Reposition();
         }
 
@@ -27,8 +27,8 @@ namespace SkillChat.Client.ViewModel
                 if (!window.IsClosed)
                 {
                     count++;
-                    window.SetPosition(window.ScreenBottomRightX - (int)window.Width, window.ScreenBottomRightY - count * (int)window.Height - 50 -
-                            10 * count);
+                    window.SetPosition(window.ScreenBottomRightX - (int)(window.Width*window.PrimaryPixelDensity), 
+                        window.ScreenBottomRightY - count * (int)(window.Height* window.PrimaryPixelDensity) - (int)(50 * window.PrimaryPixelDensity) -(int) (10 * window.PrimaryPixelDensity)*count);
                 }
             }
         }

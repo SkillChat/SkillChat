@@ -7,6 +7,7 @@ namespace SkillChat.Client.ViewModel
         bool IsClosed { get; }
         int ScreenBottomRightX { get; }
         int ScreenBottomRightY { get; }
+        double PrimaryPixelDensity { get; }
         double Width { get; }
         double Height { get; }
         bool ShowInTaskbar { get; set; }
