@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reactive;
 using System.Windows.Input;
 using PropertyChanged;
@@ -18,56 +17,82 @@ namespace SkillChat.Client.ViewModel
     [AddINotifyPropertyChangedInterface]
     public class ProfileViewModel
     {
-        public ProfileViewModel(IJsonServiceClient serviceClient, MainWindowViewModel mainWindow)
+        public ProfileViewModel(IJsonServiceClient serviceClient)
         {
-            WindowViewModel = mainWindow;
             //Показать/скрыть панель профиля
             SetOpenProfileCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                if (ProfileViewModel.windowWidth < 650) isShowChat = false;
-                if (isOpenProfile && isEditProfile)
+                if (ProfileViewModel.WindowWidth < 650) IsShowChat = false;
+                if (IsOpenProfile && IsEditNameProfile)
                 {
-                    isEditProfile = false;
+                    IsEditNameProfile = false;
                 }
-                isOpenProfile = !isOpenProfile;
-                WindowViewModel.SettingsViewModel.IsWindowSettings = false;
+
+                IsOpenProfile = !IsOpenProfile;
+                IsOpenProfileEvent?.Invoke(IsOpenProfile);
             });
-            //Показать/скрыть редактирование профиля
-            SetEditProfileCommand = ReactiveCommand.CreateFromTask(async () => { isEditProfile = true; });
-            //Сохранить изменения профиля
-            ApplyProfileCommand = ReactiveCommand.CreateFromTask(async () =>
-                {
-                    Profile = await serviceClient.PostAsync(new SetProfile { DisplayName = Profile.DisplayName });
-                    isEditProfile = false;
-                });
+
+            //Сохранить изменения Name профиля
+            ApplyProfileNameCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                Profile = await serviceClient.PostAsync(new SetProfile
+                    {DisplayName = Profile.DisplayName});
+                IsEditNameProfile = false;
+            });
+
             //Скрытие окна 
             LayoutUpdatedWindow = ReactiveCommand.Create<object>(obj =>
             {
                 if (obj is IHaveWidth window)
                 {
-                    ProfileViewModel.windowWidth = window.Width;
-                    isShowChat = !isOpenProfile || window.Width > 650;
+                    ProfileViewModel.WindowWidth = window.Width;
+                    IsShowChat = !IsOpenProfile || window.Width > 650;
                 }
+            });
+
+            //Показать/скрыть редактирование профиля
+            SetEditNameProfileCommand = ReactiveCommand.CreateFromTask(async () => { IsEditNameProfile = true; });
+
+            //Показать/скрыть PopupMenuProfile
+            PopupMenuProfile = ReactiveCommand.Create<object>(obj => { IsOpenMenu = !IsOpenMenu; });
+
+
+            SignOutCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                SignOut = !SignOut;
+                SignOutEvent?.Invoke(SignOut);
+            });
+
+            LoadMessageHistoryCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                LoadMessageHistory = !LoadMessageHistory;
+                LoadMessageHistoryEvent?.Invoke(LoadMessageHistory);
             });
         }
 
         //Profile
-        public bool isOpenProfile { get; set; }
-        public bool isEditProfile { get; set; }
-        
-        public bool isShowChat { get; set; } = false;
-        public static double windowWidth { get; set; }
+        public bool IsOpenProfile { get; set; }
+        public bool IsOpenMenu { get; set; }
+        public bool IsEditNameProfile { get; set; }
+        public bool IsShowChat { get; set; } = false;
+        public static double WindowWidth { get; set; }
+        public bool SignOut { get; set; }
+        public bool LoadMessageHistory { get; set; }
+
+        public ICommand ApplyProfileNameCommand { get; }
+        public ICommand SetOpenProfileCommand { get; }
+        public ICommand SetEditNameProfileCommand { get; }
+        public ICommand SignOutCommand { get; }
+        public ICommand LoadMessageHistoryCommand { get; }
 
         public UserProfileMold Profile { get; set; }
 
-        public MainWindowViewModel WindowViewModel { get; set; }
+        public event Action<bool> IsOpenProfileEvent;
+        public event Action<bool> SignOutEvent;
+        public event Action<bool> LoadMessageHistoryEvent;
 
-        public ICommand ApplyProfileCommand { get; }
-
-        public ICommand SetOpenProfileCommand { get; }
-
-        public ICommand SetEditProfileCommand { get; }
 
         public ReactiveCommand<object, Unit> LayoutUpdatedWindow { get; }
+        public ReactiveCommand<object, Unit> PopupMenuProfile { get; }
     }
 }

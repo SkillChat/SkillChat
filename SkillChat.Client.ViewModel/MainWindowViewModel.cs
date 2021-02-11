@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
@@ -41,13 +42,18 @@ namespace SkillChat.Client.ViewModel
             }
 
             serviceClient = new JsonServiceClient(settings.HostUrl);
-            ProfileViewModel = new ProfileViewModel(serviceClient, this);
+
+            ProfileViewModel = new ProfileViewModel(serviceClient);
+            ProfileViewModel.IsOpenProfileEvent += (e) => {WindowStates(WindowState.OpenProfile);};
+            ProfileViewModel.SignOutEvent += (e) => {SignOutCommand.Execute(null);};
+            ProfileViewModel.LoadMessageHistoryEvent += (e) => {LoadMessageHistoryCommand.Execute(null);};
 
             SettingsViewModel = new SettingsViewModel(serviceClient);
-            SettingsViewModel.ProfileViewModel = ProfileViewModel;
-            SettingsViewModel.IsWindowSettingsEvent += (e) => { ProfileViewModel.isOpenProfile = false; };
-            SettingsViewModel.TypeEnterEvent += (e) => { KeySendMessage = e; };
-     
+            SettingsViewModel.IsWindowSettingsEvent += (e) => {WindowStates(WindowState.WindowSettings);};
+            SettingsViewModel.TypeEnterEvent += (e) => {KeySendMessage = e;};
+            SettingsViewModel.IsHeaderMenuPopupEvent += (e) => {WindowStates(WindowState.HeaderMenuPopup);};
+
+            Width(false);
             User.UserName = settings.UserName;
             Tokens = new TokenResult {AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken};
 
@@ -300,6 +306,8 @@ namespace SkillChat.Client.ViewModel
                     settings.AccessToken = null;
                     settings.RefreshToken = null;
                     configuration.GetSection("ChatClientSettings").Set(settings);
+
+                    WindowStates(WindowState.SignOut);
                 }
                 catch (Exception ex)
                 {
@@ -367,9 +375,10 @@ namespace SkillChat.Client.ViewModel
                     Notify.WindowIsActive = win.IsActive;
                 }
             });
-            MorePointerPressedCommand = ReactiveCommand.Create<object>(obj =>
+           PointerPressedCommand = ReactiveCommand.Create<object>(obj =>
             {
-                SettingsViewModel.IsOpenSettings = false;
+                ProfileViewModel.IsOpenMenu = false;
+                SettingsViewModel.IsHeaderMenuPopup = false;
             });
         }
 
@@ -423,7 +432,7 @@ namespace SkillChat.Client.ViewModel
         public bool windowIsFocused { get; set; }
         public static ReactiveCommand<object, Unit> NotifyCommand { get; set; }
 
-        public static ReactiveCommand<object, Unit> MorePointerPressedCommand { get; set; }
+        public static ReactiveCommand<object, Unit> PointerPressedCommand { get; set; }
 
         public ProfileViewModel ProfileViewModel { get; set; }
 
@@ -453,6 +462,62 @@ namespace SkillChat.Client.ViewModel
 
         public event Action ErrorBe;
         public event Action ResetError;
+
+        public enum WindowState
+        {
+            SignOut,
+            OpenProfile,
+            WindowSettings,
+            HeaderMenuPopup
+        }
+
+        public void WindowStates(WindowState state)
+        {
+            switch (state)
+            {
+                case WindowState.SignOut:
+                    SettingsViewModel.IsWindowSettings = false;
+                    ProfileViewModel.IsOpenMenu = false;
+                    ProfileViewModel.IsOpenProfile = false;
+                    break;
+                case WindowState.OpenProfile:
+                    SettingsViewModel.IsWindowSettings = false; 
+                    SettingsViewModel.IsHeaderMenuPopup = false;
+                    break;
+                case WindowState.WindowSettings:
+                    ProfileViewModel.IsOpenProfile = false;
+                    Width(SettingsViewModel.IsWindowSettings);
+                    break;
+                case WindowState.HeaderMenuPopup:
+                    ProfileViewModel.IsOpenMenu = false;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(state), state, null);
+            }
+        }
+
+        public string ColumndefinitionWidth { get; set; }
+        public string ColumndefinitionWidth2 { get; set; }
+        public double? GridWidth { get; set; }
+        public string HeaderText { get; set; } = "Чат";
+
+        public void Width(bool isWindow)
+        {
+            if (!isWindow)
+            {
+                ColumndefinitionWidth = "*";
+                ColumndefinitionWidth2 = "Auto";
+                HeaderText = "Чат";
+                GridWidth = 390;
+            }
+            else
+            {
+                ColumndefinitionWidth = "310";
+                ColumndefinitionWidth2 = "*";
+                HeaderText = "Настройки";
+                GridWidth = null;
+            }
+        }
     }
 
     /// <summary>Хранилище аргументов соытия MessageReceived</summary>

@@ -1,73 +1,104 @@
-﻿<Styles 
-	xmlns="https://github.com/avaloniaui"
+﻿<Styles
+    xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia">
+    xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia">
 
-	<!--Кнопка открыть профиль слева-->
-	<Style Selector="Button.profile Image#profile_white_icon">
-		<Setter Property="Source">
-			<Setter.Value>
-				<svg:SvgImage Source="/Assets/Profile.svg" />
-			</Setter.Value>
-		</Setter>
-	</Style>
-	<Style Selector="Button.profile:pointerover Image#profile_white_icon">
-		<Setter Property="Source">
-			<Setter.Value>
-				<svg:SvgImage Source="/Assets/profile_orange_icon.svg" />
-			</Setter.Value>
-		</Setter>
-	</Style>
-	<Style Selector="Button.profile /template/ ContentPresenter">
-		<Setter Property="Background" Value="Transparent"/>
-	</Style>
+    <!--Кнопка открыть профиль слева-->
+    <Style Selector="Button.profile Image#profile_white_icon">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/Profile.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style Selector="Button.profile:pointerover Image#profile_white_icon">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/profile_orange_icon.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style Selector="Button.profile /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
 
-	<!--Кнопка открыть профиль-->
-	<Style Selector="Button.profile Image#profile_icon">
-		<Setter Property="Source">
-			<Setter.Value>
-				<svg:SvgImage Source="/Assets/profile_icon.svg" />
-			</Setter.Value>
-		</Setter>
-	</Style>
-	<Style Selector="Button.profile:pointerover Image#profile_icon">
-		<Setter Property="Source">
-			<Setter.Value>
-				<svg:SvgImage Source="/Assets/profile_orange_icon.svg" />
-			</Setter.Value>
-		</Setter>
-	</Style>
-	<Style Selector="Button.profile /template/ ContentPresenter">
-		<Setter Property="Background" Value="Transparent"/>
-	</Style>
+    <!--Кнопка открыть профиль-->
+    <Style Selector="Button.profile Image#profile_icon">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/profile_icon.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style Selector="Button.profile:pointerover Image#profile_icon">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/profile_orange_icon.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style Selector="Button.profile /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
 
-	<!--Кнопка Active профиль-->
-	<Style Selector="Button.profile_dd Image#profile_orange_icon">
-		<Setter Property="Source">
-			<Setter.Value>
-				<svg:SvgImage Source="/Assets/profile_orange_icon.svg" />
-			</Setter.Value>
-		</Setter>
-	</Style>
-	<Style Selector="Button.profile_dd /template/ ContentPresenter">
-		<Setter Property="Background" Value="Transparent"/>
-	</Style>
+    <!--Кнопка Active профиль-->
+    <Style Selector="Button.profile_dd Image#profile_orange_icon">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/profile_orange_icon.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style Selector="Button.profile_dd /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
 
-	<!--Кнопка редактирование профиля-->
-	<Style Selector="Button.profile_edit Image#buttonImagePencil">
-		<Setter Property="Source">
-			<Setter.Value>
-				<svg:SvgImage Source="/Assets/pencil.svg" />
-			</Setter.Value>
-		</Setter>
-	</Style>
+    <!--Кнопка редактирование профиля-->
+    <Style Selector="Button.profile_edit Image#buttonImagePencil">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/pencil.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-	<!--Кнопка сохранения профиля-->
-	<Style Selector="Button.profile_save Image#buttonImageSave">
-		<Setter Property="Source">
-			<Setter.Value>
-				<svg:SvgImage Source="/Assets/ok.svg" />
-			</Setter.Value>
-		</Setter>
-	</Style>
+    <!--Кнопка сохранения профиля-->
+    <Style Selector="Button.profile_save Image#buttonImageSave">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/ok.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--Кнопка редактирование профиля-->
+    <Style Selector="Button.profile_edit Image#buttonImagePencil2">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/pencil.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--Кнопка сохранения профиля-->
+    <Style Selector="Button.profile_save Image#buttonImageSave2">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/ok.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--Кнопка выхода из профиля-->
+    <Style Selector="Button.profile_exit">
+        <Setter Property="Foreground" Value="{DynamicResource Orange}"/>
+    </Style>
+    <Style Selector="Button.profile_exit:pointerover /template/ ContentPresenter">
+        <Setter Property="BorderBrush" Value="{DynamicResource Transparent}"/>
+        <Setter Property="Background" Value="{DynamicResource Transparent}"/>
+    </Style>
+    <Style Selector="Button.profile_exit:pointerover TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource Violet}"/>
+    </Style>
+
 </Styles>

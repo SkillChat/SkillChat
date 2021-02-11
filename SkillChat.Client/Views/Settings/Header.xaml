@@ -9,7 +9,7 @@
         VerticalAlignment="Center"
         Background="Transparent"
         BorderThickness="0"
-		Cursor="Hand"
+        Cursor="Hand"
         Command="{Binding OpenSettingsCommand}"
         Classes="more">
         <Image Name="more" Width="20" Height="40" />

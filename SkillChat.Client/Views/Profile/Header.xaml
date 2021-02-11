@@ -5,61 +5,83 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
              xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
+             xmlns:interactivity="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+             xmlns:profile="clr-namespace:SkillChat.Client.Views.Profile"
              x:Class="SkillChat.Client.Views.Profile.Header">
 
-  <!--Profile - Шапка профиля-->
-  <Grid>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="2"/>
-      <ColumnDefinition Width="*"/>
-      <ColumnDefinition Width="20"/>
-	  <ColumnDefinition Width="40"/>
-    </Grid.ColumnDefinitions>
 
-    <Grid Grid.Column="0" Background="#E0E0E0"/>
+    <!--Profile - Шапка профиля-->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="300" />
+        </Grid.ColumnDefinitions>
 
-	  <StackPanel Orientation="Horizontal">
-		  <Button
-			  VerticalAlignment="Center"
-			  Background="Transparent"
-			  BorderThickness="0"
-			  Command="{Binding WindowViewModel.LoadMessageHistoryCommand}"
-			  Content="Cтарые сообщения"
-			  FontSize="12"
-			  HorizontalAlignment="Left"/>
-	  </StackPanel>
-	  
-    <Button
-			IsVisible="{Binding !isOpenProfile}"
-			VerticalAlignment="Center"
-			Background="Transparent"
-			BorderThickness="0"
-			Cursor="Hand"
-			ToolTip.Tip="Свой профиль"
-			Classes="profile"
-			ToolTip.Placement="Bottom"
-			ToolTip.HorizontalOffset="-70"
-			ToolTip.VerticalOffset="1"
-			Command="{Binding SetOpenProfileCommand}"
-			Grid.Column="3">
-      <Image Name="profile_icon" Width="13.33" Height="18.65"/>
-    </Button>
+        <Grid Grid.Column="0" Background="#E0E0E0" />
 
-    <Button
-			IsVisible="{Binding isOpenProfile}"
-			VerticalAlignment="Center"
-			Background="Transparent"
-			BorderThickness="0"
-			Cursor="Hand"
-			ToolTip.Tip="Скрыть свой профиль"
-			Classes="profile_dd"
-			ToolTip.Placement="Bottom"
-			ToolTip.HorizontalOffset="-115"
-			ToolTip.VerticalOffset="1"
-			Command="{Binding SetOpenProfileCommand}"
-			Grid.Column="3">
-      <Image Name="profile_orange_icon" Width="13.33" Height="18.65"/>
-    </Button>
+        <StackPanel Orientation="Horizontal">
+            <Button
+                VerticalAlignment="Center"
+                Background="Transparent"
+                BorderThickness="0"
+                Command="{Binding LoadMessageHistoryCommand}"
+                Content="Cтарые сообщения"
+                FontSize="12"
+                HorizontalAlignment="Left" />
+        </StackPanel>
+        <Grid Grid.Column="3">
+            <Button
+                IsVisible="{Binding !IsOpenProfile}"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                BorderThickness="0"
+                Cursor="Hand"
+                Name="button_PopupMenuProfile"
+                HorizontalAlignment="Right"
+                Margin="0 0 10 0"
+                ToolTip.Tip="Свой профиль"
+                Classes="profile"
+                ToolTip.Placement="Bottom"
+                ToolTip.HorizontalOffset="-75"
+                ToolTip.VerticalOffset="1"
+                Command="{Binding SetOpenProfileCommand}">
+                <Image Name="profile_icon" Width="13.33" Height="18.65" />
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="PointerReleased"
+                                             SourceObject="{Binding #button_PopupMenuProfile}">
+                        <core:InvokeCommandAction Command="{Binding PopupMenuProfile}"
+                                                CommandParameter="{Binding #button_PopupMenuProfile}" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </Button>
+            <Button
+                IsVisible="{Binding IsOpenProfile}"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                BorderThickness="0"
+                Cursor="Hand"
+                Name="buttonAction_PopupMenuProfile"
+                ToolTip.Tip="Скрыть свой профиль"
+                HorizontalAlignment="Right"
+                Margin="0 0 10 0"
+                Classes="profile_dd"
+                ToolTip.Placement="Bottom"
+                ToolTip.HorizontalOffset="-123"
+                ToolTip.VerticalOffset="1"
+                Command="{Binding SetOpenProfileCommand}">
+                <Image Name="profile_orange_icon" Width="13.33" Height="18.65" />
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="PointerReleased"
+                                             SourceObject="{Binding #buttonAction_PopupMenuProfile}">
+                        <core:InvokeCommandAction Command="{Binding PopupMenuProfile}"
+                                                CommandParameter="{Binding #buttonAction_PopupMenuProfile}" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </Button>
+        </Grid>
+    </Grid>
 
-  </Grid>
 </UserControl>
