@@ -132,6 +132,7 @@
                     <Button
                         VerticalAlignment="Top"
                         HorizontalAlignment="Center"
+                        IsVisible="{Binding !IsUserProfileInfo}"
                         Margin="120 50 121 0"
                         FontWeight="400"
                         Height="30"
