@@ -53,11 +53,30 @@ namespace SkillChat.Client.ViewModel
             SettingsViewModel.TypeEnterEvent += (e) => {KeySendMessage = e;};
             SettingsViewModel.IsHeaderMenuPopupEvent += (e) => {WindowStates(WindowState.HeaderMenuPopup);};
 
+
+            var oldUserId = "";
             IUserProfileInfo.UserProfileInfoEvent += e =>
             {
                 ProfileViewModel.Profile = e;
-                ProfileViewModel.IsOpenProfile = !ProfileViewModel.IsOpenProfile;
-                ProfileViewModel.IsUserProfileInfo = true;
+                if (User.Id == e.Id)
+                {
+                    ProfileViewModel.IsOpenProfile = !ProfileViewModel.IsOpenProfile;
+                    ProfileViewModel.IsUserProfileInfo = true;
+                }
+                else
+                {
+                    if (oldUserId == e.Id)
+                    {
+                        ProfileViewModel.IsOpenProfile = false;
+                        oldUserId = "";
+                    }
+                    else
+                    {
+                        oldUserId = e.Id;
+                        ProfileViewModel.IsOpenProfile = true;
+                        ProfileViewModel.IsUserProfileInfo = true;
+                    }
+                }
             };
 
             Width(false);

@@ -36,7 +36,7 @@ namespace SkillChat.Client.ViewModel
         {
             UserProfileInfoCommand = ReactiveCommand.Create<string>(async userId =>
             {
-                ProfileMold = await serviceClient.GetAsync(new GetProfileInfoUser { UserId = userId });
+                ProfileMold = await serviceClient.GetAsync(new GetProfile { UserId = userId });
                 IUserProfileInfo.UserProfileInfoEvent?.Invoke(ProfileMold);
             });
         }
