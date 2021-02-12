@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Reactive;
 using PropertyChanged;
 using ReactiveUI;
+using ServiceStack;
+using SkillChat.Server.ServiceModel;
+using SkillChat.Server.ServiceModel.Molds;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -26,7 +30,20 @@ namespace SkillChat.Client.ViewModel
     public class MyMessageViewModel : MessageViewModel { }
 
     [AddINotifyPropertyChangedInterface]
-    public class UserMessageViewModel : MessageViewModel { }
+    public class UserMessageViewModel : MessageViewModel
+    {
+        public UserMessageViewModel(IJsonServiceClient serviceClient)
+        {
+            UserProfileInfoCommand = ReactiveCommand.Create<string>(async userId =>
+            {
+                ProfileMold = await serviceClient.GetAsync(new GetProfileInfoUser { UserId = userId });
+                IUserProfileInfo.UserProfileInfoEvent?.Invoke(ProfileMold);
+            });
+        }
+
+        public UserProfileMold ProfileMold { get; set; }
+        public  ReactiveCommand<string, Unit> UserProfileInfoCommand { get; set; }
+    }
 
     [AddINotifyPropertyChangedInterface]
     public class MessageViewModel

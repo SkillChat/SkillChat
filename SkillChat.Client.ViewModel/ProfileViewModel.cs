@@ -28,6 +28,8 @@ namespace SkillChat.Client.ViewModel
                     IsEditNameProfile = false;
                 }
 
+                Profile = await serviceClient.GetAsync(new GetMyProfile());
+                IsUserProfileInfo = false;
                 IsOpenProfile = !IsOpenProfile;
                 IsOpenProfileEvent?.Invoke(IsOpenProfile);
             });
@@ -65,10 +67,6 @@ namespace SkillChat.Client.ViewModel
             //Показать/скрыть PopupMenuProfile
             PopupMenuProfile = ReactiveCommand.Create<object>(obj => { IsOpenMenu = !IsOpenMenu; });
 
-            //Показать/скрыть PopupMenuProfile
-            PopupMenuProfile = ReactiveCommand.Create<object>(obj => { IsOpenMenu = !IsOpenMenu; });
-
-
             SignOutCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 SignOut = !SignOut;
@@ -91,6 +89,7 @@ namespace SkillChat.Client.ViewModel
         public static double WindowWidth { get; set; }
         public bool SignOut { get; set; }
         public bool LoadMessageHistory { get; set; }
+        public bool IsUserProfileInfo { get; set; }
 
         public ICommand ApplyProfileNameCommand { get; }
         public ICommand ApplyProfileAboutMeCommand { get; }

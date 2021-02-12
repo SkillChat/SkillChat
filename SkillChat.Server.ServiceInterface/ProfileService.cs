@@ -42,5 +42,18 @@ namespace SkillChat.Server.ServiceInterface
             }
             throw new HttpError(HttpStatusCode.NotFound, "Пользователь не найден в базе данных");
         }
+
+        [Authenticate]
+        public async Task<UserProfileMold> Get(GetProfileInfoUser request)
+        {
+            var existedUser = await RavenSession.Query<User>().FirstOrDefaultAsync(x => x.Id == request.UserId);
+            if (existedUser != null)
+            {
+                var user = await RavenSession.LoadAsync<User>(existedUser.Id);
+                var mapped = Mapper.Map<UserProfileMold>(user);
+                return mapped;
+            }
+            throw new HttpError(HttpStatusCode.NotFound, "Пользователь не найден в базе данных");
+        }
     }
 }

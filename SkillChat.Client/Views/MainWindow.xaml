@@ -250,11 +250,19 @@
                                                 BorderThickness="0">
                                                 <Grid RowDefinitions="Auto,Auto">
                                                     <StackPanel Orientation="Horizontal">
-                                                        <TextBlock
+                                                         <TextBlock
                                                             Padding="10,0,0,0"
                                                             FontSize="14"
                                                             FontWeight="SemiBold"
-                                                        Text="{Binding DisplayNickname}" />
+                                                            Text="{Binding DisplayNickname}"
+                                                            Cursor="Hand"
+                                                            x:Name="UserDisplayNickname">
+                                                            <interactivity:Interaction.Behaviors>
+                                                                <core:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #UserDisplayNickname}">
+                                                                    <core:InvokeCommandAction Command="{Binding UserProfileInfoCommand}" CommandParameter="{Binding UserId}"/>
+                                                                </core:EventTriggerBehavior>
+                                                            </interactivity:Interaction.Behaviors>
+                                                         </TextBlock>
                                                     </StackPanel>
                                                     <TextBlock
                                                         Grid.Row="1"

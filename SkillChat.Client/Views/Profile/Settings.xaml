@@ -24,11 +24,7 @@
                                TextAlignment="Center"
                                Foreground="#000000" FontWeight="600" FontSize="16" Text="{Binding Profile.DisplayName}" />
 
-                    <TextBlock Margin="50 5 0 0" IsVisible="{Binding !IsEditNameProfile}" FontStyle="Italic"
-                               Foreground="#828282"
-                               FontWeight="400" FontSize="14" Text="Ваше имя" />
-
-                    <TextBlock Margin="50 5 0 0" IsVisible="{Binding IsEditNameProfile}" FontStyle="Italic"
+                    <TextBlock Margin="50 5 0 0" FontStyle="Italic"
                                Foreground="#828282"
                                FontWeight="400" FontSize="14" Text="Имя" />
 
@@ -37,36 +33,39 @@
                              Foreground="#828282" FontWeight="600" FontSize="16" VerticalContentAlignment="Center"
                              HorizontalContentAlignment="Center" BorderBrush="#BDBDBD" Margin="0 29 0 0"
                              VerticalAlignment="Top" />
-                    <Button
-                        IsVisible="{Binding !IsEditNameProfile}"
-                        VerticalAlignment="Top"
-                        HorizontalAlignment="Right"
-                        Background="Transparent"
-                        Margin="0 35.67 20 0"
-                        Cursor="Hand"
-                        Classes="profile_edit"
-                        BorderThickness="0"
-                        Command="{Binding SetEditNameProfileCommand}">
-                        <Image
-                            Name="buttonImagePencil"
-                            Width="19.33"
-                            Height="18.67" />
-                    </Button>
-                    <Button
-                        IsVisible="{Binding IsEditNameProfile}"
-                        VerticalAlignment="Top"
-                        HorizontalAlignment="Right"
-                        Background="Transparent"
-                        Margin="0 48 21.33 0"
-                        Cursor="Hand"
-                        Classes="profile_save"
-                        BorderThickness="0"
-                        Command="{Binding ApplyProfileNameCommand}">
-                        <Image
-                            Name="buttonImageSave"
-                            Width="17.33"
-                            Height="11.33" />
-                    </Button>
+                    <Grid IsVisible="{Binding !IsUserProfileInfo}">
+                        <Button
+                            IsVisible="{Binding !IsEditNameProfile}"
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Right"
+                            Background="Transparent"
+                            Margin="0 35.67 20 0"
+                            Cursor="Hand"
+                            Classes="profile_edit"
+                            BorderThickness="0"
+                            Command="{Binding SetEditNameProfileCommand}">
+                            <Image
+                                Name="buttonImagePencil"
+                                Width="19.33"
+                                Height="18.67" />
+                        </Button>
+                        <Button
+                            IsVisible="{Binding IsEditNameProfile}"
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Right"
+                            Background="Transparent"
+                            Margin="0 48 21.33 0"
+                            Cursor="Hand"
+                            Classes="profile_save"
+                            BorderThickness="0"
+                            Command="{Binding ApplyProfileNameCommand}">
+                            <Image
+                                Name="buttonImageSave"
+                                Width="17.33"
+                                Height="11.33" />
+                        </Button>
+                    </Grid>
+
                 </Grid>
 
                 <Grid Grid.Row="1">
@@ -93,36 +92,38 @@
                              MaxHeight="250"
                              BorderBrush="#BDBDBD" Margin="0 44 0 0"
                              VerticalAlignment="Top" />
-                    <Button
-                        IsVisible="{Binding !IsEditAboutMeProfile}"
-                        VerticalAlignment="Top"
-                        HorizontalAlignment="Right"
-                        Background="Transparent"
-                        Margin="0 60 20 0"
-                        Cursor="Hand"
-                        Classes="profile_edit"
-                        BorderThickness="0"
-                        Command="{Binding SetEditAboutMeProfileCommand}">
-                        <Image
-                            Name="buttonImagePencil2"
-                            Width="19.33"
-                            Height="18.67" />
-                    </Button>
-                    <Button
-                        IsVisible="{Binding IsEditAboutMeProfile}"
-                        VerticalAlignment="Top"
-                        HorizontalAlignment="Right"
-                        Background="Transparent"
-                        Margin="0 60 21.33 0"
-                        Cursor="Hand"
-                        Classes="profile_save"
-                        BorderThickness="0"
-                        Command="{Binding ApplyProfileAboutMeCommand}">
-                        <Image
-                            Name="buttonImageSave2"
-                            Width="17.33"
-                            Height="11.33" />
-                    </Button>
+                    <Grid IsVisible="{Binding !IsUserProfileInfo}">
+                        <Button
+                            IsVisible="{Binding !IsEditAboutMeProfile}"
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Right"
+                            Background="Transparent"
+                            Margin="0 60 20 0"
+                            Cursor="Hand"
+                            Classes="profile_edit"
+                            BorderThickness="0"
+                            Command="{Binding SetEditAboutMeProfileCommand}">
+                            <Image
+                                Name="buttonImagePencil2"
+                                Width="19.33"
+                                Height="18.67" />
+                        </Button>
+                        <Button
+                            IsVisible="{Binding IsEditAboutMeProfile}"
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Right"
+                            Background="Transparent"
+                            Margin="0 60 21.33 0"
+                            Cursor="Hand"
+                            Classes="profile_save"
+                            BorderThickness="0"
+                            Command="{Binding ApplyProfileAboutMeCommand}">
+                            <Image
+                                Name="buttonImageSave2"
+                                Width="17.33"
+                                Height="11.33" />
+                        </Button>
+                    </Grid>
                 </Grid>
                 <Grid Grid.Row="2">
                     <TextBlock Margin="0 20 0 0" Padding="0 0 1 0" HorizontalAlignment="Center" FontStyle="Italic"

@@ -53,6 +53,13 @@ namespace SkillChat.Client.ViewModel
             SettingsViewModel.TypeEnterEvent += (e) => {KeySendMessage = e;};
             SettingsViewModel.IsHeaderMenuPopupEvent += (e) => {WindowStates(WindowState.HeaderMenuPopup);};
 
+            IUserProfileInfo.UserProfileInfoEvent += e =>
+            {
+                ProfileViewModel.Profile = e;
+                ProfileViewModel.IsOpenProfile = !ProfileViewModel.IsOpenProfile;
+                ProfileViewModel.IsUserProfileInfo = true;
+            };
+
             Width(false);
             User.UserName = settings.UserName;
             Tokens = new TokenResult {AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken};
@@ -119,8 +126,6 @@ namespace SkillChat.Client.ViewModel
                             ChatId = chat?.Id;
                             ChatName = chat?.ChatName;
                             LoadMessageHistoryCommand.Execute(null);
-                            //Получаем профиль
-                            ProfileViewModel.Profile = await serviceClient.GetAsync(new GetMyProfile());
                             //Получаем настройки
                             SettingsViewModel.ChatSettings = await serviceClient.GetAsync(new GetMySettings());
                         }
@@ -132,7 +137,7 @@ namespace SkillChat.Client.ViewModel
                         var isMyMessage = User.Id == data.UserId;
                         var newMessage = isMyMessage
                             ? (MessageViewModel) new MyMessageViewModel()
-                            : new UserMessageViewModel();
+                            : new UserMessageViewModel(serviceClient);
                         newMessage.Id = data.Id;
                         newMessage.Text = data.Message;
                         newMessage.PostTime = data.PostTime;
@@ -237,7 +242,7 @@ namespace SkillChat.Client.ViewModel
                         var isMyMessage = User.Id == item.UserId;
                         var newMessage = isMyMessage
                             ? (MessageViewModel) new MyMessageViewModel()
-                            : new UserMessageViewModel();
+                            : new UserMessageViewModel(serviceClient);
                         newMessage.Id = item.Id;
                         newMessage.Text = item.Text;
                         newMessage.PostTime = item.PostTime;
@@ -483,6 +488,7 @@ namespace SkillChat.Client.ViewModel
                 case WindowState.OpenProfile:
                     SettingsViewModel.IsWindowSettings = false; 
                     SettingsViewModel.IsHeaderMenuPopup = false;
+                    Width(SettingsViewModel.IsWindowSettings);
                     break;
                 case WindowState.WindowSettings:
                     ProfileViewModel.IsOpenProfile = false;

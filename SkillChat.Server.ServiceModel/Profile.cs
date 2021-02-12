@@ -29,4 +29,13 @@ namespace SkillChat.Server.ServiceModel
         [ApiMember(IsRequired = true, Description = "О себе")]
         public string AboutMe { get; set; }
     }
+
+    [Api("Profile")]
+    [ApiResponse(HttpStatusCode.BadRequest, "Неверно составлен запрос", ResponseType = typeof(void))]
+    [Route("/getprofileinfouser", "GET", Summary = "Получение профиля")]
+    public class GetProfileInfoUser: IReturn<UserProfileMold>
+    {
+        [ApiMember(IsRequired = true, Description = "Идентификатор пользователя")]
+        public string UserId { get; set; }
+    }
 }
