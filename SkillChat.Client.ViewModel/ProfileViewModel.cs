@@ -28,10 +28,21 @@ namespace SkillChat.Client.ViewModel
                     IsEditNameProfile = false;
                 }
 
-                Profile = await serviceClient.GetAsync(new GetMyProfile());
-                IsUserProfileInfo = false;
-                IsOpenProfile = !IsOpenProfile;
-                IsOpenProfileEvent?.Invoke(IsOpenProfile);
+                if (IsUserProfileInfo)
+                {
+                    IsOpenProfile = true;
+                    Profile = await serviceClient.GetAsync(new GetMyProfile());
+                    IsOpenProfileEvent?.Invoke(IsOpenProfile, IsUserProfileInfo);
+                    IsUserProfileInfo = false;
+                }
+                else
+                {
+                    Profile = await serviceClient.GetAsync(new GetMyProfile());
+                    IsUserProfileInfo = false;
+                    IsOpenProfile = !IsOpenProfile;
+                    IsOpenProfileEvent?.Invoke(IsOpenProfile, IsUserProfileInfo);
+                }
+               
             });
 
             //Сохранить изменения Name профиля
@@ -102,7 +113,7 @@ namespace SkillChat.Client.ViewModel
 
         public UserProfileMold Profile { get; set; }
 
-        public event Action<bool> IsOpenProfileEvent;
+        public event Action<bool,bool> IsOpenProfileEvent;
         public event Action<bool> SignOutEvent;
         public event Action<bool> LoadMessageHistoryEvent;
   

@@ -44,7 +44,7 @@ namespace SkillChat.Client.ViewModel
             serviceClient = new JsonServiceClient(settings.HostUrl);
 
             ProfileViewModel = new ProfileViewModel(serviceClient);
-            ProfileViewModel.IsOpenProfileEvent += (e) => {WindowStates(WindowState.OpenProfile);};
+            ProfileViewModel.IsOpenProfileEvent += (e, d) => { WindowStates(WindowState.OpenProfile); oldUserId = d?"":oldUserId;};
             ProfileViewModel.SignOutEvent += (e) => {SignOutCommand.Execute(null);};
             ProfileViewModel.LoadMessageHistoryEvent += (e) => {LoadMessageHistoryCommand.Execute(null);};
 
@@ -54,7 +54,6 @@ namespace SkillChat.Client.ViewModel
             SettingsViewModel.IsHeaderMenuPopupEvent += (e) => {WindowStates(WindowState.HeaderMenuPopup);};
 
 
-            var oldUserId = "";
             IUserProfileInfo.UserProfileInfoEvent += e =>
             {
                 ProfileViewModel.Profile = e;
@@ -71,7 +70,7 @@ namespace SkillChat.Client.ViewModel
                         oldUserId = "";
                     }
                     else
-                    {
+                    { 
                         oldUserId = e.Id;
                         ProfileViewModel.IsOpenProfile = true;
                         ProfileViewModel.IsUserProfileInfo = true;
@@ -464,6 +463,8 @@ namespace SkillChat.Client.ViewModel
         public bool IsShowingRegisterPage { get; set; }
 
         public string ValidationError { get; set; }
+        public string oldUserId { get; set; }
+        
         public ReactiveCommand<object, Unit> GoToRegisterCommand { get; }
         public RegisterUserViewModel RegisterUser { get; set; }
         public ICommand RegisterCommand { get; }
