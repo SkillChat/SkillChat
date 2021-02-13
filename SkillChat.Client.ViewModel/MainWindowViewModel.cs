@@ -59,20 +59,20 @@ namespace SkillChat.Client.ViewModel
                 ProfileViewModel.Profile = e;
                 if (User.Id == e.Id)
                 {
-                    ProfileViewModel.IsOpenProfile = !ProfileViewModel.IsOpenProfile;
+                    ProfileViewModel.IsOpened = !ProfileViewModel.IsOpened;
                     ProfileViewModel.IsUserProfileInfo = true;
                 }
                 else
                 {
                     if (oldUserId == e.Id)
                     {
-                        ProfileViewModel.IsOpenProfile = false;
+                        ProfileViewModel.IsOpened = false;
                         oldUserId = "";
                     }
                     else
                     { 
                         oldUserId = e.Id;
-                        ProfileViewModel.IsOpenProfile = true;
+                        ProfileViewModel.IsOpened = true;
                         ProfileViewModel.IsUserProfileInfo = true;
                     }
                 }
@@ -503,7 +503,7 @@ namespace SkillChat.Client.ViewModel
                 case WindowState.SignOut:
                     SettingsViewModel.IsWindowSettings = false;
                     ProfileViewModel.IsOpenMenu = false;
-                    ProfileViewModel.IsOpenProfile = false;
+                    ProfileViewModel.IsOpened = false;
                     break;
                 case WindowState.OpenProfile:
                     SettingsViewModel.IsWindowSettings = false; 
@@ -511,7 +511,7 @@ namespace SkillChat.Client.ViewModel
                     Width(SettingsViewModel.IsWindowSettings);
                     break;
                 case WindowState.WindowSettings:
-                    ProfileViewModel.IsOpenProfile = false;
+                    ProfileViewModel.IsOpened = false;
                     Width(SettingsViewModel.IsWindowSettings);
                     break;
                 case WindowState.HeaderMenuPopup:

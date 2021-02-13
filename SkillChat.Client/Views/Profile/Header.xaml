@@ -34,7 +34,7 @@
         </StackPanel>
         <Grid Grid.Column="3">
             <Button
-                IsVisible="{Binding !IsOpenProfile}"
+                IsVisible="{Binding !IsOpened}"
                 VerticalAlignment="Center"
                 Background="Transparent"
                 BorderThickness="0"
@@ -58,7 +58,7 @@
                 </interactivity:Interaction.Behaviors>
             </Button>
             <Button
-                IsVisible="{Binding IsOpenProfile}"
+                IsVisible="{Binding IsOpened}"
                 VerticalAlignment="Center"
                 Background="Transparent"
                 BorderThickness="0"

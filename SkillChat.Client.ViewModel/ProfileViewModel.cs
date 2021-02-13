@@ -27,23 +27,23 @@ namespace SkillChat.Client.ViewModel
             SetOpenProfileCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 if (ProfileViewModel.WindowWidth < 650) IsShowChat = false;
-                if (IsOpenProfile && IsEditNameProfile)
+                if (IsOpened && IsEditNameProfile)
                 {
                     IsEditNameProfile = false;
                 }
 
                 if (IsUserProfileInfo)
                 {
-                    IsOpenProfile = true;
+                    IsOpened = true;
                     Profile = await _serviceClient.GetAsync(new GetMyProfile());
-                    IsOpenProfileEvent?.Invoke(IsOpenProfile, IsUserProfileInfo);
+                    IsOpenProfileEvent?.Invoke(IsOpened, IsUserProfileInfo);
                     IsUserProfileInfo = false;
                 }
                 else
                 {
-                    IsOpenProfile = !IsOpenProfile;
+                    IsOpened = !IsOpened;
                     Profile = await _serviceClient.GetAsync(new GetMyProfile());
-                    IsOpenProfileEvent?.Invoke(IsOpenProfile, IsUserProfileInfo);
+                    IsOpenProfileEvent?.Invoke(IsOpened, IsUserProfileInfo);
                     IsUserProfileInfo = false;
                 }
                
@@ -61,7 +61,7 @@ namespace SkillChat.Client.ViewModel
                 if (obj is IHaveWidth window)
                 {
                     ProfileViewModel.WindowWidth = window.Width;
-                    IsShowChat = !IsOpenProfile || window.Width > 650;
+                    IsShowChat = !IsOpened || window.Width > 650;
                 }
             });
 
@@ -96,7 +96,7 @@ namespace SkillChat.Client.ViewModel
         }
 
         //Profile
-        public bool IsOpenProfile { get; set; }
+        public bool IsOpened { get; set; }
         public bool IsOpenMenu { get; set; }
         public bool IsEditNameProfile { get; set; }
         public bool IsEditAboutMeProfile { get; set; }

@@ -8,7 +8,7 @@
              x:Class="SkillChat.Client.Views.Profile.Settings">
 
     <!--Profile - panel -->
-    <Grid IsVisible="{Binding IsOpenProfile}" Width="390" Background="#ffffff" HorizontalAlignment="Right">
+    <Grid IsVisible="{Binding IsOpened}" Width="390" Background="#ffffff" HorizontalAlignment="Right">
         <Grid Width="2" Background="#E0E0E0" HorizontalAlignment="Left" />
 
         <Grid>

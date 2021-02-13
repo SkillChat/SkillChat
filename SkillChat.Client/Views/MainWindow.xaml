@@ -83,7 +83,7 @@
                     </Image.Source>
                 </Image>
                 <Button Background="Transparent"
-                        IsVisible="{Binding !ProfileViewModel.IsOpenProfile}"
+                        IsVisible="{Binding !ProfileViewModel.IsOpened}"
                         BorderBrush="Transparent"
                         BorderThickness="0"
                         Cursor="Hand"
@@ -92,7 +92,7 @@
                     <Image Width="13.33" Height="18.65" Margin="20" Name="profile_white_icon" />
                 </Button>
                 <Button
-                    IsVisible="{Binding ProfileViewModel.IsOpenProfile}"
+                    IsVisible="{Binding ProfileViewModel.IsOpened}"
                     Background="Transparent"
                     BorderBrush="Transparent"
                     BorderThickness="0"
