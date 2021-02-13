@@ -51,7 +51,7 @@ namespace SkillChat.Server.Hubs
             Log.Information($"User {Context.Items["nickname"]}({Context.Items["login"]}) send message in main chat");
         }
 
-        public async Task Login(string token)
+        public async Task Login(string token, string operatingSystem, string ipAddress, string nameVersionClient)
         {
             var jwtAuthProviderReader = (JwtAuthProviderReader)AuthenticateService.GetAuthProvider("jwt");
 
@@ -84,6 +84,35 @@ namespace SkillChat.Server.Hubs
                 }
 
                 await Clients.Caller.SendAsync(logOn);
+                var userLoginAudit = await _ravenSession.LoadAsync<LoginAudit>(jwtPayload["sub"] + "/LoginAudit");
+                if (userLoginAudit != null)
+                {
+                    if (jwtPayload["session"] != userLoginAudit.SessionId)
+                    {
+                        userLoginAudit.NameVersionClient = nameVersionClient;
+                        userLoginAudit.OperatingSystem = operatingSystem;
+                        userLoginAudit.IpAddress = ipAddress;
+                        userLoginAudit.DateOfEntry = DateTime.Now;
+                        userLoginAudit.SessionId = jwtPayload["session"];
+
+                        await _ravenSession.StoreAsync(userLoginAudit);
+                        await _ravenSession.SaveChangesAsync();
+                    }
+                }
+                else
+                {
+                    userLoginAudit = new LoginAudit
+                    {
+                        Id = jwtPayload["sub"] + "/LoginAudit",
+                        OperatingSystem = operatingSystem,
+                        DateOfEntry = DateTime.Now,
+                        IpAddress = ipAddress,
+                        NameVersionClient = nameVersionClient,
+                        SessionId = jwtPayload["session"]
+                    };
+                    await _ravenSession.StoreAsync(userLoginAudit);
+                    await _ravenSession.SaveChangesAsync();
+                }
                 Log.Information($"Connected {Context.Items["login"]}({Context.Items["uid"]}) with session {Context.Items["session"]}");
             }
             catch (Exception e)

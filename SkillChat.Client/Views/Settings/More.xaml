@@ -28,7 +28,7 @@
                 BorderBrush="Transparent"
                 Background="#0000"
                 Cursor="Hand"
-                Command="{Binding GoToSettingsCommand}"
+                Command="{Binding WindowSettingsCommand}"
                 HorizontalContentAlignment="Left"
                 Classes="SelectedMore">
                 <Button.Content>

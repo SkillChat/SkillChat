@@ -3,7 +3,9 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Reactive;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -59,6 +61,12 @@ namespace SkillChat.Client.ViewModel
 
             Messages = new ObservableCollection<IMessagesContainerViewModel>();
 
+            var bits = Environment.Is64BitOperatingSystem ? "PC 64bit, " : "PC 32bit, ";
+            var operatingSystem = bits + RuntimeInformation.OSDescription;
+            var ipAddress = new WebClient().DownloadString("https://api.ipify.org");
+            var nameVersionClient = "SkillChat Avalonia Client 1.0";
+
+
             ConnectCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 try
@@ -100,7 +108,7 @@ namespace SkillChat.Client.ViewModel
                                 settings.AccessToken = Tokens.AccessToken;
                                 settings.RefreshToken = Tokens.RefreshToken;
                                 configuration.GetSection("ChatClientSettings").Set(configuration);
-                                await _hub.Login(Tokens.AccessToken);
+                                await _hub.Login(Tokens.AccessToken, operatingSystem, ipAddress, nameVersionClient);
                             }
                             catch (Exception e)
                             {
@@ -178,7 +186,7 @@ namespace SkillChat.Client.ViewModel
 
                     _connection.Closed += connectionOnClosed();
                     await _connection.StartAsync();
-                    await _hub.Login(Tokens.AccessToken);
+                    await _hub.Login(Tokens.AccessToken, operatingSystem, ipAddress, nameVersionClient);
                     //Messages.Add("Connection started");
                     IsShowingLoginPage = false;
                     IsShowingRegisterPage = false;

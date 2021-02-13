@@ -31,16 +31,42 @@
             </Grid.ColumnDefinitions>
 
             <Grid Background="#F2F2F2" Grid.Column="0">
-                <TextBlock
-                    Margin="20 10 0 0"
-                    Background="#0000"
-                    Cursor="Hand"
-                    FontSize="15"
-                    FontWeight="600"
-                    Foreground="Black"
-                    Text="Сообщения и чаты" />
-            </Grid>
-            <Grid Background="#FFFFFF" Grid.Column="3">
+				<StackPanel>
+					<Button Height="35"
+						Content="Сообщения и чаты"
+						HorizontalContentAlignment="Left"
+						Background="#0000"
+                        Cursor="Hand"
+						FontSize="15"
+						Classes="SettingItems"
+                        FontWeight="600"
+                        Foreground="Black"
+						BorderBrush="Transparent"
+						BorderThickness="0"
+						Command="{Binding GoToSettingsCommand}"
+						Padding="20 0 0 0"/>
+
+					<Button Height="35"
+							Content="Аудит входа"
+							HorizontalContentAlignment="Left"
+							Background="#0000"
+							Cursor="Hand"
+							FontSize="15"
+							Classes="SettingItems"
+							FontWeight="600"
+							Foreground="Black"
+							BorderBrush="Transparent"
+							BorderThickness="0"
+							Padding="20 0 0 0"
+							Command="{Binding LoginAuditCommand}"/>
+				</StackPanel>
+
+
+
+
+			</Grid>
+
+            <Grid Background="#FFFFFF" Grid.Column="3" IsVisible="{Binding Settings}" ZIndex="10">
                 <WrapPanel>
                     <TextBlock
                         Margin="20 10 0 0"
@@ -53,10 +79,65 @@
                     <RadioButton Margin="25 6 0 0" Cursor="Hand" Command="{Binding SettingsCommand}" Content="Enter"
                                  GroupName="TypeMessages" IsChecked="{Binding TypeEnter}" FontWeight="600"
                                  FontSize="16" />
-                    <RadioButton Margin="25 6 0 0" Cursor="Hand" Command="{Binding SettingsCommand}" Content="Ctrl+Enter"
+                    <RadioButton Margin="25 6 0 0" Cursor="Hand" Command="{Binding SettingsCommand}"
+                                 Content="Ctrl+Enter"
                                  GroupName="TypeMessages" IsChecked="{Binding !TypeEnter}" FontWeight="600"
                                  FontSize="16" />
                 </WrapPanel>
+            </Grid>
+
+            <Grid Background="#FFFFFF" Grid.Column="3" IsVisible="{Binding Audit}" ZIndex="10">
+                <ItemsControl
+                    Margin="15,0"
+                    BorderThickness="0"
+                    Items="{Binding LoginAudits}">
+                    <ItemsControl.DataTemplates>
+                        <DataTemplate DataType="{x:Type viewModel:LoginAuditViewModel}">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Grid Grid.Column="0">
+                                    <StackPanel>
+                                        <TextBlock
+                                            Margin="0 10 0 0"
+                                            Background="#0000"
+                                            FontSize="14"
+                                            FontWeight="600"
+                                            Foreground="Black"
+                                            Text="{Binding NameVersionClient}" />
+                                        <TextBlock
+                                            Margin="0 3 0 0"
+                                            Background="#0000"
+                                            FontSize="14"
+                                            FontWeight="600"
+                                            Foreground="Black"
+                                            Text="{Binding OperatingSystem}" />
+                                        <TextBlock
+                                            Margin="0 3 0 0"
+                                            FontSize="14"
+                                            FontWeight="600"
+                                            Foreground="#828282"
+                                            Text="{Binding IpAddress}" />
+                                    </StackPanel>
+                                </Grid>
+                                <Grid Grid.Column="1">
+									<TextBlock
+										Margin="0 10 50 0"
+										Foreground="#6B3FE7"
+										FontWeight="400"
+                                        FontSize="13"
+										Text="{Binding IsActive}"/>
+                                    <TextBlock
+                                        Margin="0 10 0 0"
+                                        HorizontalAlignment="Right"
+                                        TextAlignment="Right"
+                                        FontWeight="400"
+                                        FontSize="13"
+                                        Text="{Binding DateOfEntry}"
+                                        Foreground="#828282" />
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.DataTemplates>
+                </ItemsControl>
             </Grid>
         </Grid>
     </Grid>
