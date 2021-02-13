@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reactive;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using PropertyChanged;
 using ReactiveUI;
@@ -17,8 +18,11 @@ namespace SkillChat.Client.ViewModel
     [AddINotifyPropertyChangedInterface]
     public class ProfileViewModel
     {
+        private readonly IJsonServiceClient _serviceClient;
+
         public ProfileViewModel(IJsonServiceClient serviceClient)
         {
+            _serviceClient = serviceClient;
             //Показать/скрыть панель профиля
             SetOpenProfileCommand = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -31,35 +35,25 @@ namespace SkillChat.Client.ViewModel
                 if (IsUserProfileInfo)
                 {
                     IsOpenProfile = true;
-                    Profile = await serviceClient.GetAsync(new GetMyProfile());
+                    Profile = await _serviceClient.GetAsync(new GetMyProfile());
                     IsOpenProfileEvent?.Invoke(IsOpenProfile, IsUserProfileInfo);
                     IsUserProfileInfo = false;
                 }
                 else
                 {
-                    Profile = await serviceClient.GetAsync(new GetMyProfile());
-                    IsUserProfileInfo = false;
                     IsOpenProfile = !IsOpenProfile;
+                    Profile = await _serviceClient.GetAsync(new GetMyProfile());
                     IsOpenProfileEvent?.Invoke(IsOpenProfile, IsUserProfileInfo);
+                    IsUserProfileInfo = false;
                 }
                
             });
 
             //Сохранить изменения Name профиля
-            ApplyProfileNameCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                Profile = await serviceClient.PostAsync(new SetProfile
-                    {DisplayName = Profile.DisplayName, AboutMe = Profile.AboutMe });
-                IsEditNameProfile = false;
-            });
+            ApplyProfileNameCommand = ReactiveCommand.CreateFromTask(async () =>  await SetProfile() );
 
             //Сохранить изменения AboutMe профиля
-            ApplyProfileAboutMeCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                Profile = await serviceClient.PostAsync(new SetProfile
-                    { AboutMe = Profile.AboutMe, DisplayName = Profile.DisplayName });
-                IsEditAboutMeProfile = false;
-            });
+            ApplyProfileAboutMeCommand = ReactiveCommand.CreateFromTask(async () => await SetProfile() );
 
             //Скрытие окна 
             LayoutUpdatedWindow = ReactiveCommand.Create<object>(obj =>
@@ -89,6 +83,16 @@ namespace SkillChat.Client.ViewModel
                 LoadMessageHistory = !LoadMessageHistory;
                 LoadMessageHistoryEvent?.Invoke(LoadMessageHistory);
             });
+        }
+
+        private async Task SetProfile()
+        {
+            Profile = await _serviceClient.PostAsync(new SetProfile
+            {
+                AboutMe = Profile.AboutMe,
+                DisplayName = Profile.DisplayName
+            });
+            IsEditNameProfile = false;
         }
 
         //Profile
