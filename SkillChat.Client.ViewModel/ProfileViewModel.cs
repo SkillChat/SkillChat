@@ -113,7 +113,7 @@ namespace SkillChat.Client.ViewModel
         public static double WindowWidth { get; set; }
         public bool SignOut { get; set; }
         public bool LoadMessageHistory { get; set; }
-        public bool IsMyProfile { get; protected set; }
+        public bool IsMyProfile => Locator.Current.GetService<CurrentUserViewModel>()?.Id == Profile?.Id;
 
         public ICommand ApplyProfileNameCommand { get; }
         public ICommand ApplyProfileAboutMeCommand { get; }
@@ -151,9 +151,7 @@ namespace SkillChat.Client.ViewModel
             {
                 ResetEditMode();
                 Profile = await _serviceClient.GetAsync(new GetProfile { UserId = userId });
-                var user = Locator.Current.GetService<CurrentUserViewModel>();
                 IsOpened = true;
-                IsMyProfile = user.Id == userId;
                 IsOpenProfileEvent?.Invoke();
             }
         }
