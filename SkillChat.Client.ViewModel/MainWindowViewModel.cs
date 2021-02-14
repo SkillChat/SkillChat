@@ -28,6 +28,7 @@ namespace SkillChat.Client.ViewModel
         public MainWindowViewModel()
         {
             User = new CurrentUserViewModel();
+            Locator.CurrentMutable.RegisterConstant(User);
             configuration = Locator.Current.GetService<IConfiguration>();
             settings = configuration.GetSection("ChatClientSettings").Get<ChatClientSettings>();
 
@@ -44,7 +45,7 @@ namespace SkillChat.Client.ViewModel
             serviceClient = new JsonServiceClient(settings.HostUrl);
 
             ProfileViewModel = new ProfileViewModel(serviceClient);
-            ProfileViewModel.IsOpenProfileEvent += (e, d) => { WindowStates(WindowState.OpenProfile); oldUserId = d?"":oldUserId;};
+            ProfileViewModel.IsOpenProfileEvent += (e, d) => { WindowStates(WindowState.OpenProfile);};
             ProfileViewModel.SignOutEvent += (e) => {SignOutCommand.Execute(null);};
             ProfileViewModel.LoadMessageHistoryEvent += (e) => {LoadMessageHistoryCommand.Execute(null);};
 
@@ -52,31 +53,6 @@ namespace SkillChat.Client.ViewModel
             SettingsViewModel.IsWindowSettingsEvent += (e) => {WindowStates(WindowState.WindowSettings);};
             SettingsViewModel.TypeEnterEvent += (e) => {KeySendMessage = e;};
             SettingsViewModel.IsHeaderMenuPopupEvent += (e) => {WindowStates(WindowState.HeaderMenuPopup);};
-
-
-            IUserProfileInfo.UserProfileInfoEvent += e =>
-            {
-                ProfileViewModel.Profile = e;
-                if (User.Id == e.Id)
-                {
-                    ProfileViewModel.IsOpened = !ProfileViewModel.IsOpened;
-                    ProfileViewModel.IsUserProfileInfo = true;
-                }
-                else
-                {
-                    if (oldUserId == e.Id)
-                    {
-                        ProfileViewModel.IsOpened = false;
-                        oldUserId = "";
-                    }
-                    else
-                    { 
-                        oldUserId = e.Id;
-                        ProfileViewModel.IsOpened = true;
-                        ProfileViewModel.IsUserProfileInfo = true;
-                    }
-                }
-            };
 
             Width(false);
             User.UserName = settings.UserName;
@@ -463,7 +439,6 @@ namespace SkillChat.Client.ViewModel
         public bool IsShowingRegisterPage { get; set; }
 
         public string ValidationError { get; set; }
-        public string oldUserId { get; set; }
         
         public ReactiveCommand<object, Unit> GoToRegisterCommand { get; }
         public RegisterUserViewModel RegisterUser { get; set; }
@@ -503,7 +478,7 @@ namespace SkillChat.Client.ViewModel
                 case WindowState.SignOut:
                     SettingsViewModel.IsWindowSettings = false;
                     ProfileViewModel.IsOpenMenu = false;
-                    ProfileViewModel.IsOpened = false;
+                    ProfileViewModel.Close();
                     break;
                 case WindowState.OpenProfile:
                     SettingsViewModel.IsWindowSettings = false; 
@@ -511,7 +486,7 @@ namespace SkillChat.Client.ViewModel
                     Width(SettingsViewModel.IsWindowSettings);
                     break;
                 case WindowState.WindowSettings:
-                    ProfileViewModel.IsOpened = false;
+                    ProfileViewModel.Close();
                     Width(SettingsViewModel.IsWindowSettings);
                     break;
                 case WindowState.HeaderMenuPopup:

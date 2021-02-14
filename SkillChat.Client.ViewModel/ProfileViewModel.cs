@@ -7,6 +7,7 @@ using ReactiveUI;
 using ServiceStack;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
+using Splat;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -41,7 +42,14 @@ namespace SkillChat.Client.ViewModel
                 }
                 else
                 {
-                    IsOpened = !IsOpened;
+                    if (IsOpened)
+                    {
+                        Close();
+                    }
+                    else
+                    {
+                        IsOpened = true;
+                    }
                     Profile = await _serviceClient.GetAsync(new GetMyProfile());
                     IsOpenProfileEvent?.Invoke(IsOpened, IsUserProfileInfo);
                     IsUserProfileInfo = false;
@@ -83,6 +91,30 @@ namespace SkillChat.Client.ViewModel
                 LoadMessageHistory = !LoadMessageHistory;
                 LoadMessageHistoryEvent?.Invoke(LoadMessageHistory);
             });
+
+            IUserProfileInfo.UserProfileInfoEvent += e =>
+            {
+                var lastProfile = Profile;
+                Profile = e;
+                var user = Locator.Current.GetService<CurrentUserViewModel>();
+                if (user.Id == e.Id)
+                {
+                    IsOpened = !IsOpened;
+                    IsUserProfileInfo = true;
+                }
+                else
+                {
+                    if (lastProfile?.Id == e.Id)
+                    {
+                        Close();
+                    }
+                    else
+                    {
+                        IsOpened = true;
+                        IsUserProfileInfo = true;
+                    }
+                }
+            };
         }
 
         private async Task SetProfile()
@@ -96,7 +128,7 @@ namespace SkillChat.Client.ViewModel
         }
 
         //Profile
-        public bool IsOpened { get; set; }
+        public bool IsOpened { get; protected set; }
         public bool IsOpenMenu { get; set; }
         public bool IsEditNameProfile { get; set; }
         public bool IsEditAboutMeProfile { get; set; }
@@ -124,5 +156,11 @@ namespace SkillChat.Client.ViewModel
 
         public ReactiveCommand<object, Unit> LayoutUpdatedWindow { get; }
         public ReactiveCommand<object, Unit> PopupMenuProfile { get; }
+
+        public void Close()
+        {
+            IsOpened = false;
+            Profile = null;
+        }
     }
 }
