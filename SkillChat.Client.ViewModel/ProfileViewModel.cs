@@ -141,23 +141,30 @@ namespace SkillChat.Client.ViewModel
 
         public async Task Open(string userId)
         {
-            var profile = await _serviceClient.GetAsync(new GetProfile { UserId = userId });
             var lastProfile = Profile;
-            Profile = profile;
             var user = Locator.Current.GetService<CurrentUserViewModel>();
-            if (user.Id == profile.Id)
+            if (user.Id == userId)//Сейчас не вызывается, так как на своих сообщениях нет заголовка для клика
             {
-                IsOpened = !IsOpened;
-                IsUserProfileInfo = true;
-            }
-            else
-            {
-                if (lastProfile?.Id == profile.Id)
+                if (IsOpened)
                 {
                     Close();
                 }
                 else
                 {
+                    Profile = await _serviceClient.GetAsync(new GetProfile { UserId = userId });
+                    IsOpened = true;
+                }
+                IsUserProfileInfo = true;
+            }
+            else
+            {
+                if (lastProfile?.Id == userId)
+                {
+                    Close();
+                }
+                else
+                {
+                    Profile = await _serviceClient.GetAsync(new GetProfile { UserId = userId });
                     IsOpened = true;
                     IsUserProfileInfo = true;
                 }
