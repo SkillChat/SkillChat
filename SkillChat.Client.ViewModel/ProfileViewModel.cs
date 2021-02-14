@@ -33,12 +33,12 @@ namespace SkillChat.Client.ViewModel
                     IsEditNameProfile = false;
                 }
 
-                if (IsUserProfileInfo)
+                if (!IsMyProfile)
                 {
                     IsOpened = true;
                     Profile = await _serviceClient.GetAsync(new GetMyProfile());
-                    IsOpenProfileEvent?.Invoke(IsOpened, IsUserProfileInfo);
-                    IsUserProfileInfo = false;
+                    IsOpenProfileEvent?.Invoke(IsOpened, !IsMyProfile);
+                    IsMyProfile = true;
                 }
                 else
                 {
@@ -51,8 +51,8 @@ namespace SkillChat.Client.ViewModel
                         IsOpened = true;
                     }
                     Profile = await _serviceClient.GetAsync(new GetMyProfile());
-                    IsOpenProfileEvent?.Invoke(IsOpened, IsUserProfileInfo);
-                    IsUserProfileInfo = false;
+                    IsOpenProfileEvent?.Invoke(IsOpened, !IsMyProfile);
+                    IsMyProfile = true;
                 }
                
             });
@@ -115,7 +115,7 @@ namespace SkillChat.Client.ViewModel
         public static double WindowWidth { get; set; }
         public bool SignOut { get; set; }
         public bool LoadMessageHistory { get; set; }
-        public bool IsUserProfileInfo { get; set; }
+        public bool IsMyProfile { get; protected set; }
 
         public ICommand ApplyProfileNameCommand { get; }
         public ICommand ApplyProfileAboutMeCommand { get; }
@@ -157,7 +157,7 @@ namespace SkillChat.Client.ViewModel
                     Profile = await _serviceClient.GetAsync(new GetProfile { UserId = userId });
                     IsOpened = true;
                 }
-                IsUserProfileInfo = true;
+                IsMyProfile = false;
             }
             else
             {
@@ -169,7 +169,7 @@ namespace SkillChat.Client.ViewModel
                 {
                     Profile = await _serviceClient.GetAsync(new GetProfile { UserId = userId });
                     IsOpened = true;
-                    IsUserProfileInfo = true;
+                    IsMyProfile = false;
                 }
             }
         }

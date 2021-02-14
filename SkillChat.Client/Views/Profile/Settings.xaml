@@ -33,7 +33,7 @@
                              Foreground="#828282" FontWeight="600" FontSize="16" VerticalContentAlignment="Center"
                              HorizontalContentAlignment="Center" BorderBrush="#BDBDBD" Margin="0 29 0 0"
                              VerticalAlignment="Top" />
-                    <Grid IsVisible="{Binding !IsUserProfileInfo}">
+                    <Grid IsVisible="{Binding IsMyProfile}">
                         <Button
                             IsVisible="{Binding !IsEditNameProfile}"
                             VerticalAlignment="Top"
@@ -92,7 +92,7 @@
                              MaxHeight="250"
                              BorderBrush="#BDBDBD" Margin="0 44 0 0"
                              VerticalAlignment="Top" />
-                    <Grid IsVisible="{Binding !IsUserProfileInfo}">
+                    <Grid IsVisible="{Binding IsMyProfile}">
                         <Button
                             IsVisible="{Binding !IsEditAboutMeProfile}"
                             VerticalAlignment="Top"
@@ -132,7 +132,7 @@
                     <Button
                         VerticalAlignment="Top"
                         HorizontalAlignment="Center"
-                        IsVisible="{Binding !IsUserProfileInfo}"
+                        IsVisible="{Binding IsMyProfile}"
                         Margin="120 50 121 0"
                         FontWeight="400"
                         Height="30"
