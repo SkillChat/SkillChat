@@ -92,31 +92,7 @@ namespace SkillChat.Client.ViewModel
                 LoadMessageHistoryEvent?.Invoke(LoadMessageHistory);
             });
         }
-
-        public async Task UserProfileInfoEvent(UserProfileMold profile)
-        {
-            var lastProfile = Profile;
-            Profile = profile;
-            var user = Locator.Current.GetService<CurrentUserViewModel>();
-            if (user.Id == profile.Id)
-            {
-                IsOpened = !IsOpened;
-                IsUserProfileInfo = true;
-            }
-            else
-            {
-                if (lastProfile?.Id == profile.Id)
-                {
-                    Close();
-                }
-                else
-                {
-                    IsOpened = true;
-                    IsUserProfileInfo = true;
-                }
-            }
-        }
-
+        
         private async Task SetProfile()
         {
             Profile = await _serviceClient.PostAsync(new SetProfile
@@ -165,8 +141,27 @@ namespace SkillChat.Client.ViewModel
 
         public async Task Open(string userId)
         {
-            var ProfileMold = await _serviceClient.GetAsync(new GetProfile { UserId = userId });
-            await UserProfileInfoEvent(ProfileMold);
+            var profile = await _serviceClient.GetAsync(new GetProfile { UserId = userId });
+            var lastProfile = Profile;
+            Profile = profile;
+            var user = Locator.Current.GetService<CurrentUserViewModel>();
+            if (user.Id == profile.Id)
+            {
+                IsOpened = !IsOpened;
+                IsUserProfileInfo = true;
+            }
+            else
+            {
+                if (lastProfile?.Id == profile.Id)
+                {
+                    Close();
+                }
+                else
+                {
+                    IsOpened = true;
+                    IsUserProfileInfo = true;
+                }
+            }
         }
     }
 }
