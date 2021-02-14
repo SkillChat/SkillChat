@@ -27,20 +27,7 @@ namespace SkillChat.Client.ViewModel
             //Показать/скрыть панель профиля
             OpenProfilePanelCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                if (ProfileViewModel.WindowWidth < 650) IsShowChat = false;
-                if (IsOpened && IsEditNameProfile)
-                {
-                    IsEditNameProfile = false;
-                }
-
-                if (!IsMyProfile)
-                {
-                    IsOpened = true;
-                    Profile = await _serviceClient.GetAsync(new GetMyProfile());
-                    IsOpenProfileEvent?.Invoke(IsOpened, !IsMyProfile);
-                    IsMyProfile = true;
-                }
-                else
+                if (IsMyProfile)
                 {
                     if (IsOpened)
                     {
@@ -48,13 +35,21 @@ namespace SkillChat.Client.ViewModel
                     }
                     else
                     {
+                        ResetEditMode();
                         IsOpened = true;
+                        Profile = await _serviceClient.GetAsync(new GetMyProfile());
+                        IsOpenProfileEvent?.Invoke(IsOpened, !IsMyProfile);
+                        IsMyProfile = true;
                     }
+                }
+                else
+                {
+                    ResetEditMode();
+                    IsOpened = true;
                     Profile = await _serviceClient.GetAsync(new GetMyProfile());
                     IsOpenProfileEvent?.Invoke(IsOpened, !IsMyProfile);
                     IsMyProfile = true;
                 }
-               
             });
 
             //Сохранить изменения Name профиля
@@ -74,8 +69,8 @@ namespace SkillChat.Client.ViewModel
             });
 
             //Показать/скрыть редактирование профиля
-            SetEditNameProfileCommand = ReactiveCommand.CreateFromTask(async () => { IsEditNameProfile = true; });
-            SetEditAboutMeProfileCommand = ReactiveCommand.CreateFromTask(async () => { IsEditAboutMeProfile = true; });
+            SetEditNameProfileCommand = ReactiveCommand.Create(() => ResetEditMode(UserProfileEditMode.DisplayName));
+            SetEditAboutMeProfileCommand = ReactiveCommand.Create(() => ResetEditMode(UserProfileEditMode.AboutMe));
 
             //Показать/скрыть PopupMenuProfile
             PopupMenuProfile = ReactiveCommand.Create<object>(obj => { IsOpenMenu = !IsOpenMenu; });
@@ -100,7 +95,7 @@ namespace SkillChat.Client.ViewModel
                 AboutMe = Profile.AboutMe,
                 DisplayName = Profile.DisplayName
             });
-            IsEditNameProfile = false;
+            ResetEditMode();
         }
 
         //Profile
@@ -108,9 +103,33 @@ namespace SkillChat.Client.ViewModel
         /// Панель профиля открыта
         /// </summary>
         public bool IsOpened { get; protected set; }
+
         public bool IsOpenMenu { get; set; }
-        public bool IsEditNameProfile { get; set; }
-        public bool IsEditAboutMeProfile { get; set; }
+
+        /// <summary>
+        /// Режим редактирования имени
+        /// </summary>
+        public bool IsEditNameProfile => EditMode == UserProfileEditMode.DisplayName;
+
+        /// <summary>
+        /// Режим редактирования о себе
+        /// </summary>
+        public bool IsEditAboutMeProfile => EditMode == UserProfileEditMode.AboutMe;
+
+        public UserProfileEditMode EditMode { get; protected set; }
+
+        protected void ResetEditMode(UserProfileEditMode mode = UserProfileEditMode.None)
+        {
+            EditMode = mode;
+        }
+
+        public enum UserProfileEditMode
+        {
+            None,
+            DisplayName,
+            AboutMe
+        }
+
         public bool IsShowChat { get; set; } = false;
         public static double WindowWidth { get; set; }
         public bool SignOut { get; set; }
@@ -154,6 +173,7 @@ namespace SkillChat.Client.ViewModel
                 }
                 else
                 {
+                    ResetEditMode();
                     Profile = await _serviceClient.GetAsync(new GetProfile { UserId = userId });
                     IsOpened = true;
                 }
@@ -167,6 +187,7 @@ namespace SkillChat.Client.ViewModel
                 }
                 else
                 {
+                    ResetEditMode();
                     Profile = await _serviceClient.GetAsync(new GetProfile { UserId = userId });
                     IsOpened = true;
                     IsMyProfile = false;
