@@ -140,6 +140,11 @@ namespace SkillChat.Client.ViewModel
             Profile = null;
         }
 
+        public void ContextMenuClose()
+        {
+            IsActiveContextMenu = false;
+        }
+
         public async Task Open(string userId)
         {
             var lastProfileId = Profile?.Id;

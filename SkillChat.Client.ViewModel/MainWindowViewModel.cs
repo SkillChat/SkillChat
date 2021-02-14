@@ -377,7 +377,7 @@ namespace SkillChat.Client.ViewModel
             });
            PointerPressedCommand = ReactiveCommand.Create<object>(obj =>
             {
-                ProfileViewModel.IsOpenMenu = false;
+                ProfileViewModel.ContextMenuClose();
                 SettingsViewModel.IsHeaderMenuPopup = false;
             });
         }
@@ -478,7 +478,7 @@ namespace SkillChat.Client.ViewModel
             {
                 case WindowState.SignOut:
                     SettingsViewModel.IsWindowSettings = false;
-                    ProfileViewModel.IsOpenMenu = false;
+                    ProfileViewModel.ContextMenuClose();
                     ProfileViewModel.Close();
                     break;
                 case WindowState.OpenProfile:
@@ -491,7 +491,7 @@ namespace SkillChat.Client.ViewModel
                     Width(SettingsViewModel.IsWindowSettings);
                     break;
                 case WindowState.HeaderMenuPopup:
-                    ProfileViewModel.IsOpenMenu = false;
+                    ProfileViewModel.ContextMenuClose();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);
