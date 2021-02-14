@@ -32,40 +32,40 @@
             </Grid.ColumnDefinitions>
 
             <Grid Background="#F2F2F2" Grid.Column="0">
-				<StackPanel>
-					<Button Height="35"
-						Content="Сообщения и чаты"
-						HorizontalContentAlignment="Left"
-						Background="#0000"
-                        Cursor="Hand"
-						FontSize="15"
-						Classes="SettingItems"
-                        FontWeight="600"
-                        Foreground="Black"
-						BorderBrush="Transparent"
-						BorderThickness="0"
-						Command="{Binding GetSettingsCommand}"
-						Padding="20 0 0 0"/>
+                <StackPanel>
+                    <Button Height="35"
+                            Content="Сообщения и чаты"
+                            HorizontalContentAlignment="Left"
+                            Background="#0000"
+                            Cursor="Hand"
+                            FontSize="15"
+                            Classes="SettingItems"
+                            FontWeight="600"
+                            Foreground="Black"
+                            BorderBrush="Transparent"
+                            BorderThickness="0"
+                            Command="{Binding GetSettingsCommand}"
+                            Padding="20 0 0 0"/>
 
-					<Button Height="35"
-							Content="Аудит входа"
-							HorizontalContentAlignment="Left"
-							Background="#0000"
-							Cursor="Hand"
-							FontSize="15"
-							Classes="SettingItems"
-							FontWeight="600"
-							Foreground="Black"
-							BorderBrush="Transparent"
-							BorderThickness="0"
-							Padding="20 0 0 0"
-							Command="{Binding GetHistoryLoginAuditCommand}"/>
-				</StackPanel>
-
-
+                    <Button Height="35"
+                            Content="Аудит входа"
+                            HorizontalContentAlignment="Left"
+                            Background="#0000"
+                            Cursor="Hand"
+                            FontSize="15"
+                            Classes="SettingItems"
+                            FontWeight="600"
+                            Foreground="Black"
+                            BorderBrush="Transparent"
+                            BorderThickness="0"
+                            Padding="20 0 0 0"
+                            Command="{Binding GetHistoryLoginAuditCommand}"/>
+                </StackPanel>
 
 
-			</Grid>
+
+
+            </Grid>
 
             <Grid Background="#FFFFFF" Grid.Column="3" IsVisible="{Binding SettingsMenuActiveMain}" ZIndex="10">
                 <WrapPanel>
