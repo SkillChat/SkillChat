@@ -27,36 +27,15 @@ namespace SkillChat.Client.ViewModel
             //Показать/скрыть панель профиля
             OpenProfilePanelCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                if (IsMyProfile)
-                {
-                    if (IsOpened)
-                    {
-                        Close();
-                    }
-                    else
-                    {
-                        ResetEditMode();
-                        IsOpened = true;
-                        Profile = await _serviceClient.GetAsync(new GetMyProfile());
-                        IsOpenProfileEvent?.Invoke(IsOpened, !IsMyProfile);
-                        IsMyProfile = true;
-                    }
-                }
-                else
-                {
-                    ResetEditMode();
-                    IsOpened = true;
-                    Profile = await _serviceClient.GetAsync(new GetMyProfile());
-                    IsOpenProfileEvent?.Invoke(IsOpened, !IsMyProfile);
-                    IsMyProfile = true;
-                }
+                var user = Locator.Current.GetService<CurrentUserViewModel>();
+                await Open(user.Id);
             });
 
             //Сохранить изменения Name профиля
-            ApplyProfileNameCommand = ReactiveCommand.CreateFromTask(async () =>  await SetProfile() );
+            ApplyProfileNameCommand = ReactiveCommand.CreateFromTask(async () => await SetProfile());
 
             //Сохранить изменения AboutMe профиля
-            ApplyProfileAboutMeCommand = ReactiveCommand.CreateFromTask(async () => await SetProfile() );
+            ApplyProfileAboutMeCommand = ReactiveCommand.CreateFromTask(async () => await SetProfile());
 
             //Скрытие окна 
             LayoutUpdatedWindow = ReactiveCommand.Create<object>(obj =>
@@ -87,7 +66,7 @@ namespace SkillChat.Client.ViewModel
                 LoadMessageHistoryEvent?.Invoke(LoadMessageHistory);
             });
         }
-        
+
         private async Task SetProfile()
         {
             Profile = await _serviceClient.PostAsync(new SetProfile
@@ -147,10 +126,10 @@ namespace SkillChat.Client.ViewModel
 
         public UserProfileMold Profile { get; set; }
 
-        public event Action<bool,bool> IsOpenProfileEvent;
+        public event Action IsOpenProfileEvent;
         public event Action<bool> SignOutEvent;
         public event Action<bool> LoadMessageHistoryEvent;
-  
+
 
         public ReactiveCommand<object, Unit> LayoutUpdatedWindow { get; }
         public ReactiveCommand<object, Unit> PopupMenuProfile { get; }
@@ -163,35 +142,19 @@ namespace SkillChat.Client.ViewModel
 
         public async Task Open(string userId)
         {
-            var lastProfile = Profile;
-            var user = Locator.Current.GetService<CurrentUserViewModel>();
-            if (user.Id == userId)//Сейчас не вызывается, так как на своих сообщениях нет заголовка для клика
+            var lastProfileId = Profile?.Id;
+            if (lastProfileId == userId)
             {
-                if (IsOpened)
-                {
-                    Close();
-                }
-                else
-                {
-                    ResetEditMode();
-                    Profile = await _serviceClient.GetAsync(new GetProfile { UserId = userId });
-                    IsOpened = true;
-                }
-                IsMyProfile = false;
+                if (IsOpened) Close();
             }
             else
             {
-                if (lastProfile?.Id == userId)
-                {
-                    Close();
-                }
-                else
-                {
-                    ResetEditMode();
-                    Profile = await _serviceClient.GetAsync(new GetProfile { UserId = userId });
-                    IsOpened = true;
-                    IsMyProfile = false;
-                }
+                ResetEditMode();
+                Profile = await _serviceClient.GetAsync(new GetProfile { UserId = userId });
+                var user = Locator.Current.GetService<CurrentUserViewModel>();
+                IsOpened = true;
+                IsMyProfile = user.Id == userId;
+                IsOpenProfileEvent?.Invoke();
             }
         }
     }
