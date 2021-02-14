@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using PropertyChanged;
 using ReactiveUI;
+using SkillChat.Interface;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -47,6 +48,12 @@ namespace SkillChat.Client.ViewModel
         public bool IsReceived { get; set; }
         /// <summary>Прочитано ли</summary>
         public bool IsRead { get; set; }
+
+        public void SetStatus(MessageStatus status)
+        {
+            if (status.ReceivedDate != null && !IsReceived) IsReceived = true;
+            if (status.ReadDate != null && IsRead) IsRead = true;
+        }
     }
 
     [AddINotifyPropertyChangedInterface]

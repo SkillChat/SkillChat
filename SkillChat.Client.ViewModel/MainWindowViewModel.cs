@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -52,10 +55,20 @@ namespace SkillChat.Client.ViewModel
             Tokens = new TokenResult {AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken};
 
             Messages = new ObservableCollection<IMessagesContainerViewModel>();
-          
+            
+            //Магия реактивных штук! Тут происходит подписка на событие добавленя статуса сообщения,
+            //если статусы добавляются быстро (быстрее чем 0,2 сек), то они копятся в словаре.
+            //Когда после добавления статуса проходит 0,2 сек, из словаря берется коллекция статусов и отправляется на сервер.
+            var obs = Observable.FromEvent(
+                    handler => AddNewStatus += handler,
+                    handler => AddNewStatus -= handler)
+                .Throttle(TimeSpan.FromMilliseconds(200))
+                .Subscribe(async _ => await SendStatuses());
+
 
             ConnectCommand = ReactiveCommand.CreateFromTask(async () =>
             {
+                statuses = new ConcurrentDictionary<string, MessageStatus>();
                 try
                 {
                     _connection = new HubConnectionBuilder()
@@ -119,7 +132,8 @@ namespace SkillChat.Client.ViewModel
                         }
                     });
 
-
+                    _connection.Subscribe<MessageStatus>(ApplyMessageStatus);
+                    
                     _connection.Subscribe<ReceiveMessage>(async data =>
                     {
                         var isMyMessage = User.UserName.ToLowerInvariant() == data.UserLogin;
@@ -162,13 +176,17 @@ namespace SkillChat.Client.ViewModel
                                     $"\"{(newMessage.Text.Length > 10 ? string.Concat(newMessage.Text.Remove(10, newMessage.Text.Length - 10), "...") : newMessage.Text)}\"");
                         }
 
-
                         container.Messages.Add(newMessage);
                         if (container.Messages.First() == newMessage)
                         {
                             newMessage.ShowLogin = true;
                         }
 
+                        if (newMessage is UserMessageViewModel userMessage)
+                        {
+                            userMessage.ReceiveAction += OnReceiveMessage;
+                            userMessage.ReadAction += OnReadMessage;
+                        }
                         MessageReceived?.Invoke(new ReceivedMessageArgs(newMessage));
                     });
 
@@ -370,6 +388,62 @@ namespace SkillChat.Client.ViewModel
             });
         }
 
+        /// <summary>Отправка листа статусов на сервер</summary>
+        private async Task SendStatuses()
+        {
+            //Если в данный момент происходит отправка, то не выполняем метод
+            if (statuses.Count != 0 && IsStatusesSended)
+            {
+                var list = statuses.Values.ToList<MessageStatus>();
+                IsStatusesSended = false;
+                await _hub.SendStatuses(list);
+                statuses.Clear();
+                IsStatusesSended = true;
+            }
+        }
+        /// <summary>Когда сообщение получает статус прочитано</summary>
+        /// <param name="message">Сообщение</param>
+        private void OnReadMessage(UserMessageViewModel message)
+        {
+            if (message.Read)
+            {
+                if (statuses.TryGetValue(message.Id, out var value) && value.ReadDate == null)
+                {
+                    value.ReadDate ??= DateTimeOffset.Now;
+                }
+                else
+                {
+                    statuses.TryAdd(message.Id, new MessageStatus()
+                    {
+                        MessageId = message.Id,
+                        ReadDate = DateTimeOffset.Now,
+                    });
+                }
+                AddNewStatus?.Invoke();
+            }
+        }
+        /// <summary>Когда сообщение получает статус получено</summary>
+        /// <param name="message">Сообщение</param>
+        private void OnReceiveMessage(UserMessageViewModel message)
+        {
+            if (message.Received)
+            {
+                if (statuses.TryGetValue(message.Id, out var value) && value.ReceivedDate == null)
+                {
+                    value.ReceivedDate ??= DateTimeOffset.Now;
+                }
+                else
+                {
+                    statuses.TryAdd(message.Id, new MessageStatus()
+                    {
+                        MessageId = message.Id,
+                        ReceivedDate = DateTimeOffset.Now,
+                    });
+                }
+                AddNewStatus?.Invoke();
+            }
+        }
+
         public DateTimeOffset ExpireTime { get; set; }
 
         private Func<Exception, Task> connectionOnClosed()
@@ -447,9 +521,30 @@ namespace SkillChat.Client.ViewModel
             User.Reset();
             ResetError?.Invoke();
         }
-
+        
         public event Action ErrorBe;
         public event Action ResetError;
+        
+        /// <summary>Применение сообщению статуса</summary>
+        /// <param name="status">Статус полученный от сервера</param>
+        void ApplyMessageStatus(MessageStatus status)
+        {
+            foreach (var container in Messages)
+            {
+                var message = container.Messages.FirstOrDefault(m => m.Id == status.MessageId);
+                if (message != null && message is MyMessageViewModel mymess)
+                {
+                    mymess.SetStatus(status);
+                }
+            }
+        }
+
+        /// <summary>Список статусов для отправки на сервер</summary>
+        private ConcurrentDictionary<string, MessageStatus> statuses;
+
+        private bool IsStatusesSended { get; set; } = true;
+        /// <summary>Происходит при добавлении нового статуса для сообщения</summary>
+        public event Action AddNewStatus;
     }
 
     /// <summary>Хранилище аргументов соытия MessageReceived</summary>

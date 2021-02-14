@@ -8,7 +8,7 @@ namespace SkillChat.Server.Domain
     {
         public string MessageId { get; set; }
         public string UserId { get; set; }
-        public DateTimeOffset ReadDate { get; set; }
-        public DateTimeOffset ReceivedDate { get; set; }
+        public DateTimeOffset? ReadDate { get; set; }
+        public DateTimeOffset? ReceivedDate { get; set; }
     }
 }

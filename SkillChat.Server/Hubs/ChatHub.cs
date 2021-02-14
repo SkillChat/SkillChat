@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Linq;
+using Raven.Client.Documents.Operations.Counters;
 using Raven.Client.Documents.Session;
 using Serilog;
 using ServiceStack;
@@ -87,6 +91,70 @@ namespace SkillChat.Server.Hubs
                 });
                 Log.Warning($"Bad token from connection {Context.ConnectionId}");
             }
+        }
+
+        /// <summary>Получение листа статусов сообщений и рассылка отправителям сообдений об их статусах</summary>
+        /// <param name="statuses">Лист статусов сообщеий</param>
+        public async Task SendStatuses(List<MessageStatus> statuses)
+        {
+            var uid = Context.Items["uid"] as string; //Получил ID юзера отправившего статус
+            //Загружаем все статусы этого юзера
+            var statusItems = _ravenSession.Query<MessageStatusDomain>().Where(s => s.UserId == uid);
+            foreach (var status in statuses) //Перебираем все статусы в поиске присланного
+            {
+                //Находим статус для этого сообщения
+                var statusItem = await statusItems.FirstOrDefaultAsync(s => s.MessageId == status.MessageId);
+                //Получаем сообщение для которого пришел статус
+                var statusedMessage = await _ravenSession.LoadAsync<Message>(status.MessageId);
+                if (statusItem == null)//Если нет статуса для требуемого сообщения, то создаем новый
+                {
+                    statusItem = new MessageStatusDomain()
+                    {
+                        UserId = uid,
+                        MessageId = status.MessageId,
+                        ReadDate = status?.ReadDate,
+                        ReceivedDate = status?.ReceivedDate,
+                    };
+                    await _ravenSession.StoreAsync(statusItem); //Сохранил статус в БД
+                    //Далее создаем счетчики для сообщений
+                    if (status?.ReadDate != null)
+                    {
+                        _ravenSession.CountersFor(statusedMessage).Increment(MessageCounters.ReadCounter.ToString());
+                    }
+                    if (status?.ReceivedDate != null)
+                    {
+                        _ravenSession.CountersFor(statusedMessage).Increment(MessageCounters.ReceivedCounter.ToString());
+                    }
+                }
+                else //Если статус найден
+                {
+                    //Если даты прочтения нет, то присваиваем ее
+                    if (statusItem.ReadDate == null && status?.ReadDate != null)
+                    {
+                        statusItem.ReadDate = status.ReadDate;
+                        // и увеличиваем счетчик прочтений
+                        _ravenSession.CountersFor(statusedMessage).Increment(MessageCounters.ReadCounter.ToString());
+                    }
+                    //Если даты получения нет, то присваиваем ее
+                    if (statusItem.ReceivedDate == null && status?.ReceivedDate != null)
+                    {
+                        statusItem.ReceivedDate = status.ReceivedDate;
+                        // и увеличиваем счетчик получений
+                        _ravenSession.CountersFor(statusedMessage).Increment(MessageCounters.ReceivedCounter.ToString());
+                    }
+                }
+
+                var counters = await _ravenSession.CountersFor(statusedMessage).GetAllAsync();
+                long? read;
+                long? rec;
+                if (counters?.GetValueOrDefault(MessageCounters.ReadCounter.ToString()) == 1
+                || counters?.GetValueOrDefault(MessageCounters.ReadCounter.ToString()) == 1)
+                {
+                    await Clients.User(statusedMessage.UserId).SendAsync(status);
+                }
+            }
+            //Сохраняем изменения в БД
+            await _ravenSession.SaveChangesAsync();
         }
     }
 }
