@@ -51,8 +51,8 @@ namespace SkillChat.Client.ViewModel
             SetEditNameProfileCommand = ReactiveCommand.Create(() => ResetEditMode(UserProfileEditMode.DisplayName));
             SetEditAboutMeProfileCommand = ReactiveCommand.Create(() => ResetEditMode(UserProfileEditMode.AboutMe));
 
-            //Показать/скрыть PopupMenuProfile
-            PopupMenuProfile = ReactiveCommand.Create<object>(obj => { IsOpenMenu = !IsOpenMenu; });
+            //Показать/скрыть ContextMenu
+            ContextMenuProfile = ReactiveCommand.Create<object>(obj => { IsActiveContextMenu = !IsActiveContextMenu; });
 
             SignOutCommand = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -83,7 +83,7 @@ namespace SkillChat.Client.ViewModel
         /// </summary>
         public bool IsOpened { get; protected set; }
 
-        public bool IsOpenMenu { get; set; }
+        public bool IsActiveContextMenu { get; set; }
 
         /// <summary>
         /// Режим редактирования имени
@@ -132,7 +132,7 @@ namespace SkillChat.Client.ViewModel
 
 
         public ReactiveCommand<object, Unit> LayoutUpdatedWindow { get; }
-        public ReactiveCommand<object, Unit> PopupMenuProfile { get; }
+        public ReactiveCommand<object, Unit> ContextMenuProfile { get; }
 
         public void Close()
         {

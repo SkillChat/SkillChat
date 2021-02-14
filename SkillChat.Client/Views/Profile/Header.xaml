@@ -52,7 +52,7 @@
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="PointerReleased"
                                              SourceObject="{Binding #button_PopupMenuProfile}">
-                        <core:InvokeCommandAction Command="{Binding PopupMenuProfile}"
+                        <core:InvokeCommandAction Command="{Binding ContextMenuProfile}"
                                                 CommandParameter="{Binding #button_PopupMenuProfile}" />
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
@@ -76,7 +76,7 @@
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="PointerReleased"
                                              SourceObject="{Binding #buttonAction_PopupMenuProfile}">
-                        <core:InvokeCommandAction Command="{Binding PopupMenuProfile}"
+                        <core:InvokeCommandAction Command="{Binding ContextMenuProfile}"
                                                 CommandParameter="{Binding #buttonAction_PopupMenuProfile}" />
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
