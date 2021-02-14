@@ -45,7 +45,7 @@ namespace SkillChat.Client.ViewModel
             serviceClient = new JsonServiceClient(settings.HostUrl);
 
             ProfileViewModel = new ProfileViewModel(serviceClient);
-            Locator.CurrentMutable.RegisterConstant(ProfileViewModel);
+            Locator.CurrentMutable.RegisterConstant(ProfileViewModel,typeof(IProfile));
             ProfileViewModel.IsOpenProfileEvent += () => WindowStates(WindowState.OpenProfile);
             ProfileViewModel.SignOutEvent += (e) => {SignOutCommand.Execute(null);};
             ProfileViewModel.LoadMessageHistoryEvent += (e) => {LoadMessageHistoryCommand.Execute(null);};
@@ -132,7 +132,7 @@ namespace SkillChat.Client.ViewModel
                         var isMyMessage = User.Id == data.UserId;
                         var newMessage = isMyMessage
                             ? (MessageViewModel) new MyMessageViewModel()
-                            : new UserMessageViewModel(serviceClient);
+                            : new UserMessageViewModel();
                         newMessage.Id = data.Id;
                         newMessage.Text = data.Message;
                         newMessage.PostTime = data.PostTime;
@@ -237,7 +237,7 @@ namespace SkillChat.Client.ViewModel
                         var isMyMessage = User.Id == item.UserId;
                         var newMessage = isMyMessage
                             ? (MessageViewModel) new MyMessageViewModel()
-                            : new UserMessageViewModel(serviceClient);
+                            : new UserMessageViewModel();
                         newMessage.Id = item.Id;
                         newMessage.Text = item.Text;
                         newMessage.PostTime = item.PostTime;

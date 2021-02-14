@@ -17,7 +17,7 @@ namespace SkillChat.Client.ViewModel
     }
 
     [AddINotifyPropertyChangedInterface]
-    public class ProfileViewModel
+    public class ProfileViewModel: IProfile
     {
         private readonly IJsonServiceClient _serviceClient;
 

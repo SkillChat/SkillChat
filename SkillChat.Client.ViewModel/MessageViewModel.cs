@@ -33,11 +33,11 @@ namespace SkillChat.Client.ViewModel
     [AddINotifyPropertyChangedInterface]
     public class UserMessageViewModel : MessageViewModel
     {
-        public UserMessageViewModel(IJsonServiceClient serviceClient)
+        public UserMessageViewModel()
         {
             UserProfileInfoCommand = ReactiveCommand.Create<string>(async userId =>
             {
-                var profileViewModel = Locator.Current.GetService<ProfileViewModel>();
+                var profileViewModel = Locator.Current.GetService<IProfile>();
                 await profileViewModel.Open(userId);
             });
         }
