@@ -120,20 +120,22 @@
                                     </StackPanel>
                                 </Grid>
                                 <Grid Grid.Column="1">
-									<TextBlock
-										Margin="0 10 50 0"
-										Foreground="#6B3FE7"
-										FontWeight="400"
-                                        FontSize="13"
-										Text="{Binding IsActive}"/>
-                                    <TextBlock
-                                        Margin="0 10 0 0"
-                                        HorizontalAlignment="Right"
-                                        TextAlignment="Right"
-                                        FontWeight="400"
-                                        FontSize="13"
-                                        Text="{Binding DateOfEntry}"
-                                        Foreground="#828282" />
+                                    <WrapPanel>
+                                        <TextBlock
+                                            Margin="0 10 10 0"
+                                            Foreground="#6B3FE7"
+                                            FontWeight="400"
+                                            FontSize="13"
+                                            Text="{Binding IsActive}"/>
+                                        <TextBlock
+                                            Margin="0 10 0 0"
+                                            HorizontalAlignment="Right"
+                                            TextAlignment="Right"
+                                            FontWeight="400"
+                                            FontSize="13"
+                                            Text="{Binding DateOfEntry}"
+                                            Foreground="#828282" />
+                                    </WrapPanel>
                                 </Grid>
                             </Grid>
                         </DataTemplate>
