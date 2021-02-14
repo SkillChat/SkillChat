@@ -35,6 +35,7 @@ namespace SkillChat.Client.ViewModel
 
             GetSettingsCommand = ReactiveCommand.CreateFromTask(async () =>
             {
+                SetSelectedMenuItem(SelectedMenuItem.Settings);
                 var settingsUser = await serviceClient.GetAsync(new GetMySettings());
                 if (settingsUser.SendingMessageByEnterKey)
                 {
@@ -54,6 +55,7 @@ namespace SkillChat.Client.ViewModel
             GetHistoryLoginAuditCommand = ReactiveCommand.CreateFromTask(async () =>
             {
 
+                SetSelectedMenuItem(SelectedMenuItem.Audit);
                 LoginAuditCollection.Clear();
                 LoginHistoryCollection = await serviceClient.GetAsync(new GetLoginAudit());
                 foreach (var item in LoginHistoryCollection.History)
@@ -90,10 +92,23 @@ namespace SkillChat.Client.ViewModel
         public bool TypeEnter { get; set; }
         public bool IsOpened { get; set; }
 
+        public SelectedMenuItem SelectedItem { get; protected set; }
+
+        protected void SetSelectedMenuItem(SelectedMenuItem selected)
+        {
+            SelectedItem = selected;
+            SetSelectedOnSettingsItemEvent?.Invoke(SelectedItem);
+        }
+
+        public enum SelectedMenuItem
+        {
+            Settings,
+            Audit
+        }
 
 
-        public bool Settings { get; set; }
-        public bool Audit { get; set; }
+        public bool SettingsMenuActiveMain => SelectedItem == SelectedMenuItem.Settings;
+        public bool AuditMenuActiveMain => SelectedItem == SelectedMenuItem.Audit;
 
         public event Action<bool> OpenSettingsActiveEvent;
         public event Action<bool> TypeEnterEvent;
