@@ -67,7 +67,7 @@ namespace SkillChat.Server.ServiceInterface
             var history = new LoginHistory
             {
                 History = await RavenSession.Advanced.Revisions.GetForAsync<UserLoginAudit>(uid),
-                UserSession = сurrentSessionId
+                UniqueSessionUser = сurrentSessionId
             };
             return history;
         }

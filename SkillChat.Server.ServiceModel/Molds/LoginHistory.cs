@@ -11,6 +11,6 @@ namespace SkillChat.Server.ServiceModel.Molds
         [Description("История входа")]
         public List<UserLoginAudit> History { get; set; }
         [Description("Уникальный идентификатор сессии")]
-        public string UserSession { get; set; }
+        public string UniqueSessionUser { get; set; }
     }
 }

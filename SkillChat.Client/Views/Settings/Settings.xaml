@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:interactivity="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
              xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              x:Class="SkillChat.Client.Views.Settings.Settings"
              Name="Settings">
@@ -43,7 +44,7 @@
                         Foreground="Black"
 						BorderBrush="Transparent"
 						BorderThickness="0"
-						Command="{Binding GoToSettingsCommand}"
+						Command="{Binding GetSettingsCommand}"
 						Padding="20 0 0 0"/>
 
 					<Button Height="35"
@@ -58,7 +59,7 @@
 							BorderBrush="Transparent"
 							BorderThickness="0"
 							Padding="20 0 0 0"
-							Command="{Binding LoginAuditCommand}"/>
+							Command="{Binding GetHistoryLoginAuditCommand}"/>
 				</StackPanel>
 
 
@@ -66,7 +67,7 @@
 
 			</Grid>
 
-            <Grid Background="#FFFFFF" Grid.Column="3" IsVisible="{Binding Settings}" ZIndex="10">
+            <Grid Background="#FFFFFF" Grid.Column="3" IsVisible="{Binding SettingsMenuActiveMain}" ZIndex="10">
                 <WrapPanel>
                     <TextBlock
                         Margin="20 10 0 0"
@@ -76,21 +77,21 @@
                         FontWeight="600"
                         Foreground="Black"
                         Text="Отправлять сообщения клавишей" />
-                    <RadioButton Margin="25 6 0 0" Cursor="Hand" Command="{Binding SettingsCommand}" Content="Enter"
+                    <RadioButton Margin="25 6 0 0" Cursor="Hand" Command="{Binding SaveSettingsCommand}" Content="Enter"
                                  GroupName="TypeMessages" IsChecked="{Binding TypeEnter}" FontWeight="600"
                                  FontSize="16" />
-                    <RadioButton Margin="25 6 0 0" Cursor="Hand" Command="{Binding SettingsCommand}"
+                    <RadioButton Margin="25 6 0 0" Cursor="Hand" Command="{Binding SaveSettingsCommand}"
                                  Content="Ctrl+Enter"
                                  GroupName="TypeMessages" IsChecked="{Binding !TypeEnter}" FontWeight="600"
                                  FontSize="16" />
                 </WrapPanel>
             </Grid>
 
-            <Grid Background="#FFFFFF" Grid.Column="3" IsVisible="{Binding Audit}" ZIndex="10">
+            <Grid Background="#FFFFFF" Grid.Column="3" IsVisible="{Binding AuditMenuActiveMain}" ZIndex="10">
                 <ItemsControl
                     Margin="15,0"
                     BorderThickness="0"
-                    Items="{Binding LoginAudits}">
+                    Items="{Binding LoginAuditCollection}">
                     <ItemsControl.DataTemplates>
                         <DataTemplate DataType="{x:Type viewModel:LoginAuditViewModel}">
                             <Grid ColumnDefinitions="*,Auto">

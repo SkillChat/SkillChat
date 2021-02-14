@@ -112,8 +112,8 @@
                     Margin="0 0 0 30"
                     BorderBrush="Transparent"
                     BorderThickness="0"
-                    IsVisible="{Binding !SettingsViewModel.IsWindowSettings}"
-                    Command="{Binding SettingsViewModel.GoToSettingsCommand}"
+                    IsVisible="{Binding !SettingsViewModel.IsOpened}"
+                    Command="{Binding SettingsViewModel.OpenSettingsCommand}"
                     Classes="settings"
                     Cursor="Hand">
                 <Image Width="18.67" Height="18.65" Margin="20" Name="settings" />
@@ -123,8 +123,8 @@
                     Margin="0 0 0 30"
                     BorderBrush="Transparent"
                     BorderThickness="0"
-                    IsVisible="{Binding SettingsViewModel.IsWindowSettings}"
-                    Command="{Binding SettingsViewModel.GoToSettingsCommand}"
+                    IsVisible="{Binding SettingsViewModel.IsOpened}"
+                    Command="{Binding SettingsViewModel.OpenSettingsCommand}"
                     Classes="settings_active"
                     Cursor="Hand">
                 <Image Width="18.67" Height="18.65" Margin="20" Name="settings_active" />
@@ -149,7 +149,7 @@
                         <TextBlock
                             FontSize="16"
                             FontWeight="SemiBold"
-                            Text="{Binding HeaderText}" />
+                            Text="{Binding TextHeaderMain}" />
                         <TextBlock
                             FontSize="14"
                             FontWeight="Regular"
@@ -171,7 +171,7 @@
                             <settings:Header DataContext="{Binding SettingsViewModel}" />
                         </Grid>
                         <!--Settings - Panel -->
-                        <Grid ZIndex="1" IsHitTestVisible="{Binding SettingsViewModel.IsHeaderMenuPopup}"
+                        <Grid ZIndex="1" IsHitTestVisible="{Binding SettingsViewModel.IsContextMenu}"
                               HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Height="62"
                               Margin="0 47 47 0" Background="Transparent">
                             <settings:More DataContext="{Binding SettingsViewModel}" />
@@ -180,7 +180,7 @@
                 </Grid>
 
                 <!--Settings-->
-                <Grid Grid.Row="1" IsVisible="{Binding SettingsViewModel.IsWindowSettings}">
+                <Grid Grid.Row="1" IsVisible="{Binding SettingsViewModel.IsOpened}">
                     <settings:Settings DataContext="{Binding SettingsViewModel}" />
                 </Grid>
 

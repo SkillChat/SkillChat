@@ -16,87 +16,86 @@ namespace SkillChat.Client.ViewModel
         public SettingsViewModel(IJsonServiceClient serviceClient)
         {
             ChatSettings = new UserChatSettings();
-            OpenSettingsCommand = ReactiveCommand.CreateFromTask(async () =>
+
+            LoginAuditCollection = new ObservableCollection<LoginAuditViewModel>();
+
+            ContextMenuCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                IsHeaderMenuPopup = !IsHeaderMenuPopup;
-                IsHeaderMenuPopupEvent?.Invoke(IsHeaderMenuPopup);
+                IsContextMenu = !IsContextMenu;
+                ContextMenuSettingsActiveEvent?.Invoke(IsContextMenu);
             });
 
-            WindowSettingsCommand = ReactiveCommand.CreateFromTask(async () =>
+            OpenSettingsCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                IsHeaderMenuPopup = false;
-                IsWindowSettings = !IsWindowSettings;
-                IsWindowSettingsEvent?.Invoke(IsWindowSettings);
-                var settings = await serviceClient.GetAsync(new GetMySettings());
+                IsOpened = !IsOpened;
+                CloseContextMenu();
+                GetSettingsCommand.Execute(null);
+                OpenSettingsActiveEvent?.Invoke(IsOpened);
+            });
 
-            GoToSettingsCommand = ReactiveCommand.CreateFromTask(async () =>
+            GetSettingsCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                Audit = false;
-                Settings = true;
-                var settings = await serviceClient.GetAsync(new GetMySettings());
-                if (settings.SendingMessageByEnterKey)
+                var settingsUser = await serviceClient.GetAsync(new GetMySettings());
+                if (settingsUser.SendingMessageByEnterKey)
                 {
-                    TypeEnter = settings.SendingMessageByEnterKey;
+                    TypeEnter = settingsUser.SendingMessageByEnterKey;
                     TypeEnterEvent?.Invoke(TypeEnter);
                 }
             });
 
-            SettingsCommand = ReactiveCommand.CreateFromTask(async () =>
+            SaveSettingsCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                var settings = await serviceClient.PostAsync(new SetSettings {SendingMessageByEnterKey = TypeEnter});
-                ChatSettings = settings;
+                var settingsUser = await serviceClient.PostAsync(new SetSettings {SendingMessageByEnterKey = TypeEnter});
+                ChatSettings = settingsUser;
             });
 
-            MorePointerPressedCommand = ReactiveCommand.Create<object>(obj => { IsHeaderMenuPopup = false; });
-            LoginAuditCommand = ReactiveCommand.CreateFromTask(async () =>
-                Settings = false;
+            MorePointerPressedCommand = ReactiveCommand.Create<object>(obj => { IsContextMenu = false; });
+
+            GetHistoryLoginAuditCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                Audit = true;
-                LoginAudits.Clear();
 
-
+                LoginAuditCollection.Clear();
                 LoginHistoryCollection = await serviceClient.GetAsync(new GetLoginAudit());
                 foreach (var item in LoginHistoryCollection.History)
-                    LoginAuditView = new LoginAuditViewModel
                 {
+                    LoginAuditView = new LoginAuditViewModel
                     {
-                       Id = item.Id,
-                       IpAddress = item.IpAddress,
-                       OperatingSystem = item.OperatingSystem,
-                       DateOfEntry = item.DateOfEntry.Date == DateTime.Now.Date ? $"{item.DateOfEntry:hh.mm}" : $"{item.DateOfEntry:dd.MM.yyyy hh.mm}",
-                       NameVersionClient = item.NameVersionClient,
+                        Id = item.Id,
+                        IpAddress = item.IpAddress,
+                        OperatingSystem = item.OperatingSystem,
+                        NameVersionClient = item.NameVersionClient,
+                        DateOfEntry = item.DateOfEntry.Date == DateTime.Now.Date ? $"{item.DateOfEntry:HH:mm}" : $"{item.DateOfEntry:dd.MM.yyyy HH:mm}",
+                        IsActive = item.SessionId == LoginHistoryCollection.UniqueSessionUser ? "Активный" : ""
                     };
-                       IsActive = item.SessionId == LoginHistoryCollection.UserSession ? "Активный" : ""
-                    LoginAudits.Add(LoginAuditView);
+                    LoginAuditCollection.Add(LoginAuditView);
                 }
             });
         }
 
+        public ICommand ContextMenuCommand { get; }
         public ICommand OpenSettingsCommand { get; }
-        public ICommand WindowSettingsCommand { get; }
-        public ICommand GoToSettingsCommand { get; }
-        public ICommand SettingsCommand { get; }
-        public ICommand LoginAuditCommand { get; }
-        public bool IsOpenSettings { get; set; }
-        public bool IsHeaderMenuPopup { get; set; }
+        public ICommand GetSettingsCommand { get; }
+        public ICommand SaveSettingsCommand { get; }
+        public ICommand GetHistoryLoginAuditCommand { get; }
+        public bool IsContextMenu { get; set; }
         public bool TypeEnter { get; set; }
-        public bool IsWindowSettings { get; set; }
+        public bool IsOpened { get; set; }
 
 
 
         public bool Settings { get; set; }
         public bool Audit { get; set; }
 
-        public event Action<bool> IsWindowSettingsEvent;
+        public event Action<bool> OpenSettingsActiveEvent;
         public event Action<bool> TypeEnterEvent;
-        public event Action<bool> IsHeaderMenuPopupEvent;
+        public event Action<bool> ContextMenuSettingsActiveEvent;
 
 
         public UserChatSettings ChatSettings { get; set; }
         public static ReactiveCommand<object, Unit> MorePointerPressedCommand { get; set; }
 
         public LoginHistory LoginHistoryCollection { get; set; }
-        public ObservableCollection<LoginAuditViewModel> LoginAudits { get; set; }
+        public ObservableCollection<LoginAuditViewModel> LoginAuditCollection { get; set; }
         private LoginAuditViewModel LoginAuditView { get; set; }
     }
 
