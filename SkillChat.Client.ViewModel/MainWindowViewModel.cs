@@ -51,9 +51,10 @@ namespace SkillChat.Client.ViewModel
             ProfileViewModel.IsOpenProfileEvent += () => WindowStates(WindowState.OpenProfile);
 
             SettingsViewModel = new SettingsViewModel(serviceClient);
-            SettingsViewModel.IsWindowSettingsEvent += (e) => { WindowStates(WindowState.WindowSettings); };
-            SettingsViewModel.TypeEnterEvent += (e) => { KeySendMessage = e; };
-            SettingsViewModel.IsHeaderMenuPopupEvent += (e) => { WindowStates(WindowState.HeaderMenuPopup); };
+            SettingsViewModel.OpenSettingsActiveEvent += (e) => {WindowStates(WindowState.WindowSettings);};
+            SettingsViewModel.TypeEnterEvent += (e) => {KeySendMessage = e;};
+            SettingsViewModel.ContextMenuSettingsActiveEvent += (e) => {WindowStates(WindowState.HeaderMenuPopup);};
+            SettingsViewModel.SetSelectedOnSettingsItemEvent += e => { TextHeaderMenuInSettings = SettingsViewModel.SettingsMenuActiveMain ? "Сообщения и чаты" : "Аудит входа"; };
 
             Width(false);
             User.UserName = settings.UserName;
@@ -508,7 +509,9 @@ namespace SkillChat.Client.ViewModel
         public string ColumndefinitionWidth { get; set; }
         public string ColumndefinitionWidth2 { get; set; }
         public double? GridWidth { get; set; }
-        public string HeaderText { get; set; } = "Чат";
+        public string TextHeaderMain { get; set; } = "Чат";
+        public bool SettingsActive { get; set; }
+        public string TextHeaderMenuInSettings { get; set; }
 
         public void Width(bool isWindow)
         {
@@ -516,15 +519,18 @@ namespace SkillChat.Client.ViewModel
             {
                 ColumndefinitionWidth = "*";
                 ColumndefinitionWidth2 = "Auto";
-                HeaderText = "Чат";
-                GridWidth = 390;
+                TextHeaderMain = "Чат";
+                SettingsActive = false;
+                GridWidth = 388;
             }
             else
             {
                 ColumndefinitionWidth = "310";
                 ColumndefinitionWidth2 = "*";
-                HeaderText = "Настройки";
+                TextHeaderMain = "Настройки";
+                SettingsActive = true;
                 GridWidth = null;
+                TextHeaderMenuInSettings = "Сообщения и чаты";
             }
         }
     }

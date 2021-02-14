@@ -89,6 +89,7 @@ namespace SkillChat.Client.ViewModel
         public event Action<bool> OpenSettingsActiveEvent;
         public event Action<bool> TypeEnterEvent;
         public event Action<bool> ContextMenuSettingsActiveEvent;
+        public event Action<Enum> SetSelectedOnSettingsItemEvent;
 
 
         public UserChatSettings ChatSettings { get; set; }

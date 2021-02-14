@@ -138,6 +138,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition
                             Width="{Binding ColumndefinitionWidth,Converter={StaticResource GridLengthValueConverter}}" />
+                        <ColumnDefinition Width="2"/>
                         <ColumnDefinition
                             Width="{Binding ColumndefinitionWidth2,Converter={StaticResource GridLengthValueConverter}}" />
                     </Grid.ColumnDefinitions>
@@ -158,8 +159,28 @@
                             TextTrimming="WordEllipsis" />
                     </StackPanel>
 
+                    <Grid Grid.Column="1" Background="#E0E0E0"/>
+
                     <!--Profile - Шапка профиля -->
-                    <Grid Grid.Column="1" Width="{Binding GridWidth}" ZIndex="1">
+                    <Grid Grid.Column="2" Width="{Binding GridWidth}" ZIndex="1">
+                        <StackPanel Orientation="Horizontal">
+                            <Button
+                                VerticalAlignment="Center"
+                                Background="Transparent"
+                                IsVisible="{Binding !SettingsActive}"
+                                BorderThickness="0"
+                                Command="{Binding LoadMessageHistoryCommand}"
+                                Content="Cтарые сообщения"
+                                FontSize="12"
+                                HorizontalAlignment="Left" />
+                            <TextBlock Foreground="#4F4F4F"
+                                       FontWeight="600"
+                                       IsVisible="{Binding SettingsActive}"
+                                       VerticalAlignment="Center" 
+                                       Margin="20 0 0 0"
+                                       FontSize="15" 
+                                       Text="{Binding TextHeaderMenuInSettings}"/>
+                        </StackPanel>
                         <profile:Header DataContext="{Binding ProfileViewModel}" />
                         <!--Profile - Exit -->
                         <Grid ZIndex="2" Width="140" Height="30" HorizontalAlignment="Right" Margin="0 52 18 0">
