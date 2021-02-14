@@ -72,6 +72,15 @@ namespace SkillChat.Client.ViewModel
             });
         }
 
+        public void Close()
+        {
+            IsOpened = false;
+        }
+        public void CloseContextMenu()
+        {
+            IsContextMenu = false;
+        }
+
         public ICommand ContextMenuCommand { get; }
         public ICommand OpenSettingsCommand { get; }
         public ICommand GetSettingsCommand { get; }

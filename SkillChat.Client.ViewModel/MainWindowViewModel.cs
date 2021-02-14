@@ -171,7 +171,7 @@ namespace SkillChat.Client.ViewModel
                                 Messages.Add(container);
                             }
 
-                            if (!windowIsFocused || SettingsViewModel.IsWindowSettings)
+                            if (!windowIsFocused || SettingsViewModel.IsOpened)
                                 Notify.NewMessage(newMessage.UserNickname, newMessage.Text.Replace("\r\n", " "));
                         }
 
@@ -380,11 +380,11 @@ namespace SkillChat.Client.ViewModel
                     windowIsFocused = win.IsActive;
                 }
             });
-            PointerPressedCommand = ReactiveCommand.Create<object>(obj =>
-             {
-                 ProfileViewModel.ContextMenuClose();
-                 SettingsViewModel.IsHeaderMenuPopup = false;
-             });
+           PointerPressedCommand = ReactiveCommand.Create<object>(obj =>
+           {
+                ProfileViewModel.ContextMenuClose();
+                SettingsViewModel.CloseContextMenu();
+           });
 
             ProfileViewModel.SignOutCommand = SignOutCommand;
             ProfileViewModel.LoadMessageHistoryCommand = LoadMessageHistoryCommand;
@@ -485,18 +485,18 @@ namespace SkillChat.Client.ViewModel
             switch (state)
             {
                 case WindowState.SignOut:
-                    SettingsViewModel.IsWindowSettings = false;
+                    SettingsViewModel.Close();
                     ProfileViewModel.ContextMenuClose();
                     ProfileViewModel.Close();
                     break;
                 case WindowState.OpenProfile:
-                    SettingsViewModel.IsWindowSettings = false;
-                    SettingsViewModel.IsHeaderMenuPopup = false;
-                    Width(SettingsViewModel.IsWindowSettings);
+                    SettingsViewModel.Close();
+                    SettingsViewModel.CloseContextMenu();
+                    Width(SettingsViewModel.IsOpened);
                     break;
                 case WindowState.WindowSettings:
                     ProfileViewModel.Close();
-                    Width(SettingsViewModel.IsWindowSettings);
+                    Width(SettingsViewModel.IsOpened);
                     break;
                 case WindowState.HeaderMenuPopup:
                     ProfileViewModel.ContextMenuClose();
