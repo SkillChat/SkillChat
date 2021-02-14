@@ -28,7 +28,7 @@ namespace SkillChat.Client.ViewModel
                 {
                     count++;
                     window.SetPosition(window.ScreenBottomRightX - (int)(window.Width*window.PrimaryPixelDensity), 
-                        window.ScreenBottomRightY - count * (int)(window.Height* window.PrimaryPixelDensity) - (int)(50 * window.PrimaryPixelDensity) -(int) (10 * window.PrimaryPixelDensity)*count);
+                        window.ScreenBottomRightY - count * (int)(window.Height* window.PrimaryPixelDensity) - (int)(window.PrimaryPixelDensity) -(int) (10 * window.PrimaryPixelDensity)*count);
                 }
             }
         }

@@ -162,7 +162,7 @@ namespace SkillChat.Client.ViewModel
                                 Messages.Add(container);
                             }
 
-                            if (!windowIsFocused)
+                            if (!windowIsFocused || SettingsViewModel.IsWindowSettings)
                                 Notify.NewMessage(newMessage.UserNickname, newMessage.Text.Replace("\r\n", " "));
                         }
 
