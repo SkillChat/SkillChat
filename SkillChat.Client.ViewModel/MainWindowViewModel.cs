@@ -45,6 +45,7 @@ namespace SkillChat.Client.ViewModel
             serviceClient = new JsonServiceClient(settings.HostUrl);
 
             ProfileViewModel = new ProfileViewModel(serviceClient);
+            Locator.CurrentMutable.RegisterConstant(ProfileViewModel);
             ProfileViewModel.IsOpenProfileEvent += (e, d) => { WindowStates(WindowState.OpenProfile);};
             ProfileViewModel.SignOutEvent += (e) => {SignOutCommand.Execute(null);};
             ProfileViewModel.LoadMessageHistoryEvent += (e) => {LoadMessageHistoryCommand.Execute(null);};

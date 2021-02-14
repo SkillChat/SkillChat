@@ -6,6 +6,7 @@ using ReactiveUI;
 using ServiceStack;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
+using Splat;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -36,8 +37,8 @@ namespace SkillChat.Client.ViewModel
         {
             UserProfileInfoCommand = ReactiveCommand.Create<string>(async userId =>
             {
-                ProfileMold = await serviceClient.GetAsync(new GetProfile { UserId = userId });
-                IUserProfileInfo.UserProfileInfoEvent?.Invoke(ProfileMold);
+                var profileViewModel = Locator.Current.GetService<ProfileViewModel>();
+                await profileViewModel.Open(userId);
             });
         }
 
