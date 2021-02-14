@@ -88,7 +88,7 @@
                         BorderThickness="0"
                         Cursor="Hand"
                         Classes="profile"
-                        Command="{Binding ProfileViewModel.SetOpenProfileCommand}">
+                        Command="{Binding ProfileViewModel.OpenProfilePanelCommand}">
                     <Image Width="13.33" Height="18.65" Margin="20" Name="profile_white_icon" />
                 </Button>
                 <Button
@@ -98,7 +98,7 @@
                     BorderThickness="0"
                     Cursor="Hand"
                     Classes="profile_dd"
-                    Command="{Binding ProfileViewModel.SetOpenProfileCommand}">
+                    Command="{Binding ProfileViewModel.OpenProfilePanelCommand}">
                     <Image Name="profile_orange_icon" Margin="20" Width="13.33" Height="18.65" />
                 </Button>
             </StackPanel>

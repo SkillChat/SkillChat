@@ -47,7 +47,7 @@
                 ToolTip.Placement="Bottom"
                 ToolTip.HorizontalOffset="-75"
                 ToolTip.VerticalOffset="1"
-                Command="{Binding SetOpenProfileCommand}">
+                Command="{Binding OpenProfilePanelCommand}">
                 <Image Name="profile_icon" Width="13.33" Height="18.65" />
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="PointerReleased"
@@ -71,7 +71,7 @@
                 ToolTip.Placement="Bottom"
                 ToolTip.HorizontalOffset="-123"
                 ToolTip.VerticalOffset="1"
-                Command="{Binding SetOpenProfileCommand}">
+                Command="{Binding OpenProfilePanelCommand}">
                 <Image Name="profile_orange_icon" Width="13.33" Height="18.65" />
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="PointerReleased"

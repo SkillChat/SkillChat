@@ -25,7 +25,7 @@ namespace SkillChat.Client.ViewModel
         {
             _serviceClient = serviceClient;
             //Показать/скрыть панель профиля
-            SetOpenProfileCommand = ReactiveCommand.CreateFromTask(async () =>
+            OpenProfilePanelCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 if (ProfileViewModel.WindowWidth < 650) IsShowChat = false;
                 if (IsOpened && IsEditNameProfile)
@@ -104,6 +104,9 @@ namespace SkillChat.Client.ViewModel
         }
 
         //Profile
+        /// <summary>
+        /// Панель профиля открыта
+        /// </summary>
         public bool IsOpened { get; protected set; }
         public bool IsOpenMenu { get; set; }
         public bool IsEditNameProfile { get; set; }
@@ -116,7 +119,7 @@ namespace SkillChat.Client.ViewModel
 
         public ICommand ApplyProfileNameCommand { get; }
         public ICommand ApplyProfileAboutMeCommand { get; }
-        public ICommand SetOpenProfileCommand { get; }
+        public ICommand OpenProfilePanelCommand { get; }
         public ICommand SetEditNameProfileCommand { get; }
         public ICommand SignOutCommand { get; }
         public ICommand LoadMessageHistoryCommand { get; }
