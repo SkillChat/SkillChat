@@ -109,7 +109,7 @@ namespace SkillChat.Client.ViewModel
             AboutMe
         }
 
-        public bool IsShowChat { get; set; } = false;
+        public bool IsShowChat { get; protected set; } = false;
         public static double WindowWidth { get; set; }
         public bool SignOut { get; set; }
         public bool LoadMessageHistory { get; set; }
@@ -123,8 +123,7 @@ namespace SkillChat.Client.ViewModel
         public ICommand LoadMessageHistoryCommand { get; }
         public ICommand SetEditAboutMeProfileCommand { get; }
 
-
-        public UserProfileMold Profile { get; set; }
+        public UserProfileMold Profile { get; protected set; }
 
         public event Action IsOpenProfileEvent;
         public event Action<bool> SignOutEvent;
