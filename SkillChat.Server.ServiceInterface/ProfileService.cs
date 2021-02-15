@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Raven.Client.Documents;
@@ -32,6 +33,8 @@ namespace SkillChat.Server.ServiceInterface
             var existedUser = await RavenSession.Query<User>().FirstOrDefaultAsync(x => x.Id == uid);
             if (existedUser != null)
             {
+                request.DisplayName = new string(request.DisplayName.Take(32).ToArray());
+
                 var user = Mapper.Map<SetProfile, User>(request, existedUser);
 
                 await RavenSession.StoreAsync(user);
