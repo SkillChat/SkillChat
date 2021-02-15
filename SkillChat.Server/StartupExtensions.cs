@@ -131,12 +131,6 @@ namespace SkillChat.Server
                 {
                     Disabled = false,
                     PurgeOnDelete = false,
-                },
-                Collections = new Dictionary<string, RevisionsCollectionConfiguration>
-                {
-                    {"LoginAudit", new RevisionsCollectionConfiguration{
-                        MinimumRevisionsToKeep = 5
-                    }}
                 }
             }));
         }

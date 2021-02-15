@@ -88,59 +88,61 @@
             </Grid>
 
             <Grid Background="#FFFFFF" Grid.Column="3" IsVisible="{Binding AuditMenuActiveMain}" ZIndex="10">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled">
                 <ItemsControl
                     Margin="15,0"
                     BorderThickness="0"
                     Items="{Binding LoginAuditCollection}">
-                    <ItemsControl.DataTemplates>
-                        <DataTemplate DataType="{x:Type viewModel:LoginAuditViewModel}">
-                            <Grid ColumnDefinitions="*,Auto">
-                                <Grid Grid.Column="0">
-                                    <StackPanel>
-                                        <TextBlock
-                                            Margin="0 10 0 0"
-                                            Background="#0000"
-                                            FontSize="14"
-                                            FontWeight="600"
-                                            Foreground="Black"
-                                            Text="{Binding NameVersionClient}" />
-                                        <TextBlock
-                                            Margin="0 3 0 0"
-                                            Background="#0000"
-                                            FontSize="14"
-                                            FontWeight="600"
-                                            Foreground="Black"
-                                            Text="{Binding OperatingSystem}" />
-                                        <TextBlock
-                                            Margin="0 3 0 0"
-                                            FontSize="14"
-                                            FontWeight="600"
-                                            Foreground="#828282"
-                                            Text="{Binding IpAddress}" />
-                                    </StackPanel>
+                        <ItemsControl.DataTemplates>
+                            <DataTemplate DataType="{x:Type viewModel:LoginAuditViewModel}">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Grid Grid.Column="0">
+                                        <StackPanel>
+                                            <TextBlock
+                                                Margin="0 10 0 0"
+                                                Background="#0000"
+                                                FontSize="14"
+                                                FontWeight="600"
+                                                Foreground="Black"
+                                                Text="{Binding NameVersionClient}" />
+                                            <TextBlock
+                                                Margin="0 3 0 0"
+                                                Background="#0000"
+                                                FontSize="14"
+                                                FontWeight="600"
+                                                Foreground="Black"
+                                                Text="{Binding OperatingSystem}" />
+                                            <TextBlock
+                                                Margin="0 3 0 0"
+                                                FontSize="14"
+                                                FontWeight="600"
+                                                Foreground="#828282"
+                                                Text="{Binding IpAddress}" />
+                                        </StackPanel>
+                                    </Grid>
+                                    <Grid Grid.Column="1">
+                                        <WrapPanel>
+                                            <TextBlock
+                                                Margin="0 10 10 0"
+                                                Foreground="#6B3FE7"
+                                                FontWeight="400"
+                                                FontSize="13"
+                                                Text="{Binding IsActive}"/>
+                                            <TextBlock
+                                                Margin="0 10 0 0"
+                                                HorizontalAlignment="Right"
+                                                TextAlignment="Right"
+                                                FontWeight="400"
+                                                FontSize="13"
+                                                Text="{Binding DateOfEntry}"
+                                                Foreground="#828282" />
+                                        </WrapPanel>
+                                    </Grid>
                                 </Grid>
-                                <Grid Grid.Column="1">
-                                    <WrapPanel>
-                                        <TextBlock
-                                            Margin="0 10 10 0"
-                                            Foreground="#6B3FE7"
-                                            FontWeight="400"
-                                            FontSize="13"
-                                            Text="{Binding IsActive}"/>
-                                        <TextBlock
-                                            Margin="0 10 0 0"
-                                            HorizontalAlignment="Right"
-                                            TextAlignment="Right"
-                                            FontWeight="400"
-                                            FontSize="13"
-                                            Text="{Binding DateOfEntry}"
-                                            Foreground="#828282" />
-                                    </WrapPanel>
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.DataTemplates>
-                </ItemsControl>
+                            </DataTemplate>
+                        </ItemsControl.DataTemplates>
+                    </ItemsControl>
+                </ScrollViewer>
             </Grid>
         </Grid>
     </Grid>
