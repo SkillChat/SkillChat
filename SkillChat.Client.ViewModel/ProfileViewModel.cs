@@ -27,7 +27,7 @@ namespace SkillChat.Client.ViewModel
             //Показать/скрыть панель профиля
             OpenProfilePanelCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                var user = Locator.Current.GetService<CurrentUserViewModel>();
+                var user = Locator.Current.GetService<ICurrentUser>();
                 await Open(user?.Id);
             });
 
@@ -99,7 +99,7 @@ namespace SkillChat.Client.ViewModel
 
         public bool IsShowChat { get; protected set; } = false;
         public static double WindowWidth { get; set; }
-        public bool IsMyProfile => Locator.Current.GetService<CurrentUserViewModel>()?.Id == Profile?.Id;
+        public bool IsMyProfile => Locator.Current.GetService<ICurrentUser>()?.Id == Profile?.Id;
 
         public ICommand ApplyProfileNameCommand { get; }
         public ICommand ApplyProfileAboutMeCommand { get; }

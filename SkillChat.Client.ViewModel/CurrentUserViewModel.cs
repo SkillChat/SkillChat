@@ -11,7 +11,7 @@ namespace SkillChat.Client.ViewModel
     /// Текущий пользователь
     /// </summary>
     [AddINotifyPropertyChangedInterface]
-   public class CurrentUserViewModel
+   public class CurrentUserViewModel : ICurrentUser
     {
         public CurrentUserViewModel()
         {

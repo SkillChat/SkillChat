@@ -28,7 +28,7 @@ namespace SkillChat.Client.ViewModel
         public MainWindowViewModel()
         {
             User = new CurrentUserViewModel();
-            Locator.CurrentMutable.RegisterConstant(User);
+            Locator.CurrentMutable.RegisterConstant<ICurrentUser>(User);
             configuration = Locator.Current.GetService<IConfiguration>();
             settings = configuration.GetSection("ChatClientSettings").Get<ChatClientSettings>();
 
@@ -49,7 +49,7 @@ namespace SkillChat.Client.ViewModel
                 SignOutCommand = SignOutCommand,
                 LoadMessageHistoryCommand = LoadMessageHistoryCommand
             };
-            Locator.CurrentMutable.RegisterConstant(ProfileViewModel,typeof(IProfile));
+            Locator.CurrentMutable.RegisterConstant<IProfile>(ProfileViewModel);
             ProfileViewModel.IsOpenProfileEvent += () => WindowStates(WindowState.OpenProfile);
             
             SettingsViewModel = new SettingsViewModel(serviceClient);
