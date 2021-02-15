@@ -44,22 +44,18 @@ namespace SkillChat.Client.ViewModel
 
             serviceClient = new JsonServiceClient(settings.HostUrl);
 
-            ProfileViewModel = new ProfileViewModel(serviceClient)
-            {
-                SignOutCommand = SignOutCommand,
-                LoadMessageHistoryCommand = LoadMessageHistoryCommand
-            };
+            ProfileViewModel = new ProfileViewModel(serviceClient);
             Locator.CurrentMutable.RegisterConstant<IProfile>(ProfileViewModel);
             ProfileViewModel.IsOpenProfileEvent += () => WindowStates(WindowState.OpenProfile);
-            
+
             SettingsViewModel = new SettingsViewModel(serviceClient);
-            SettingsViewModel.IsWindowSettingsEvent += (e) => {WindowStates(WindowState.WindowSettings);};
-            SettingsViewModel.TypeEnterEvent += (e) => {KeySendMessage = e;};
-            SettingsViewModel.IsHeaderMenuPopupEvent += (e) => {WindowStates(WindowState.HeaderMenuPopup);};
+            SettingsViewModel.IsWindowSettingsEvent += (e) => { WindowStates(WindowState.WindowSettings); };
+            SettingsViewModel.TypeEnterEvent += (e) => { KeySendMessage = e; };
+            SettingsViewModel.IsHeaderMenuPopupEvent += (e) => { WindowStates(WindowState.HeaderMenuPopup); };
 
             Width(false);
             User.UserName = settings.UserName;
-            Tokens = new TokenResult {AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken};
+            Tokens = new TokenResult { AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken };
 
             Messages = new ObservableCollection<IMessagesContainerViewModel>();
 
@@ -76,7 +72,7 @@ namespace SkillChat.Client.ViewModel
                     if (Tokens == null || Tokens.AccessToken.IsNullOrEmpty())
                     {
                         Tokens = await serviceClient.PostAsync(new AuthViaPassword
-                            {Login = User.UserName, Password = User.Password});
+                        { Login = User.UserName, Password = User.Password });
                         settings.AccessToken = Tokens.AccessToken;
                         settings.RefreshToken = Tokens.RefreshToken;
                         settings.UserName = User.UserName;
@@ -133,7 +129,7 @@ namespace SkillChat.Client.ViewModel
                     {
                         var isMyMessage = User.Id == data.UserId;
                         var newMessage = isMyMessage
-                            ? (MessageViewModel) new MyMessageViewModel()
+                            ? (MessageViewModel)new MyMessageViewModel()
                             : new UserMessageViewModel();
                         newMessage.Id = data.Id;
                         newMessage.Text = data.Message;
@@ -193,7 +189,7 @@ namespace SkillChat.Client.ViewModel
                     User.Password = "";
                 }
                 catch (Exception ex)
-                {                    
+                {
                     //Изменение параеметров TextBox в случае ошибки                    
                     User.Error("неверный логин или пароль");
                     ErrorBe?.Invoke();
@@ -238,7 +234,7 @@ namespace SkillChat.Client.ViewModel
                     {
                         var isMyMessage = User.Id == item.UserId;
                         var newMessage = isMyMessage
-                            ? (MessageViewModel) new MyMessageViewModel()
+                            ? (MessageViewModel)new MyMessageViewModel()
                             : new UserMessageViewModel();
                         newMessage.Id = item.Id;
                         newMessage.Text = item.Text;
@@ -377,11 +373,14 @@ namespace SkillChat.Client.ViewModel
                     Notify.WindowIsActive = win.IsActive;
                 }
             });
-           PointerPressedCommand = ReactiveCommand.Create<object>(obj =>
-            {
-                ProfileViewModel.ContextMenuClose();
-                SettingsViewModel.IsHeaderMenuPopup = false;
-            });
+            PointerPressedCommand = ReactiveCommand.Create<object>(obj =>
+             {
+                 ProfileViewModel.ContextMenuClose();
+                 SettingsViewModel.IsHeaderMenuPopup = false;
+             });
+
+            ProfileViewModel.SignOutCommand = SignOutCommand;
+            ProfileViewModel.LoadMessageHistoryCommand = LoadMessageHistoryCommand;
         }
 
         public DateTimeOffset ExpireTime { get; set; }
@@ -442,7 +441,7 @@ namespace SkillChat.Client.ViewModel
         public bool IsShowingRegisterPage { get; set; }
 
         public string ValidationError { get; set; }
-        
+
         public ReactiveCommand<object, Unit> GoToRegisterCommand { get; }
         public RegisterUserViewModel RegisterUser { get; set; }
         public ICommand RegisterCommand { get; }
@@ -484,7 +483,7 @@ namespace SkillChat.Client.ViewModel
                     ProfileViewModel.Close();
                     break;
                 case WindowState.OpenProfile:
-                    SettingsViewModel.IsWindowSettings = false; 
+                    SettingsViewModel.IsWindowSettings = false;
                     SettingsViewModel.IsHeaderMenuPopup = false;
                     Width(SettingsViewModel.IsWindowSettings);
                     break;
