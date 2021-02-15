@@ -31,7 +31,7 @@
                     <TextBox Width="290" IsVisible="{Binding IsEditNameProfile}" Height="50"
                              Text="{Binding Profile.DisplayName}"
                              Foreground="#828282" FontWeight="600" FontSize="16" VerticalContentAlignment="Center"
-                             HorizontalContentAlignment="Center" BorderBrush="#BDBDBD" Margin="0 29 0 0"
+                             MaxLength="32" BorderBrush="#BDBDBD" Margin="0 29 0 0"
                              VerticalAlignment="Top" />
                     <Grid IsVisible="{Binding IsMyProfile}">
                         <Button
@@ -86,7 +86,6 @@
                              Text="{Binding Profile.AboutMe}"
                              AcceptsReturn="True"
                              Foreground="#828282" FontWeight="600" FontSize="16"
-                             HorizontalContentAlignment="Center"
                              TextWrapping="Wrap"
                              MinHeight="50"
                              MaxHeight="250"
