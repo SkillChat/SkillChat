@@ -44,12 +44,14 @@ namespace SkillChat.Client.ViewModel
 
             serviceClient = new JsonServiceClient(settings.HostUrl);
 
-            ProfileViewModel = new ProfileViewModel(serviceClient);
+            ProfileViewModel = new ProfileViewModel(serviceClient)
+            {
+                SignOutCommand = SignOutCommand,
+                LoadMessageHistoryCommand = LoadMessageHistoryCommand
+            };
             Locator.CurrentMutable.RegisterConstant(ProfileViewModel,typeof(IProfile));
             ProfileViewModel.IsOpenProfileEvent += () => WindowStates(WindowState.OpenProfile);
-            ProfileViewModel.SignOutEvent += (e) => {SignOutCommand.Execute(null);};
-            ProfileViewModel.LoadMessageHistoryEvent += (e) => {LoadMessageHistoryCommand.Execute(null);};
-
+            
             SettingsViewModel = new SettingsViewModel(serviceClient);
             SettingsViewModel.IsWindowSettingsEvent += (e) => {WindowStates(WindowState.WindowSettings);};
             SettingsViewModel.TypeEnterEvent += (e) => {KeySendMessage = e;};
@@ -60,7 +62,6 @@ namespace SkillChat.Client.ViewModel
             Tokens = new TokenResult {AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken};
 
             Messages = new ObservableCollection<IMessagesContainerViewModel>();
-          
 
             ConnectCommand = ReactiveCommand.CreateFromTask(async () =>
             {

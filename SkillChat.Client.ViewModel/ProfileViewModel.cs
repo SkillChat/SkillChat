@@ -17,7 +17,7 @@ namespace SkillChat.Client.ViewModel
     }
 
     [AddINotifyPropertyChangedInterface]
-    public class ProfileViewModel: IProfile
+    public class ProfileViewModel : IProfile
     {
         private readonly IJsonServiceClient _serviceClient;
 
@@ -28,14 +28,14 @@ namespace SkillChat.Client.ViewModel
             OpenProfilePanelCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 var user = Locator.Current.GetService<CurrentUserViewModel>();
-                await Open(user.Id);
+                await Open(user?.Id);
             });
 
             //Сохранить изменения Name профиля
-            ApplyProfileNameCommand = ReactiveCommand.CreateFromTask(async () => await SetProfile());
+            ApplyProfileNameCommand = ReactiveCommand.CreateFromTask(SetProfile);
 
             //Сохранить изменения AboutMe профиля
-            ApplyProfileAboutMeCommand = ReactiveCommand.CreateFromTask(async () => await SetProfile());
+            ApplyProfileAboutMeCommand = ReactiveCommand.CreateFromTask(SetProfile);
 
             //Скрытие окна 
             LayoutUpdatedWindow = ReactiveCommand.Create<object>(obj =>
@@ -53,18 +53,6 @@ namespace SkillChat.Client.ViewModel
 
             //Показать/скрыть ContextMenu
             ContextMenuProfile = ReactiveCommand.Create<object>(obj => { IsActiveContextMenu = !IsActiveContextMenu; });
-
-            SignOutCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                SignOut = !SignOut;
-                SignOutEvent?.Invoke(SignOut);
-            });
-
-            LoadMessageHistoryCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                LoadMessageHistory = !LoadMessageHistory;
-                LoadMessageHistoryEvent?.Invoke(LoadMessageHistory);
-            });
         }
 
         private async Task SetProfile()
@@ -111,24 +99,19 @@ namespace SkillChat.Client.ViewModel
 
         public bool IsShowChat { get; protected set; } = false;
         public static double WindowWidth { get; set; }
-        public bool SignOut { get; set; }
-        public bool LoadMessageHistory { get; set; }
         public bool IsMyProfile => Locator.Current.GetService<CurrentUserViewModel>()?.Id == Profile?.Id;
 
         public ICommand ApplyProfileNameCommand { get; }
         public ICommand ApplyProfileAboutMeCommand { get; }
         public ICommand OpenProfilePanelCommand { get; }
         public ICommand SetEditNameProfileCommand { get; }
-        public ICommand SignOutCommand { get; }
-        public ICommand LoadMessageHistoryCommand { get; }
+        public ICommand SignOutCommand { get; set; }
+        public ICommand LoadMessageHistoryCommand { get; set; }
         public ICommand SetEditAboutMeProfileCommand { get; }
 
         public UserProfileMold Profile { get; protected set; }
 
         public event Action IsOpenProfileEvent;
-        public event Action<bool> SignOutEvent;
-        public event Action<bool> LoadMessageHistoryEvent;
-
 
         public ReactiveCommand<object, Unit> LayoutUpdatedWindow { get; }
         public ReactiveCommand<object, Unit> ContextMenuProfile { get; }
@@ -154,7 +137,7 @@ namespace SkillChat.Client.ViewModel
             else
             {
                 ResetEditMode();
-                Profile = await _serviceClient.GetAsync(new GetProfile { UserId = userId });
+                Profile = await _serviceClient.GetAsync(new GetProfile {UserId = userId});
                 IsOpened = true;
                 IsOpenProfileEvent?.Invoke();
             }
