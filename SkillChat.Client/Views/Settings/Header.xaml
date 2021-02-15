@@ -10,7 +10,7 @@
         Background="Transparent"
         BorderThickness="0"
         Cursor="Hand"
-        Command="{Binding OpenSettingsCommand}"
+        Command="{Binding ContextMenuCommand}"
         Classes="more">
         <Image Name="more" Width="20" Height="40" />
     </Button>

@@ -3,7 +3,9 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Reactive;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -49,15 +51,22 @@ namespace SkillChat.Client.ViewModel
             ProfileViewModel.IsOpenProfileEvent += () => WindowStates(WindowState.OpenProfile);
 
             SettingsViewModel = new SettingsViewModel(serviceClient);
-            SettingsViewModel.IsWindowSettingsEvent += (e) => { WindowStates(WindowState.WindowSettings); };
-            SettingsViewModel.TypeEnterEvent += (e) => { KeySendMessage = e; };
-            SettingsViewModel.IsHeaderMenuPopupEvent += (e) => { WindowStates(WindowState.HeaderMenuPopup); };
+            SettingsViewModel.OpenSettingsActiveEvent += (e) => {WindowStates(WindowState.WindowSettings);};
+            SettingsViewModel.TypeEnterEvent += (e) => {KeySendMessage = e;};
+            SettingsViewModel.ContextMenuSettingsActiveEvent += (e) => {WindowStates(WindowState.HeaderMenuPopup);};
+            SettingsViewModel.SetSelectedOnSettingsItemEvent += e => { TextHeaderMenuInSettings = SettingsViewModel.SettingsMenuActiveMain ? "Сообщения и чаты" : "Аудит входа"; };
 
             Width(false);
             User.UserName = settings.UserName;
             Tokens = new TokenResult { AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken };
 
             Messages = new ObservableCollection<IMessagesContainerViewModel>();
+
+            var bits = Environment.Is64BitOperatingSystem ? "PC 64bit, " : "PC 32bit, ";
+            var operatingSystem = bits + RuntimeInformation.OSDescription;
+            var ipAddress = new WebClient().DownloadString("https://api.ipify.org");
+            var nameVersionClient = "SkillChat Avalonia Client 1.0";
+
 
             ConnectCommand = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -100,7 +109,7 @@ namespace SkillChat.Client.ViewModel
                                 settings.AccessToken = Tokens.AccessToken;
                                 settings.RefreshToken = Tokens.RefreshToken;
                                 configuration.GetSection("ChatClientSettings").Set(configuration);
-                                await _hub.Login(Tokens.AccessToken);
+                                await _hub.Login(Tokens.AccessToken, operatingSystem, ipAddress, nameVersionClient);
                             }
                             catch (Exception e)
                             {
@@ -162,7 +171,7 @@ namespace SkillChat.Client.ViewModel
                                 Messages.Add(container);
                             }
 
-                            if (!windowIsFocused || SettingsViewModel.IsWindowSettings)
+                            if (!windowIsFocused || SettingsViewModel.IsOpened)
                                 Notify.NewMessage(newMessage.UserNickname, newMessage.Text.Replace("\r\n", " "));
                         }
 
@@ -178,7 +187,7 @@ namespace SkillChat.Client.ViewModel
 
                     _connection.Closed += connectionOnClosed();
                     await _connection.StartAsync();
-                    await _hub.Login(Tokens.AccessToken);
+                    await _hub.Login(Tokens.AccessToken, operatingSystem, ipAddress, nameVersionClient);
                     //Messages.Add("Connection started");
                     IsShowingLoginPage = false;
                     IsShowingRegisterPage = false;
@@ -371,11 +380,11 @@ namespace SkillChat.Client.ViewModel
                     windowIsFocused = win.IsActive;
                 }
             });
-            PointerPressedCommand = ReactiveCommand.Create<object>(obj =>
-             {
-                 ProfileViewModel.ContextMenuClose();
-                 SettingsViewModel.IsHeaderMenuPopup = false;
-             });
+           PointerPressedCommand = ReactiveCommand.Create<object>(obj =>
+           {
+                ProfileViewModel.ContextMenuClose();
+                SettingsViewModel.CloseContextMenu();
+           });
 
             ProfileViewModel.SignOutCommand = SignOutCommand;
             ProfileViewModel.LoadMessageHistoryCommand = LoadMessageHistoryCommand;
@@ -476,18 +485,18 @@ namespace SkillChat.Client.ViewModel
             switch (state)
             {
                 case WindowState.SignOut:
-                    SettingsViewModel.IsWindowSettings = false;
+                    SettingsViewModel.Close();
                     ProfileViewModel.ContextMenuClose();
                     ProfileViewModel.Close();
                     break;
                 case WindowState.OpenProfile:
-                    SettingsViewModel.IsWindowSettings = false;
-                    SettingsViewModel.IsHeaderMenuPopup = false;
-                    Width(SettingsViewModel.IsWindowSettings);
+                    SettingsViewModel.Close();
+                    SettingsViewModel.CloseContextMenu();
+                    Width(SettingsViewModel.IsOpened);
                     break;
                 case WindowState.WindowSettings:
                     ProfileViewModel.Close();
-                    Width(SettingsViewModel.IsWindowSettings);
+                    Width(SettingsViewModel.IsOpened);
                     break;
                 case WindowState.HeaderMenuPopup:
                     ProfileViewModel.ContextMenuClose();
@@ -500,7 +509,9 @@ namespace SkillChat.Client.ViewModel
         public string ColumndefinitionWidth { get; set; }
         public string ColumndefinitionWidth2 { get; set; }
         public double? GridWidth { get; set; }
-        public string HeaderText { get; set; } = "Чат";
+        public string TextHeaderMain { get; set; } = "Чат";
+        public bool SettingsActive { get; set; }
+        public string TextHeaderMenuInSettings { get; set; }
 
         public void Width(bool isWindow)
         {
@@ -508,15 +519,18 @@ namespace SkillChat.Client.ViewModel
             {
                 ColumndefinitionWidth = "*";
                 ColumndefinitionWidth2 = "Auto";
-                HeaderText = "Чат";
-                GridWidth = 390;
+                TextHeaderMain = "Чат";
+                SettingsActive = false;
+                GridWidth = 388;
             }
             else
             {
                 ColumndefinitionWidth = "310";
                 ColumndefinitionWidth2 = "*";
-                HeaderText = "Настройки";
+                TextHeaderMain = "Настройки";
+                SettingsActive = true;
                 GridWidth = null;
+                TextHeaderMenuInSettings = "Сообщения и чаты";
             }
         }
     }

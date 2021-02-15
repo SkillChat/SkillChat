@@ -56,5 +56,20 @@ namespace SkillChat.Server.ServiceInterface
             var mapped = Mapper.Map<UserChatSettings>(settings);
             return mapped;
         }
+
+        [Authenticate]
+        public async Task<LoginHistory> Get(GetLoginAudit request)
+        {
+            var session = Request.ThrowIfUnauthorized();
+            var uid = session?.UserAuthId + "/loginAudit";
+            var сurrentSessionId = session?.Id;
+
+            var history = new LoginHistory
+            {
+                History = await RavenSession.Advanced.Revisions.GetForAsync<UserLoginAudit>(uid),
+                UniqueSessionUser = сurrentSessionId
+            };
+            return history;
+        }
     }
 }

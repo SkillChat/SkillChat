@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="50" d:DesignHeight="50"
              xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
              xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
              xmlns:interactivity="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
@@ -13,28 +13,8 @@
 
     <!--Profile - Шапка профиля-->
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="20" />
-            <ColumnDefinition Width="300" />
-        </Grid.ColumnDefinitions>
-
-        <Grid Grid.Column="0" Background="#E0E0E0" />
-
-        <StackPanel Orientation="Horizontal">
-            <Button
-                VerticalAlignment="Center"
-                Background="Transparent"
-                BorderThickness="0"
-                Command="{Binding LoadMessageHistoryCommand}"
-                Content="Cтарые сообщения"
-                FontSize="12"
-                HorizontalAlignment="Left" />
-        </StackPanel>
-        <Grid Grid.Column="3">
-            <Button
-                IsVisible="{Binding !IsOpened}"
+        <Button
+                IsVisible="{Binding !IsOpenProfile}"
                 VerticalAlignment="Center"
                 Background="Transparent"
                 BorderThickness="0"
@@ -82,6 +62,5 @@
                 </interactivity:Interaction.Behaviors>
             </Button>
         </Grid>
-    </Grid>
 
 </UserControl>

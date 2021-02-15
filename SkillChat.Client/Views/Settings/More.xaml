@@ -5,7 +5,7 @@
              mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="62"
              x:Class="SkillChat.Client.Views.Settings.More"
              Background="Transparent">
-    <Border CornerRadius="2" Name="bord" IsVisible="{Binding IsHeaderMenuPopup}" Background="White" BorderBrush="#FF9337"
+    <Border CornerRadius="2" Name="bord" IsVisible="{Binding IsContextMenu}" Background="White" BorderBrush="#FF9337"
             BorderThickness="1">
         <WrapPanel>
 
@@ -28,7 +28,7 @@
                 BorderBrush="Transparent"
                 Background="#0000"
                 Cursor="Hand"
-                Command="{Binding GoToSettingsCommand}"
+                Command="{Binding OpenSettingsCommand}"
                 HorizontalContentAlignment="Left"
                 Classes="SelectedMore">
                 <Button.Content>
