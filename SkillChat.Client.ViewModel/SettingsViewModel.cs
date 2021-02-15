@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive;
 using System.Windows.Input;
 using PropertyChanged;
@@ -54,11 +55,10 @@ namespace SkillChat.Client.ViewModel
 
             GetHistoryLoginAuditCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-
                 SetSelectedMenuItem(SelectedMenuItem.Audit);
                 LoginAuditCollection.Clear();
                 LoginHistoryCollection = await serviceClient.GetAsync(new GetLoginAudit());
-                foreach (var item in LoginHistoryCollection.History)
+                foreach (var item in LoginHistoryCollection.History.Take(100))
                 {
                     LoginAuditView = new LoginAuditViewModel
                     {
@@ -66,7 +66,9 @@ namespace SkillChat.Client.ViewModel
                         IpAddress = item.IpAddress,
                         OperatingSystem = item.OperatingSystem,
                         NameVersionClient = item.NameVersionClient,
-                        DateOfEntry = item.DateOfEntry.Date == DateTime.Now.Date ? $"{item.DateOfEntry:HH:mm}" : $"{item.DateOfEntry:dd.MM.yyyy HH:mm}",
+                        DateOfEntry = item.DateOfEntry.Date == DateTime.Now.Date
+                            ? $"{item.DateOfEntry:HH:mm}"
+                            : $"{item.DateOfEntry:dd.MM.yyyy HH:mm}",
                         IsActive = item.SessionId == LoginHistoryCollection.UniqueSessionUser ? "Активный" : ""
                     };
                     LoginAuditCollection.Add(LoginAuditView);
