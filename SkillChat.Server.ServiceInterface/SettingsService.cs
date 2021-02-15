@@ -20,9 +20,9 @@ namespace SkillChat.Server.ServiceInterface
         {
             var session = Request.ThrowIfUnauthorized();
 
-            var uid = session?.UserAuthId + "/settings";
+            var settingsId = session?.UserAuthId + "/settings";
 
-            var typeMessage = await RavenSession.Query<Settings>().FirstOrDefaultAsync(x => x.Id == uid);
+            var typeMessage = await RavenSession.Query<Settings>().FirstOrDefaultAsync(x => x.Id == settingsId);
 
             if (typeMessage != null)
             {
@@ -31,7 +31,7 @@ namespace SkillChat.Server.ServiceInterface
             }
             else
             {
-                var settings = new Settings {SendingMessageByEnterKey = true, Id = uid};
+                var settings = new Settings {SendingMessageByEnterKey = true, Id = settingsId };
 
                 await RavenSession.StoreAsync(settings);
                 await RavenSession.SaveChangesAsync();
@@ -45,10 +45,10 @@ namespace SkillChat.Server.ServiceInterface
         public async Task<UserChatSettings> Post(SetSettings request)
         {
             var session = Request.ThrowIfUnauthorized();
-            var uid = session?.UserAuthId + "/settings";
+            var settingsId = session?.UserAuthId + "/settings";
 
             var settings = Mapper.Map<Settings>(request);
-            settings.Id = uid;
+            settings.Id = settingsId;
 
             await RavenSession.StoreAsync(settings);
             await RavenSession.SaveChangesAsync();
@@ -61,12 +61,12 @@ namespace SkillChat.Server.ServiceInterface
         public async Task<LoginHistory> Get(GetLoginAudit request)
         {
             var session = Request.ThrowIfUnauthorized();
-            var uid = session?.UserAuthId + "/loginAudit";
+            var loginAuditId = session?.UserAuthId + "/loginAudit";
             var сurrentSessionId = session?.Id;
 
             var history = new LoginHistory
             {
-                History = await RavenSession.Advanced.Revisions.GetForAsync<UserLoginAudit>(uid),
+                History = await RavenSession.Advanced.Revisions.GetForAsync<UserLoginAudit>(loginAuditId),
                 UniqueSessionUser = сurrentSessionId
             };
             return history;
