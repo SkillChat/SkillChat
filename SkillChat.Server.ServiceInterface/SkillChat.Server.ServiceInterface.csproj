@@ -1,19 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="RavenDB.Client" Version="5.1.1" />
-    <PackageReference Include="Serilog" Version="2.10.1-dev-01256" />
-    <PackageReference Include="ServiceStack.Server" Version="5.10.2" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="10.1.1" />
+        <PackageReference Include="RavenDB.Client" Version="5.1.1" />
+        <PackageReference Include="Serilog" Version="2.10.1-dev-01256" />
+        <PackageReference Include="ServiceStack.Server" Version="5.10.2" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SkillChat.Server.Domain\SkillChat.Server.Domain.csproj" />
-    <ProjectReference Include="..\SkillChat.Server.ServiceModel\SkillChat.Server.ServiceModel.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\SkillChat.Server.Domain\SkillChat.Server.Domain.csproj" />
+        <ProjectReference Include="..\SkillChat.Server.ServiceModel\SkillChat.Server.ServiceModel.csproj" />
+    </ItemGroup>
 
 </Project>

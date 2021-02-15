@@ -124,6 +124,7 @@ namespace SkillChat.Client.ViewModel
                             LoadMessageHistoryCommand.Execute(null);
                             //Получаем настройки
                             SettingsViewModel.ChatSettings = await serviceClient.GetAsync(new GetMySettings());
+                            KeySendMessage = SettingsViewModel.ChatSettings.SendingMessageByEnterKey;
                         }
                     });
 
