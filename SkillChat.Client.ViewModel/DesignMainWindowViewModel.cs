@@ -43,7 +43,7 @@ namespace SkillChat.Client.ViewModel
                 {
                     Messages = new ObservableCollection<MessageViewModel>
                     {
-                        new UserMessageViewModel
+                        new UserMessageViewModel()
                         {
                             UserNickname = "alice",
                             Text = "Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? ",
@@ -51,7 +51,7 @@ namespace SkillChat.Client.ViewModel
                             Id = "1",
                             ShowNickname = true,
                         }
-                        ,new UserMessageViewModel
+                        ,new UserMessageViewModel()
                         {
                             UserNickname = "alice",
                             Text = "Есть кто?",
@@ -86,7 +86,7 @@ namespace SkillChat.Client.ViewModel
                 {
                     Messages = new ObservableCollection<MessageViewModel>
                     {
-                        new UserMessageViewModel
+                        new UserMessageViewModel()
                         {
                             UserNickname = "alice",
                             Text = "Привет, как дела?",
@@ -94,7 +94,7 @@ namespace SkillChat.Client.ViewModel
                             Id = "1",
                             ShowNickname = true,
                         }
-                        ,new UserMessageViewModel
+                        ,new UserMessageViewModel()
                         {
                             UserNickname = "alice",
                             Text = "Есть кто?",
@@ -108,7 +108,7 @@ namespace SkillChat.Client.ViewModel
                 {
                     Messages = new ObservableCollection<MessageViewModel>
                     {
-                        new UserMessageViewModel
+                        new UserMessageViewModel()
                         {
                             UserNickname = "bob",
                             Text = "Привет, как дела?",

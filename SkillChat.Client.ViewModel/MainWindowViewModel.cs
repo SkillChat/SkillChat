@@ -28,6 +28,7 @@ namespace SkillChat.Client.ViewModel
         public MainWindowViewModel()
         {
             User = new CurrentUserViewModel();
+            Locator.CurrentMutable.RegisterConstant<ICurrentUser>(User);
             configuration = Locator.Current.GetService<IConfiguration>();
             settings = configuration.GetSection("ChatClientSettings").Get<ChatClientSettings>();
 
@@ -43,11 +44,14 @@ namespace SkillChat.Client.ViewModel
 
             serviceClient = new JsonServiceClient(settings.HostUrl);
 
-            ProfileViewModel = new ProfileViewModel(serviceClient);
-            ProfileViewModel.IsOpenProfileEvent += (e) => {WindowStates(WindowState.OpenProfile);};
-            ProfileViewModel.SignOutEvent += (e) => {SignOutCommand.Execute(null);};
-            ProfileViewModel.LoadMessageHistoryEvent += (e) => {LoadMessageHistoryCommand.Execute(null);};
-
+            ProfileViewModel = new ProfileViewModel(serviceClient)
+            {
+                SignOutCommand = SignOutCommand,
+                LoadMessageHistoryCommand = LoadMessageHistoryCommand
+            };
+            Locator.CurrentMutable.RegisterConstant<IProfile>(ProfileViewModel);
+            ProfileViewModel.IsOpenProfileEvent += () => WindowStates(WindowState.OpenProfile);
+            
             SettingsViewModel = new SettingsViewModel(serviceClient);
             SettingsViewModel.IsWindowSettingsEvent += (e) => {WindowStates(WindowState.WindowSettings);};
             SettingsViewModel.TypeEnterEvent += (e) => {KeySendMessage = e;};
@@ -58,7 +62,6 @@ namespace SkillChat.Client.ViewModel
             Tokens = new TokenResult {AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken};
 
             Messages = new ObservableCollection<IMessagesContainerViewModel>();
-          
 
             ConnectCommand = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -119,8 +122,6 @@ namespace SkillChat.Client.ViewModel
                             ChatId = chat?.Id;
                             ChatName = chat?.ChatName;
                             LoadMessageHistoryCommand.Execute(null);
-                            //Получаем профиль
-                            ProfileViewModel.Profile = await serviceClient.GetAsync(new GetMyProfile());
                             //Получаем настройки
                             SettingsViewModel.ChatSettings = await serviceClient.GetAsync(new GetMySettings());
                         }
@@ -377,7 +378,7 @@ namespace SkillChat.Client.ViewModel
             });
            PointerPressedCommand = ReactiveCommand.Create<object>(obj =>
             {
-                ProfileViewModel.IsOpenMenu = false;
+                ProfileViewModel.ContextMenuClose();
                 SettingsViewModel.IsHeaderMenuPopup = false;
             });
         }
@@ -440,6 +441,7 @@ namespace SkillChat.Client.ViewModel
         public bool IsShowingRegisterPage { get; set; }
 
         public string ValidationError { get; set; }
+        
         public ReactiveCommand<object, Unit> GoToRegisterCommand { get; }
         public RegisterUserViewModel RegisterUser { get; set; }
         public ICommand RegisterCommand { get; }
@@ -477,19 +479,20 @@ namespace SkillChat.Client.ViewModel
             {
                 case WindowState.SignOut:
                     SettingsViewModel.IsWindowSettings = false;
-                    ProfileViewModel.IsOpenMenu = false;
-                    ProfileViewModel.IsOpenProfile = false;
+                    ProfileViewModel.ContextMenuClose();
+                    ProfileViewModel.Close();
                     break;
                 case WindowState.OpenProfile:
                     SettingsViewModel.IsWindowSettings = false; 
                     SettingsViewModel.IsHeaderMenuPopup = false;
+                    Width(SettingsViewModel.IsWindowSettings);
                     break;
                 case WindowState.WindowSettings:
-                    ProfileViewModel.IsOpenProfile = false;
+                    ProfileViewModel.Close();
                     Width(SettingsViewModel.IsWindowSettings);
                     break;
                 case WindowState.HeaderMenuPopup:
-                    ProfileViewModel.IsOpenMenu = false;
+                    ProfileViewModel.ContextMenuClose();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);

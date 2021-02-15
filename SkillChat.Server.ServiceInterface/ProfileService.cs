@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net;
+using System.Threading.Tasks;
 using AutoMapper;
+using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
 using ServiceStack;
 using SkillChat.Server.Domain;
@@ -25,16 +27,20 @@ namespace SkillChat.Server.ServiceInterface
         public async Task<UserProfileMold> Post(SetProfile request)
         {
             var session = Request.ThrowIfUnauthorized();
-            var displayName = request.DisplayName;
+            var uid = session?.UserAuthId;
 
-            var user = await RavenSession.LoadAsync<User>(session.UserAuthId);
-            user.DisplayName = displayName;
+            var existedUser = await RavenSession.Query<User>().FirstOrDefaultAsync(x => x.Id == uid);
+            if (existedUser != null)
+            {
+                var user = Mapper.Map<SetProfile, User>(request, existedUser);
 
-            await RavenSession.StoreAsync(user);
-            await RavenSession.SaveChangesAsync();
+                await RavenSession.StoreAsync(user);
+                await RavenSession.SaveChangesAsync();
 
-            var mapped = Mapper.Map<UserProfileMold>(user);
-            return mapped;
+                var mapped = Mapper.Map<UserProfileMold>(user);
+                return mapped;
+            }
+            throw new HttpError(HttpStatusCode.NotFound, "Пользователь не найден в базе данных");
         }
     }
 }

@@ -83,22 +83,22 @@
                     </Image.Source>
                 </Image>
                 <Button Background="Transparent"
-                        IsVisible="{Binding !ProfileViewModel.IsOpenProfile}"
+                        IsVisible="{Binding !ProfileViewModel.IsOpened}"
                         BorderBrush="Transparent"
                         BorderThickness="0"
                         Cursor="Hand"
                         Classes="profile"
-                        Command="{Binding ProfileViewModel.SetOpenProfileCommand}">
+                        Command="{Binding ProfileViewModel.OpenProfilePanelCommand}">
                     <Image Width="13.33" Height="18.65" Margin="20" Name="profile_white_icon" />
                 </Button>
                 <Button
-                    IsVisible="{Binding ProfileViewModel.IsOpenProfile}"
+                    IsVisible="{Binding ProfileViewModel.IsOpened}"
                     Background="Transparent"
                     BorderBrush="Transparent"
                     BorderThickness="0"
                     Cursor="Hand"
                     Classes="profile_dd"
-                    Command="{Binding ProfileViewModel.SetOpenProfileCommand}">
+                    Command="{Binding ProfileViewModel.OpenProfilePanelCommand}">
                     <Image Name="profile_orange_icon" Margin="20" Width="13.33" Height="18.65" />
                 </Button>
             </StackPanel>
@@ -250,11 +250,19 @@
                                                 BorderThickness="0">
                                                 <Grid RowDefinitions="Auto,Auto">
                                                     <StackPanel Orientation="Horizontal">
-                                                        <TextBlock
+                                                         <TextBlock
                                                             Padding="10,0,0,0"
                                                             FontSize="14"
                                                             FontWeight="SemiBold"
-                                                        Text="{Binding DisplayNickname}" />
+                                                            Text="{Binding DisplayNickname}"
+                                                            Cursor="Hand"
+                                                            x:Name="UserDisplayNickname">
+                                                            <interactivity:Interaction.Behaviors>
+                                                                <core:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #UserDisplayNickname}">
+                                                                    <core:InvokeCommandAction Command="{Binding UserProfileInfoCommand}" CommandParameter="{Binding UserId}"/>
+                                                                </core:EventTriggerBehavior>
+                                                            </interactivity:Interaction.Behaviors>
+                                                         </TextBlock>
                                                     </StackPanel>
                                                     <TextBlock
                                                         Grid.Row="1"

@@ -34,7 +34,7 @@
         </StackPanel>
         <Grid Grid.Column="3">
             <Button
-                IsVisible="{Binding !IsOpenProfile}"
+                IsVisible="{Binding !IsOpened}"
                 VerticalAlignment="Center"
                 Background="Transparent"
                 BorderThickness="0"
@@ -47,18 +47,18 @@
                 ToolTip.Placement="Bottom"
                 ToolTip.HorizontalOffset="-75"
                 ToolTip.VerticalOffset="1"
-                Command="{Binding SetOpenProfileCommand}">
+                Command="{Binding OpenProfilePanelCommand}">
                 <Image Name="profile_icon" Width="13.33" Height="18.65" />
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="PointerReleased"
                                              SourceObject="{Binding #button_PopupMenuProfile}">
-                        <core:InvokeCommandAction Command="{Binding PopupMenuProfile}"
+                        <core:InvokeCommandAction Command="{Binding ContextMenuProfile}"
                                                 CommandParameter="{Binding #button_PopupMenuProfile}" />
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </Button>
             <Button
-                IsVisible="{Binding IsOpenProfile}"
+                IsVisible="{Binding IsOpened}"
                 VerticalAlignment="Center"
                 Background="Transparent"
                 BorderThickness="0"
@@ -71,12 +71,12 @@
                 ToolTip.Placement="Bottom"
                 ToolTip.HorizontalOffset="-123"
                 ToolTip.VerticalOffset="1"
-                Command="{Binding SetOpenProfileCommand}">
+                Command="{Binding OpenProfilePanelCommand}">
                 <Image Name="profile_orange_icon" Width="13.33" Height="18.65" />
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="PointerReleased"
                                              SourceObject="{Binding #buttonAction_PopupMenuProfile}">
-                        <core:InvokeCommandAction Command="{Binding PopupMenuProfile}"
+                        <core:InvokeCommandAction Command="{Binding ContextMenuProfile}"
                                                 CommandParameter="{Binding #buttonAction_PopupMenuProfile}" />
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>

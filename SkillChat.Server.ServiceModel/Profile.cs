@@ -25,5 +25,8 @@ namespace SkillChat.Server.ServiceModel
     {
         [ApiMember(IsRequired = true, Description = "Имя пользователя")]
         public string DisplayName { get; set; }
+
+        [ApiMember(IsRequired = true, Description = "О себе")]
+        public string AboutMe { get; set; }
     }
 }

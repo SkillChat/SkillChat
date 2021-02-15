@@ -13,5 +13,8 @@ namespace SkillChat.Server.ServiceModel.Molds
 
         [Description("Имя пользователя")]
         public string DisplayName { get; set; }
+
+        [Description("О себе")]
+        public string AboutMe { get; set; }
     }
 }
