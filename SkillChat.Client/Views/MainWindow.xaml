@@ -21,20 +21,24 @@
     Icon="/Assets/skillchat-logo.ico"
     mc:Ignorable="d">
 
-    <interactivity:Interaction.Behaviors>
-        <!--  Notify  -->
-        <core:EventTriggerBehavior EventName="LayoutUpdated" SourceObject="{Binding #WindowChat}">
-            <core:InvokeCommandAction Command="{Binding NotifyCommand}" CommandParameter="{Binding #WindowChat}" />
-        </core:EventTriggerBehavior>
-        <!--  Profile  -->
-        <core:EventTriggerBehavior EventName="LayoutUpdated" SourceObject="{Binding #WindowChat}">
-            <core:InvokeCommandAction Command="{Binding ProfileViewModel.LayoutUpdatedWindow}" CommandParameter="{Binding #WindowChat}" />
-        </core:EventTriggerBehavior>
-        <!--  Settings  -->
-        <core:EventTriggerBehavior EventName="PointerPressed" SourceObject="{Binding #WindowChat}">
+  <interactivity:Interaction.Behaviors>
+    <!--  Notify  -->
+    <core:EventTriggerBehavior EventName="LostFocus" SourceObject="{Binding #WindowChat}">
+      <core:InvokeCommandAction Command="{Binding NotifyCommand}" CommandParameter="{Binding #WindowChat}" />
+    </core:EventTriggerBehavior>
+      <!--  Notify  -->
+      <core:EventTriggerBehavior EventName="GotFocus" SourceObject="{Binding #WindowChat}">
+          <core:InvokeCommandAction Command="{Binding NotifyCommand}" CommandParameter="{Binding #WindowChat}" />
+     </core:EventTriggerBehavior>
+    <!--  Profile  -->
+    <core:EventTriggerBehavior EventName="LayoutUpdated" SourceObject="{Binding #WindowChat}">
+      <core:InvokeCommandAction Command="{Binding ProfileViewModel.LayoutUpdatedWindow}" CommandParameter="{Binding #WindowChat}" />
+    </core:EventTriggerBehavior>
+	  <!--  Settings  -->
+	  <core:EventTriggerBehavior EventName="PointerPressed"  SourceObject="{Binding #WindowChat}">
             <core:InvokeCommandAction Command="{Binding PointerPressedCommand}" CommandParameter="{Binding #WindowChat}" />
-        </core:EventTriggerBehavior>
-    </interactivity:Interaction.Behaviors>
+	  </core:EventTriggerBehavior>
+  </interactivity:Interaction.Behaviors>
 
     <Window.Resources>
         <utils:GridLengthValueConverter x:Key="GridLengthValueConverter" />
