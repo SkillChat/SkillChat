@@ -62,7 +62,7 @@
                         <settings:Header />
                     </Grid>
                     <!--Settings - Panel -->
-                    <Grid HorizontalAlignment="Right" IsVisible="{Binding IsOpenSettings}" Width="200" Height="62"
+                    <Grid HorizontalAlignment="Right" IsVisible="{Binding IsOpenSettings}" Width="200" Height="92"
                           VerticalAlignment="Top" Margin="0 47 47 0" Background="Transparent">
                         <settings:More />
                     </Grid>

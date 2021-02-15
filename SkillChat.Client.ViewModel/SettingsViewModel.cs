@@ -12,9 +12,11 @@ namespace SkillChat.Client.ViewModel
     [AddINotifyPropertyChangedInterface]
     public class SettingsViewModel
     {
-        public SettingsViewModel(IJsonServiceClient serviceClient)
+        public SettingsViewModel(IJsonServiceClient serviceClient, MainWindowViewModel mainWindow)
         {
             ChatSettings = new UserChatSettings();
+            MainWindowViewModel = mainWindow;
+
             OpenSettingsCommand = ReactiveCommand.CreateFromTask(async () => { IsOpenSettings = !IsOpenSettings; });
 
             GoToSettingsCommand = ReactiveCommand.CreateFromTask(async () =>
@@ -29,7 +31,7 @@ namespace SkillChat.Client.ViewModel
 
             SettingsCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                var settings = await serviceClient.PostAsync(new SetSettings {SendingMessageByEnterKey = TypeEnter});
+                var settings = await serviceClient.PostAsync(new SetSettings {SendingMessageByEnterKey = TypeEnter  });
                 ChatSettings = settings;
             });
 
@@ -37,6 +39,7 @@ namespace SkillChat.Client.ViewModel
             {
                 IsOpenSettings = false;
             });
+
 
         }
 
@@ -74,6 +77,7 @@ namespace SkillChat.Client.ViewModel
 
         public UserChatSettings ChatSettings { get; set; }
         public ProfileViewModel ProfileViewModel { get; set; }
+        public MainWindowViewModel MainWindowViewModel { get; set; }
         public static ReactiveCommand<object, Unit> MorePointerPressedCommand { get; set; }
     }
 }

@@ -177,7 +177,7 @@
 							<settings:Header DataContext="{Binding SettingsViewModel}" />
 						</Grid>
 						<!--Settings - Panel -->
-						<Grid  HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Height="62"  Margin="0 47 47 0" Background="Transparent">
+						<Grid  HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Height="92"  Margin="0 47 47 0" Background="Transparent">
 							<settings:More DataContext="{Binding SettingsViewModel}" />
 						</Grid>
 						

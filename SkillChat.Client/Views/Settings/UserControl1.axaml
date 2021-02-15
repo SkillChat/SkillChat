@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="380" d:DesignHeight="180"
+             x:Class="SkillChat.Client.Views.Settings.UserControl1">
+
+  <!--Profile - Шапка профиля-->
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="100"/>
+      <ColumnDefinition Width="100"/>
+      <ColumnDefinition Width="100"/>
+    </Grid.ColumnDefinitions>
+
+    <TextBlock Grid.ColumnSpan="3" Margin="60 50 0 0" IsVisible="{Binding isEditProfile}" FontStyle="Italic" Foreground="#BDBDBD"
+           FontWeight="400" FontSize="14" Text="Удалить у себя всю историю из чата?"/>
+
+    <StackPanel Orientation="Horizontal">
+      <Button
+        Grid.Column="0"
+              VerticalAlignment="Center"
+              Background="Transparent"
+              BorderThickness="2"
+              Command="{Binding WindowViewModel.LoadMessageHistoryCommand}"
+              Content="Отмена"
+        Width="100"
+        Margin="50 60 0 0"
+              HorizontalAlignment="Left"/>
+    </StackPanel>
+    <Button
+            VerticalAlignment="Center"
+            Background="Transparent"
+            BorderThickness="2"
+            Cursor="Hand"
+      Margin="20 60 0 0"
+            Classes="profile"
+      Content="Удалить"
+      Width="100"
+            Command="{Binding SetOpenProfileCommand}"
+            Grid.Column="2">
+    </Button>
+  </Grid>
+</UserControl>

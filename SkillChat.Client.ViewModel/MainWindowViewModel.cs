@@ -42,8 +42,7 @@ namespace SkillChat.Client.ViewModel
 
             serviceClient = new JsonServiceClient(settings.HostUrl);
             ProfileViewModel = new ProfileViewModel(serviceClient, this);
-
-            SettingsViewModel = new SettingsViewModel(serviceClient);
+            SettingsViewModel = new SettingsViewModel(serviceClient, this);
             SettingsViewModel.ProfileViewModel = ProfileViewModel;
             SettingsViewModel.IsWindowSettingsEvent += (e) => { ProfileViewModel.isOpenProfile = false; };
             SettingsViewModel.TypeEnterEvent += (e) => { KeySendMessage = e; };
@@ -368,7 +367,23 @@ namespace SkillChat.Client.ViewModel
             {
                 SettingsViewModel.IsOpenSettings = false;
             });
+
+            ClearMessagesCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                try
+                {
+                    Messages.Clear();
+                }
+
+                catch (Exception e)
+                {
+                }
+
+            });
+
         }
+
+
 
         public DateTimeOffset ExpireTime { get; set; }
 
@@ -410,6 +425,7 @@ namespace SkillChat.Client.ViewModel
         public string MembersCaption { get; set; }
 
         public ICommand ConnectCommand { get; }
+        public ICommand OpenWindowChoiceClearHistoryCommand { get; }
 
         public ICommand SendCommand { get; }
 
@@ -431,6 +447,8 @@ namespace SkillChat.Client.ViewModel
         public ReactiveCommand<object, Unit> GoToRegisterCommand { get; }
         public RegisterUserViewModel RegisterUser { get; set; }
         public ICommand RegisterCommand { get; }
+        public ICommand ClearMessagesCommand { get; }
+        public ICommand OpenChoiceClearHistoryCommand { get; }
 
         public SettingsViewModel SettingsViewModel { get; set; }
 

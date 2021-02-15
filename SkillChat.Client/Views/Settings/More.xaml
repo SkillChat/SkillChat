@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="62"
+             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="92"
              x:Class="SkillChat.Client.Views.Settings.More"
              Background="Transparent">
     <Border CornerRadius="2" Name="bord" IsVisible="{Binding IsOpenSettings}" Classes="AttachList" Background="White" BorderBrush="#FF9337"
@@ -29,12 +29,29 @@
                 Background="#0000"
                 Cursor="Hand"
                 Command="{Binding GoToSettingsCommand}"
+                IsEnabled="True"
                 HorizontalContentAlignment="Left"
                 Classes="SelectedMore">
                 <Button.Content>
                     <TextBlock Text="Настройки" FontWeight="400" FontSize="13" Padding="15 0" />
                 </Button.Content>
             </Button>
+
+          <Button
+                Width="200"
+                Height="30"
+                BorderBrush="Transparent"
+                Background="#0000"
+                Cursor="Hand"
+                IsEnabled="True"
+                Command="{Binding MainWindowViewModel.ClearMessagesHistoryCommand}"
+                HorizontalContentAlignment="Left"
+                Classes="SelectedMore">
+            <Button.Content>
+              <TextBlock Text="Очистить историю" FontWeight="400" FontSize="13" Padding="15 0" />
+            </Button.Content>
+          </Button>
+          
         </WrapPanel>
     </Border>
 </UserControl>
