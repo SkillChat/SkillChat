@@ -132,7 +132,7 @@ namespace SkillChat.Client.ViewModel
                         }
                     });
 
-                    _connection.Subscribe<MessageStatus>(ApplyMessageStatus);
+                    _connection.Subscribe<MessageStatus>(async st => ApplyMessageStatus(st));
                     
                     _connection.Subscribe<ReceiveMessage>(async data =>
                     {
@@ -255,6 +255,10 @@ namespace SkillChat.Client.ViewModel
                         var container = Messages.FirstOrDefault();
                         if (isMyMessage)
                         {
+                            var mess = newMessage as MyMessageViewModel;
+                            mess.ReadCount = item.ReadCount ??= 0;
+                            mess.ReceivedCount = item.ReceivedCount ??= 0;
+                            
                             if (!(container is MyMessagesContainerViewModel))
                             {
                                 container = new MyMessagesContainerViewModel();
@@ -263,6 +267,14 @@ namespace SkillChat.Client.ViewModel
                         }
                         else
                         {
+                            var mess = newMessage as UserMessageViewModel;
+                            
+                            mess.Read = item?.Read != null ? true : false;
+                            mess.Received = item?.Received != null ? true : false;
+
+                            mess.ReceiveAction += OnReceiveMessage;
+                            mess.ReadAction += OnReadMessage;
+
                             if (container is UserMessagesContainerViewModel)
                             {
                                 var firstMessage = container.Messages.FirstOrDefault();
@@ -286,6 +298,13 @@ namespace SkillChat.Client.ViewModel
                         {
                             message.ShowLogin = firstInBlock == message;
                         }
+
+                        if (newMessage is UserMessageViewModel userMessage)
+                        {
+                            userMessage.ReceiveAction += OnReceiveMessage;
+                            userMessage.ReadAction += OnReadMessage;
+                        }
+                        MessageReceived?.Invoke(new ReceivedMessageArgs(newMessage));
                     }
                 }
                 catch (Exception e)

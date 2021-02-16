@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using SkillChat.Client.Utils;
 using SkillChat.Client.ViewModel;
 
@@ -37,16 +39,19 @@ namespace SkillChat.Client.Views
 			if (this.DataContext is MainWindowViewModel vm)
 			{
                 vm.MessageReceived += x => MessagesScroller.PropertyChanged += ScrollToEndMethod;
-                vm.MessageReceived += ReceivedMessageArgs =>
+                vm.MessageReceived += async receivedMessageArgs =>
                 {
-                    if (ReceivedMessageArgs.Message is UserMessageViewModel userMessage)
+                    await Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        MessageStatusesSetter.SetReceived(userMessage);
-                    }
-                    else if (ReceivedMessageArgs.Message is MyMessageViewModel myMessage)
-                    {
-                        MessageStatusesSetter.SetSended(myMessage);
-                    }
+                        if (receivedMessageArgs.Message is UserMessageViewModel userMessage)
+                        {
+                            MessageStatusesSetter.SetReceived(userMessage);
+                        }
+                        else if (receivedMessageArgs.Message is MyMessageViewModel myMessage)
+                        {
+                            MessageStatusesSetter.SetSended(myMessage);
+                        }
+                    });
                 };
             }
 		}

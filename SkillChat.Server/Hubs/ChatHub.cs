@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Raven.Client.Documents;
@@ -80,6 +81,8 @@ namespace SkillChat.Server.Hubs
                     }
                 }
 
+                await Groups.AddToGroupAsync(this.Context.ConnectionId, logOn.Id);
+
                 await Clients.Caller.SendAsync(logOn);
                 Log.Information($"Connected {Context.Items["login"]}({Context.Items["uid"]}) with session {Context.Items["session"]}");
             }
@@ -96,7 +99,7 @@ namespace SkillChat.Server.Hubs
         /// <summary>Получение листа статусов сообщений и рассылка отправителям сообдений об их статусах</summary>
         /// <param name="statuses">Лист статусов сообщеий</param>
         public async Task SendStatuses(List<MessageStatus> statuses)
-        {
+        { 
             var uid = Context.Items["uid"] as string; //Получил ID юзера отправившего статус
             //Загружаем все статусы этого юзера
             var statusItems = _ravenSession.Query<MessageStatusDomain>().Where(s => s.UserId == uid);
@@ -145,12 +148,14 @@ namespace SkillChat.Server.Hubs
                 }
 
                 var counters = await _ravenSession.CountersFor(statusedMessage).GetAllAsync();
-                long? read;
-                long? rec;
-                if (counters?.GetValueOrDefault(MessageCounters.ReadCounter.ToString()) == 1
-                || counters?.GetValueOrDefault(MessageCounters.ReadCounter.ToString()) == 1)
+                long? read = counters?.GetValueOrDefault("ReadCounter");
+                long? rec = counters?.GetValueOrDefault("ReceivedCounter");
+                //if (counters?.GetValueOrDefault(MessageCounters.ReadCounter.ToString()) == 1
+                //|| counters?.GetValueOrDefault(MessageCounters.ReadCounter.ToString()) == 1)
+
+                if (read == 1 || rec == 1)
                 {
-                    await Clients.User(statusedMessage.UserId).SendAsync(status);
+                    await Clients.Group(statusedMessage.UserId).SendAsync(status);
                 }
             }
             //Сохраняем изменения в БД

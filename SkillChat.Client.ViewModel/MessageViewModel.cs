@@ -38,16 +38,19 @@ namespace SkillChat.Client.ViewModel
                 if (re > 0) IsReceived = true;
             });
         }
+
         /// <summary>Отправлено ли на сервер</summary>
-        public bool IsSended { get; set; }
+        public bool IsSended { get; set; } = false;
         /// <summary>Сколько раз прочитали</summary>
         public long ReadCount { get; set; }
         /// <summary>Сколько раз получили</summary>
         public long ReceivedCount { get; set; }
+
         /// <summary>Получено ли</summary>
-        public bool IsReceived { get; set; }
+        public bool IsReceived { get; set; } = false;
+
         /// <summary>Прочитано ли</summary>
-        public bool IsRead { get; set; }
+        public bool IsRead { get; set; } = false;
 
         public void SetStatus(MessageStatus status)
         {
@@ -72,10 +75,10 @@ namespace SkillChat.Client.ViewModel
         }
 
         /// <summary>Получено ли</summary>
-        public bool Received { get; set; }
+        public bool Received { get; set; } = false;
 
         /// <summary>Прочитано ли</summary>
-        public bool Read { get; set; }
+        public bool Read { get; set; } = false;
 
         /// <summary>Возникает при изменении статуса о получении</summary>
         public Action<UserMessageViewModel> ReceiveAction;

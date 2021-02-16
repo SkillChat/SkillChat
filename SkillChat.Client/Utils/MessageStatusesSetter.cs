@@ -82,14 +82,14 @@ namespace SkillChat.Client.Utils
         /// <param name="myMessage">Сообщение</param>
         public static void SetSended(MyMessageViewModel myMessage)
         {
-            if (!myMessage.IsSended) myMessage.IsSended = true;
+            myMessage.IsSended = true;
         }
 
         /// <summary>Установка сообщениям собеседника статуса получено</summary>
         /// <param name="userMessage">Сообщение собеседника</param>
         public static void SetReceived(UserMessageViewModel userMessage)
         {
-            if (!userMessage.Received) userMessage.Received = true;
+            userMessage.Received = true;
         }
         
     }
