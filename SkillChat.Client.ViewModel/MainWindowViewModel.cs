@@ -14,6 +14,7 @@ using SignalR.EasyUse.Client;
 using SkillChat.Interface;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
+using SkillChat.Server.ServiceModel.Molds.Chats;
 using Splat;
 
 namespace SkillChat.Client.ViewModel
@@ -105,16 +106,17 @@ namespace SkillChat.Client.ViewModel
                         {
                             IsSignedIn = true;
                             User.UserName = data.UserLogin;
+                            User.UserId = data.Id;
                             ExpireTime = data.ExpireTime;
                             var chats = await serviceClient.GetAsync(new GetChatsList());
                             var chat = chats.Chats.FirstOrDefault();
                             ChatId = chat?.Id;
                             ChatName = chat?.ChatName;
-                            LoadMessageHistoryCommand.Execute(null);
                             //Получаем профиль
                             ProfileViewModel.Profile = await serviceClient.GetAsync(new GetMyProfile());
                             //Получаем настройки
                             SettingsViewModel.ChatSettings = await serviceClient.GetAsync(new GetMySettings());
+                            LoadMessageHistoryCommand.Execute(null);
                         }
                     });
 
@@ -215,13 +217,17 @@ namespace SkillChat.Client.ViewModel
             {
                 try
                 {
-                    var first = Messages.FirstOrDefault()?.Messages.FirstOrDefault();
                     var request = new GetMessages()
                     {
                         ChatId = ChatId
                     };
+
+                    var chats = await serviceClient.GetAsync(new GetChatsList());
+                    var chat = chats.Chats.FirstOrDefault();
+
                     // Логика выбора сообщений по id чата
-                    request.BeforePostTime = first?.PostTime;
+                    request.AfterPostTime = chat.Members.Find(e => e.UserId == User.UserId).MessagesHistoryDateBegin;
+
                     var result = await serviceClient.GetAsync(request);
                     foreach (var item in result.Messages)
                     {
@@ -368,13 +374,17 @@ namespace SkillChat.Client.ViewModel
                 SettingsViewModel.IsOpenSettings = false;
             });
 
-            ClearMessagesCommand = ReactiveCommand.CreateFromTask(async () =>
+            ClearMessagesHistoryCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 try
                 {
                     Messages.Clear();
-                }
+                    var chats = await serviceClient.GetAsync(new GetChatsList());
+                    var chat = chats.Chats.FirstOrDefault();
 
+                    ChatMember = await serviceClient.PostAsync(new SetChatMember
+                    { MessagesHistoryDateBegin = DateTimeOffset.Now.UtcDateTime });
+                }
                 catch (Exception e)
                 {
                 }
@@ -439,6 +449,7 @@ namespace SkillChat.Client.ViewModel
         public static ReactiveCommand<object, Unit> MorePointerPressedCommand { get; set; }
 
         public ProfileViewModel ProfileViewModel { get; set; }
+        public ChatMemberMold ChatMember { get; set; }
 
         public bool IsShowingLoginPage { get; set; }
         public bool IsShowingRegisterPage { get; set; }
@@ -446,8 +457,9 @@ namespace SkillChat.Client.ViewModel
         public string ValidationError { get; set; }
         public ReactiveCommand<object, Unit> GoToRegisterCommand { get; }
         public RegisterUserViewModel RegisterUser { get; set; }
+
         public ICommand RegisterCommand { get; }
-        public ICommand ClearMessagesCommand { get; }
+        public ICommand ClearMessagesHistoryCommand { get; }
         public ICommand OpenChoiceClearHistoryCommand { get; }
 
         public SettingsViewModel SettingsViewModel { get; set; }
@@ -480,4 +492,5 @@ namespace SkillChat.Client.ViewModel
 
         public MessageViewModel Message { get; set; }
     }
+
 }

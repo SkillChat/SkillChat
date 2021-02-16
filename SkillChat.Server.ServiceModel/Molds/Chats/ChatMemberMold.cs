@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 
 namespace SkillChat.Server.ServiceModel.Molds.Chats
 {
@@ -9,6 +10,8 @@ namespace SkillChat.Server.ServiceModel.Molds.Chats
         public string UserId { get; set; }
         [Description("Роль")]
         public ChatMemberRoleMold UserRole { get; set; }
+        [Description("Начало по времени истории сообщений")]
+        public DateTimeOffset MessagesHistoryDateBegin { get; set; }
     }
 
     [Description("Роль участника чата")]

@@ -51,7 +51,7 @@ namespace SkillChat.Server.ServiceInterface
                 defaultChat.Members = new List<ChatMember>();
             }
 
-            defaultChat.Members.Add(new ChatMember() {UserId = user.Id, UserRole = ChatMemberRole.Participient});
+            defaultChat.Members.Add(new ChatMember() { UserId = user.Id, UserRole = ChatMemberRole.Participient, MessagesHistoryDateBegin = DateTimeOffset.MinValue.UtcDateTime });
             await RavenSession.SaveChangesAsync();
         }
 

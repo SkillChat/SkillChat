@@ -23,9 +23,9 @@ namespace SkillChat.Server.ServiceInterface
         {
             var messages = RavenSession.Query<Message>().Where(e => e.ChatId == request.ChatId).OrderByDescending(x => x.PostTime);
             var result = new MessagePage();
-            if (request.BeforePostTime != null)
+            if (request.AfterPostTime != null)
             {
-                messages = messages.Where(x => x.PostTime.UtcDateTime < request.BeforePostTime.Value.UtcDateTime);
+                messages = messages.Where(x => x.PostTime.UtcDateTime > request.AfterPostTime.Value.UtcDateTime);
             }
             var pageSize = request.PageSize ?? 10;
             var docs = await messages.Take(pageSize).Include(x => x.UserId).ToListAsync();

@@ -17,11 +17,12 @@ namespace SkillChat.Server.ServiceModel
         public string ChatId { get; set; }
 
         [ApiMember(IsRequired = false, Description = "Идентиикатор сообщения после которрого получать")]
-        public DateTimeOffset? BeforePostTime { get; set; }
+        public DateTimeOffset? AfterPostTime { get; set; }
         
         [ApiMember(IsRequired = false, Description = "Идентиикатор сообщения после которрого получать")]
         public int? PageSize { get;set; }
     }
+
 
     [Api("Chat")]
     [ApiResponse(HttpStatusCode.BadRequest, "Неверно составлен запрос", ResponseType = typeof(void))]
