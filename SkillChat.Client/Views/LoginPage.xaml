@@ -256,7 +256,7 @@
             FontSize="16"
             FontWeight="600"
             Foreground="#FFA85E"
-            Text="Зарегестрироваться">
+            Text="Зарегистрироваться">
           <i:Interaction.Behaviors>
             <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #registerLinkTB}">
               <ia:InvokeCommandAction Command="{Binding GoToRegisterCommand}" CommandParameter="{x:Null}" />

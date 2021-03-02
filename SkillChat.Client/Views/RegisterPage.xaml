@@ -112,7 +112,7 @@
             BorderThickness="1"
             IsChecked="{Binding RegisterUser.Consent}"
             Padding="12,0,0,0"
-            Content="Я согласен на обработку персональныx данныx"/>
+            Content="Соглашаюсь на обработку прсональных данных"/>
 
         </StackPanel>
         <TextBlock
