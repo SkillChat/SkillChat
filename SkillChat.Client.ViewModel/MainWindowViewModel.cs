@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Net;
 using System.Reactive;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -64,7 +63,9 @@ namespace SkillChat.Client.ViewModel
 
             var bits = Environment.Is64BitOperatingSystem ? "PC 64bit, " : "PC 32bit, ";
             var operatingSystem = bits + RuntimeInformation.OSDescription;
-            var ipAddress = new WebClient().DownloadString("https://api.ipify.org");
+
+            string ipAddress = ClientHost.GetIpAddress(settings.HostUrl);
+
             var nameVersionClient = "SkillChat Avalonia Client 1.0";
 
 
