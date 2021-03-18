@@ -32,7 +32,7 @@ namespace SkillChat.Client.ViewModel
             User = new CurrentUserViewModel();
             Locator.CurrentMutable.RegisterConstant<ICurrentUser>(User);
             configuration = Locator.Current.GetService<IConfiguration>();
-            settings = configuration.GetSection("ChatClientSettings").Get<ChatClientSettings>();
+            settings = configuration?.GetSection("ChatClientSettings")?.Get<ChatClientSettings>();
 
             if (settings == null)
             {

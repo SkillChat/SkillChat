@@ -11,6 +11,7 @@ namespace SkillChat.Client.ViewModel
         public DesignMainWindowViewModel()
         {
             IsConnected = true;
+            IsShowingLoginPage = false;
             Tokens = new TokenResult();
             MembersCaption = "Вы, Кристина Петрова, Стас Верещагин, Иван";
             MessageText =

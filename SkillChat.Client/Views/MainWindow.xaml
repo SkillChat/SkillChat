@@ -20,6 +20,9 @@
     MinHeight="530"
     Icon="/Assets/skillchat-logo.ico"
     mc:Ignorable="d">
+    <Design.DataContext>
+        <viewModel:DesignMainWindowViewModel/>
+    </Design.DataContext>
 
   <interactivity:Interaction.Behaviors>
     <!--  Notify  -->
@@ -34,10 +37,10 @@
     <core:EventTriggerBehavior EventName="LayoutUpdated" SourceObject="{Binding #WindowChat}">
       <core:InvokeCommandAction Command="{Binding ProfileViewModel.LayoutUpdatedWindow}" CommandParameter="{Binding #WindowChat}" />
     </core:EventTriggerBehavior>
-	  <!--  Settings  -->
-	  <core:EventTriggerBehavior EventName="PointerPressed"  SourceObject="{Binding #WindowChat}">
+      <!--  Settings  -->
+      <core:EventTriggerBehavior EventName="PointerPressed"  SourceObject="{Binding #WindowChat}">
             <core:InvokeCommandAction Command="{Binding PointerPressedCommand}" CommandParameter="{Binding #WindowChat}" />
-	  </core:EventTriggerBehavior>
+      </core:EventTriggerBehavior>
   </interactivity:Interaction.Behaviors>
 
     <Window.Resources>
