@@ -233,6 +233,7 @@
             FontSize="13"
             FontWeight="400"
             Foreground="#FF9337"
+            TextWrapping="WrapWithOverflow"
             Text="{Binding User.ErrorMsg}">
         </TextBlock>
         <Button
