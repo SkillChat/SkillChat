@@ -2,9 +2,13 @@
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Configuration;
 using PropertyChanged;
 using ReactiveUI;
 using ServiceStack;
+using SignalR.EasyUse.Client;
+using SkillChat.Interface;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
 using Splat;
@@ -19,11 +23,14 @@ namespace SkillChat.Client.ViewModel
     [AddINotifyPropertyChangedInterface]
     public class ProfileViewModel : IProfile
     {
-        private readonly IJsonServiceClient _serviceClient;
+	    private readonly IJsonServiceClient _serviceClient;
+        private readonly IChatHub _hub;
 
-        public ProfileViewModel(IJsonServiceClient serviceClient)
+        public ProfileViewModel(IJsonServiceClient serviceClient, IChatHub hub)
         {
             _serviceClient = serviceClient;
+            _hub = hub;
+
             //Показать/скрыть панель профиля
             OpenProfilePanelCommand = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -57,11 +64,17 @@ namespace SkillChat.Client.ViewModel
 
         private async Task SetProfile()
         {
-            Profile = await _serviceClient.PostAsync(new SetProfile
+	        Profile = await _serviceClient.PostAsync(new SetProfile
             {
                 AboutMe = Profile.AboutMe,
                 DisplayName = Profile.DisplayName
             });
+
+            if (Profile != null && !string.IsNullOrEmpty(Profile.Id)) 
+            {
+	            await _hub.UpdateUserDisplayName(Profile.DisplayName, Profile.Id);
+            }
+
             ResetEditMode();
         }
 

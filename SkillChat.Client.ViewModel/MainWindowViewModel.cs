@@ -46,7 +46,13 @@ namespace SkillChat.Client.ViewModel
 
             serviceClient = new JsonServiceClient(settings.HostUrl);
 
-            ProfileViewModel = new ProfileViewModel(serviceClient);
+            _connection = new HubConnectionBuilder()
+	            .WithUrl(settings.HostUrl + "/ChatHub")
+	            .Build();
+
+            _hub = _connection.CreateHub<IChatHub>();
+
+            ProfileViewModel = new ProfileViewModel(serviceClient, _hub);
             Locator.CurrentMutable.RegisterConstant<IProfile>(ProfileViewModel);
             ProfileViewModel.IsOpenProfileEvent += () => WindowStates(WindowState.OpenProfile);
 
@@ -67,18 +73,11 @@ namespace SkillChat.Client.ViewModel
             var ipAddress = new WebClient().DownloadString("https://api.ipify.org");
             var nameVersionClient = "SkillChat Avalonia Client 1.0";
 
-
             ConnectCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 try
                 {
-                    _connection = new HubConnectionBuilder()
-                        .WithUrl(settings.HostUrl + "/ChatHub")
-                        .Build();
-
-                    _hub = _connection.CreateHub<IChatHub>();
-
-                    if (Tokens == null || Tokens.AccessToken.IsNullOrEmpty())
+	                if (Tokens == null || Tokens.AccessToken.IsNullOrEmpty())
                     {
                         Tokens = await serviceClient.PostAsync(new AuthViaPassword
                         { Login = User.UserName, Password = User.Password });
@@ -133,6 +132,39 @@ namespace SkillChat.Client.ViewModel
                         }
                     });
 
+                    _connection.Subscribe<UpdateUserDisplayName>(async user =>
+                    {
+	                    var updateMessages = Messages.Where(s => s is UserMessagesContainerViewModel);
+	                    var oldUserDispalyName = updateMessages
+		                    .Select(s => s.Messages
+			                    .FirstOrDefault(x => x.UserId.Equals(user.Id))?.DisplayNickname)
+		                    .First();
+	                    
+	                    foreach (var message in updateMessages)
+	                    {
+		                    foreach (var item in message.Messages.Where(s => s.ShowNickname && s.UserId == user.Id))
+		                    {
+			                    item.UserNickname = user.DisplayName;
+		                    }
+	                    }
+
+	                    if (!User.Id.Equals(user.Id) && !string.IsNullOrEmpty(oldUserDispalyName))
+	                    {
+		                    var container = new UserMessagesContainerViewModel();
+							var changeMessage = new UserMessageViewModel
+                            {
+                                UserId = user.Id,
+			                    UserNickname = user.DisplayName,
+			                    ShowNickname = false,
+			                    PostTime = DateTimeOffset.UtcNow,
+			                    Text = $"User \"{oldUserDispalyName}\" change NikcName to \"{user.DisplayName}\""
+		                    };
+		                    container.Messages.Add(changeMessage);
+							Messages.Add(container);
+
+		                    Notify.NewMessage(changeMessage.UserNickname, changeMessage.Text.Replace("\r\n", " "));
+	                    }
+                    });
 
                     _connection.Subscribe<ReceiveMessage>(async data =>
                     {
@@ -174,7 +206,6 @@ namespace SkillChat.Client.ViewModel
                             if (!windowIsFocused || SettingsViewModel.IsOpened)
                                 Notify.NewMessage(newMessage.UserNickname, newMessage.Text.Replace("\r\n", " "));
                         }
-
 
                         container.Messages.Add(newMessage);
                         if (container.Messages.First() == newMessage)
@@ -380,11 +411,11 @@ namespace SkillChat.Client.ViewModel
                     windowIsFocused = win.IsActive;
                 }
             });
-           PointerPressedCommand = ReactiveCommand.Create<object>(obj =>
-           {
+			PointerPressedCommand = ReactiveCommand.Create<object>(obj =>
+			{
                 ProfileViewModel.ContextMenuClose();
                 SettingsViewModel.CloseContextMenu();
-           });
+			});
 
             ProfileViewModel.SignOutCommand = SignOutCommand;
             ProfileViewModel.LoadMessageHistoryCommand = LoadMessageHistoryCommand;
@@ -535,7 +566,7 @@ namespace SkillChat.Client.ViewModel
         }
     }
 
-    /// <summary>Хранилище аргументов соытия MessageReceived</summary>
+    /// <summary>Хранилище аргументов события MessageReceived</summary>
     public class ReceivedMessageArgs
     {
         public ReceivedMessageArgs(MessageViewModel message)

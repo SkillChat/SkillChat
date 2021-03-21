@@ -27,7 +27,7 @@ namespace SkillChat.Server.ServiceInterface
         [Authenticate]
         public async Task<UserProfileMold> Post(SetProfile request)
         {
-            var session = Request.ThrowIfUnauthorized();
+	        var session = Request.ThrowIfUnauthorized();
             var uid = session?.UserAuthId;
 
             var existedUser = await RavenSession.Query<User>().FirstOrDefaultAsync(x => x.Id == uid);
@@ -38,7 +38,7 @@ namespace SkillChat.Server.ServiceInterface
                 var user = Mapper.Map<SetProfile, User>(request, existedUser);
 
                 await RavenSession.StoreAsync(user);
-                await RavenSession.SaveChangesAsync();
+	            await RavenSession.SaveChangesAsync();
 
                 var mapped = Mapper.Map<UserProfileMold>(user);
                 return mapped;
