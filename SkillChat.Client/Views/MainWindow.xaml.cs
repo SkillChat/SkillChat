@@ -4,7 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using SkillChat.Client.ViewModel;
-
+using System.Reflection;
 namespace SkillChat.Client.Views
 {
     public class MainWindow : Window, IHaveWidth, IHaveIsActive
@@ -13,10 +13,29 @@ namespace SkillChat.Client.Views
         {
             InitializeComponent();
 			MessagesScroller = this.Get<ScrollViewer>("MessagesSV");
+            MessagesScroller.ScrollChanged += MessagesScroller_ScrollChanged; 
             this.DataContextChanged += SetDataContextMethod;
 #if DEBUG
             this.AttachDevTools();
 #endif
+        }
+
+        private void MessagesScroller_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (this.DataContext is MainWindowViewModel vm)
+            {
+                double verticaloffsetmax = 0;
+                double verticaloffsetvalue = 0;
+
+                Type t = MessagesScroller.GetType();
+
+                PropertyInfo prop = t.GetProperty("VerticalScrollBarValue", BindingFlags.NonPublic | BindingFlags.Instance);
+                verticaloffsetvalue = (double)prop.GetValue(MessagesScroller);
+                prop = t.GetProperty("VerticalScrollBarMaximum", BindingFlags.NonPublic | BindingFlags.Instance);
+                verticaloffsetmax = (double)prop.GetValue(MessagesScroller);
+
+                vm.SettingsViewModel.AutoScroll = verticaloffsetmax.Equals(verticaloffsetvalue); 
+            }
         }
 
         public void LayoutUpdated_window(object sender, EventArgs e)
@@ -44,8 +63,11 @@ namespace SkillChat.Client.Views
         /// <param name="e"></param>
 		private void ScrollToEndMethod(object sender, AvaloniaPropertyChangedEventArgs e)
 		{
+
 			if (e.Property.PropertyType.Name == "Size")
-				MessagesScroller.ScrollToEnd();
+                if(this.DataContext is MainWindowViewModel vm)
+                    if(vm.SettingsViewModel.AutoScroll)
+                        MessagesScroller.ScrollToEnd();
             MessagesScroller.PropertyChanged -= ScrollToEndMethod;
         }
 
