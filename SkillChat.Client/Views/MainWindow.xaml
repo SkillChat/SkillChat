@@ -9,6 +9,7 @@
     xmlns:views="clr-namespace:SkillChat.Client.Views"
     xmlns:profile="clr-namespace:SkillChat.Client.Views.Profile"
     xmlns:settings="clr-namespace:SkillChat.Client.Views.Settings"
+	xmlns:reactions="clr-namespace:SkillChat.Client.Views.Reactions"
     xmlns:interactivity="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
     xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
     xmlns:utils="clr-namespace:SkillChat.Client.Utils"
@@ -271,12 +272,12 @@
                                             Items="{Binding Messages}" />
                                     </DataTemplate>
                                     <DataTemplate DataType="{x:Type viewModel:UserMessageViewModel}">
-                                        <StackPanel Margin="0,0,0,3" HorizontalAlignment="Left">
+                                        <StackPanel Margin="0,0,0,3" HorizontalAlignment="Left" Classes="message">
                                             <Border
                                                 Padding="10,5"
                                                 Background="White"
                                                 BorderThickness="0">
-                                                <Grid RowDefinitions="Auto,Auto">
+                                                <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="8*,1*">
                                                     <StackPanel Orientation="Horizontal">
                                                          <TextBlock
                                                             Padding="10,0,0,0"
@@ -308,6 +309,8 @@
                                                         VerticalAlignment="Bottom"
                                                         Classes="time"
                                                         Text="{Binding Time}" />
+													<!-- Reactions -->
+													<reactions:ReactionsButton Grid.Row="1" Grid.Column="2" VerticalAlignment="Top"/>
                                                 </Grid>
                                             </Border>
                                         </StackPanel>

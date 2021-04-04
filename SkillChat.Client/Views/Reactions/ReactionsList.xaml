@@ -1,0 +1,32 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             
+             x:Class="SkillChat.Client.Views.Reactions.ReactionsList">
+
+	<Border CornerRadius="2" Name="bord" IsVisible="{Binding IsContextMenu}" Background="White" BorderBrush="#FF9337"
+            BorderThickness="1">
+		<WrapPanel>
+			
+			<Button
+                Width="22"
+                Height="22"
+                BorderBrush="Transparent"
+                Cursor="Hand"
+                Classes="smile">
+				<Image Name="smile" Width="20" Height="20" />
+			</Button>
+
+			<Button
+                Width="22"
+                Height="22"
+                BorderBrush="Transparent"
+                Cursor="Hand"
+                Classes="smile">
+				<Image Name="smile_2" Width="20" Height="20" />
+			</Button>
+
+		</WrapPanel>
+	</Border>
+</UserControl>

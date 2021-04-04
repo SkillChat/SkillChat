@@ -14,6 +14,7 @@
         <StyleInclude Source="/Assets/SkillChat.xaml" />
         <StyleInclude Source="/Styles/ProfileStyle.xaml" />
         <StyleInclude Source="/Styles/SettingsStyle.xaml" />
+		<StyleInclude Source="/Styles/ReactionsStyle.xaml" />
         <Style Selector="TextBlock">
             <Setter Property="FontFamily" Value="Open Sans" />
         </Style>

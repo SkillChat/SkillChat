@@ -1,0 +1,45 @@
+﻿<Styles
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
+	xmlns:reactions="clr-namespace:SkillChat.Client.Views.Reactions">
+
+    <!--Кнопка открыть панель реакций-->
+	<Style Selector="StackPanel.message:pointerover Button.reaction Image#reaction">
+		<Setter Property="Source">
+			<Setter.Value>
+				<svg:SvgImage Source="/Assets/Reactions/reacts_pressed.svg" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+	
+    <Style Selector="Button.reaction /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+	
+	<!--Кнопка реакции улыбка-->
+	<!--<Style Selector="Button.smile Image#smile">
+		<Setter Property="Source">
+			<Setter.Value>
+				<svg:SvgImage Source="/Assets/Reactions/smile_4.svg" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style Selector="Button.smile /template/ ContentPresenter">
+		<Setter Property="Background" Value="Transparent"/>
+	</Style>-->
+
+	<!--Кнопка реакции грусть-->
+	<!--<Style Selector="Button.smile Image#smile">
+		<Setter Property="Source">
+			<Setter.Value>
+				<svg:SvgImage Source="/Assets/Reactions/smile_4.svg" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style Selector="Button.smile /template/ ContentPresenter">
+		<Setter Property="Background" Value="Transparent"/>
+	</Style>-->
+
+
+</Styles>
