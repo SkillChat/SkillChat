@@ -22,17 +22,15 @@ namespace SkillChat.Client.Views
 
         private void MessagesScroller_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            if (this.DataContext is MainWindowViewModel vm)
+            if (DataContext is MainWindowViewModel vm)
             {
-                double verticaloffsetmax = 0;
-                double verticaloffsetvalue = 0;
 
-                Type t = MessagesScroller.GetType();
+                var t = MessagesScroller.GetType();
 
                 PropertyInfo prop = t.GetProperty("VerticalScrollBarValue", BindingFlags.NonPublic | BindingFlags.Instance);
-                verticaloffsetvalue = (double)prop.GetValue(MessagesScroller);
+                var verticaloffsetvalue = (double)prop.GetValue(MessagesScroller);
                 prop = t.GetProperty("VerticalScrollBarMaximum", BindingFlags.NonPublic | BindingFlags.Instance);
-                verticaloffsetmax = (double)prop.GetValue(MessagesScroller);
+                var verticaloffsetmax = (double)prop.GetValue(MessagesScroller);
 
                 vm.SettingsViewModel.AutoScroll = verticaloffsetmax.Equals(verticaloffsetvalue); 
             }
@@ -65,7 +63,7 @@ namespace SkillChat.Client.Views
 		{
 
 			if (e.Property.PropertyType.Name == "Size")
-                if(this.DataContext is MainWindowViewModel vm)
+                if(DataContext is MainWindowViewModel vm)
                     if(vm.SettingsViewModel.AutoScroll)
                         MessagesScroller.ScrollToEnd();
             MessagesScroller.PropertyChanged -= ScrollToEndMethod;
