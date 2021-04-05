@@ -90,7 +90,6 @@ namespace SkillChat.Client.ViewModel
         public ICommand GetSettingsCommand { get; }
         public ICommand SaveSettingsCommand { get; }
         public ICommand GetHistoryLoginAuditCommand { get; }
-        public bool AutoScroll { get; set; }
         public bool IsContextMenu { get; set; }
         public bool TypeEnter { get; set; }
         public bool IsOpened { get; set; }
