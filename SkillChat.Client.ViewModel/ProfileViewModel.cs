@@ -1,13 +1,14 @@
-﻿using System;
-using System.Reactive;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using PropertyChanged;
 using ReactiveUI;
 using ServiceStack;
+using SkillChat.Interface;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
 using Splat;
+using System;
+using System.Reactive;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -20,10 +21,12 @@ namespace SkillChat.Client.ViewModel
     public class ProfileViewModel : IProfile
     {
         private readonly IJsonServiceClient _serviceClient;
+        private IChatHub _hub;
 
         public ProfileViewModel(IJsonServiceClient serviceClient)
         {
             _serviceClient = serviceClient;
+
             //Показать/скрыть панель профиля
             OpenProfilePanelCommand = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -57,13 +60,18 @@ namespace SkillChat.Client.ViewModel
 
         private async Task SetProfile()
         {
-            Profile = await _serviceClient.PostAsync(new SetProfile
+            UpdateProfileProps(await _serviceClient.PostAsync(new SetProfile
             {
-                AboutMe = Profile.AboutMe,
-                DisplayName = Profile.DisplayName
-            });
+                AboutMe = AboutMe,
+                DisplayName = DisplayName
+            }));
+
+            await _hub.UpdateMyDisplayName(DisplayName);
+
             ResetEditMode();
         }
+
+        public void SetChatHub(IChatHub chatHub) => _hub = chatHub;
 
         //Profile
         /// <summary>
@@ -99,7 +107,7 @@ namespace SkillChat.Client.ViewModel
 
         public bool IsShowChat { get; protected set; } = false;
         public static double WindowWidth { get; set; }
-        public bool IsMyProfile => Locator.Current.GetService<ICurrentUser>()?.Id == Profile?.Id;
+        public bool IsMyProfile => Locator.Current.GetService<ICurrentUser>()?.Id == ProfileId;
 
         public ICommand ApplyProfileNameCommand { get; }
         public ICommand ApplyProfileAboutMeCommand { get; }
@@ -109,7 +117,10 @@ namespace SkillChat.Client.ViewModel
         public ICommand LoadMessageHistoryCommand { get; set; }
         public ICommand SetEditAboutMeProfileCommand { get; }
 
-        public UserProfileMold Profile { get; protected set; }
+        public string ProfileId { get; set; }
+        public string Login { get; set; }
+        public string DisplayName { get; set; }
+        public string AboutMe { get; set; }
 
         public event Action IsOpenProfileEvent;
 
@@ -119,7 +130,11 @@ namespace SkillChat.Client.ViewModel
         public void Close()
         {
             IsOpened = false;
-            Profile = null;
+
+            ProfileId = string.Empty;
+            Login = string.Empty;
+            DisplayName = string.Empty;
+            AboutMe = string.Empty;
         }
 
         public void ContextMenuClose()
@@ -127,9 +142,17 @@ namespace SkillChat.Client.ViewModel
             IsActiveContextMenu = false;
         }
 
+        public void UpdateUserProfile(string newUserDisplayName, string userId)
+        {
+            if (ProfileId == userId)
+            {
+                DisplayName = newUserDisplayName;
+            }
+        }
+
         public async Task Open(string userId)
         {
-            var lastProfileId = Profile?.Id;
+            var lastProfileId = ProfileId;
             if (lastProfileId == userId)
             {
                 if (IsOpened) Close();
@@ -137,10 +160,19 @@ namespace SkillChat.Client.ViewModel
             else
             {
                 ResetEditMode();
-                Profile = await _serviceClient.GetAsync(new GetProfile {UserId = userId});
+                UpdateProfileProps(await _serviceClient.GetAsync(new GetProfile { UserId = userId }));
+
                 IsOpened = true;
                 IsOpenProfileEvent?.Invoke();
             }
+        }
+
+        private void UpdateProfileProps(UserProfileMold profile)
+        {
+            ProfileId = profile.Id;
+            Login = profile.Login;
+            DisplayName = profile.DisplayName;
+            AboutMe = profile.AboutMe;
         }
     }
 }

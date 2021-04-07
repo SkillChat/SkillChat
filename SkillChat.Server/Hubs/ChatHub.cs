@@ -1,15 +1,14 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using Raven.Client.Documents.Session;
 using Serilog;
 using ServiceStack;
 using ServiceStack.Auth;
 using ServiceStack.Host;
-using ServiceStack.Text;
 using SignalR.EasyUse.Server;
 using SkillChat.Interface;
 using SkillChat.Server.Domain;
+using System;
+using System.Threading.Tasks;
 
 namespace SkillChat.Server.Hubs
 {
@@ -23,7 +22,23 @@ namespace SkillChat.Server.Hubs
         private string _loginedGroup = "Logined";
 
         private readonly IAsyncDocumentSession _ravenSession;
-        
+
+        public async Task UpdateMyDisplayName(string userDispalyName)
+        {
+            if (Context.Items["nickname"] as string != userDispalyName)
+            {
+                await Clients.Group(_loginedGroup).SendAsync(new UpdateUserDisplayName
+                {
+                    Id = Context.Items["uid"] as string,
+                    DisplayName = userDispalyName
+                });
+
+                Context.Items["nickname"] = userDispalyName;
+                Log.Information(
+                    $"User Id:{Context.Items["uid"] as string} change display user name to {userDispalyName}");
+            }
+        }
+
         public async Task SendMessage(string message, string chatId)
         {
             var messageItem = new Message
@@ -47,7 +62,7 @@ namespace SkillChat.Server.Hubs
                 ChatId = chatId,
                 UserId = messageItem.UserId
             });
-            
+
             Log.Information($"User {Context.Items["nickname"]}({Context.Items["login"]}) send message in main chat");
         }
 
@@ -62,9 +77,9 @@ namespace SkillChat.Server.Hubs
                 Context.Items["login"] = jwtPayload["name"];
                 Context.Items["uid"] = jwtPayload["sub"];
                 Context.Items["session"] = jwtPayload["session"];
-                
+
                 var user = await _ravenSession.LoadAsync<User>(jwtPayload["sub"]);
-                if (user!= null)
+                if (user != null)
                 {
                     Context.Items["nickname"] = user.DisplayName;
                 }

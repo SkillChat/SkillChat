@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Net;
-using System.Reactive;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Microsoft.AspNetCore.SignalR.Client;
+﻿using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
 using PropertyChanged;
 using ReactiveUI;
@@ -18,6 +8,15 @@ using SkillChat.Interface;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
 using Splat;
+using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Reactive;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -51,9 +50,9 @@ namespace SkillChat.Client.ViewModel
             ProfileViewModel.IsOpenProfileEvent += () => WindowStates(WindowState.OpenProfile);
 
             SettingsViewModel = new SettingsViewModel(serviceClient);
-            SettingsViewModel.OpenSettingsActiveEvent += (e) => {WindowStates(WindowState.WindowSettings);};
-            SettingsViewModel.TypeEnterEvent += (e) => {KeySendMessage = e;};
-            SettingsViewModel.ContextMenuSettingsActiveEvent += (e) => {WindowStates(WindowState.HeaderMenuPopup);};
+            SettingsViewModel.OpenSettingsActiveEvent += (e) => { WindowStates(WindowState.WindowSettings); };
+            SettingsViewModel.TypeEnterEvent += (e) => { KeySendMessage = e; };
+            SettingsViewModel.ContextMenuSettingsActiveEvent += (e) => { WindowStates(WindowState.HeaderMenuPopup); };
             SettingsViewModel.SetSelectedOnSettingsItemEvent += e => { TextHeaderMenuInSettings = SettingsViewModel.SettingsMenuActiveMain ? "Сообщения и чаты" : "Аудит входа"; };
 
             Width(false);
@@ -67,7 +66,6 @@ namespace SkillChat.Client.ViewModel
             var ipAddress = new WebClient().DownloadString("https://api.ipify.org");
             var nameVersionClient = "SkillChat Avalonia Client 1.0";
 
-
             ConnectCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 try
@@ -77,6 +75,7 @@ namespace SkillChat.Client.ViewModel
                         .Build();
 
                     _hub = _connection.CreateHub<IChatHub>();
+                    ProfileViewModel.SetChatHub(_hub);
 
                     if (Tokens == null || Tokens.AccessToken.IsNullOrEmpty())
                     {
@@ -133,6 +132,26 @@ namespace SkillChat.Client.ViewModel
                         }
                     });
 
+                    _connection.Subscribe<UpdateUserDisplayName>(async user =>
+                    {
+                        try
+                        {
+                            var updateMessages = Messages.Where(s => s is UserMessagesContainerViewModel);
+                            foreach (var message in updateMessages)
+                            {
+                                foreach (var item in message.Messages.Where(s => s.UserId == user.Id))
+                                {
+                                    item.UserNickname = user.DisplayName;
+                                }
+                            }
+
+                            ProfileViewModel.UpdateUserProfile(user.DisplayName, user.Id);
+                        }
+                        catch (Exception e)
+                        {
+                            SignOutCommand.Execute(null);
+                        }
+                    });
 
                     _connection.Subscribe<ReceiveMessage>(async data =>
                     {
@@ -174,7 +193,6 @@ namespace SkillChat.Client.ViewModel
                             if (!windowIsFocused || SettingsViewModel.IsOpened)
                                 Notify.NewMessage(newMessage.UserNickname, newMessage.Text.Replace("\r\n", " "));
                         }
-
 
                         container.Messages.Add(newMessage);
                         if (container.Messages.First() == newMessage)
@@ -380,11 +398,11 @@ namespace SkillChat.Client.ViewModel
                     windowIsFocused = win.IsActive;
                 }
             });
-           PointerPressedCommand = ReactiveCommand.Create<object>(obj =>
-           {
+            PointerPressedCommand = ReactiveCommand.Create<object>(obj =>
+            {
                 ProfileViewModel.ContextMenuClose();
                 SettingsViewModel.CloseContextMenu();
-           });
+            });
 
             ProfileViewModel.SignOutCommand = SignOutCommand;
             ProfileViewModel.LoadMessageHistoryCommand = LoadMessageHistoryCommand;
@@ -535,7 +553,7 @@ namespace SkillChat.Client.ViewModel
         }
     }
 
-    /// <summary>Хранилище аргументов соытия MessageReceived</summary>
+    /// <summary>Хранилище аргументов события MessageReceived</summary>
     public class ReceivedMessageArgs
     {
         public ReceivedMessageArgs(MessageViewModel message)
