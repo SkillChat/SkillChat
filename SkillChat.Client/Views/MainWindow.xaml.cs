@@ -4,7 +4,6 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using SkillChat.Client.ViewModel;
-
 namespace SkillChat.Client.Views
 {
     public class MainWindow : Window, IHaveWidth, IHaveIsActive
@@ -13,10 +12,25 @@ namespace SkillChat.Client.Views
         {
             InitializeComponent();
 			MessagesScroller = this.Get<ScrollViewer>("MessagesSV");
+            MessagesScroller.ScrollChanged += MessagesScroller_ScrollChanged; 
             this.DataContextChanged += SetDataContextMethod;
 #if DEBUG
             this.AttachDevTools();
 #endif
+        }
+        /// <summary>
+        /// при изменение прокрутки проверят прокрученно ли до конца и сохраняет во ViewModel
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MessagesScroller_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (DataContext is MainWindowViewModel vm)
+            {
+              var verticaloffsetvalue = ScrollViewer.VerticalScrollBarValueProperty.Getter(MessagesScroller);
+              var verticaloffsetmax = ScrollViewer.VerticalScrollBarMaximumProperty.Getter(MessagesScroller);
+              vm.SettingsViewModel.AutoScroll = verticaloffsetmax.Equals(verticaloffsetvalue); 
+            }
         }
 
         public void LayoutUpdated_window(object sender, EventArgs e)
@@ -35,18 +49,21 @@ namespace SkillChat.Client.Views
 		{
 			if (this.DataContext is MainWindowViewModel vm)
 			{
-                vm.MessageReceived += x => MessagesScroller.PropertyChanged += ScrollToEndMethod;
+                vm.MessageReceived += x => MessagesScroller.PropertyChanged += ScrollMethod;
 			}
 		}
 
-        /// <summary>При изменении размеров ScrollView скролит его вниз</summary>
+        /// <summary>При изменении размеров ScrollView скролит его вниз если разешено</summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-		private void ScrollToEndMethod(object sender, AvaloniaPropertyChangedEventArgs e)
+		private void ScrollMethod(object sender, AvaloniaPropertyChangedEventArgs e)
 		{
+
 			if (e.Property.PropertyType.Name == "Size")
-				MessagesScroller.ScrollToEnd();
-            MessagesScroller.PropertyChanged -= ScrollToEndMethod;
+                if(DataContext is MainWindowViewModel vm)
+                    if(vm.SettingsViewModel.AutoScroll)
+                        MessagesScroller.ScrollToEnd();
+            MessagesScroller.PropertyChanged -= ScrollMethod;
         }
 
         private void InitializeComponent()
