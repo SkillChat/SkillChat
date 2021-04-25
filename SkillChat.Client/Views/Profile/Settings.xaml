@@ -22,14 +22,14 @@
                     <TextBlock Margin="0 43 0 0" FontStyle="Normal" IsVisible="{Binding !IsEditNameProfile}"
                                Width="290"
                                TextAlignment="Center"
-                               Foreground="#000000" FontWeight="600" FontSize="16" Text="{Binding Profile.DisplayName}" />
+                               Foreground="#000000" FontWeight="600" FontSize="16" Text="{Binding DisplayName}" />
 
                     <TextBlock Margin="50 5 0 0" FontStyle="Italic"
                                Foreground="#828282"
                                FontWeight="400" FontSize="14" Text="Имя" />
 
                     <TextBox Width="290" IsVisible="{Binding IsEditNameProfile}" Height="50"
-                             Text="{Binding Profile.DisplayName}"
+                             Text="{Binding DisplayName}"
                              Foreground="#828282" FontWeight="600" FontSize="16" VerticalContentAlignment="Center"
                              MaxLength="32" BorderBrush="#BDBDBD" Margin="0 29 0 0"
                              VerticalAlignment="Top" />
@@ -79,11 +79,11 @@
                                MinHeight="50"
                                MaxHeight="250"
                                TextWrapping="Wrap"
-                               Foreground="#000000" FontWeight="600" FontSize="16" Text="{Binding Profile.AboutMe}" />
+                               Foreground="#000000" FontWeight="600" FontSize="16" Text="{Binding AboutMe}" />
 
 
                     <TextBox Width="290" IsVisible="{Binding IsEditAboutMeProfile}"
-                             Text="{Binding Profile.AboutMe}"
+                             Text="{Binding AboutMe}"
                              AcceptsReturn="True"
                              Foreground="#828282" FontWeight="600" FontSize="16"
                              TextWrapping="Wrap"
@@ -127,7 +127,7 @@
                 <Grid Grid.Row="2">
                     <TextBlock Margin="0 20 0 0" Padding="0 0 1 0" HorizontalAlignment="Center" FontStyle="Italic"
                                Foreground="#BDBDBD"
-                               FontWeight="400" FontSize="16" Text="{Binding Profile.Login}" />
+                               FontWeight="400" FontSize="16" Text="{Binding Login}" />
                     <Button
                         VerticalAlignment="Top"
                         HorizontalAlignment="Center"
