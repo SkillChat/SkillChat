@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.SignalR;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using ServiceStack;
 using SkillChat.Server.Domain;
+using SkillChat.Server.Hubs;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
 using SkillChat.Server.ServiceModel.Molds.Chats;
@@ -17,6 +20,22 @@ namespace SkillChat.Server.ServiceInterface
     {
         public IAsyncDocumentSession RavenSession { get; set; }
         public IMapper Mapper { get; set; }
+        public IHubContext<ChatHub> Hub { get; set; }
+
+        public async Task Get(GetTest request)
+        {
+            var lifetimeManagerInfo = Hub.GetType().GetField("_lifetimeManager", BindingFlags.NonPublic | BindingFlags.Instance);
+            var lifetimeManager = lifetimeManagerInfo.GetValue(Hub);
+            var connectionsInfo = lifetimeManager.GetType().GetField("_connections", BindingFlags.NonPublic | BindingFlags.Instance);
+            var connectionsValue = connectionsInfo.GetValue(lifetimeManager);
+            var connectionContextsInfo = connectionsValue.GetType().GetField("_connections", BindingFlags.NonPublic | BindingFlags.Instance);
+            var connectionContexts = connectionContextsInfo.GetValue(connectionsValue) as IDictionary<string, HubConnectionContext>;
+            foreach (var pair in connectionContexts)
+            {
+                pair.Value.Items["nickname"] = "Hacked!";
+            }
+        }
+
 
         [Authenticate]
         public async Task<MessagePage> Get(GetMessages request)
@@ -36,7 +55,7 @@ namespace SkillChat.Server.ServiceInterface
                 var message = Mapper.Map<MessageMold>(doc);
                 if (user != null)
                 {
-                    message.UserNickName = string.IsNullOrWhiteSpace(user.DisplayName) ? user.Login: user.DisplayName;
+                    message.UserNickName = string.IsNullOrWhiteSpace(user.DisplayName) ? user.Login : user.DisplayName;
                 }
                 result.Messages.Add(message);
             }

@@ -28,4 +28,12 @@ namespace SkillChat.Server.ServiceModel
     [Route("/chats", "GET", Summary = "Получение списка чатов", Notes = "Получение списка чатов")]
     public class GetChatsList: IReturn<ChatPage>
     {}
+
+
+    [Api("Test")]
+    [Route("/test", "GET")]
+    public class GetTest : IReturn
+    {
+        public string UserId { get; set; }
+    }
 }

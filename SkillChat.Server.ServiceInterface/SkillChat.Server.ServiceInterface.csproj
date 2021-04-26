@@ -8,9 +8,11 @@
         <PackageReference Include="AutoMapper" Version="10.1.1" />
         <PackageReference Include="RavenDB.Client" Version="5.1.7" />
         <PackageReference Include="ServiceStack.Server" Version="5.11.0" />
+        <PackageReference Include="SignalR.EasyUse.Server" Version="0.2.1" />
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\SkillChat.Interface\SkillChat.Interface.csproj" />
         <ProjectReference Include="..\SkillChat.Server.Domain\SkillChat.Server.Domain.csproj" />
         <ProjectReference Include="..\SkillChat.Server.ServiceModel\SkillChat.Server.ServiceModel.csproj" />
     </ItemGroup>

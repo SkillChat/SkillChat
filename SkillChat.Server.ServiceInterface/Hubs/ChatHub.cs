@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Raven.Client.Documents.Session;
-using Serilog;
+//using Serilog;
 using ServiceStack;
 using ServiceStack.Auth;
 using ServiceStack.Host;
@@ -34,8 +34,7 @@ namespace SkillChat.Server.Hubs
                 });
 
                 Context.Items["nickname"] = userDispalyName;
-                Log.Information(
-                    $"User Id:{Context.Items["uid"] as string} change display user name to {userDispalyName}");
+                //Log.Information($"User Id:{Context.Items["uid"] as string} change display user name to {userDispalyName}");
             }
         }
 
@@ -63,7 +62,7 @@ namespace SkillChat.Server.Hubs
                 UserId = messageItem.UserId
             });
 
-            Log.Information($"User {Context.Items["nickname"]}({Context.Items["login"]}) send message in main chat");
+            //Log.Information($"User {Context.Items["nickname"]}({Context.Items["login"]}) send message in main chat");
         }
 
         public async Task Login(string token, string operatingSystem, string ipAddress, string nameVersionClient)
@@ -128,7 +127,7 @@ namespace SkillChat.Server.Hubs
                     await _ravenSession.StoreAsync(userLoginAudit);
                     await _ravenSession.SaveChangesAsync();
                 }
-                Log.Information($"Connected {Context.Items["login"]}({Context.Items["uid"]}) with session {Context.Items["session"]}");
+                //Log.Information($"Connected {Context.Items["login"]}({Context.Items["uid"]}) with session {Context.Items["session"]}");
             }
             catch (Exception e)
             {
@@ -136,7 +135,7 @@ namespace SkillChat.Server.Hubs
                 {
                     Error = true
                 });
-                Log.Warning($"Bad token from connection {Context.ConnectionId}");
+                //Log.Warning($"Bad token from connection {Context.ConnectionId}");
             }
         }
     }
