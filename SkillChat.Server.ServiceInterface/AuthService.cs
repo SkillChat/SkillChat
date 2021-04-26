@@ -6,7 +6,6 @@ using AutoMapper;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
-using Serilog;
 using ServiceStack;
 using ServiceStack.Auth;
 using SkillChat.Server.Domain;
