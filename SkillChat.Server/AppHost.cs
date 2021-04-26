@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using Funq;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using ServiceStack;
 using ServiceStack.Api.OpenApi;
 using ServiceStack.Api.Swagger;
@@ -16,11 +17,11 @@ namespace SkillChat.Server
     public class AppHost : AppHostBase
     {
         private readonly IAppSettings _settings;
-        private readonly IHostingEnvironment _env;
+        private readonly IWebHostEnvironment _env;
         /// <summary>
         /// Base constructor requires a Name and Assembly where web service implementation is located
         /// </summary>
-        public AppHost(IAppSettings settings, IHostingEnvironment env)
+        public AppHost(IAppSettings settings, IWebHostEnvironment env)
             : base("SkillChat", typeof(AuthService).Assembly)
         {
             _settings = settings;
@@ -116,7 +117,6 @@ namespace SkillChat.Server
             Plugins.Add(authFeature);
 
             Plugins.Add(new OpenApiFeature { UseBearerSecurity = true });
-            Plugins.Add(new SwaggerFeature { UseCamelCaseModelPropertyNames = true, UseBootstrapTheme = true });
         }
     }
 }
