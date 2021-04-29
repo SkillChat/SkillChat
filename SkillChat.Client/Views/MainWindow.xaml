@@ -218,6 +218,7 @@
                             TileMode="Tile" />
                     </Grid.Background>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="80" />
                         <RowDefinition />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
@@ -343,9 +344,19 @@
                             </ItemsControl>
                         </ScrollViewer>
                     </Grid>
+                  <Border Grid.Row="1" Classes="AttachMenuBorder" x:Name="AttachButtons" IsVisible="{Binding AttachMenuVisible}">
+                    <StackPanel Orientation="Vertical" x:Name="AttachMenuList" >
+                      <Button Classes="AttachMenu" x:Name="AttachFile" Command="{Binding AttachFileClick}" >
+                        <StackPanel Orientation="Horizontal" >
+                          <Image Name="FileImage" Width="16" Height="18.5" Classes="FileImage"/>
+                          <TextBlock  Text="Файл"  Classes="MenuText" />
+                        </StackPanel>
+                      </Button>
+                    </StackPanel>
+                  </Border>
                     <!--  Блок отправки сообщения  -->
                     <Border Grid.Column="0"
-                            Grid.Row="1"
+                            Grid.Row="2"
                             MinHeight="50"
                             MaxHeight="270"
                             ZIndex="-1"

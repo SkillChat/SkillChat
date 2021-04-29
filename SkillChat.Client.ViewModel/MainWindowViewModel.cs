@@ -406,6 +406,8 @@ namespace SkillChat.Client.ViewModel
 
             ProfileViewModel.SignOutCommand = SignOutCommand;
             ProfileViewModel.LoadMessageHistoryCommand = LoadMessageHistoryCommand;
+
+            AttachButtonEnabled = true;
         }
 
         public DateTimeOffset ExpireTime { get; set; }
@@ -435,6 +437,21 @@ namespace SkillChat.Client.ViewModel
 
         public bool IsSignedIn { get; set; }
 
+
+        public bool AttachMenuVisible { get; set; }
+
+        public void AttachFileClick()
+        {
+            AttachMenuVisible = false;
+        }
+
+        public bool AttachButtonEnabled {get; set; }
+
+
+        public void AttachMenuCommand()
+        {
+            AttachMenuVisible = true;
+        }
         public ObservableCollection<IMessagesContainerViewModel> Messages { get; set; }
 
         public TokenResult Tokens { get; set; }
