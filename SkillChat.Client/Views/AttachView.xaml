@@ -1,0 +1,107 @@
+﻿<UserControl  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+    xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
+  mc:Ignorable="d"
+   MinWidth="360"
+    MinHeight="530"
+  x:Class="SkillChat.Client.Views.AttachView"
+  Background="#4C000000">
+  <Border  Classes="AttachList">
+    <Grid Width="320" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+     
+      <ListBox Items="{Binding Path=listAttachment}" 
+               MaxHeight="700" 
+               SelectedItems="{Binding SelectedAttach}" 
+               ScrollViewer.HorizontalScrollBarVisibility="Hidden"   
+               Grid.Row="0" 
+               BorderThickness="0">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Border Background="White">
+              <Grid ColumnDefinitions="Auto, *">
+                <Image Grid.Column="0" Classes="AttachFile" Name="AttachImageView" Margin="5" Width="60" Height="70"/>
+                <Grid Grid.Column="1" RowDefinitions="*, Auto" Margin="5" Width="220" >
+                  <TextBlock Grid.Row="0" Classes="AttachFileName"  Text="{Binding FileName}"/>
+                  <Grid Height="16" Grid.Row="1" ColumnDefinitions="*, Auto" HorizontalAlignment="Stretch">
+                    <StackPanel Orientation="Horizontal" Grid.Column="0">
+                      <TextBlock Text="{Binding  Path=FileExtension}"  Classes="AttachInfo" />
+                      <TextBlock Text=" / " Classes="AttachInfo" />
+                      <TextBlock Text="{Binding SizeInfo}" Classes="AttachInfo" />
+                    </StackPanel>
+                    <Button Command="{Binding $parent[ListBox].DataContext.CommandRemoveAttach}" Classes="AttachRemoveButton" Grid.Column="1" 
+                             CommandParameter="{Binding Path=Id}">
+                      <Image Width="15" Height="15" Name="RemoveAttachImage"/>
+                    </Button>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+      <Button
+              x:Name="CloseAttachList"
+              Grid.Row="0"
+              Classes="CloseAttach H1"
+              Command="{Binding CloseAttachCommand}">
+        <Image
+            Name="closeAttachImage"
+            Width="16"
+            Height="16" />
+      </Button>
+      <Button
+              x:Name="AddToAttachList"
+              Grid.Row="0"
+              Classes="AddToAttach  H1"
+              Command="{Binding AttachFileClick}">
+        <Image
+            Name="addAttachImage"
+            Width="16"
+            Height="16" />
+      </Button>
+      <Border Grid.Row="1" Classes="BorderSendCaction">
+        <Grid >
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <TextBox
+           x:Name="InputContent" 
+           AcceptsReturn="True"
+           Classes="CaptionTextStyle"
+           
+           Grid.Column="0"
+           Text="{Binding CaptionText}"
+           Watermark="Сообщение">
+            <TextBox.KeyBindings>
+              <KeyBinding Command="{Binding SendAttachCommand}" Gesture="Enter"  />
+            </TextBox.KeyBindings>
+          </TextBox>
+          <!--  Кнопка отправки сообщения  -->
+          <Button
+              x:Name="sendAttachButton"
+              Grid.Column="1"
+              Classes="Send-Btn sendAttach"
+              Command="{Binding SendAttachCommand}">
+            <Image
+                Name="buttonAttachImage"
+                Width="20"
+                Height="20" />
+          </Button>
+        </Grid>
+      </Border>
+      
+    </Grid>
+  </Border>
+ 
+    
+</UserControl>

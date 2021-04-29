@@ -13,12 +13,13 @@
         <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml" />
         <StyleInclude Source="/Assets/SkillChat.xaml" />
         <StyleInclude Source="/Styles/ProfileStyle.xaml" />
-        <StyleInclude Source="/Styles/SettingsStyle.xaml" />
+        <StyleInclude Source="/Styles/SendMessageStyle.xaml" />
         <Style Selector="TextBlock">
             <Setter Property="FontFamily" Value="Open Sans" />
         </Style>
         <Style Selector="TextBox">
             <Setter Property="FontFamily" Value="Open Sans" />
         </Style>
+      
     </Application.Styles>
 </Application>

@@ -1,0 +1,171 @@
+﻿<Styles
+	xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia">
+
+    <!--Начало: Стили кнопки отпрвки сообщений-->
+    <Style Selector="Button.Send-Btn /template/ ContentPresenter">
+        <Setter Property="Width" Value="30"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
+    <Style Selector="TextBox.SendMessageText">
+        <Setter Property="Padding" Value="10,5,2,5"/>
+        <Setter Property="AcceptsReturn" Value="True"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontSize" Value="{DynamicResource H4}"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="Watermark" Value="Сообщение"/>
+    </Style>
+
+    <!--Кнопка отправки сообщений-->
+    <Style Selector="Button.sendMsg /template/ ContentPresenter">
+        <Setter Property="Background" Value="#C4C4C4"/>
+    </Style>
+
+    <Style Selector="Button.sendAttach /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource White}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
+    <Style Selector="Button:pointerover.sendMsg /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource White}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Orange-03}" />
+    </Style>
+
+    <Style Selector="Button:pressed.sendMsg /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Orange-03}"/>
+    </Style>
+
+    <Style Selector="Button.sendMsg Image#buttonImage">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/arrow.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style Selector="Button.sendAttach Image#buttonAttachImage">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/arrow_orange.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style Selector="Button:pointerover.sendMsg Image#buttonImage">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/arrow_orange.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style Selector="Button:pressed.sendMsg Image#buttonImage">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/arrow.svg"  />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--Кнопка прикрепления файла-->
+    <Style Selector="Button.attachBtn /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="Button.attachBtn Image#AttachImage">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/ic_clip-grey.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style Selector="Button:pointerover.attachBtn Image#AttachImage">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/ic_clip-orange.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--Выпадающее меню-->
+    <Style Selector="Button.AttachMenu">
+        <Setter Property="Background" Value="{DynamicResource White}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Width" Value="148"/>
+    </Style>
+
+    <Style Selector="Button:pointerover.AttachMenu /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Orange-03}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Orange-03}"/>
+    </Style>
+
+    <Style Selector="TextBlock.MenuText">
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="#000"/>
+        <Setter Property="Margin" Value="10 0 0 0"/>
+        <Setter Property="Padding" Value="0"/>
+    </Style>
+
+    <Style Selector="Button:pointerover.AttachMenu TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource White}"/>
+    </Style>
+
+    <Style Selector="Button:pressed.AttachMenu /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Orange-02}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Orange-02}"/>
+    </Style>
+
+    <Style Selector="Button.AttachMenu Image#FileImage">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/ic_file.svg" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Margin" Value="2 0 0 0"/>
+    </Style>
+
+    <Style Selector="Button:pointerover.AttachMenu Image#FileImage">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/ic_file-white.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style Selector="Border.AttachMenuBorder">
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="VerticalAlignment" Value="Bottom"/>
+        <Setter Property="Margin" Value="10 0 0 -10"/>
+        <Setter Property="MaxWidth" Value="152"/>
+        <Setter Property="ZIndex" Value="10"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Orange-03}"/>
+        <Setter Property="CornerRadius" Value="2"/>
+    </Style>
+
+    <!--Конец: Стили кнопки отпрвки сообщений-->
+
+    <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Background" Value="{DynamicResource White}"/>
+    </Style>
+
+    <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Background" Value="{DynamicResource White}"/>
+    </Style>
+
+    <Style Selector="ListBoxItem:selected:focus /template/ ContentPresenter">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Background" Value="{DynamicResource White}"/>
+    </Style>
+
+</Styles>
