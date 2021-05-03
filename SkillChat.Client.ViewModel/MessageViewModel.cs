@@ -13,18 +13,46 @@ namespace SkillChat.Client.ViewModel
     public interface IMessagesContainerViewModel
     {
         ObservableCollection<MessageViewModel> Messages { get;set; }
-    }
+         void SetSelecMessageActiveCommand(bool status);
+   }
 
     [AddINotifyPropertyChangedInterface]
     public class MyMessagesContainerViewModel:IMessagesContainerViewModel
     {
+        public MyMessagesContainerViewModel()
+        {
+            Locator.CurrentMutable.RegisterConstant(this);
+        }
+
         public ObservableCollection<MessageViewModel> Messages { get;set; } = new ObservableCollection<MessageViewModel>();
+
+        public void SetSelecMessageActiveCommand(bool status)
+        {
+            foreach (var m in Messages)
+            {
+                m.SelectMessageActive = status;
+            }
+        }
+
     }
     
     [AddINotifyPropertyChangedInterface]
     public class UserMessagesContainerViewModel:IMessagesContainerViewModel
     {
+        public UserMessagesContainerViewModel()
+        {
+            Locator.CurrentMutable.RegisterConstant(this);
+        }
+
         public ObservableCollection<MessageViewModel> Messages { get;set; } = new ObservableCollection<MessageViewModel>();
+
+        public void SetSelecMessageActiveCommand(bool status)
+        {
+            foreach (var m in Messages)
+            {
+                m.SelectMessageActive = status;
+            }
+        }
     }
 
     [AddINotifyPropertyChangedInterface]
@@ -63,6 +91,7 @@ namespace SkillChat.Client.ViewModel
                     Time = local.ToString("t");
                 }
             });
+            Locator.CurrentMutable.RegisterConstant(this);
         }
 
         public string Id { get; set; }
@@ -82,5 +111,18 @@ namespace SkillChat.Client.ViewModel
         public DateTimeOffset PostTime { get; set; }
 
         public string Time { get; set; }
+
+        public bool Selected { get; set; }
+
+        public bool SelectMessageActive { get; set; }
+
+        /// <summary>
+        /// Включает возможность выборки сообщений
+        /// </summary>
+        public void SelectMessageCommand()
+        {
+            var settingVM = Locator.Current.GetService<SettingsViewModel>();
+            settingVM.SelectMessageCommandFromContextMenu();
+        }               
     }
 }

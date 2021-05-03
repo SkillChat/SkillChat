@@ -17,6 +17,8 @@ using System.Reactive;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia;
+using Avalonia.Input.Platform;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -30,9 +32,9 @@ namespace SkillChat.Client.ViewModel
         {
             User = new CurrentUserViewModel();
             Locator.CurrentMutable.RegisterConstant<ICurrentUser>(User);
+            Locator.CurrentMutable.RegisterConstant(this);
             configuration = Locator.Current.GetService<IConfiguration>();
             settings = configuration?.GetSection("ChatClientSettings")?.Get<ChatClientSettings>();
-
             if (settings == null)
             {
                 settings = new ChatClientSettings();
@@ -239,6 +241,9 @@ namespace SkillChat.Client.ViewModel
                     {
                         SignOutCommand.Execute(null);
                     }
+                    var settingVM = Locator.Current.GetService<SettingsViewModel>();
+                    settingVM.SetSelectMessahgeActivator();
+
                 },
                 this.WhenAnyValue(m => m.IsConnected, m => m.MessageText,
                     (b, m) => b == true && !string.IsNullOrEmpty(m)));
@@ -299,8 +304,12 @@ namespace SkillChat.Client.ViewModel
                         foreach (var message in container.Messages)
                         {
                             message.ShowNickname = firstInBlock == message;
-                        }
+                        }                        
                     }
+                    //// Для загруженных сообщений, устанавливаем возможность выборки от её значения
+                    var settingVM = Locator.Current.GetService<SettingsViewModel>();
+                    settingVM.SetSelectMessahgeActivator();
+                    ////
                 }
                 catch (Exception e)
                 {
@@ -453,7 +462,7 @@ namespace SkillChat.Client.ViewModel
 
         public bool KeySendMessage { get; set; }
 
-        public ICommand LoadMessageHistoryCommand { get; }
+        public ICommand LoadMessageHistoryCommand { get; }        
         public ICommand SignOutCommand { get; }
         public bool windowIsFocused { get; set; }
         public static ReactiveCommand<object, Unit> NotifyCommand { get; set; }
@@ -549,6 +558,62 @@ namespace SkillChat.Client.ViewModel
                 SettingsActive = true;
                 GridWidth = null;
                 TextHeaderMenuInSettings = "Сообщения и чаты";
+            }
+        }
+
+        /// <summary>
+        /// Коллекция выбранных сообщений
+        /// </summary>
+        public ObservableCollection<MessageViewModel> SelectedMessages { get; set; }
+
+        /// <summary>
+        /// Текст выбранных сообщений
+        /// </summary>
+        public string TextSelectedMessages { get; set; }
+
+
+        
+        /// <summary>
+        /// Команда добавления в список выбраных сообщений по команде
+        /// </summary>
+        public void AddToSelectedListCommandByButton()
+        {
+            TextSelectedMessages ="";
+            if (SelectedMessages == null) SelectedMessages = new ObservableCollection<MessageViewModel>();
+            var userMessageVM = Locator.Current.GetService<UserMessagesContainerViewModel>();
+            var myMessageVM = Locator.Current.GetService<MyMessagesContainerViewModel>();
+            if(userMessageVM!=null) AddToSelectedMessagesColl(userMessageVM);
+            if (myMessageVM != null) AddToSelectedMessagesColl(myMessageVM);
+            var settingVM = Locator.Current.GetService<SettingsViewModel>();
+            settingVM.SelectMessageCommandFromContextMenu();
+            CopyToClipboard();
+            
+        }
+
+        /// <summary>
+        /// Добавляет текст выбранных сообщение в буфер обмена
+        /// </summary>
+        public void CopyToClipboard()
+        {
+          AvaloniaLocator.Current.GetService<IClipboard>().SetTextAsync(TextSelectedMessages);
+        }
+
+        /// <summary>
+        /// Заполняет колекцию из выбранных сообщений
+        /// </summary>
+        /// <param name="MessageVM">Колекция сообщений из которых идет выборка</param>
+        private void AddToSelectedMessagesColl(IMessagesContainerViewModel MessageVM)
+        {
+            
+            foreach (var message in MessageVM.Messages)
+            {
+                if (message.Selected)
+                {
+                    SelectedMessages.Add(message);
+                    string text = $"{message.UserNickname}\n {message.Text}\n {message.Time}\n";
+                    TextSelectedMessages += text;
+                }
+                message.Selected = false;
             }
         }
     }
