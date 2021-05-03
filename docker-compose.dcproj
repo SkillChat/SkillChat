@@ -3,7 +3,7 @@
   <PropertyGroup Label="Globals">
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
-    <ProjectGuid>54a73ebf-d4a9-4fd8-9604-f9764d6cbc78</ProjectGuid>
+    <ProjectGuid>3b31bdf8-ce3d-4e7f-be8d-e60510de5622</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
     <DockerServiceName>skillchat.server</DockerServiceName>
