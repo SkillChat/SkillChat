@@ -13,10 +13,10 @@ namespace SkillChat.Client.Utils
         /// <param name="messagesScroller">Контрол отображающий список</param>
         public static void SetRead(ItemsControl messagesList, ScrollViewer messagesScroller)
         {
-            // Если найдено последнее прочитанное сообщение, то тру
-            bool lastReadMessageFound = false;
-            // Получаем коллекцию визуальных контейнеров из списка сообщений
-            var containersList = messagesList
+
+            if (messagesList.ItemCount == 0) return;    // Если в списке нет сообщений, то выходим из метода
+            bool lastReadMessageFound = false;          // Если найдено последнее прочитанное сообщение, то тру
+            var containersList = messagesList           // Получаем коллекцию визуальных контейнеров из списка сообщений
                 .Presenter
                 .VisualChildren[0]
                 .VisualChildren;
@@ -59,12 +59,13 @@ namespace SkillChat.Client.Utils
                         {
                             if (!userMessage.Read) // Если сообщение не прочитано, то перебираем дальше и помечаем прочитанными
                             {
-                                userMessage.Read = true;
+                                userMessage.SetRead();
                                 Debug.WriteLine($"--- {userMessage.Id} помечено прочитанным!");
                             }
                             else
                             {
                                 lastReadMessageFound = true;
+                                Debug.WriteLine($"--- Найдено прочитанное сообщение - {userMessage.Id}");
                                 return;
                             }
                         }
@@ -84,7 +85,7 @@ namespace SkillChat.Client.Utils
         /// <param name="userMessage">Сообщение собеседника</param>
         public static void SetReceived(UserMessageViewModel userMessage)
         {
-            userMessage.Received = true;
+            userMessage.SetReceived();
         }
         
     }

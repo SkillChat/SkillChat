@@ -353,11 +353,10 @@ namespace SkillChat.Client.ViewModel
                         {
                             var mess = newMessage as UserMessageViewModel;
                             
-                            mess.Read = item?.Read != null ? true : false;
-                            mess.Received = item?.Received != null ? true : false;
-
-                            mess.ReceiveAction += OnReceiveMessage;
-                            mess.ReadAction += OnReadMessage;
+                            if ( item?.Read == true) mess.SetRead();
+                            else mess.ReadAction += OnReadMessage;
+                            if ( item?.Received == true) mess.SetReceived();
+                            else mess.ReceiveAction += OnReceiveMessage;
 
                             if (container is UserMessagesContainerViewModel)
                             {
@@ -383,11 +382,6 @@ namespace SkillChat.Client.ViewModel
                             message.ShowNickname = firstInBlock == message;
                         }
 
-                        if (newMessage is UserMessageViewModel userMessage)
-                        {
-                            userMessage.ReceiveAction += OnReceiveMessage;
-                            userMessage.ReadAction += OnReadMessage;
-                        }
                         MessageReceived?.Invoke(new ReceivedMessageArgs(newMessage));
                     }
                 }
@@ -503,8 +497,8 @@ namespace SkillChat.Client.ViewModel
             //Если в данный момент происходит отправка, то не выполняем метод
             if (statuses.Count != 0 && IsStatusesSended)
             {
-                var list = statuses.Values.ToList<MessageStatus>();
                 IsStatusesSended = false;
+                var list = statuses.Values.ToList<MessageStatus>();
                 await _hub.SendStatuses(list);
                 statuses.Clear();
                 IsStatusesSended = true;
@@ -778,12 +772,13 @@ namespace SkillChat.Client.ViewModel
         /// <param name="status">Статус полученный от сервера</param>
         void ApplyMessageStatus(MessageStatus status)
         {
-            foreach (var container in Messages)
+            for (int i = Messages.Count - 1; i >= 0; i--)
             {
-                var message = container.Messages.FirstOrDefault(m => m.Id == status.MessageId);
-                if (message != null && message is MyMessageViewModel mymess)
+                var mess = Messages[i].Messages.FirstOrDefault(m => m.Id == status.MessageId);
+                if (mess != null && mess is MyMessageViewModel mymess)
                 {
-                    mymess.SetStatus(status);
+                    mymess.ApplyStatus(status);
+                    return;
                 }
             }
         }

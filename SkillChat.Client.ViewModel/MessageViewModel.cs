@@ -44,6 +44,19 @@ namespace SkillChat.Client.ViewModel
             {
                 if (re > 0) IsReceived = true;
             });
+
+            this.WhenAnyValue(s => s.IsSended).Subscribe(r =>
+            {
+                SetStatus();
+            });
+            this.WhenAnyValue(s => s.IsReceived).Subscribe(r =>
+            {
+                SetStatus();
+            });
+            this.WhenAnyValue(s => s.IsRead).Subscribe(r =>
+            {
+                SetStatus();
+            });
         }
 
         /// <summary>Отправлено ли на сервер</summary>
@@ -54,15 +67,37 @@ namespace SkillChat.Client.ViewModel
         public long ReceivedCount { get; set; }
 
         /// <summary>Получено ли</summary>
-        public bool IsReceived { get; set; } = false;
+        public bool IsReceived { get; private set; } = false;
 
         /// <summary>Прочитано ли</summary>
-        public bool IsRead { get; set; } = false;
+        public bool IsRead { get; private set; } = false;
 
-        public void SetStatus(MessageStatus status)
+        public void ApplyStatus(MessageStatus status)
         {
-            if (status.ReceivedDate != null && !IsReceived) IsReceived = true;
-            if (status.ReadDate != null && IsRead) IsRead = true;
+            if (status.ReceivedDate != null && !IsReceived)
+            {
+                IsReceived = true;
+            }
+            if (status.ReadDate != null && !IsRead)
+            {
+                IsRead = true;
+            }
+        }
+
+        public void SetStatus()
+        {
+            if (IsRead) Status = Statuses.Read;
+            else if (IsReceived) Status = Statuses.Received;
+            else if (IsSended) Status = Statuses.Sended;
+        }
+
+        public Statuses Status { get; set; }
+
+        public enum Statuses
+        {
+            Sended,
+            Received,
+            Read
         }
     }
 
@@ -81,24 +116,33 @@ namespace SkillChat.Client.ViewModel
                 var profileViewModel = Locator.Current.GetService<IProfile>();
                 await profileViewModel.Open(userId);
             });
-            this.WhenAnyValue(r => r.Received).Subscribe(_ =>
-            {
-                ReceiveAction?.Invoke(this);
-            });
-            this.WhenAnyValue(r => r.Read).Subscribe(_ =>
-            {
-                ReadAction?.Invoke(this);
-            });
         }
         
         public UserProfileMold ProfileMold { get; set; }
         public  ReactiveCommand<string, Unit> UserProfileInfoCommand { get; set; }
 
         /// <summary>Получено ли</summary>
-        public bool Received { get; set; } = false;
+        public bool Received { get; private set; } = false;
 
         /// <summary>Прочитано ли</summary>
-        public bool Read { get; set; } = false;
+        public bool Read { get; private set; } = false;
+
+        public void SetReceived()
+        {
+            if (!Received)
+            {
+                Received = true;
+                ReceiveAction?.Invoke(this);
+            }
+        }
+        public void SetRead()
+        {
+            if (!Read)
+            {
+                Read = true;
+                ReadAction?.Invoke(this);
+            }
+        }
 
         /// <summary>Возникает при изменении статуса о получении</summary>
         public Action<UserMessageViewModel> ReceiveAction;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -9,12 +10,23 @@ namespace SkillChat.Client.Views
 {
     public class MainWindow : Window, IHaveWidth, IHaveIsActive
     {
+        /// <summary>Контрол скролла для списка сообщений</summary>
+        ScrollViewer MessagesScroller;
+        /// <summary>Контрол списка сообщений</summary>
+        ItemsControl MessagesList;
+
         public MainWindow()
         {
             InitializeComponent();
 			MessagesScroller = this.Get<ScrollViewer>("MessagesSV");
+            MessagesList = this.Get<ItemsControl>("MessagesList");
             MessagesScroller.ScrollChanged += MessagesScroller_ScrollChanged; 
             this.DataContextChanged += SetDataContextMethod;
+            Observable.FromEventPattern<ScrollChangedEventArgs>(
+                    handler => MessagesScroller.ScrollChanged += handler,
+                    handler => MessagesScroller.ScrollChanged -= handler)
+                .Throttle(TimeSpan.FromMilliseconds(800))
+                .Subscribe(async _ => await Dispatcher.UIThread.InvokeAsync(() => MessageStatusesSetter.SetRead(MessagesList, MessagesScroller)));
 #if DEBUG
             this.AttachDevTools();
 #endif
@@ -42,10 +54,8 @@ namespace SkillChat.Client.Views
             }
         }
 
-        /// <summary>Контрол скролла для списка сообщений</summary>
-        ScrollViewer MessagesScroller;
 
-        /// <summary>Устонавливаем текущий датаконтрекст</summary>
+        /// <summary>Устанавливаем текущий датаконтрекст</summary>
         private void SetDataContextMethod(object sender, EventArgs e)
 		{
 			if (this.DataContext is MainWindowViewModel vm)

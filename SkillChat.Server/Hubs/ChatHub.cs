@@ -151,67 +151,75 @@ namespace SkillChat.Server.Hubs
         /// <summary>Получение листа статусов сообщений и рассылка отправителям сообдений об их статусах</summary>
         /// <param name="statuses">Лист статусов сообщеий</param>
         public async Task SendStatuses(List<MessageStatus> statuses)
-        { 
-            var uid = Context.Items["uid"] as string; //Получил ID юзера отправившего статус
-            //Загружаем все статусы этого юзера
-            var statusItems = _ravenSession.Query<MessageStatusDomain>().Where(s => s.UserId == uid);
-            foreach (var status in statuses) //Перебираем все статусы в поиске присланного
+        {
+            try
             {
-                //Находим статус для этого сообщения
-                var statusItem = await statusItems.FirstOrDefaultAsync(s => s.MessageId == status.MessageId);
-                //Получаем сообщение для которого пришел статус
-                var statusedMessage = await _ravenSession.LoadAsync<Message>(status.MessageId);
-                if (statusItem == null)//Если нет статуса для требуемого сообщения, то создаем новый
+                Log.Information($"{statuses.Count} statuses were received from users id = {Context.Items["uid"]}");
+                var uid = Context.Items["uid"] as string;
+                //Загружаем все статусы этого юзера
+                var statusItems = _ravenSession.Query<MessageStatusDomain>().Where(s => s.UserId == uid);
+                foreach (var status in statuses)
                 {
-                    statusItem = new MessageStatusDomain()
+                    var statusItem = await statusItems.FirstOrDefaultAsync(s => s.MessageId == status.MessageId);
+                    var statusedMessage = await _ravenSession.LoadAsync<Message>(status.MessageId);
+                    if (statusItem == null)
                     {
-                        UserId = uid,
-                        MessageId = status.MessageId,
-                        ReadDate = status?.ReadDate,
-                        ReceivedDate = status?.ReceivedDate,
-                    };
-                    await _ravenSession.StoreAsync(statusItem); //Сохранил статус в БД
-                    //Далее создаем счетчики для сообщений
-                    if (status?.ReadDate != null)
-                    {
-                        _ravenSession.CountersFor(statusedMessage).Increment(MessageCounters.ReadCounter.ToString());
-                    }
-                    if (status?.ReceivedDate != null)
-                    {
-                        _ravenSession.CountersFor(statusedMessage).Increment(MessageCounters.ReceivedCounter.ToString());
-                    }
-                }
-                else //Если статус найден
-                {
-                    //Если даты прочтения нет, то присваиваем ее
-                    if (statusItem.ReadDate == null && status?.ReadDate != null)
-                    {
-                        statusItem.ReadDate = status.ReadDate;
-                        // и увеличиваем счетчик прочтений
-                        _ravenSession.CountersFor(statusedMessage).Increment(MessageCounters.ReadCounter.ToString());
-                    }
-                    //Если даты получения нет, то присваиваем ее
-                    if (statusItem.ReceivedDate == null && status?.ReceivedDate != null)
-                    {
-                        statusItem.ReceivedDate = status.ReceivedDate;
-                        // и увеличиваем счетчик получений
-                        _ravenSession.CountersFor(statusedMessage).Increment(MessageCounters.ReceivedCounter.ToString());
-                    }
-                }
+                        statusItem = new MessageStatusDomain()
+                        {
+                            UserId = uid,
+                            MessageId = status.MessageId,
+                            ReadDate = status?.ReadDate,
+                            ReceivedDate = status?.ReceivedDate,
+                        };
+                        await _ravenSession.StoreAsync(statusItem);
+                        if (status?.ReadDate != null)
+                        {
+                            _ravenSession.CountersFor(statusedMessage).Increment(MessageCounters.ReadCounter.ToString());
+                        }
+                        if (status?.ReceivedDate != null)
+                        {
+                            _ravenSession.CountersFor(statusedMessage).Increment(MessageCounters.ReceivedCounter.ToString());
+                        }
 
-                var counters = await _ravenSession.CountersFor(statusedMessage).GetAllAsync();
-                long? read = counters?.GetValueOrDefault("ReadCounter");
-                long? rec = counters?.GetValueOrDefault("ReceivedCounter");
-                //if (counters?.GetValueOrDefault(MessageCounters.ReadCounter.ToString()) == 1
-                //|| counters?.GetValueOrDefault(MessageCounters.ReadCounter.ToString()) == 1)
+                    }
+                    else
+                    {
+                        if (statusItem.ReadDate == null && status?.ReadDate != null)
+                        {
+                            statusItem.ReadDate = status.ReadDate;
+                            _ravenSession.CountersFor(statusedMessage).Increment(MessageCounters.ReadCounter.ToString());
+                        }
+                        if (statusItem.ReceivedDate == null && status?.ReceivedDate != null)
+                        {
+                            statusItem.ReceivedDate = status.ReceivedDate;
+                            _ravenSession.CountersFor(statusedMessage).Increment(MessageCounters.ReceivedCounter.ToString());
+                        }
+                    }
 
-                if (read == 1 || rec == 1)
-                {
-                    await Clients.Group(statusedMessage.UserId).SendAsync(status);
+                    await _ravenSession.SaveChangesAsync();
+                    Log.Information("New statuses saved in database");
+                    var counters = await _ravenSession.CountersFor(statusedMessage).GetAllAsync();
+                    long? read = counters?.GetValueOrDefault("ReadCounter");
+                    long? rec = counters?.GetValueOrDefault("ReceivedCounter");
+
+                    if (read == 1 || rec == 1)
+                    {
+                        SendStatusToUser(status, statusedMessage.UserId);
+                    }
+
                 }
             }
-            //Сохраняем изменения в БД
-            await _ravenSession.SaveChangesAsync();
+            catch(Exception ex)
+            {
+                Log.Error($"Receiving statuses error - \"{ex.Message}\"");
+            }
+        }
+
+        private async Task SendStatusToUser(MessageStatus status, string userId)
+        {
+            //await Clients.Client(userId).SendAsync(status);
+            await Clients.Group(userId).SendAsync(status);
+            Log.Information($"The status of message \"{status.MessageId}\" sended to user {userId}");
         }
     }
 }

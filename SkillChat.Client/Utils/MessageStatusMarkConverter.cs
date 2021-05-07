@@ -11,16 +11,24 @@ namespace SkillChat.Client.Utils
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is MyMessageViewModel vm)
+            object resource;
+            switch (value)
             {
-                object resource;
-                if (vm.IsRead && vm.IsReceived && vm.IsSended) Application.Current.TryFindResource("ReadMessageMark", out resource);
-                else if (!vm.IsRead && vm.IsReceived && vm.IsSended) Application.Current.TryFindResource("ReceivedMessageMark", out resource);
-                else if (!vm.IsRead && !vm.IsReceived && vm.IsSended) Application.Current.TryFindResource("SendedMessageMark", out resource);
-                else resource = null;
-                return resource;
+                case MyMessageViewModel.Statuses.Sended:
+                    Application.Current.TryFindResource("SendedMessageMark", out resource);
+                    break;
+                case MyMessageViewModel.Statuses.Received:
+                    Application.Current.TryFindResource("ReceivedMessageMark", out resource);
+                    break;
+                case MyMessageViewModel.Statuses.Read:
+                    Application.Current.TryFindResource("ReadMessageMark", out resource);
+                    break;
+                default:
+                    resource = null;
+                    break;
             }
-            throw new ArgumentException("Тип не MyMessageViewModel");
+            return resource;
+
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

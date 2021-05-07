@@ -229,7 +229,7 @@
                         Grid.Column="0"
                         IsVisible="{Binding ProfileViewModel.IsShowChat}" ZIndex="-1">
                         <ScrollViewer Name="MessagesSV" HorizontalScrollBarVisibility="Disabled">
-                            <ItemsControl
+                            <ItemsControl x:Name="MessagesList"
                                 Grid.Row="3"
                                 Grid.Column="0"
                                 Grid.ColumnSpan="3"
@@ -594,7 +594,7 @@
                                                         Grid.Row="2"
                                                         HorizontalAlignment="Right"
                                                         VerticalAlignment="Bottom">
-                                                        <Image Source ="{Binding ., Converter={StaticResource MarkConverter}}" />
+                                                        <Image Source ="{Binding Status, Converter={StaticResource MarkConverter}}" />
                                                         <TextBlock
                                                             Classes="time"
                                                             Text="{Binding Time}" />
