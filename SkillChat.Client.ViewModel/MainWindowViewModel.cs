@@ -162,7 +162,7 @@ namespace SkillChat.Client.ViewModel
                         newMessage.Id = data.Id;
                         newMessage.Text = data.Message;
                         newMessage.PostTime = data.PostTime;
-                        newMessage.UserNickname = data.UserNickname;
+                        newMessage.UserNickname = data.UserNickname??data.UserLogin;
                         newMessage.UserId = data.UserId;
                         var container = Messages.LastOrDefault();
                         if (isMyMessage)
