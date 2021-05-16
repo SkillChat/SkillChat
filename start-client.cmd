@@ -1,0 +1,1 @@
+dotnet run -p SkillChat.Client\SkillChat.Client.csproj
