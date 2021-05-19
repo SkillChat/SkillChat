@@ -223,127 +223,358 @@
                     </Grid.RowDefinitions>
 
                     <!--  Блок списка сообщений  -->
-                    <Grid
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        IsVisible="{Binding ProfileViewModel.IsShowChat}" ZIndex="-1">
-                        <ScrollViewer Name="MessagesSV" HorizontalScrollBarVisibility="Disabled">
+                  <Grid
+                      Grid.Row="0"
+                      Grid.Column="0"
+                      IsVisible="{Binding ProfileViewModel.IsShowChat}" ZIndex="-1">
+                    <ScrollViewer Name="MessagesSV" HorizontalScrollBarVisibility="Disabled" >
+                      <ItemsControl
+                          Grid.Row="3"
+                          Grid.Column="0"
+                          Grid.ColumnSpan="3"
+                          Margin="0,0"
+                          VerticalAlignment="Bottom"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          Items="{Binding Messages}">
+                        <ItemsControl.Styles>
+                          <Style Selector="CheckBox.SelectMsgCkBx">
+                            <Setter Property="Template">
+                              <Setter.Value>
+                                <ControlTemplate TargetType="Path">
+                                  <StackPanel Orientation="Horizontal" Width="20" Height="20">
+                                    <Border
+                                      Width="20"
+                                      Height="20"
+                                      BorderBrush="#6B3FE7"
+                                      BorderThickness="1"
+                                      CornerRadius="2"
+                                              >
+                                      <Panel>
+                                        <Path
+                                          Data="M0 2L2 18.5L18.5 18.5L18.5 1"
+                                          Fill="Beige"
+                                          Opacity="0"
+                                          StrokeLineCap="Square"
+                                          Width="20"
+                                          Height="20"/>
+                                      </Panel>
+                                    </Border>
+                                  </StackPanel>
+                                </ControlTemplate>
+                              </Setter.Value>
+                            </Setter>
+                          </Style>
+                          <Style Selector="CheckBox:checked">
+                            <Setter Property="BorderThickness" Value="1" />
+                            <Setter Property="BorderBrush" Value="#FF9337" />
+                          </Style>
+                          <Style Selector="Border">
+                            <Setter Property="CornerRadius" Value="2"/>
+                          </Style>
+                          <Style Selector="CheckBox.SelectMsgCkBx:checked">
+                            <Setter Property="Template">
+                              <Setter.Value>
+                                <ControlTemplate TargetType="Path">
+                                  <StackPanel Orientation="Horizontal" Width="20" Height="20">
+                                    <Border
+                                      Width="20"
+                                      Height="20"
+                                      BorderBrush="#FF9337"
+                                      BorderThickness="1"
+                                      CornerRadius="2">
+                                      <Image Source="/Assets/VectoChekBox.png"
+                                             Width="18"
+                                             Height="18">
+                                      </Image>
+                                    </Border>
+                                  </StackPanel>
+                                </ControlTemplate>
+                              </Setter.Value>
+                            </Setter>
+                          </Style>
+                          <Style Selector="TextBlock.message">
+                            <Setter Property="Padding" Value="10,0,10,5" />
+                            <Setter Property="FontSize" Value="14" />
+                            <Setter Property="Foreground" Value="Transparent" />
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                          </Style>
+                          <Style Selector="TextBox.message">
+                            <Setter Property="Padding" Value="10,0,10,15" />
+                            <Setter Property="FontSize" Value="14" />
+                            <Setter Property="AcceptsReturn" Value="True" />
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="BorderThickness" Value="0" />
+                            <Setter Property="TextWrapping" Value="Wrap" />
+
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                          </Style>
+                          <Style Selector="TextBlock.time">
+                            <Setter Property="FontSize" Value="12" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                            <Setter Property="Foreground" Value="#828282" />
+
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                          </Style>   
+                          <Style Selector="StackPanel.messageItem:pointerover">
+                            <Setter Property="Background" Value="#F2F2F2" />
+                          </Style>
+                          <Style Selector="Grid.messageItem:pointerover">
+                            <Setter Property="Background" Value="#F2F2F2" />
+                          </Style>                         
+                          
+                          <Style Selector="TextBlock.ContextMenu:focuse">
+                            <Setter Property="Background" Value="Transparent" />
+                          </Style>
+                        </ItemsControl.Styles>
+                        <ItemsControl.DataTemplates>
+                          <DataTemplate DataType="{x:Type viewModel:UserMessagesContainerViewModel}">
                             <ItemsControl
-                                Grid.Row="3"
-                                Grid.Column="0"
-                                Grid.ColumnSpan="3"
-                                Margin="20,0"
-                                VerticalAlignment="Bottom"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                Items="{Binding Messages}">
-                                <ItemsControl.Styles>
-                                    <Style Selector="TextBlock.message">
-                                        <Setter Property="Padding" Value="10,0,10,5" />
-                                        <Setter Property="FontSize" Value="14" />
-                                        <Setter Property="Foreground" Value="Transparent" />
-                                    </Style>
-                                    <Style Selector="TextBox.message">
-                                        <Setter Property="Padding" Value="10,0,10,5" />
-                                        <Setter Property="FontSize" Value="14" />
-                                        <Setter Property="AcceptsReturn" Value="True" />
-                                        <Setter Property="Background" Value="Transparent" />
-                                        <Setter Property="BorderThickness" Value="0" />
-                                        <Setter Property="TextWrapping" Value="Wrap" />
-                                    </Style>
-                                    <Style Selector="TextBlock.time">
-                                        <Setter Property="FontSize" Value="12" />
-                                        <Setter Property="FontWeight" Value="SemiBold" />
-                                        <Setter Property="Foreground" Value="#828282" />
-                                    </Style>
-                                </ItemsControl.Styles>
-                                <ItemsControl.DataTemplates>
-                                    <DataTemplate DataType="{x:Type viewModel:UserMessagesContainerViewModel}">
-                                        <ItemsControl
-                                            Margin="0,17,20,0"
-                                            HorizontalAlignment="Left"
-                                            Items="{Binding Messages}" />
-                                    </DataTemplate>
-                                    <DataTemplate DataType="{x:Type viewModel:MyMessagesContainerViewModel}">
-                                        <ItemsControl
-                                            Margin="20,17,0,0"
-                                            HorizontalAlignment="Right"
-                                            Items="{Binding Messages}" />
-                                    </DataTemplate>
-                                    <DataTemplate DataType="{x:Type viewModel:UserMessageViewModel}">
-                                        <StackPanel Margin="0,0,0,3" HorizontalAlignment="Left">
-                                            <Border
-                                                Padding="10,5"
-                                                Background="White"
-                                                BorderThickness="0">
-                                                <Grid RowDefinitions="Auto,Auto">
-                                                    <StackPanel Orientation="Horizontal">
-                                                         <TextBlock
-                                                            Padding="10,0,0,0"
-                                                            FontSize="14"
-                                                            FontWeight="SemiBold"
-                                                            Text="{Binding DisplayNickname}"
-                                                            Cursor="Hand"
-                                                            x:Name="UserDisplayNickname">
-                                                            <interactivity:Interaction.Behaviors>
-                                                                <core:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #UserDisplayNickname}">
-                                                                    <core:InvokeCommandAction Command="{Binding UserProfileInfoCommand}" CommandParameter="{Binding UserId}"/>
-                                                                </core:EventTriggerBehavior>
-                                                            </interactivity:Interaction.Behaviors>
-                                                         </TextBlock>
-                                                    </StackPanel>
-                                                    <TextBlock
-                                                        Grid.Row="1"
-                                                        Classes="message"
-                                                        Text="{Binding TextAligned}"
-                                                        TextWrapping="Wrap" />
-                                                    <TextBox
-                                                        Grid.Row="1"
-                                                        Classes="message"
-                                                        IsReadOnly="True"
-                                                        Text="{Binding Text}" />
-                                                    <TextBlock
-                                                        Grid.Row="1"
-                                                        HorizontalAlignment="Right"
-                                                        VerticalAlignment="Bottom"
-                                                        Classes="time"
-                                                        Text="{Binding Time}" />
-                                                </Grid>
-                                            </Border>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                    <DataTemplate DataType="{x:Type viewModel:MyMessageViewModel}">
-                                        <StackPanel Margin="0,0,0,3" HorizontalAlignment="Right">
-                                            <Border
-                                                Padding="10,5"
-                                                Background="#DDD5F4"
-                                                BorderThickness="0"
-                                                CornerRadius="2">
-                                                <Grid>
-                                                    <TextBlock
-                                                        Grid.Row="1"
-                                                        Classes="message"
-                                                        Text="{Binding TextAligned}"
-                                                        TextWrapping="Wrap" />
-                                                    <TextBox
-                                                        Grid.Row="1"
-                                                        Classes="message"
-                                                        IsReadOnly="True"
-                                                        Text="{Binding Text}" />
-                                                    <TextBlock
-                                                        HorizontalAlignment="Right"
-                                                        VerticalAlignment="Bottom"
-                                                        Classes="time"
-                                                        Text="{Binding Time}" />
-                                                </Grid>
-                                            </Border>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ItemsControl.DataTemplates>
+                                Margin="0,17,0,0"                                            
+                                Items="{Binding Messages}" />
+                          </DataTemplate>
+                          <DataTemplate DataType="{x:Type viewModel:MyMessagesContainerViewModel}">
+                            <ItemsControl
+                                Margin="0,17,0,0"                                
+                                Items="{Binding Messages}" >
                             </ItemsControl>
-                        </ScrollViewer>
-                    </Grid>
-                    <!--  Блок отправки сообщения  -->
+                          </DataTemplate>                          
+                          <DataTemplate DataType="{x:Type viewModel:UserMessageViewModel}">                            
+                            <Grid Margin="0,20,0,0" Background="Transparent">
+                              <Grid.ContextMenu>
+                                <!--ContextMenu-->
+                                <ContextMenu
+                                  BorderThickness="1"
+                                  BorderBrush="#F2994A"
+                                  Background="White"
+                                  Width="200"
+                                      Height="30">
+                                  <TextBlock Text="Выбрать сообщения"
+                                             FontWeight="400"
+                                             FontSize="13"
+                                             Classes="ContextMenu"
+                                             Name="ChooseMssgTxBck">
+                                    <interactivity:Interaction.Behaviors>
+                                      <core:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #ChooseMssgTxBck}">
+                                        <core:InvokeCommandAction Command="{Binding SelectMessageCommand}" CommandParameter="{x:Null}"/>
+                                      </core:EventTriggerBehavior>
+                                    </interactivity:Interaction.Behaviors>
+                                  </TextBlock>
+                                </ContextMenu>
+                              </Grid.ContextMenu>
+                              <StackPanel Orientation="Horizontal"                                         
+                                          Classes="messageItem"                                          
+                                          Width="{Binding GridWidth}">
+                                <Grid
+                               IsVisible="{Binding SelectMessageActive}"
+                                Margin="20,0,0,0">
+                                <CheckBox
+                                  Name="UserMessageViewModelChkBx"
+                                 Classes="SelectMsgCkBx"
+                                 IsChecked="{Binding Selected}">
+                                  <interactivity:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="Checked" SourceObject="{Binding #UserMessageViewModelChkBx}">
+                                      <core:InvokeCommandAction Command="{Binding AddToSelectedListCommand}" CommandParameter="{x:Null}"/>
+                                    </core:EventTriggerBehavior>
+                                  </interactivity:Interaction.Behaviors>
+
+                                  <interactivity:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="Unchecked" SourceObject="{Binding #UserMessageViewModelChkBx}">
+                                      <core:InvokeCommandAction Command="{Binding AddToSelectedListCommand}" CommandParameter="{x:Null}"/>
+                                    </core:EventTriggerBehavior>
+                                  </interactivity:Interaction.Behaviors>
+                                </CheckBox>
+                              </Grid>
+                              <Grid
+                              Grid.Column="1"
+                              HorizontalAlignment="Right"
+                              Margin="20,0,0,0">
+                                <Border
+                                                  
+                                          CornerRadius="4,4,4,0"
+                                          Grid.Row="0"
+                                          Padding="10,5"
+                                          Background="White"
+                                          BorderThickness="1"
+                                          BorderBrush="#E0E0E0"
+                                          HorizontalAlignment="Left">
+                                  <StackPanel  >
+
+                                    <StackPanel Orientation="Horizontal" >
+                                      <TextBlock
+                                                                    Padding="10,0,0,0"
+                                                                    FontSize="14"
+                                                                    FontWeight="SemiBold"
+                                                                   Text="{Binding DisplayNickname}"
+                                                    Cursor="Hand"
+                                                    x:Name="UserDisplayNickname">
+                                        <interactivity:Interaction.Behaviors>
+                                          <core:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #UserDisplayNickname}">
+                                            <core:InvokeCommandAction Command="{Binding UserProfileInfoCommand}" CommandParameter="{Binding UserId}"/>
+                                          </core:EventTriggerBehavior>
+                                        </interactivity:Interaction.Behaviors>
+                                      </TextBlock>
+                                    </StackPanel>
+                                    <TextBlock
+                                                                Grid.Row="1"
+                                                                Classes="message"
+                                                                TextAlignment="Left"
+                                                                Text="{Binding TextAligned}"
+                                                                HorizontalAlignment="Left"
+                                                                TextWrapping="Wrap" />
+                                    <TextBox
+                                                                Grid.Row="1"
+                                                                Classes="message"
+                                                                IsReadOnly="True"
+                                                                TextWrapping="Wrap"
+                                                                HorizontalAlignment="Left"
+                                                                Text="{Binding Text}" />
+                                    <TextBlock
+                                                                Grid.Row="1"
+                                                                HorizontalAlignment="Right"
+                                                                VerticalAlignment="Bottom"
+                                                                Classes="time"
+                                                                Text="{Binding Time}" />
+                                  </StackPanel>
+                                </Border>
+                              </Grid>
+                              </StackPanel>
+                            </Grid>
+                          </DataTemplate>
+                          <DataTemplate DataType="{x:Type viewModel:MyMessageViewModel}">                            
+                            <Grid  Margin="0,0,0,20"
+                                       Background="Transparent">
+                              <Grid.ContextMenu>
+                                <!--ContextMenu-->
+                                <ContextMenu
+                                  BorderThickness="1"
+                                  BorderBrush="#F2994A"
+                                  Background="White"
+                                  Width="200"
+                                  Height="30">
+                                  <TextBlock Text="Выбрать сообщения"
+                                             FontWeight="400"
+                                             FontSize="13"
+                                             Classes="ContextMenu"
+                                             Name="ChooseMssgTxBck">
+                                    <interactivity:Interaction.Behaviors>
+                                      <core:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #ChooseMssgTxBck}">
+                                        <core:InvokeCommandAction Command="{Binding SelectMessageCommand}" CommandParameter="{x:Null}"/>
+                                      </core:EventTriggerBehavior>
+                                    </interactivity:Interaction.Behaviors>
+                                  </TextBlock>
+                                </ContextMenu>
+                              </Grid.ContextMenu>
+                              <Grid Classes="messageItem" >                               
+                              <Grid
+                                Width="60"
+                                IsVisible="{Binding SelectMessageActive}"
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Left"
+                                Margin="20,0,20,0">
+                                <!-- CheckBox -->
+                                <CheckBox
+                                  Classes="SelectMsgCkBx"
+                                  Name="MyMessageViewModelChkBx"
+                                  HorizontalAlignment="Left"
+                                  HorizontalContentAlignment="Left"
+                                  IsChecked="{Binding Selected}">
+                                  <interactivity:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="Checked" SourceObject="{Binding #MyMessageViewModelChkBx}">
+                                      <core:InvokeCommandAction Command="{Binding AddToSelectedListCommand}" CommandParameter="{x:Null}"/>
+                                    </core:EventTriggerBehavior>
+                                  </interactivity:Interaction.Behaviors>
+
+                                  <interactivity:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="Unchecked" SourceObject="{Binding #MyMessageViewModelChkBx}">
+                                      <core:InvokeCommandAction Command="{Binding AddToSelectedListCommand}" CommandParameter="{x:Null}"/>
+                                    </core:EventTriggerBehavior>
+                                  </interactivity:Interaction.Behaviors>
+                                </CheckBox>
+                              </Grid>
+                              <Border
+                                      Margin="50,0,25,0"
+                                      HorizontalAlignment="Right"
+                                      Grid.Column="2"
+                                      Padding="10,5"
+                                      Background="#DDD5F4"
+                                      BorderThickness="0"
+                                      CornerRadius="2">                               
+                                <Grid
+                                  HorizontalAlignment="Right">
+                                  <TextBlock
+                                    IsVisible="False"
+                                    TextAlignment="Right"
+                                      Grid.Row="1"
+                                      Classes="message"
+                                      Text="{Binding TextAligned}"
+                                      TextWrapping="Wrap" />
+                                  <TextBox
+                                    TextAlignment="Right"
+                                      Grid.Row="1"
+                                      Classes="message"
+                                    TextWrapping="Wrap"
+                                      Text="{Binding Text}" />
+                                  <TextBlock
+                                    Grid.Row="2"
+                                      HorizontalAlignment="Right"
+                                      VerticalAlignment="Bottom"
+                                      Classes="time"
+                                      Text="{Binding Time}" />
+                                </Grid>
+                              </Border>
+                            </Grid>
+                            </Grid>
+                          </DataTemplate>
+                        </ItemsControl.DataTemplates>
+                      </ItemsControl>
+                    </ScrollViewer>
+                  
+                  </Grid>
+                  <!--Кнопка копирования сообщения-->
+                  <Grid
+                     IsVisible="{Binding SettingsViewModel.SelectMessageActive}"
+                     Height="50"
+                     Grid.Row="1"
+                     ZIndex="5"
+                     Grid.ColumnSpan="2"
+                     VerticalAlignment="Bottom"
+                     Background="#E0E0E0">
+                    <StackPanel
+                     Orientation="Horizontal"
+                     HorizontalAlignment="Left"
+                     Background="#E0E0E0">
+                      <Button Width ="18.7"
+                         Height="18.7"
+                         Background="#E0E0E0"
+                         BorderBrush="#E0E0E0"
+                         Grid.Column="0"
+                         Margin="20,15"
+                         Name="CoppyButton"
+                         Command="{Binding AddToSelectedListCommandByButton}">
+                        <Image Width ="18.7"
+                         Height="18.7">
+                          <Image.Source>
+                            <svg:SvgImage Source="/Assets/CopyButton.svg" />
+                          </Image.Source>
+                        </Image>
+                      </Button>
+                      <TextBlock
+                         Margin="0,15"
+                        Text="Скопировать в буфер обмена"
+                        Foreground="#4F4F4F"
+                         Name="CoppyButtonTB">
+                        <interactivity:Interaction.Behaviors>
+                          <core:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #CoppyButtonTB}">
+                            <core:InvokeCommandAction Command="{Binding AddToSelectedListCommandByButton}" CommandParameter="{x:Null}"/>
+                          </core:EventTriggerBehavior>
+                        </interactivity:Interaction.Behaviors>
+                      </TextBlock>
+                    </StackPanel>
+                  </Grid>
+
+                  <!--  Блок отправки сообщения  -->
                     <Border Grid.Column="0"
                             Grid.Row="1"
                             MinHeight="50"
@@ -363,8 +594,9 @@
                 </Grid>
             </Grid>
         </Grid>
-
+      
         <views:LoginPage VerticalAlignment="Stretch" IsVisible="{Binding IsShowingLoginPage, Mode=OneWay}" />
         <views:RegisterPage VerticalAlignment="Stretch" IsVisible="{Binding IsShowingRegisterPage, Mode=OneWay}" />
+     
     </Grid>
 </Window>

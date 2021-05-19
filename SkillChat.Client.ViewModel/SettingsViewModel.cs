@@ -8,6 +8,7 @@ using ReactiveUI;
 using ServiceStack;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
+using Splat;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -16,6 +17,7 @@ namespace SkillChat.Client.ViewModel
     {
         public SettingsViewModel(IJsonServiceClient serviceClient)
         {
+            Locator.CurrentMutable.RegisterConstant(this);
             ChatSettings = new UserChatSettings();
 
             LoginAuditCollection = new ObservableCollection<LoginAuditViewModel>();
@@ -33,7 +35,7 @@ namespace SkillChat.Client.ViewModel
                 GetSettingsCommand.Execute(null);
                 OpenSettingsActiveEvent?.Invoke(IsOpened);
             });
-
+            
             GetSettingsCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 SetSelectedMenuItem(SelectedMenuItem.Settings);
@@ -76,6 +78,43 @@ namespace SkillChat.Client.ViewModel
             });
         }
 
+        /// <summary>
+        /// Устанавливает включение/выключение выборки сообщений
+        /// </summary>
+        public void SelectMessageCommand () 
+        {
+            SelectMessageActive = !SelectMessageActive;
+            CloseContextMenu();
+            SetSelectMessahgeActivator();
+        }
+
+        /// <summary>
+        /// Устанавливает включение/выключение выборки сообщений при вызове из контексного меню
+        /// </summary>
+        public void SelectMessageCommandFromContextMenu ()
+        {
+            SelectMessageActive = !SelectMessageActive;
+            SetSelectMessahgeActivator();
+        }
+
+        /// <summary>
+        /// Устанавливает включение/выключение выборки сообщений
+        /// </summary>
+        public void SetSelectMessahgeActivator()
+        {
+                var userMessageVM = Locator.Current.GetService<UserMessagesContainerViewModel>();
+                if(userMessageVM!=null) userMessageVM.SetSelecMessageActiveCommand(SelectMessageActive);
+                var myMessageVM = Locator.Current.GetService<MyMessagesContainerViewModel>();
+                if (myMessageVM != null) myMessageVM.SetSelecMessageActiveCommand(SelectMessageActive);
+                if (SelectMessageActive)
+                {
+                    var mainWindowVM = Locator.Current.GetService<MainWindowViewModel>();
+                    mainWindowVM.SelectedMessages = null;
+                }
+            
+            
+        }
+
         public void Close()
         {
             IsOpened = false;
@@ -94,6 +133,7 @@ namespace SkillChat.Client.ViewModel
         public bool IsContextMenu { get; set; }
         public bool TypeEnter { get; set; }
         public bool IsOpened { get; set; }
+        public bool SelectMessageActive { get; set; }
 
         public SelectedMenuItem SelectedItem { get; protected set; }
 

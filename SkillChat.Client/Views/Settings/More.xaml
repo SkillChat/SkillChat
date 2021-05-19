@@ -16,6 +16,7 @@
                 HorizontalContentAlignment="Left"
                 Background="#0000"
                 Cursor="Hand"
+                Command="{Binding SelectMessageCommand}"
                 Classes="SelectedMore">
                 <Button.Content>
                     <TextBlock Text="Выбрать сообщения" FontWeight="400" FontSize="13" Padding="15 0" />
