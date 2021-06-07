@@ -14,6 +14,9 @@
         <AvaloniaResource Include="Assets\**" />
     </ItemGroup>
     <ItemGroup>
+      <None Remove="Views\LineReplyMessage.xaml" />
+    </ItemGroup>
+    <ItemGroup>
         <PackageReference Include="Avalonia" Version="0.10.2" />
         <PackageReference Include="Avalonia.Desktop" Version="0.10.2" />
         <PackageReference Include="Avalonia.Diagnostics" Version="0.10.2" />
@@ -23,5 +26,15 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\SkillChat.Client.ViewModel\SkillChat.Client.ViewModel.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <AvaloniaResource Update="Views\LineReplyMessage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </AvaloniaResource>
+    </ItemGroup>
+    <ItemGroup>
+      <Compile Update="Views\LineReplyMessage.xaml.cs">
+        <DependentUpon>%(Filename)</DependentUpon>
+      </Compile>
     </ItemGroup>
 </Project>

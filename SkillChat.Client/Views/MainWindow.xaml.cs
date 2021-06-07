@@ -4,6 +4,8 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using SkillChat.Client.ViewModel;
+using Splat;
+
 namespace SkillChat.Client.Views
 {
     public class MainWindow : Window, IHaveWidth, IHaveIsActive
@@ -17,6 +19,7 @@ namespace SkillChat.Client.Views
 #if DEBUG
             this.AttachDevTools();
 #endif
+            var mainWindow = Locator.Current.GetService<MainWindowViewModel>();
         }
         /// <summary>
         /// при изменение прокрутки проверят прокрученно ли до конца и сохраняет во ViewModel
@@ -71,6 +74,5 @@ namespace SkillChat.Client.Views
             AvaloniaXamlLoader.Load(this);
         }
 
-    
     }
 }

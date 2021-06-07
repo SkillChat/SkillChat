@@ -243,6 +243,19 @@ namespace SkillChat.Client.ViewModel
                 this.WhenAnyValue(m => m.IsConnected, m => m.MessageText,
                     (b, m) => b == true && !string.IsNullOrEmpty(m)));
 
+            ReplyCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                try
+                {
+                    await _hub.SendMessage("+++", "54e623e3-98b8-44fe-888c-2b102874ae4e");
+                    MessageText = null;
+                }
+                catch (Exception ex)
+                {
+                    SignOutCommand.Execute(null);
+                }
+            });
+
             LoadMessageHistoryCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 try
@@ -450,6 +463,8 @@ namespace SkillChat.Client.ViewModel
         public ICommand ConnectCommand { get; }
 
         public ICommand SendCommand { get; }
+
+        public ICommand ReplyCommand { get; }
 
         public bool KeySendMessage { get; set; }
 

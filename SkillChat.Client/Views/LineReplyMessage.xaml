@@ -1,0 +1,46 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="150"
+        x:Class="SkillChat.Client.Views.NotifyWindow"
+        xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
+        Height="60"
+        Width="340"
+        TransparencyLevelHint="Transparent"
+        Background="Transparent"
+        HasSystemDecorations="False"
+        Title="Notify">
+    <Border CornerRadius="8,0,0,8"  Background="#F2EEFF"  Width="340" Height="70">
+        <Grid Background="#E0E0E0" ColumnDefinitions="60,*,60">
+
+
+			<Button x:Name="button" HorizontalAlignment="Left" Margin="0,10,0,10" VerticalAlignment="Top">
+				<StackPanel Orientation="Horizontal">
+					<Image Source="/Assets/x_rest.jpg" Margin="0,0,0,0" />
+				</StackPanel>
+			</Button>
+
+
+            <StackPanel Grid.Column="1">
+                <WrapPanel Margin="0 14 0 0">
+                    <TextBlock 
+						Margin="5 0 0 0" 
+						FontSize="14" 
+						FontWeight="600" 
+						Foreground="#5027C7"
+						Text="{Binding #UserNickName}"/>
+                </WrapPanel>
+                <WrapPanel>
+                    <TextBlock  
+						Margin="5 2 0 0" 
+						FontSize="14" 
+						FontWeight="400" 
+						Foreground="#4F4F4F" 
+						Text="сообщение сообщение"/>
+                </WrapPanel>
+            </StackPanel>
+
+        </Grid>
+    </Border>
+</Window>

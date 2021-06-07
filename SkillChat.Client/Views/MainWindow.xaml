@@ -25,10 +25,6 @@
     </Design.DataContext>
 
   <interactivity:Interaction.Behaviors>
-    <!--  Notify  -->
-    <core:EventTriggerBehavior EventName="LostFocus" SourceObject="{Binding #WindowChat}">
-      <core:InvokeCommandAction Command="{Binding NotifyCommand}" CommandParameter="{Binding #WindowChat}" />
-    </core:EventTriggerBehavior>
       <!--  Notify  -->
       <core:EventTriggerBehavior EventName="GotFocus" SourceObject="{Binding #WindowChat}">
           <core:InvokeCommandAction Command="{Binding NotifyCommand}" CommandParameter="{Binding #WindowChat}" />
@@ -136,7 +132,7 @@
             <Grid Grid.Column="1" RowDefinitions="80,*">
 
                 <!--Header-->
-                <Grid ZIndex="1" Background="#F2F2F2">
+                <Grid ZIndex="1" Background="#F2F2F2" x:Name="Header">
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition
@@ -270,7 +266,23 @@
                                             HorizontalAlignment="Right"
                                             Items="{Binding Messages}" />
                                     </DataTemplate>
+
                                     <DataTemplate DataType="{x:Type viewModel:UserMessageViewModel}">
+										<Grid
+											HorizontalAlignment="Left"
+											Background="Red"
+											Width="500"
+											>
+											<Grid.ContextMenu>
+												<ContextMenu DataContext= "mainWindow">
+													<Button Content="Цитировать"
+															DataContext= "mainWindow"
+															Command="{Binding ReplyCommand}"/>
+													<MenuItem
+														Header="Цитировать"
+														Command="{Binding ReplyCommand}"/>
+												</ContextMenu>
+											</Grid.ContextMenu>
                                         <StackPanel Margin="0,0,0,3" HorizontalAlignment="Left">
                                             <Border
                                                 Padding="10,5"
@@ -311,6 +323,7 @@
                                                 </Grid>
                                             </Border>
                                         </StackPanel>
+                                    </Grid>
                                     </DataTemplate>
                                     <DataTemplate DataType="{x:Type viewModel:MyMessageViewModel}">
                                         <StackPanel Margin="0,0,0,3" HorizontalAlignment="Right">
