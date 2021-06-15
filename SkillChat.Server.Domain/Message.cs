@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace SkillChat.Server.Domain
 {
@@ -6,8 +7,9 @@ namespace SkillChat.Server.Domain
     {
         public string Id { get; set; }
         public string UserId { get; set; }
-        public string Text { get;set; }
+        public string Text { get; set; }
         public DateTimeOffset PostTime { get; set; }
         public string ChatId { get; set; }
+        public List<string> Attachments { get; set; }
     }
 }

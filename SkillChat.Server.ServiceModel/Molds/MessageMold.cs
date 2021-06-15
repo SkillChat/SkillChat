@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SkillChat.Server.ServiceModel.Molds.Attachment;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace SkillChat.Server.ServiceModel.Molds
@@ -14,11 +16,17 @@ namespace SkillChat.Server.ServiceModel.Molds
 
         [Description("Имя пользователя")]
         public string UserNickName { get; set; }
+
         [Description("Текст сообщения")]
         public string Text { get; set; }
+
         [Description("Время публикации")]
         public DateTimeOffset PostTime { get; set; }
+
         [Description("Идентификатор чата")]
-        public string ChatId{get;set;}
+        public string ChatId { get; set; }
+
+        [Description("Вложения")]
+        public List<AttachmentMold> Attachments { get; set; }
     }
 }
