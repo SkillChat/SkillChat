@@ -293,3 +293,5 @@ SkillChat.Client.ViewModel/FodyWeavers.xsd
 RavenDB
 
 SkillChat.sln.startup.json
+SkillChat.Client/Download/
+SkillChat.Server/Files

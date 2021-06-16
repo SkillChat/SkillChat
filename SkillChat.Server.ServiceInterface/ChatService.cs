@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -9,7 +6,11 @@ using ServiceStack;
 using SkillChat.Server.Domain;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
+using SkillChat.Server.ServiceModel.Molds.Attachment;
 using SkillChat.Server.ServiceModel.Molds.Chats;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SkillChat.Server.ServiceInterface
 {
@@ -28,15 +29,37 @@ namespace SkillChat.Server.ServiceInterface
                 messages = messages.Where(x => x.PostTime.UtcDateTime < request.BeforePostTime.Value.UtcDateTime);
             }
             var pageSize = request.PageSize ?? 10;
-            var docs = await messages.Take(pageSize).Include(x => x.UserId).ToListAsync();
+            
+            var docs = 
+                await messages.Take(pageSize)
+                    .Include(x => x.UserId)
+                    .Include(s => s.Attachments)
+                    .ToListAsync();
+
             result.Messages = new List<MessageMold>();
             foreach (var doc in docs)
             {
                 var user = await RavenSession.LoadAsync<User>(doc.UserId);
                 var message = Mapper.Map<MessageMold>(doc);
+
+                if (doc.Attachments != null)
+                {
+                    var attach = await RavenSession.LoadAsync<Attachment>(doc.Attachments);
+                    message.Attachments = new List<AttachmentMold>();
+
+                    foreach (var id in doc.Attachments)
+                    {
+                        if (attach.TryGetValue(id, out var attachment))
+                        {
+                            message.Attachments.Add(Mapper.Map<AttachmentMold>(attachment));
+                        }
+                        //TODO учесть в будущем показ потерянных файлов
+                    }
+                }
+
                 if (user != null)
                 {
-                    message.UserNickName = string.IsNullOrWhiteSpace(user.DisplayName) ? user.Login: user.DisplayName;
+                    message.UserNickName = string.IsNullOrWhiteSpace(user.DisplayName) ? user.Login : user.DisplayName;
                 }
                 result.Messages.Add(message);
             }

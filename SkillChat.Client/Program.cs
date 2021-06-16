@@ -1,8 +1,10 @@
 ﻿using Avalonia;
 using Avalonia.ReactiveUI;
 using Microsoft.Extensions.Configuration;
+using SkillChat.Client.Utils;
 using SkillChat.Client.ViewModel;
 using SkillChat.Client.Views;
+using SkillChat.Interface;
 using Splat;
 using WritableJsonConfiguration;
 
@@ -24,6 +26,7 @@ namespace SkillChat.Client
             }
             Locator.CurrentMutable.RegisterConstant(configuration, typeof(IConfiguration));
             Locator.CurrentMutable.Register<INotify>(() => new NotifyWindow());
+            Locator.CurrentMutable.Register<ICanOpenFileDialog>(() => new CanOpenFileDialog());
 
             //Запуск авалонии
             BuildAvaloniaApp()
