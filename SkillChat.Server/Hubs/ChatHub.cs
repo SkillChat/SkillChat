@@ -8,6 +8,7 @@ using SignalR.EasyUse.Server;
 using SkillChat.Interface;
 using SkillChat.Server.Domain;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SkillChat.Server.Hubs
@@ -39,14 +40,15 @@ namespace SkillChat.Server.Hubs
             }
         }
 
-        public async Task SendMessage(string message, string chatId)
+        public async Task SendMessage(HubMessage hubMessage)
         {
             var messageItem = new Message
             {
                 UserId = Context.Items["uid"] as string,
-                Text = message,
+                Text = hubMessage.Message,
                 PostTime = DateTimeOffset.UtcNow,
-                ChatId = chatId,
+                ChatId = hubMessage.ChatId,
+                Attachments = hubMessage.Attachments?.Select(s => s.Id).ToList()
             };
 
             await _ravenSession.StoreAsync(messageItem);
@@ -57,10 +59,11 @@ namespace SkillChat.Server.Hubs
                 Id = messageItem.Id,
                 UserLogin = Context.Items["login"] as string,
                 UserNickname = Context.Items["nickname"] as string,
-                Message = message,
+                Message = hubMessage.Message,
                 PostTime = messageItem.PostTime,
-                ChatId = chatId,
-                UserId = messageItem.UserId
+                ChatId = hubMessage.ChatId,
+                UserId = messageItem.UserId,
+                Attachments = hubMessage.Attachments
             });
 
             Log.Information($"User {Context.Items["nickname"]}({Context.Items["login"]}) send message in main chat");

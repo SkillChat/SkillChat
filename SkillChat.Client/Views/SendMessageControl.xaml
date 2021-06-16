@@ -2,7 +2,6 @@
     x:Class="SkillChat.Client.Views.SendMessageControl"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:custom="clr-namespace:SkillChat.Client.Extentions"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
     xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
@@ -14,78 +13,44 @@
     xmlns:interactivity="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
     xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
     Name="sendMessageControl"
-    d:DesignHeight="450"
+    d:DesignHeight="30"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <UserControl.Resources>
-        <utils:KeyConverter x:Key="keyConverter"/>
-    </UserControl.Resources>
-    <Grid ColumnDefinitions="*,Auto">
-        <!--  Текстовое поле ввода сообщения  -->
-        <TextBox
-            Name="inputMessageTB"
-            Grid.Column="0"
-            Padding="10,5,2,5"
-            AcceptsReturn="True"
-            BorderThickness="0"
-            FontSize="14"
-            Text="{Binding MessageText}"
-            TextWrapping="Wrap"
-            Watermark="Сообщение" >
-            <TextBox.KeyBindings>
-                <KeyBinding Command="{Binding SendCommand}" Gesture="{Binding Path=KeySendMessage,Converter={StaticResource keyConverter}}" />
-            </TextBox.KeyBindings>
-        </TextBox>
-        <!--  Кнопка отправки сообщения  -->
-        <Button
-            x:Name="sendButton"
-            Grid.Column="1"
-            Width="30"
-            Height="30"
-            Padding="0"
-            VerticalAlignment="Bottom"
-            Background="#C4C4C4"
-            BorderThickness="0"
-            Command="{Binding SendCommand}">
-            <Image
-                Name="buttonImage"
-                Width="20"
-                Height="20" />
+  <UserControl.Resources>
+    <utils:KeyConverter x:Key="keyConverter"/>
+  </UserControl.Resources>
 
-            <Button.Styles>
-                <Style Selector="Button /template/ ContentPresenter">
-                    <Setter Property="CornerRadius" Value="2" />
-                </Style>
-                <Style Selector="Button:pointerover /template/ ContentPresenter">
-                    <Setter Property="Background" Value="#FFFFFF" />
-                    <Setter Property="BorderThickness" Value="1" />
-                    <Setter Property="BorderBrush" Value="#FF9133" />
-                </Style>
-                <Style Selector="Button Image#buttonImage">
-                    <Setter Property="Source">
-                        <Setter.Value>
-                            <svg:SvgImage Source="/Assets/arrow.svg" />
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-                <Style Selector="Button:pointerover Image#buttonImage">
-                    <Setter Property="Source">
-                        <Setter.Value>
-                            <svg:SvgImage Source="/Assets/arrow_orange.svg" />
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-                <Style Selector="Button:pressed Image#buttonImage">
-                    <Setter Property="Source">
-                        <Setter.Value>
-                            <svg:SvgImage Source="/Assets/arrow.svg" />
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-                <Style Selector="Button:pressed /template/ ContentPresenter">
-                    <Setter Property="Background" Value="#FF9133" />
-                </Style>
-            </Button.Styles>
-        </Button>
-    </Grid>
+
+  <Grid ColumnDefinitions="Auto,*,Auto">
+    <Button Grid.Column="0"
+            x:Name="attachButton"
+            Margin="0 0 5 0"
+          Command="{Binding AttachMenuCommand}" Classes="attachBtn Send-Btn">
+      <Image Name="AttachImage"
+             Width="20"
+             Height="20"/>
+    </Button>
+    <!--Текстовое поле ввода сообщения  -->
+    <TextBox
+      Name="InputMessageTB"
+      Classes="SendMessageText"
+      Grid.Column="1"
+      Text="{Binding MessageText}">
+      <TextBox.KeyBindings>
+        <KeyBinding Command="{Binding SendCommand}" Gesture="{Binding Path=KeySendMessage,Converter={StaticResource keyConverter}}" />
+      </TextBox.KeyBindings>
+    </TextBox>
+    <!--  Кнопка отправки сообщения  -->
+    <Button
+        x:Name="sendButton"
+        Grid.Column="2"
+        Classes="Send-Btn sendMsg"
+        Command="{Binding SendCommand}" >
+      <Image
+          Name="buttonImage"
+          Width="20"
+          Height="20"/>
+
+    </Button>
+  </Grid>
 </UserControl>

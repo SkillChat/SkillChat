@@ -1,0 +1,192 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+    xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
+    xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
+    mc:Ignorable="d"
+    MinWidth="360" 
+    MinHeight="530"
+    Background="#4C000000"
+    x:Class="SkillChat.Client.Views.AttachmentView">
+
+    <Border 
+        VerticalAlignment="Center"
+        HorizontalAlignment="Center"
+        Padding="10"
+        Background="{DynamicResource White}"
+        BorderThickness="1"
+        BorderBrush="{DynamicResource Orange_03}">
+    <Grid 
+        Width="300" 
+        VerticalAlignment="Stretch" 
+        HorizontalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+      <ListBox 
+          Items="{Binding Path=Attachments}" 
+          MaxHeight="700"
+          MaxWidth="300"
+          ScrollViewer.HorizontalScrollBarVisibility="Hidden"   
+          Grid.Row="0" 
+          BorderThickness="0">
+
+          <ListBox.ItemTemplate>
+              <DataTemplate DataType="viewModel:PrepareAttachmentViewModel">
+                <Border 
+                    Background="White"
+                    MaxWidth="280">
+                  <Grid ColumnDefinitions="Auto, Auto, Auto">
+                    <Image 
+                        Grid.Column="0" 
+                        Name="AttachImageView" 
+                        Margin="5" 
+                        Width="60" 
+                        Height="70">
+                        <Image.Source>
+                            <svg:SvgImage Source="/Assets/file.svg" />
+                        </Image.Source>
+                    </Image>
+                    <Grid 
+                        Grid.Column="1" 
+                        RowDefinitions="*, Auto"
+                        ColumnDefinitions="*, Auto"
+                        Margin="5">
+                      <TextBlock
+                            FontSize="15"
+                            VerticalAlignment="Center"
+                            TextAlignment="Left"
+                            Grid.Row="0" 
+                            Text="{Binding FileName}"/>
+                      <StackPanel 
+                            Orientation="Horizontal" 
+                            Grid.Row="1"
+                            Grid.Column="0">
+                          <Grid
+                              RowDefinitions="*, Auto"
+                              ColumnDefinitions="Auto, Auto, Auto">
+                              <TextBlock
+                                  Grid.Row="0"
+                                  Grid.Column="0"
+                                  FontSize="12"
+                                  Foreground="#828282"
+                                  Margin="0 0 2 0"
+                                  TextWrapping="Wrap"
+                                  Text="{Binding Extensions}"/>
+                              <TextBlock
+                                  Grid.Row="0"
+                                  Grid.Column="1"
+                                  FontSize="12"
+                                  Foreground="#828282"
+                                  Text="/"/>
+                              <TextBlock
+                                  Grid.Row="0"
+                                  Grid.Column="2"
+                                  Margin="0 0 2 0"
+                                  FontSize="12"
+                                  Foreground="#828282"
+                                  Width="150"
+                                  Text="{Binding SizeName}"/>
+                          </Grid>
+                        </StackPanel>
+                    </Grid>
+                    <!--
+                      <Button
+                          x:Name="RemoveAttacment"
+                          Grid.Column="2"
+                          Width="20"
+                          Height="20"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          Margin="0 0 10 0"
+                          VerticalAlignment="Bottom"
+                          HorizontalAlignment="Center"
+                          Cursor="Hand"
+                          >
+                        <Image
+                            Width="16"
+                            Height="16">
+                            <Image.Source>
+                                <svg:SvgImage Source="/Assets/remove-file.svg" />
+                            </Image.Source>
+                        </Image>
+                      </Button>
+                      -->
+                  </Grid>
+                </Border>
+              </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+      <Button
+          x:Name="CloseAttachList"
+          Grid.Row="0"
+          Width="20"
+          Height="20"
+          Padding="0"
+          BorderThickness="0"
+          Background="Transparent"
+          VerticalAlignment="Top"
+          HorizontalAlignment="Right"
+          Cursor="Hand"
+          Command="{Binding Path=Close}">
+        <Image
+            Width="16"
+            Height="16">
+          <Image.Source>
+            <svg:SvgImage Source="/Assets/close.svg" />
+          </Image.Source>
+        </Image>
+      </Button>
+        <Border 
+            Grid.Row="1"
+            BorderThickness="0 1 0 0"
+            BorderBrush="{DynamicResource Orange_03}">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <TextBox
+                  BorderThickness="0"
+                  Padding="7 10"
+                  FontSize="14"
+                  x:Name="message"
+                  AcceptsReturn="True"
+                  Grid.Column="0"
+                  Watermark="Сообщение"
+                  Text="{Binding MessageText}">
+            <TextBox.KeyBindings>
+              <KeyBinding Command="{Binding SendMessage}" Gesture="Enter"  />
+            </TextBox.KeyBindings>
+          </TextBox>
+          <!--  Кнопка отправки сообщения  -->
+          <Button
+              x:Name="sendAttachButton"
+              Grid.Column="1"
+              Background="{DynamicResource White}"
+              BorderThickness="0"
+              Width="30"
+              Height="30"
+              Padding="0"
+              Cursor="Hand"
+              Command="{Binding SendMessage}"
+              CommandParameter="">
+              <Image
+                  Width="20"
+                  Height="20">
+                  <Image.Source>
+                      <svg:SvgImage Source="/Assets/arrow_orange.svg" />
+                  </Image.Source>
+              </Image>
+          </Button>
+        </Grid>
+      </Border>
+    </Grid>
+  </Border>
+</UserControl>

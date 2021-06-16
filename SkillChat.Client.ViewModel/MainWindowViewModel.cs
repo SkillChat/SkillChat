@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
 using PropertyChanged;
 using ReactiveUI;
@@ -7,10 +7,12 @@ using SignalR.EasyUse.Client;
 using SkillChat.Interface;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
+using SkillChat.Server.ServiceModel.Molds.Attachment;
 using Splat;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reactive;
@@ -28,6 +30,7 @@ namespace SkillChat.Client.ViewModel
 
         public MainWindowViewModel()
         {
+            Locator.CurrentMutable.RegisterConstant(this);
             User = new CurrentUserViewModel();
             Locator.CurrentMutable.RegisterConstant<ICurrentUser>(User);
             configuration = Locator.Current.GetService<IConfiguration>();
@@ -43,11 +46,18 @@ namespace SkillChat.Client.ViewModel
                 settings.HostUrl = "http://localhost:5000";
             }
 
+            if (settings.AttachmentDefaultPath.IsNullOrEmpty())
+            {
+                settings.AttachmentDefaultPath = "\\Download";
+            }
+
             serviceClient = new JsonServiceClient(settings.HostUrl);
 
             ProfileViewModel = new ProfileViewModel(serviceClient);
             Locator.CurrentMutable.RegisterConstant<IProfile>(ProfileViewModel);
             ProfileViewModel.IsOpenProfileEvent += () => WindowStates(WindowState.OpenProfile);
+
+            AttachmentViewModel = new SendAttachmentsViewModel(serviceClient);
 
             SettingsViewModel = new SettingsViewModel(serviceClient);
             SettingsViewModel.OpenSettingsActiveEvent += (e) => { WindowStates(WindowState.WindowSettings); };
@@ -76,6 +86,7 @@ namespace SkillChat.Client.ViewModel
 
                     _hub = _connection.CreateHub<IChatHub>();
                     ProfileViewModel.SetChatHub(_hub);
+                    AttachmentViewModel.SetChatHub(_hub);
 
                     if (Tokens == null || Tokens.AccessToken.IsNullOrEmpty())
                     {
@@ -156,15 +167,43 @@ namespace SkillChat.Client.ViewModel
                     _connection.Subscribe<ReceiveMessage>(async data =>
                     {
                         var isMyMessage = User.Id == data.UserId;
-                        var newMessage = isMyMessage
-                            ? (MessageViewModel)new MyMessageViewModel()
-                            : new UserMessageViewModel();
+                        var hasAttachments = data.Attachments != null && data.Attachments.Count > 0;
+
+                        MessageViewModel newMessage;
+
+                        if (isMyMessage)
+                        {
+                            newMessage = hasAttachments ? new MyAttachmentViewModel() : new MyMessageViewModel();
+                        }
+                        else
+                        {
+                            newMessage = hasAttachments ? new UserAttachmentViewModel() : new UserMessageViewModel();
+                        }
+
                         newMessage.Id = data.Id;
                         newMessage.Text = data.Message;
                         newMessage.PostTime = data.PostTime;
                         newMessage.UserNickname = data.UserNickname??data.UserLogin;
                         newMessage.UserId = data.UserId;
+                        
+                        newMessage.Attachments = data.Attachments?
+                            .Select(s =>
+                            {
+                                var attah = new AttachmentMold
+                                {
+                                    Id = s.Id,
+                                    FileName = s.FileName,
+                                    SenderId = s.SenderId,
+                                    Size = s.Size,
+                                    UploadDateTime = s.UploadDateTime,
+                                    Hash = s.Hash
+                                };
+
+                                return new AttachmentMessageViewModel(attah);
+                            }).ToList();
+
                         var container = Messages.LastOrDefault();
+                       
                         if (isMyMessage)
                         {
                             if (!(container is MyMessagesContainerViewModel))
@@ -232,7 +271,7 @@ namespace SkillChat.Client.ViewModel
                 {
                     try
                     {
-                        await _hub.SendMessage(MessageText, ChatId);
+                        await _hub.SendMessage(new HubMessage(ChatId, MessageText));
                         MessageText = null;
                     }
                     catch (Exception ex)
@@ -248,25 +287,36 @@ namespace SkillChat.Client.ViewModel
                 try
                 {
                     var first = Messages.FirstOrDefault()?.Messages.FirstOrDefault();
-                    var request = new GetMessages()
-                    {
-                        ChatId = ChatId
-                    };
+                    var request = new GetMessages {ChatId = ChatId, BeforePostTime = first?.PostTime};
+                    
                     // Логика выбора сообщений по id чата
-                    request.BeforePostTime = first?.PostTime;
                     var result = await serviceClient.GetAsync(request);
                     foreach (var item in result.Messages)
                     {
                         var isMyMessage = User.Id == item.UserId;
-                        var newMessage = isMyMessage
-                            ? (MessageViewModel)new MyMessageViewModel()
-                            : new UserMessageViewModel();
+                        var hasAttachments = item.Attachments != null && item.Attachments.Count > 0;
+
+                        MessageViewModel newMessage;
+
+                        if (isMyMessage)
+                        {
+                            newMessage = hasAttachments ? new MyAttachmentViewModel() : new MyMessageViewModel();
+                        }
+                        else
+                        {
+                            newMessage = hasAttachments ? new UserAttachmentViewModel() : new UserMessageViewModel();
+                        }
+
                         newMessage.Id = item.Id;
                         newMessage.Text = item.Text;
                         newMessage.PostTime = item.PostTime;
                         newMessage.UserNickname = item.UserNickName;
                         newMessage.UserId = item.UserId;
+
+                        newMessage.Attachments = item.Attachments?.Select(s => new AttachmentMessageViewModel(s)).ToList();
+
                         var container = Messages.FirstOrDefault();
+                       
                         if (isMyMessage)
                         {
                             if (!(container is MyMessagesContainerViewModel))
@@ -435,6 +485,18 @@ namespace SkillChat.Client.ViewModel
 
         public bool IsSignedIn { get; set; }
 
+
+        public bool AttachMenuVisible { get; set; }
+
+        public void AttachFileClick()
+        {
+            AttachMenuVisible = false;
+        }
+        
+        public void AttachMenuCommand()
+        {
+            AttachMenuVisible = !AttachMenuVisible;
+        }
         public ObservableCollection<IMessagesContainerViewModel> Messages { get; set; }
 
         public TokenResult Tokens { get; set; }
@@ -461,6 +523,7 @@ namespace SkillChat.Client.ViewModel
         public static ReactiveCommand<object, Unit> PointerPressedCommand { get; set; }
 
         public ProfileViewModel ProfileViewModel { get; set; }
+        public SendAttachmentsViewModel AttachmentViewModel { get; set; }
 
         public bool IsShowingLoginPage { get; set; }
         public bool IsShowingRegisterPage { get; set; }
@@ -549,6 +612,70 @@ namespace SkillChat.Client.ViewModel
                 SettingsActive = true;
                 GridWidth = null;
                 TextHeaderMenuInSettings = "Сообщения и чаты";
+            }
+        }
+
+        public async Task OpenFileBrowserMenu()
+        {
+            var canOpenFileDialog = Locator.Current.GetService<ICanOpenFileDialog>();
+            var attachmentsPatch = await canOpenFileDialog.Open();
+            await AttachmentViewModel.Open(attachmentsPatch);
+
+            AttachMenuVisible = false;
+        }
+
+        public void OpenAttachment(string fileName)
+        {
+            var path = Path.Combine(settings?.AttachmentDefaultPath, fileName);
+            Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
+        }
+
+        public bool IsExistAttachment(AttachmentMold data) 
+        {        
+            var fileInfo = new FileInfo(Path.Combine(settings?.AttachmentDefaultPath, data.FileName));
+            return fileInfo.Exists && fileInfo.Length == data.Size;
+        }
+
+        public async Task<bool> DownloadAttachment(AttachmentMold data)
+        {
+            try
+            {
+                //Тут надо убрать префикс получаемого файла
+                var pref = "attachment/";
+                var attachment = await serviceClient.GetAsync(new GetAttachment { Id = data.Id.Replace(pref, string.Empty) });     
+                if (attachment == null) return false;
+
+                var savePath = Path.Combine(settings?.AttachmentDefaultPath, data.FileName);
+                var saveFileInfo = new FileInfo(savePath);
+                if (!saveFileInfo.Directory.Exists)
+                {
+                    saveFileInfo.Directory.Create();                    
+                }
+
+                if (!string.IsNullOrEmpty(savePath))
+                {
+                    await using (var fileStream = File.Create(savePath, (int)attachment.Length))
+                    {
+                        const int bufferSize = 4194304; 
+                        var buffer = new byte[bufferSize];
+                        attachment.Seek(0, SeekOrigin.Begin);
+
+                        while (attachment.Position < attachment.Length)
+                        {
+                            var read = await attachment.ReadAsync(buffer, 0, bufferSize);
+                            await fileStream.WriteAsync(buffer, 0, read);
+                        }
+
+                        await fileStream.FlushAsync();
+                    }               
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                //TODO вывести ошибку в будущем
+                return false;
             }
         }
     }
