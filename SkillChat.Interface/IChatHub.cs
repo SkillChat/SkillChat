@@ -1,4 +1,5 @@
 ﻿using SignalR.EasyUse.Interface;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SkillChat.Interface
@@ -8,5 +9,6 @@ namespace SkillChat.Interface
         Task SendMessage(HubMessage hubMessage);
         Task UpdateMyDisplayName(string userDispalyName);
         Task Login(string token, string operatingSystem, string ipAddress, string nameVersionClient);
+        Task SendStatuses(List<MessageStatus> statuses);
     }
 }

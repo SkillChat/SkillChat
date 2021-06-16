@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using Serilog;
 using ServiceStack;
@@ -8,6 +10,7 @@ using SignalR.EasyUse.Server;
 using SkillChat.Interface;
 using SkillChat.Server.Domain;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -101,6 +104,8 @@ namespace SkillChat.Server.Hubs
                     }
                 }
 
+                await Groups.AddToGroupAsync(this.Context.ConnectionId, logOn.Id);
+
                 await Clients.Caller.SendAsync(logOn);
                 var userLoginAudit = await _ravenSession.LoadAsync<LoginAudit>(jwtPayload["sub"] + "/LoginAudit");
                 if (userLoginAudit != null)
@@ -141,6 +146,64 @@ namespace SkillChat.Server.Hubs
                 });
                 Log.Warning($"Bad token from connection {Context.ConnectionId}");
             }
+        }
+
+        /// <summary>Получение листа статусов сообщений и рассылка отправителям сообдений об их статусах</summary>
+        /// <param name="statuses">Лист статусов сообщеий</param>
+        public async Task SendStatuses(List<MessageStatus> statuses)
+        {
+            try
+            {
+                Log.Information($"{statuses.Count} statuses were received from users id = {Context.Items["uid"]}");
+                var uid = Context.Items["uid"] as string;
+                //Загружаем все статусы этого юзера
+                var statusItems = _ravenSession
+                    .Query<MessageStatusDomain>()
+                    .Include(m => m.MessageId)
+                    .Where(s => s.UserId == uid);
+                bool SendStatus = false;
+                foreach (var status in statuses)
+                {
+                    var statusItem = await statusItems.FirstOrDefaultAsync(s => s.MessageId == status.MessageId);
+                    var statusedMessage = await _ravenSession.LoadAsync<Message>(status.MessageId);
+                    if (statusItem == null)
+                    {
+                        statusItem = new MessageStatusDomain()
+                        {
+                            UserId = uid,
+                            MessageId = status.MessageId,
+                            ReadDate = status?.ReadDate,
+                            ReceivedDate = status?.ReceivedDate,
+                        };
+                        await _ravenSession.StoreAsync(statusItem);
+                    }
+                    if (!statusedMessage.IsReceived && status.ReceivedDate != null)
+                    {
+                        statusedMessage.IsReceived = SendStatus = true;
+                    }
+                    if(!statusedMessage.IsRead && status.ReadDate != null)
+                    {
+                        statusedMessage.IsRead = SendStatus = true;
+                    }
+                    if (SendStatus)
+                    {
+                        SendStatusToUser(status, statusedMessage.UserId);
+                    }
+                    await _ravenSession.SaveChangesAsync();
+                    Log.Information("New statuses saved in database");
+                }
+            }
+            catch(Exception ex)
+            {
+                Log.Error($"Receiving statuses error - \"{ex.Message}\"");
+            }
+        }
+
+        private async Task SendStatusToUser(MessageStatus status, string userId)
+        {
+            //await Clients.Client(userId).SendAsync(status);
+            await Clients.Group(userId).SendAsync(status);
+            Log.Information($"The status of message \"{status.MessageId}\" sended to user {userId}");
         }
     }
 }

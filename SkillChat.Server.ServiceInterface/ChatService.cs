@@ -22,7 +22,10 @@ namespace SkillChat.Server.ServiceInterface
         [Authenticate]
         public async Task<MessagePage> Get(GetMessages request)
         {
+            var session = Request.ThrowIfUnauthorized();
+            var uid = session.UserAuthId;
             var messages = RavenSession.Query<Message>().Where(e => e.ChatId == request.ChatId).OrderByDescending(x => x.PostTime);
+            var statuses = RavenSession.Query<MessageStatusDomain>();   
             var result = new MessagePage();
             if (request.BeforePostTime != null)
             {
@@ -35,7 +38,6 @@ namespace SkillChat.Server.ServiceInterface
                     .Include(x => x.UserId)
                     .Include(s => s.Attachments)
                     .ToListAsync();
-
             result.Messages = new List<MessageMold>();
             foreach (var doc in docs)
             {
@@ -61,6 +63,25 @@ namespace SkillChat.Server.ServiceInterface
                 {
                     message.UserNickName = string.IsNullOrWhiteSpace(user.DisplayName) ? user.Login : user.DisplayName;
                 }
+
+                var isMy = doc.UserId == uid ? true : false;
+                var status = await statuses
+                    .FirstOrDefaultAsync(m => m.MessageId == message.Id && m.UserId == uid);
+
+                if (isMy)
+                {
+                    message.Read = doc.IsRead;
+                    message.Received = doc.IsReceived;
+                }
+                else
+                {
+                    if (status != null)
+                    {
+                        message.Read = status.ReadDate != null;
+                        message.Received = status.ReceivedDate != null;
+                    }
+                }
+
                 result.Messages.Add(message);
             }
             return result;

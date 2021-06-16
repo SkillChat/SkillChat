@@ -5,6 +5,7 @@ using System.IO;
 using System.Reactive;
 using PropertyChanged;
 using ReactiveUI;
+using SkillChat.Interface;
 using SkillChat.Interface.Extensions;
 using SkillChat.Server.ServiceModel.Molds;
 using SkillChat.Server.ServiceModel.Molds.Attachment;
@@ -30,7 +31,61 @@ namespace SkillChat.Client.ViewModel
     }
 
     [AddINotifyPropertyChangedInterface]
-    public class MyMessageViewModel : MessageViewModel { }
+    public class MyMessageViewModel : MessageViewModel
+    {
+        public MyMessageViewModel() : base()
+        {
+            this.WhenAnyValue(s => s.IsSended).Subscribe(r =>
+            {
+                SetStatus();
+            });
+            this.WhenAnyValue(s => s.IsReceived).Subscribe(r =>
+            {
+                SetStatus();
+            });
+            this.WhenAnyValue(s => s.IsRead).Subscribe(r =>
+            {
+                SetStatus();
+            });
+        }
+
+        /// <summary>Отправлено ли на сервер</summary>
+        public bool IsSended { get; set; } = false;
+
+        /// <summary>Получено ли</summary>
+        public bool IsReceived { get; set; } = false;
+
+        /// <summary>Прочитано ли</summary>
+        public bool IsRead { get; set; } = false;
+
+        public void ApplyStatus(MessageStatus status)
+        {
+            if (status.ReceivedDate != null && !IsReceived)
+            {
+                IsReceived = true;
+            }
+            if (status.ReadDate != null && !IsRead)
+            {
+                IsRead = true;
+            }
+        }
+
+        public void SetStatus()
+        {
+            if (IsRead) Status = Statuses.Read;
+            else if (IsReceived) Status = Statuses.Received;
+            else if (IsSended) Status = Statuses.Sended;
+        }
+
+        public Statuses Status { get; set; }
+
+        public enum Statuses
+        {
+            Sended,
+            Received,
+            Read
+        }
+    }
 
     [AddINotifyPropertyChangedInterface]
     public class MyAttachmentViewModel : MessageViewModel
@@ -48,9 +103,37 @@ namespace SkillChat.Client.ViewModel
                 await profileViewModel.Open(userId);
             });
         }
-
+        
         public UserProfileMold ProfileMold { get; set; }
         public  ReactiveCommand<string, Unit> UserProfileInfoCommand { get; set; }
+
+        /// <summary>Получено ли</summary>
+        public bool Received { get; private set; } = false;
+
+        /// <summary>Прочитано ли</summary>
+        public bool Read { get; private set; } = false;
+
+        public void SetReceived()
+        {
+            if (!Received)
+            {
+                Received = true;
+                ReceiveAction?.Invoke(this);
+            }
+        }
+        public void SetRead()
+        {
+            if (!Read)
+            {
+                Read = true;
+                ReadAction?.Invoke(this);
+            }
+        }
+
+        /// <summary>Возникает при изменении статуса о получении</summary>
+        public Action<UserMessageViewModel> ReceiveAction;
+        /// <summary>Возникает при измененении статуса о прочтении</summary>
+        public Action<UserMessageViewModel> ReadAction;
     }
 
     [AddINotifyPropertyChangedInterface]
