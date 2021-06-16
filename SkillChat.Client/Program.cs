@@ -1,4 +1,5 @@
-﻿using Avalonia;
+﻿using AutoMapper;
+using Avalonia;
 using Avalonia.ReactiveUI;
 using Microsoft.Extensions.Configuration;
 using SkillChat.Client.Utils;
@@ -27,6 +28,9 @@ namespace SkillChat.Client
             Locator.CurrentMutable.RegisterConstant(configuration, typeof(IConfiguration));
             Locator.CurrentMutable.Register<INotify>(() => new NotifyWindow());
             Locator.CurrentMutable.Register<ICanOpenFileDialog>(() => new CanOpenFileDialog());
+
+            var mapper = AppModelMapping.ConfigureMapping();
+            Locator.CurrentMutable.Register<IMapper>(() => mapper);
 
             //Запуск авалонии
             BuildAvaloniaApp()

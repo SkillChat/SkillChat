@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -22,6 +23,7 @@ namespace SkillChat.Client.ViewModel
         private string MessageText { get; set; }
         private readonly IJsonServiceClient _serviceClient;
         private IChatHub _hub;
+        private IMapper _mapper;
 
         public SendAttachmentsViewModel(IJsonServiceClient serviceClient)
         {
@@ -29,6 +31,7 @@ namespace SkillChat.Client.ViewModel
             MessageText = string.Empty;
 
             _serviceClient = serviceClient;
+            _mapper = Locator.Current.GetService<IMapper>();
         }
 
         public void SetChatHub(IChatHub chatHub) => _hub = chatHub;
@@ -52,19 +55,11 @@ namespace SkillChat.Client.ViewModel
 
             if (uploadedAttachment != null && uploadedAttachment.Count > 0)
             {
+              
                 var chatId = GetChatId();
                 var attachmentDisplayMold =
                     uploadedAttachment
-                        .Select(s => new AttachmentHubMold
-                        {
-                            Id = s.Id,
-                            FileName = s.FileName,
-                            SenderId = s.SenderId,
-                            Size = s.Size,
-                            UploadDateTime = s.UploadDateTime,
-                            Hash = s.Hash
-                        })
-                        .ToList();
+                        .Select(s => _mapper.Map<AttachmentHubMold>(s)).ToList();
 
                 await _hub.SendMessage(new HubMessage(chatId, MessageText, attachmentDisplayMold));
 
