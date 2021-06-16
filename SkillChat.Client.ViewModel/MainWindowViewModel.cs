@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
 using PropertyChanged;
@@ -35,6 +36,8 @@ namespace SkillChat.Client.ViewModel
             Locator.CurrentMutable.RegisterConstant<ICurrentUser>(User);
             configuration = Locator.Current.GetService<IConfiguration>();
             settings = configuration?.GetSection("ChatClientSettings")?.Get<ChatClientSettings>();
+
+            var mapper = Locator.Current.GetService<IMapper>();
 
             if (settings == null)
             {
@@ -188,17 +191,8 @@ namespace SkillChat.Client.ViewModel
                         
                         newMessage.Attachments = data.Attachments?
                             .Select(s =>
-                            {
-                                var attah = new AttachmentMold
-                                {
-                                    Id = s.Id,
-                                    FileName = s.FileName,
-                                    SenderId = s.SenderId,
-                                    Size = s.Size,
-                                    UploadDateTime = s.UploadDateTime,
-                                    Hash = s.Hash
-                                };
-
+                            { 
+                                var attah = mapper?.Map<AttachmentMold>(s);
                                 return new AttachmentMessageViewModel(attah);
                             }).ToList();
 
