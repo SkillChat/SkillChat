@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Reactive;
-using System.Windows.Input;
 using PropertyChanged;
 using ReactiveUI;
 using ServiceStack;
@@ -15,7 +14,7 @@ namespace SkillChat.Client.ViewModel
     {
         ObservableCollection<MessageViewModel> Messages { get;set; }
     }
-  
+
     [AddINotifyPropertyChangedInterface]
     public class MyMessagesContainerViewModel:IMessagesContainerViewModel
     {
@@ -42,7 +41,7 @@ namespace SkillChat.Client.ViewModel
                 await profileViewModel.Open(userId);
             });
 
-            ReplyCommand = Locator.Current.GetService<MainWindowViewModel>().ReplyCommand;
+          //  ReplyCommand = Locator.Current.GetService<MainWindowViewModel>().ReplyCommand;
         }
 
         public UserProfileMold ProfileMold { get; set; }
@@ -67,8 +66,6 @@ namespace SkillChat.Client.ViewModel
                 }
             });
         }
-
-        public ReactiveCommand<Unit, Unit> ReplyCommand { get; set; }
 
         public string Id { get; set; }
 

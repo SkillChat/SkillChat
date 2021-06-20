@@ -244,7 +244,7 @@ namespace SkillChat.Client.ViewModel
                 this.WhenAnyValue(m => m.IsConnected, m => m.MessageText,
                     (b, m) => b == true && !string.IsNullOrEmpty(m)));
 
-            ReplyCommand = ReactiveCommand.Create(ReplyParametr);
+            //ReplyCommand = ReactiveCommand.Create(ReplyParametr);
 
             //ReplyCommand = ReactiveCommand.CreateFromTask(async () =>
             //{
