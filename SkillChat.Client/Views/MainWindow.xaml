@@ -274,13 +274,11 @@
 											Width="500"
 											>
 											<Grid.ContextMenu>
-												<ContextMenu DataContext= "mainWindow">
-													<Button Content="Цитировать"
-															DataContext= "mainWindow"
-															Command="{Binding ReplyCommand}"/>
+												<ContextMenu>
 													<MenuItem
 														Header="Цитировать"
-														Command="{Binding ReplyCommand}"/>
+														Command="{Binding ReplyCommand}"
+												/>
 												</ContextMenu>
 											</Grid.ContextMenu>
                                         <StackPanel Margin="0,0,0,3" HorizontalAlignment="Left">

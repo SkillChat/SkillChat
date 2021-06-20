@@ -19,7 +19,6 @@ namespace SkillChat.Client.Views
 #if DEBUG
             this.AttachDevTools();
 #endif
-            var mainWindow = Locator.Current.GetService<MainWindowViewModel>();
         }
         /// <summary>
         /// при изменение прокрутки проверят прокрученно ли до конца и сохраняет во ViewModel

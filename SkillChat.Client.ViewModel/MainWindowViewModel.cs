@@ -28,6 +28,7 @@ namespace SkillChat.Client.ViewModel
 
         public MainWindowViewModel()
         {
+            Locator.CurrentMutable.RegisterConstant<MainWindowViewModel>(this);
             User = new CurrentUserViewModel();
             Locator.CurrentMutable.RegisterConstant<ICurrentUser>(User);
             configuration = Locator.Current.GetService<IConfiguration>();
@@ -243,18 +244,20 @@ namespace SkillChat.Client.ViewModel
                 this.WhenAnyValue(m => m.IsConnected, m => m.MessageText,
                     (b, m) => b == true && !string.IsNullOrEmpty(m)));
 
-            ReplyCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                try
-                {
-                    await _hub.SendMessage("+++", "54e623e3-98b8-44fe-888c-2b102874ae4e");
-                    MessageText = null;
-                }
-                catch (Exception ex)
-                {
-                    SignOutCommand.Execute(null);
-                }
-            });
+            ReplyCommand = ReactiveCommand.Create(ReplyParametr);
+
+            //ReplyCommand = ReactiveCommand.CreateFromTask(async () =>
+            //{
+            //   try
+            //   {
+            //       await _hub.SendMessage(ReplyMessageText + "\n-------\n" + "rrrrrrrr", ChatId);
+            //       MessageText = null;
+            //   }
+            //   catch (Exception ex)
+            //   {
+            //       SignOutCommand.Execute(null);
+            //   }
+            //});
 
             LoadMessageHistoryCommand = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -464,7 +467,25 @@ namespace SkillChat.Client.ViewModel
 
         public ICommand SendCommand { get; }
 
-        public ICommand ReplyCommand { get; }
+        public ReactiveCommand<object, Unit> ReplyCommand { get; set; }
+
+        private async void ReplyParametr()
+        {
+            try
+            {
+                //ReplyMessageText = text;
+                await _hub.SendMessage(ReplyMessageText + "\n-------\n" + "rrrrrrrr", ChatId);
+                MessageText = null;
+            }
+            catch (Exception ex)
+            {
+                SignOutCommand.Execute(null);
+            }
+        }
+
+        public string ReplyNickname { get; set; }
+
+        public string ReplyMessageText { get; set; }
 
         public bool KeySendMessage { get; set; }
 
