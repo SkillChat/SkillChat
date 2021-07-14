@@ -49,6 +49,17 @@ namespace SkillChat.Server
                 var environment = serviceProvider.GetRequiredService<IHostEnvironment>();
                 var serverOptions = configuration.GetSection("RavenDb:ServerOptions").Get<ServerOptions>();
 
+                //Ищем подходящую версию DotNet для запуска процесса RavenDB
+                try
+                {
+                    serverOptions.FrameworkVersion = serviceProvider.GetRequiredService<DotNetVersionHelper>()
+                        .GetNearestDotNetVersion(serverOptions.FrameworkVersion);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+
                 //Получаем путь запуска приложения, так как RavenDB в Embeddeed режиме запускается через командную строку
                 //Следовательно при упаковке в единый файл, данные будут лежать в папке Temp
                 //Чтобы этого избежать используем исправления ниже
