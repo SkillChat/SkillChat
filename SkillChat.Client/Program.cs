@@ -4,6 +4,7 @@ using Avalonia.ReactiveUI;
 using Microsoft.Extensions.Configuration;
 using SkillChat.Client.Utils;
 using SkillChat.Client.ViewModel;
+using SkillChat.Client.ViewModel.Interfaces;
 using SkillChat.Client.Views;
 using SkillChat.Interface;
 using Splat;

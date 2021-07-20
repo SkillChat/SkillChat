@@ -9,6 +9,7 @@ using Raven.Client.Documents.Session;
 using ServiceStack;
 using ServiceStack.Auth;
 using SkillChat.Server.Domain;
+using SkillChat.Server.Domain.MessStatus;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
 
@@ -50,7 +51,7 @@ namespace SkillChat.Server.ServiceInterface
                 defaultChat.Members = new List<ChatMember>();
             }
 
-            defaultChat.Members.Add(new ChatMember() {UserId = user.Id, UserRole = ChatMemberRole.Participient});
+            defaultChat.Members.Add(new ChatMember() {UserId = user.Id, UserRole = ChatMemberRole.Participient, MessageStatus = new MessageStatus()});
             await RavenSession.SaveChangesAsync();
         }
 

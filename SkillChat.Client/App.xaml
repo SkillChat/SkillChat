@@ -3,7 +3,8 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
-    xmlns:local="clr-namespace:SkillChat.Client">
+    xmlns:local="clr-namespace:SkillChat.Client" >
+  
     <Application.DataTemplates>
         <local:ViewLocator />
     </Application.DataTemplates>
@@ -22,4 +23,13 @@
             <Setter Property="FontFamily" Value="Open Sans" />
         </Style>
     </Application.Styles>
+
+    <Application.Resources>
+      <ResourceDictionary>
+        <svg:SvgImage x:Key="ReadMessageMark" Source="/Assets/Images/MessageStatus/ReadMessageMark.svg" />
+        <svg:SvgImage x:Key="ReceivedMessageMark" Source="/Assets/Images/MessageStatus/ReceivedMessageMark.svg" />
+        <svg:SvgImage x:Key="SendedMessageMark" Source="/Assets/Images/MessageStatus/SendedMessageMark.svg" />
+      </ResourceDictionary>
+    </Application.Resources>
+  
 </Application>

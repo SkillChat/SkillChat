@@ -1,19 +1,30 @@
 ﻿using System;
+using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
+using SkillChat.Client.Utils;
 using SkillChat.Client.ViewModel;
 namespace SkillChat.Client.Views
 {
     public class MainWindow : Window, IHaveWidth, IHaveIsActive
     {
+        private MessageStatusesSetter statusSetter;
+        private ItemsControl messagesList;
         public MainWindow()
         {
             InitializeComponent();
 			MessagesScroller = this.Get<ScrollViewer>("MessagesSV");
+            messagesList = this.Get<ItemsControl>("MessagesList");
             MessagesScroller.ScrollChanged += MessagesScroller_ScrollChanged; 
             this.DataContextChanged += SetDataContextMethod;
+            Observable.FromEventPattern<ScrollChangedEventArgs>(
+                    handler => MessagesScroller.ScrollChanged += handler,
+                    handler => MessagesScroller.ScrollChanged -= handler)
+                .Throttle(TimeSpan.FromMilliseconds(500))
+                .Subscribe(async _ => await Dispatcher.UIThread.InvokeAsync(() => statusSetter.SetRead(MessagesScroller, messagesList)));
 #if DEBUG
             this.AttachDevTools();
 #endif
@@ -48,9 +59,10 @@ namespace SkillChat.Client.Views
         private void SetDataContextMethod(object sender, EventArgs e)
 		{
 			if (this.DataContext is MainWindowViewModel vm)
-			{
+            {
                 vm.MessageReceived += x => MessagesScroller.PropertyChanged += ScrollMethod;
-			}
+                statusSetter ??= new MessageStatusesSetter(this);
+            }
 		}
 
         /// <summary>При изменении размеров ScrollView скролит его вниз если разешено</summary>

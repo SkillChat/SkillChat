@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -11,6 +12,7 @@ using SkillChat.Server.ServiceModel.Molds.Chats;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Sparrow.Logging;
 
 namespace SkillChat.Server.ServiceInterface
 {
@@ -22,7 +24,11 @@ namespace SkillChat.Server.ServiceInterface
         [Authenticate]
         public async Task<MessagePage> Get(GetMessages request)
         {
+            var session = Request.ThrowIfUnauthorized();
+            var uid = session.UserAuthId;
+
             var messages = RavenSession.Query<Message>().Where(e => e.ChatId == request.ChatId).OrderByDescending(x => x.PostTime);
+
             var result = new MessagePage();
             if (request.BeforePostTime != null)
             {
@@ -36,6 +42,17 @@ namespace SkillChat.Server.ServiceInterface
                     .Include(s => s.Attachments)
                     .ToListAsync();
 
+            var chat = await RavenSession.LoadAsync<Chat>(request.ChatId);
+            result.ChatMessageStatus = Mapper.Map<MessageStatusMold>(chat.MessageStatus);
+            try
+            {
+                var member = chat.Members.FirstOrDefault(m => m.UserId == uid);
+                result.MemberMessageStatus = Mapper.Map<MessageStatusMold>(member?.MessageStatus);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ошибка во время получения чат мембера!!!\n" + ex.Message);
+            }
             result.Messages = new List<MessageMold>();
             foreach (var doc in docs)
             {

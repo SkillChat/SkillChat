@@ -21,14 +21,21 @@ using System.Reactive;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using SkillChat.Client.ViewModel.Interfaces;
+using SkillChat.Client.ViewModel.Models;
+using SkillChat.Client.ViewModel.Services;
 
 namespace SkillChat.Client.ViewModel
 {
     [AddINotifyPropertyChangedInterface]
     public class MainWindowViewModel
     {
-        IConfiguration configuration;
-        ChatClientSettings settings;
+        private IConfiguration configuration;
+        private ChatClientSettings settings;
+        
+        //NeedHelp Правильно ли расшаривать сервис и юзать его потом во вью слое? 
+        //Может быть нужно было какие то поля создать и привязать их к полям сервиса?
+        public IMessageStatusService StatusService;
 
         public MainWindowViewModel()
         {
@@ -37,6 +44,7 @@ namespace SkillChat.Client.ViewModel
             Locator.CurrentMutable.RegisterConstant<ICurrentUser>(User);
             configuration = Locator.Current.GetService<IConfiguration>();
             settings = configuration?.GetSection("ChatClientSettings")?.Get<ChatClientSettings>();
+            StatusService = new MessageStatusService(this);
 
             var mapper = Locator.Current.GetService<IMapper>();
 
@@ -201,6 +209,7 @@ namespace SkillChat.Client.ViewModel
                             newMessage = hasAttachments ? new UserAttachmentViewModel() : new UserMessageViewModel();
                         }
 
+                        //TODO Заюзать автомаппер?
                         newMessage.Id = data.Id;
                         newMessage.Text = data.Message;
                         newMessage.PostTime = data.PostTime;
@@ -214,6 +223,17 @@ namespace SkillChat.Client.ViewModel
                                 return new AttachmentMessageViewModel(attah);
                             }).ToList();
 
+                        if (isMyMessage)
+                        {
+                            if (newMessage is MyMessageViewModel myMessage)
+                                StatusService.SetStatusToMyMessage(myMessage);
+                        }
+                        else
+                        {
+                            if (newMessage is UserMessageViewModel userMess)
+                                StatusService.SetIncomingMessageReсeivedStatus(userMess);
+                        }
+                        
                         var container = Messages.LastOrDefault();
                        
                         if (isMyMessage)
@@ -253,6 +273,9 @@ namespace SkillChat.Client.ViewModel
 
                         MessageReceived?.Invoke(new ReceivedMessageArgs(newMessage));
                     });
+
+                    _connection.Subscribe<ReceiveMessageStatus>(async data => 
+                        StatusService.ReceivedChatMessageStatus(mapper.Map<MessageStatusModel>(data)));
 
                     _connection.Closed += connectionOnClosed();
                     await _connection.StartAsync();
@@ -303,6 +326,9 @@ namespace SkillChat.Client.ViewModel
                     
                     // Логика выбора сообщений по id чата
                     var result = await serviceClient.GetAsync(request);
+                    
+                    StatusService.SetMyMessagesStatus(mapper.Map<MessageStatusModel>(result.ChatMessageStatus));
+                    
                     foreach (var item in result.Messages)
                     {
                         var isMyMessage = User.Id == item.UserId;
@@ -327,6 +353,16 @@ namespace SkillChat.Client.ViewModel
 
                         newMessage.Attachments = item.Attachments?.Select(s => new AttachmentMessageViewModel(s)).ToList();
 
+                        if (newMessage is MyMessageViewModel myMess)
+                        {
+                            StatusService.SetStatusToMyMessage(myMess);
+                        }
+                        
+                        if (newMessage is UserMessageViewModel userMess)
+                        {
+                            StatusService.SetIncomingMessageReсeivedStatus(userMess);
+                        }
+                        
                         var container = Messages.FirstOrDefault();
                        
                         if (isMyMessage)
@@ -358,14 +394,19 @@ namespace SkillChat.Client.ViewModel
                         container.Messages.Insert(0, newMessage);
 
                         var firstInBlock = container.Messages.First();
+                        //TODO Занунуть в уже готовый цикл. Зачем опять их прогонять в цикле???
                         foreach (var message in container.Messages)
                         {
                             message.ShowNickname = firstInBlock == message;
                         }
+                        
+                        StatusService.ReceivedChatMessageStatus(mapper.Map<MessageStatusModel>(result.ChatMessageStatus));
                     }
                 }
                 catch (Exception e)
                 {
+                    Debug.WriteLine($"{DateTimeOffset.Now : HH:m:s ffffff} -- Ошибка при загрузке пачки сообщений с сервера!" +
+                                    $"\n {e.Message}");
                 }
             });
 
@@ -690,6 +731,22 @@ namespace SkillChat.Client.ViewModel
                 return false;
             }
         }
+
+        #region MessageStatuses
+        public async Task SendStatuses(HubMessageStatus currentIncomingMessagesStatus)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(currentIncomingMessagesStatus.ChatId))
+                    currentIncomingMessagesStatus.ChatId = ChatId;
+                await _hub.SendUserMessageStatus(currentIncomingMessagesStatus);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Ошибка при отправке статуса пользоателя на сервер!\n" + ex.Message);
+            }
+        }
+        #endregion
     }
 
     /// <summary>Хранилище аргументов события MessageReceived</summary>

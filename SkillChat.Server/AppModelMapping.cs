@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration;
+using SkillChat.Interface;
 using SkillChat.Server.Domain;
+using SkillChat.Server.Domain.MessStatus;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
 using SkillChat.Server.ServiceModel.Molds.Attachment;
@@ -44,6 +46,12 @@ namespace SkillChat.Server
             cfg.CreateMap<Settings, UserChatSettings>();
             cfg.CreateMap<SetSettings, Settings>()
                 .ForMember(m => m.Id, e => e.Ignore());
+
+            cfg.CreateMap<MessageStatus, MessageStatusMold>();
+            //cfg.CreateMap<MessageStatusMold, MessageStatus>();
+            cfg.CreateMap<HubMessageStatus, MessageStatus>();
+            cfg.CreateMap<MessageStatus, ReceiveMessageStatus>()
+                .ForMember(m => m.ChatId, o => o.Ignore());
         }
     }
 }

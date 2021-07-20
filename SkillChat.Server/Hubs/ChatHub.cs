@@ -10,14 +10,18 @@ using SkillChat.Server.Domain;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using SkillChat.Server.Domain.MessStatus;
 
 namespace SkillChat.Server.Hubs
 {
     public class ChatHub : Hub, IChatHub
     {
-        public ChatHub(IAsyncDocumentSession ravenSession)
+        private IMapper mapper;
+        public ChatHub(IAsyncDocumentSession ravenSession, IMapper mapper)
         {
             _ravenSession = ravenSession;
+            this.mapper = mapper;
         }
 
         private string _loginedGroup = "Logined";
@@ -140,6 +144,39 @@ namespace SkillChat.Server.Hubs
                     Error = true
                 });
                 Log.Warning($"Bad token from connection {Context.ConnectionId}");
+            }
+        }
+
+        public async Task SendUserMessageStatus(HubMessageStatus messageStatus)
+        {
+            bool isChatStatusUpdate = false;
+            var uid = Context.Items["uid"] as string;
+            var chat = await _ravenSession.LoadAsync<Chat>(messageStatus.ChatId);
+            var newStatus = mapper.Map<MessageStatus>(messageStatus);
+            if (chat.MessageStatus == null)
+            {
+                chat.MessageStatus = newStatus;
+                isChatStatusUpdate = true;
+            }
+            else
+            {
+                isChatStatusUpdate = chat.MessageStatus.Update(newStatus);
+            }
+            var member = chat.Members.Find(m => m.UserId == uid);
+            if (member?.MessageStatus == null)
+            {
+                member.MessageStatus = newStatus;
+            }
+            else
+            {
+                member?.MessageStatus.Update(newStatus);
+            }
+            await _ravenSession.SaveChangesAsync();
+            if (isChatStatusUpdate)
+            {
+                var receiveStatus = mapper.Map<ReceiveMessageStatus>(chat.MessageStatus);
+                receiveStatus.ChatId = chat.Id;
+                await Clients.Group(_loginedGroup).SendAsync(receiveStatus);
             }
         }
     }
