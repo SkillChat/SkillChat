@@ -93,8 +93,17 @@ namespace SkillChat.Client.ViewModel
 
                     if (Tokens == null || Tokens.AccessToken.IsNullOrEmpty())
                     {
-                        Tokens = await serviceClient.PostAsync(new AuthViaPassword
-                        { Login = User.UserName, Password = User.Password });
+                        try
+                        {
+                            Tokens = await serviceClient.PostAsync(new AuthViaPassword
+                            { Login = User.UserName, Password = User.Password });
+                        }
+                        catch
+                        {
+                            User.Error("неверный логин или пароль");
+                            return;
+                        }
+                        
                         settings.AccessToken = Tokens.AccessToken;
                         settings.RefreshToken = Tokens.RefreshToken;
                         settings.UserName = User.UserName;
@@ -243,18 +252,18 @@ namespace SkillChat.Client.ViewModel
                     IsShowingLoginPage = false;
                     IsShowingRegisterPage = false;
                     ValidationError = "";
-                    IsConnected = true;
+                    IsConnected = _connection.State == HubConnectionState.Connected ? true : false;
                     User.Password = "";
                 }
                 catch (Exception ex)
                 {
                     //Изменение параеметров TextBox в случае ошибки                    
-                    User.Error("неверный логин или пароль");
+                    User.Error(ex.Message);
                     ErrorBe?.Invoke();
                     IsShowingLoginPage = _connection.State != HubConnectionState.Connected ? true : false;
                     //Messages.Add(ex.Message);
                 }
-            }, this.WhenAnyValue(m => m.IsConnected, b => b == false));
+            });
 
             if (Tokens.AccessToken.IsNullOrEmpty() == false)
             {
@@ -466,6 +475,8 @@ namespace SkillChat.Client.ViewModel
                 catch (Exception e)
                 {
                     IsShowingLoginPage = true;
+                    User.IsServerStateHistory = true;
+                    User.Error("Сервер недоступен");
                 }
             };
         }
