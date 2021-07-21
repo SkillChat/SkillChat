@@ -17,6 +17,7 @@ namespace SkillChat.Client.ViewModel
         {
             IsPassword = false;
             PassError = false;
+            IsServerStateHistory = false;
         }
 
         public string UserName { get; set; }
@@ -46,7 +47,13 @@ namespace SkillChat.Client.ViewModel
         /// <summary>
         /// Текст ошибки
         /// </summary>
-        public string ErrorMsg { get; set; }        
+        public string ErrorMsg { get; set; }
+
+        /// <summary>
+        /// Флаг - подключение с сервером отсутствует: Сервер только подключается - false, подключение разорвано - true
+        /// </summary>
+        public bool IsServerStateHistory { get; set; }
+
         /// <summary>
         /// Сброс свойств на исходные
         /// </summary>
@@ -62,7 +69,25 @@ namespace SkillChat.Client.ViewModel
         public void Error(string errorMsg)
         {
             PassError = true;
-            ErrorMsg = errorMsg;
+
+            // это условие срабатывает, когда сервер отключается во время работы программы,
+            // программа выкидывает пользователя на страницу входа, сообщает, что сервер не доступен,
+            // но пользователь жмёт на кнопку "Войти"
+            if (errorMsg.Substring(0, 11) == "Подключение" && IsServerStateHistory == true)
+            {
+                ErrorMsg = "Сервер не доступен";
+            }
+            // это условие срабатывает при запуске, когда клиент уже запущен, а соединение с сервером в процессе установки
+            else if (errorMsg.Substring(0, 11) == "Подключение")
+            {
+                ErrorMsg = "";
+            }
+            // это условие срабатывает, когда сервер отключается во время работы программы
+            else
+            {
+                ErrorMsg = errorMsg;
+            }
+            
         }
     }
 }
