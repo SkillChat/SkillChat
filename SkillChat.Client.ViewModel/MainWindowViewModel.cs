@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Reactive;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -76,7 +77,24 @@ namespace SkillChat.Client.ViewModel
 
             var bits = Environment.Is64BitOperatingSystem ? "PC 64bit, " : "PC 32bit, ";
             var operatingSystem = bits + RuntimeInformation.OSDescription;
-            var ipAddress = new WebClient().DownloadString("https://api.ipify.org");
+
+            string ipAddress = "";
+            try
+            {
+                ipAddress = new WebClient().DownloadString("https://api.ipify.org");
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    IPHostEntry ipHost = Dns.GetHostEntry("localhost");
+                    if (ipHost.AddressList.Length > 0)
+                    {
+                        ipAddress = ipHost.AddressList.Last().ToString();
+                    }
+                }
+                catch (Exception exception) { }
+            }
             var nameVersionClient = "SkillChat Avalonia Client 1.0";
 
             ConnectCommand = ReactiveCommand.CreateFromTask(async () =>
