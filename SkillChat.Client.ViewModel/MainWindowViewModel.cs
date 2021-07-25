@@ -78,23 +78,17 @@ namespace SkillChat.Client.ViewModel
             var bits = Environment.Is64BitOperatingSystem ? "PC 64bit, " : "PC 32bit, ";
             var operatingSystem = bits + RuntimeInformation.OSDescription;
 
-            string ipAddress = "";
+            string ipAddress;
             try
             {
                 ipAddress = new WebClient().DownloadString("https://api.ipify.org");
             }
             catch (Exception e)
             {
-                try
-                {
-                    IPHostEntry ipHost = Dns.GetHostEntry("localhost");
-                    if (ipHost.AddressList.Length > 0)
-                    {
-                        ipAddress = ipHost.AddressList.Last().ToString();
-                    }
-                }
-                catch (Exception exception) { }
+                IPHostEntry ipHost = Dns.GetHostEntry("localhost");
+                ipAddress = ipHost.AddressList.Length != 0 ? Convert.ToString(ipHost.AddressList.LastOrDefault()) : "";
             }
+
             var nameVersionClient = "SkillChat Avalonia Client 1.0";
 
             ConnectCommand = ReactiveCommand.CreateFromTask(async () =>
@@ -111,8 +105,17 @@ namespace SkillChat.Client.ViewModel
 
                     if (Tokens == null || Tokens.AccessToken.IsNullOrEmpty())
                     {
-                        Tokens = await serviceClient.PostAsync(new AuthViaPassword
-                        { Login = User.UserName, Password = User.Password });
+                        try
+                        {
+                            Tokens = await serviceClient.PostAsync(new AuthViaPassword
+                            { Login = User.UserName, Password = User.Password });
+                        }
+                        catch
+                        {
+                            User.Error("неверный логин или пароль");
+                            return;
+                        }
+                        
                         settings.AccessToken = Tokens.AccessToken;
                         settings.RefreshToken = Tokens.RefreshToken;
                         settings.UserName = User.UserName;
@@ -261,18 +264,18 @@ namespace SkillChat.Client.ViewModel
                     IsShowingLoginPage = false;
                     IsShowingRegisterPage = false;
                     ValidationError = "";
-                    IsConnected = true;
+                    IsConnected = _connection.State == HubConnectionState.Connected;
                     User.Password = "";
                 }
                 catch (Exception ex)
                 {
                     //Изменение параеметров TextBox в случае ошибки                    
-                    User.Error("неверный логин или пароль");
+                    User.Error(ex.Message);
                     ErrorBe?.Invoke();
                     IsShowingLoginPage = _connection.State != HubConnectionState.Connected ? true : false;
                     //Messages.Add(ex.Message);
                 }
-            }, this.WhenAnyValue(m => m.IsConnected, b => b == false));
+            });
 
             if (Tokens.AccessToken.IsNullOrEmpty() == false)
             {
@@ -484,6 +487,8 @@ namespace SkillChat.Client.ViewModel
                 catch (Exception e)
                 {
                     IsShowingLoginPage = true;
+                    User.IsServerStateHistory = true;
+                    User.Error("Сервер недоступен");
                 }
             };
         }
