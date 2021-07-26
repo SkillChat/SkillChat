@@ -21,20 +21,19 @@ namespace SkillChat.Server
 
             if (_NETCoreRuntimes.Count > 0)
             {
-                _NETCoreRuntimes.Sort((Version version1, Version version2) =>
+                try
                 {
-                    if (version1 == null && version2 == null) return 0;
-                    else if (version1 == null) return 1;
-                    else if (version2 == null) return -1;
-                    else return version1.CompareTo(version2);
-                });
+                    //проверка на наличае точного совпадения
+                    var version = _NETCoreRuntimes.FirstOrDefault(v => v == cfgVersion);
+                    if (version != null) return version.ToString();
 
-                foreach (var netCoreVersion in _NETCoreRuntimes)
-                {
-                    if(netCoreVersion >= cfgVersion)
-                        return netCoreVersion.ToString();
+                    //первая подходящая
+                    return _NETCoreRuntimes.First(v => v.Major == cfgVersion.Major && (v.Minor == cfgVersion.Minor || v.Minor == cfgVersion.Minor + 1)).ToString();
                 }
-                return _NETCoreRuntimes.Last().ToString();
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
 
             return targetVersion;
