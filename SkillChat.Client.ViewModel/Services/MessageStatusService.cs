@@ -37,10 +37,12 @@ namespace SkillChat.Client.ViewModel.Services
                     handler => addNewStatus += handler,
                     handler => addNewStatus -= handler)
                 .Throttle(TimeSpan.FromMilliseconds(300))
-                .Subscribe(async _ => await vm.SendStatuses(mapper.Map<HubMessageStatus>(userMessagesStatus)));
+                .Subscribe(async _ 
+                    => await vm.SendStatuses(mapper
+                        .Map<HubMessageStatus>(userMessagesStatus)));
         }
 
-        public void SetMyMessagesStatus(MessageStatusModel status)
+        public void SetMyIncomingMessagesStatus(MessageStatusModel status)
         {
             lock (readStatusLock)
             {

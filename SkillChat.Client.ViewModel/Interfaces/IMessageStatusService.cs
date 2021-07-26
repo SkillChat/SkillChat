@@ -4,7 +4,7 @@ namespace SkillChat.Client.ViewModel.Interfaces
 {
     public interface IMessageStatusService
     {
-        void SetMyMessagesStatus(MessageStatusModel status);
+        void SetMyIncomingMessagesStatus(MessageStatusModel status);
         void ReceivedChatMessageStatus(MessageStatusModel status);
         void SetIncomingMessageReadStatus(MessageViewModel message);
         void SetIncomingMessageReсeivedStatus(MessageViewModel message);

@@ -327,7 +327,7 @@ namespace SkillChat.Client.ViewModel
                     // Логика выбора сообщений по id чата
                     var result = await serviceClient.GetAsync(request);
                     
-                    StatusService.SetMyMessagesStatus(mapper.Map<MessageStatusModel>(result.ChatMessageStatus));
+                    StatusService.SetMyIncomingMessagesStatus(mapper.Map<MessageStatusModel>(result.ChatMessageStatus));
                     
                     foreach (var item in result.Messages)
                     {
@@ -344,7 +344,8 @@ namespace SkillChat.Client.ViewModel
                         {
                             newMessage = hasAttachments ? new UserAttachmentViewModel() : new UserMessageViewModel();
                         }
-
+                        
+                        //todo Автомаппер?
                         newMessage.Id = item.Id;
                         newMessage.Text = item.Text;
                         newMessage.PostTime = item.PostTime;
@@ -399,9 +400,8 @@ namespace SkillChat.Client.ViewModel
                         {
                             message.ShowNickname = firstInBlock == message;
                         }
-                        
-                        StatusService.ReceivedChatMessageStatus(mapper.Map<MessageStatusModel>(result.ChatMessageStatus));
                     }
+                    StatusService.ReceivedChatMessageStatus(mapper.Map<MessageStatusModel>(result.ChatMessageStatus));
                 }
                 catch (Exception e)
                 {
