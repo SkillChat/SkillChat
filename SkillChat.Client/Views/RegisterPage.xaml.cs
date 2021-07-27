@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using SkillChat.Client.ViewModel;
 
 namespace SkillChat.Client.Views
 {
