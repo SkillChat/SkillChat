@@ -272,7 +272,7 @@ namespace SkillChat.Client.ViewModel
                     IsShowingLoginPage = _connection.State != HubConnectionState.Connected ? true : false;
                     //Messages.Add(ex.Message);
                 }
-            }, this.WhenAnyValue(m => m.IsConnected, b => b == false));
+            });
 
             if (Tokens.AccessToken.IsNullOrEmpty() == false)
             {
