@@ -19,6 +19,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reactive;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -266,6 +267,7 @@ namespace SkillChat.Client.ViewModel
                     ValidationError = "";
                     IsConnected = _connection.State == HubConnectionState.Connected;
                     User.Password = "";
+                    Hi(User.UserName);
                 }
                 catch (Exception ex)
                 {
@@ -396,6 +398,7 @@ namespace SkillChat.Client.ViewModel
                     configuration.GetSection("ChatClientSettings").Set(settings);
 
                     WindowStates(WindowState.SignOut);
+                    TextHeaderMain = "";
                 }
                 catch (Exception ex)
                 {
@@ -409,7 +412,7 @@ namespace SkillChat.Client.ViewModel
 
             // Скрывает окно регистрации
             IsShowingRegisterPage = false;
-            IsShowingLoginPage = true;
+            //IsShowingLoginPage = true;
             GoToRegisterCommand = ReactiveCommand.Create<object>(_ =>
             {
                 IsShowingRegisterPage = true;
@@ -471,6 +474,8 @@ namespace SkillChat.Client.ViewModel
 
             ProfileViewModel.SignOutCommand = SignOutCommand;
             ProfileViewModel.LoadMessageHistoryCommand = LoadMessageHistoryCommand;
+
+            FSize = 16; // размер шрифта для элемента MainWindow - заголовка "Чат"
         }
 
         public DateTimeOffset ExpireTime { get; set; }
@@ -607,9 +612,32 @@ namespace SkillChat.Client.ViewModel
         public string ColumndefinitionWidth { get; set; }
         public string ColumndefinitionWidth2 { get; set; }
         public double? GridWidth { get; set; }
-        public string TextHeaderMain { get; set; } = "Чат";
+        public string TextHeaderMain { get; set; }/* = "Чат";*/
         public bool SettingsActive { get; set; }
         public string TextHeaderMenuInSettings { get; set; }
+        public double OpProp { get; set; }
+        public int FSize { get; set; }
+
+        public async void Hi(string userName)
+        {
+            await Task.Run(() =>
+            {
+                OpProp = 1;
+                FSize = 24;
+                Thread.Sleep(1000);
+                TextHeaderMain = $"Привет, {userName}!";
+                    for (double i = 1; i > 0;)
+                    {
+                        OpProp = i;
+                        Thread.Sleep(100);
+                        i -= 0.05;
+                    }
+                OpProp = 1;
+                FSize = 16;
+                TextHeaderMain = "Чат";
+
+            });
+        }
 
         public void Width(bool isWindow)
         {
@@ -617,7 +645,7 @@ namespace SkillChat.Client.ViewModel
             {
                 ColumndefinitionWidth = "*";
                 ColumndefinitionWidth2 = "Auto";
-                TextHeaderMain = "Чат";
+                //TextHeaderMain = "Чат";
                 SettingsActive = false;
                 GridWidth = 388;
             }

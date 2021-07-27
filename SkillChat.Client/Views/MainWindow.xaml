@@ -151,7 +151,8 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center">
                         <TextBlock
-                            FontSize="16"
+                            Opacity="{Binding OpProp}"
+                            FontSize="{Binding FSize}"
                             FontWeight="SemiBold"
                             Text="{Binding TextHeaderMain}" />
                         <TextBlock
