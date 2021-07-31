@@ -743,7 +743,7 @@ namespace SkillChat.Client.ViewModel
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Ошибка при отправке статуса пользоателя на сервер!\n" + ex.Message);
+                Debug.WriteLine("Ошибка при отправке статуса пользователя на сервер!\n" + ex.Message);
             }
         }
         #endregion

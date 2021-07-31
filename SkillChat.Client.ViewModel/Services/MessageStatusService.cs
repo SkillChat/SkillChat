@@ -37,9 +37,18 @@ namespace SkillChat.Client.ViewModel.Services
                     handler => addNewStatus += handler,
                     handler => addNewStatus -= handler)
                 .Throttle(TimeSpan.FromMilliseconds(300))
-                .Subscribe(async _ 
-                    => await vm.SendStatuses(mapper
-                        .Map<HubMessageStatus>(userMessagesStatus)));
+                .Subscribe(async _
+                => {
+                    HubMessageStatus newStatus;
+                    lock (readStatusLock)
+                    {
+                        lock (receivedStatusLock)
+                        {
+                            newStatus = mapper.Map<HubMessageStatus>(userMessagesStatus);
+                        }
+                    }
+                    await vm.SendStatuses(newStatus);
+                });
         }
 
         public void SetMyIncomingMessagesStatus(MessageStatusModel status)
@@ -52,7 +61,6 @@ namespace SkillChat.Client.ViewModel.Services
                 }
             }
         }
-
         public void ReceivedChatMessageStatus(MessageStatusModel newStatus)
         {
             if (chatMessageStatus.Update(newStatus))
@@ -82,11 +90,11 @@ namespace SkillChat.Client.ViewModel.Services
             //needhelp Может быть сюда ReaderWriterLock сунуть было, или какой то другой механизм блокировки?
             lock (readStatusLock)
             {
-                if (userMessagesStatus.LastReadMessageDate < message.PostTime
-                && userMessagesStatus.LastReadMessageId != message.Id)
+                if (userMessagesStatus.LastReadedMessageDate < message.PostTime
+                && userMessagesStatus.LastReadedMessageId != message.Id)
                     {
-                        userMessagesStatus.LastReadMessageDate = message.PostTime;
-                        userMessagesStatus.LastReadMessageId = message.Id;
+                        userMessagesStatus.LastReadedMessageDate = message.PostTime;
+                        userMessagesStatus.LastReadedMessageId = message.Id;
                         addNewStatus?.Invoke();
                     }
             }
@@ -108,17 +116,17 @@ namespace SkillChat.Client.ViewModel.Services
 
         public void SetStatusToMyMessage(MyMessageViewModel message)
         {
-            if (message.PostTime <= chatMessageStatus.LastReadMessageDate)
+            if (message.PostTime <= chatMessageStatus.LastReadedMessageDate)
             {
-                message.SetRead();
+                message.Status = MyMessageViewModel.MessageStatus.Readed;
             }
             else if (message.PostTime <= chatMessageStatus.LastReceivedMessageDate)
             {
-                message.SetReceived();
+                message.Status = MyMessageViewModel.MessageStatus.Received;
             }
             else
             {
-                message.SetSended();
+                message.Status = MyMessageViewModel.MessageStatus.Sended;
             }
         }
     }

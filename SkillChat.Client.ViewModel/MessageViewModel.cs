@@ -33,29 +33,12 @@ namespace SkillChat.Client.ViewModel
     [AddINotifyPropertyChangedInterface]
     public class MyMessageViewModel : MessageViewModel
     {
-        public MessageStatus Status { get; private set; }
-
-        public void SetRead()
-        {
-            Status = MessageStatus.Read;
-            ReadEvent?.Invoke(this);
-        }
-        public void SetReceived()
-        {
-            Status = MessageStatus.Received;
-            ReceivedEvent?.Invoke(this);
-        }
-        public void SetSended()
-        {
-            Status = MessageStatus.Sended;
-            SendedEvent?.Invoke(this);
-        }
-
+        public MessageStatus Status { get; set; }
         public enum MessageStatus
         {
             Sended,
             Received,
-            Read
+            Readed
         }
 
         public MyMessageViewModel() : base()

@@ -6,44 +6,37 @@ using System.Threading.Tasks;
 
 namespace SkillChat.Server.Domain.MessStatus
 {
+    /// <summary>
+    /// For Chat status Id = ChatId;
+    /// For ChatMember status Id = ChatId+UserId
+    /// </summary>
     public class MessageStatus
     {
+        public string Id { get; set; }
         public DateTimeOffset LastReceivedMessageDate { get; set; }
         public string LastReceivedMessageId { get; set; }
-        public DateTimeOffset LastReadMessageDate { get; set; }
-        public string LastReadMessageId { get; set; }
+        public DateTimeOffset LastReadedMessageDate { get; set; }
+        public string LastReadedMessageId { get; set; }
 
         public MessageStatus()
         {
-            LastReceivedMessageDate = LastReadMessageDate = DateTimeOffset.MinValue;
-            LastReceivedMessageId = LastReadMessageId = "";
+            LastReceivedMessageDate = LastReadedMessageDate = DateTimeOffset.MinValue;
+            LastReceivedMessageId = LastReadedMessageId = "";
         }
-
-        public MessageStatus(Message message)
-        {
-            LastReceivedMessageDate = LastReadMessageDate = message.PostTime;
-            LastReceivedMessageId = LastReadMessageId = message.Id;
-        }
-        public MessageStatus(Message receivedMessage, Message readMessage)
-        {
-            LastReceivedMessageDate = receivedMessage.PostTime;
-            LastReadMessageDate = readMessage.PostTime;
-            LastReceivedMessageId = receivedMessage.Id;
-            LastReadMessageId = readMessage.Id;
-        }
+        
         public bool Update(MessageStatus newStatus)
         {
             bool result = false;
-            if (LastReadMessageDate <= newStatus.LastReadMessageDate)
+            if (LastReadedMessageDate <= newStatus.LastReadedMessageDate)
             {
-                LastReadMessageDate = newStatus.LastReadMessageDate;
-                LastReadMessageId = newStatus.LastReadMessageId;
+                LastReadedMessageDate = newStatus.LastReadedMessageDate;
+                LastReadedMessageId = newStatus.LastReadedMessageId;
                 result = true;
             }
-            if (LastReceivedMessageDate <= newStatus.LastReadMessageDate)
+            if (LastReceivedMessageDate <= newStatus.LastReadedMessageDate)
             {
-                LastReceivedMessageDate = newStatus.LastReadMessageDate;
-                LastReceivedMessageId = newStatus.LastReadMessageId;
+                LastReceivedMessageDate = newStatus.LastReadedMessageDate;
+                LastReceivedMessageId = newStatus.LastReadedMessageId;
                 result = true;
             }
             if (LastReceivedMessageDate <= newStatus.LastReceivedMessageDate)

@@ -10,7 +10,7 @@ namespace SkillChat.Server.ServiceModel.Molds
     {
         public DateTimeOffset LastReceivedMessageDate { get; set; }
         public string LastReceivedMessageId { get; set; }
-        public DateTimeOffset LastReadMessageDate { get; set; }
-        public string LastReadMessageId { get; set; }
+        public DateTimeOffset LastReadedMessageDate { get; set; }
+        public string LastReadedMessageId { get; set; }
     }
 }

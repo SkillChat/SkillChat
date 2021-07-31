@@ -48,8 +48,8 @@ namespace SkillChat.Server
                 .ForMember(m => m.Id, e => e.Ignore());
 
             cfg.CreateMap<MessageStatus, MessageStatusMold>();
-            //cfg.CreateMap<MessageStatusMold, MessageStatus>();
-            cfg.CreateMap<HubMessageStatus, MessageStatus>();
+            cfg.CreateMap<HubMessageStatus, MessageStatus>()
+                .ForMember(s => s.Id, s => s.Ignore());
             cfg.CreateMap<MessageStatus, ReceiveMessageStatus>()
                 .ForMember(m => m.ChatId, o => o.Ignore());
         }

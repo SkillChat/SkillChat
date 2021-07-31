@@ -33,7 +33,7 @@ namespace SkillChat.Server.Domain
         /// <summary>
         /// Последнее полученное/прочитанное сообщение в чате
         /// </summary>
-        public MessageStatus MessageStatus { get; set; }
+        public string MessageStatusId { get; set; }
     }
         
     public enum ChatType

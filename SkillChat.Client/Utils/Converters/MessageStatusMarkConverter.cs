@@ -9,24 +9,43 @@ namespace SkillChat.Client.Utils.Converters
 {
     public class MessageStatusMarkConverter : IValueConverter
     {
+        private readonly Lazy<object> sendedMessageMark = new(() =>
+        {
+            Application.Current.TryFindResource("SendedMessageMark", out var resource);
+            return resource;
+        });
+
+        private readonly Lazy<object> receivedMessageMark = new(() =>
+        {
+            Application.Current.TryFindResource("ReceivedMessageMark", out var resource);
+            return resource;
+        });
+
+        private readonly Lazy<object> readMessageMark = new(() =>
+        {
+            Application.Current.TryFindResource("ReadMessageMark", out var resource);
+            return resource;
+        });
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             object resource;
             switch (value)
             {
                 case MyMessageViewModel.MessageStatus.Sended:
-                    Application.Current.TryFindResource("SendedMessageMark", out resource);
+                    resource = sendedMessageMark.Value;
                     break;
                 case MyMessageViewModel.MessageStatus.Received:
-                    Application.Current.TryFindResource("ReceivedMessageMark", out resource);
+                    resource = receivedMessageMark.Value;
                     break;
-                case MyMessageViewModel.MessageStatus.Read:
-                    Application.Current.TryFindResource("ReadMessageMark", out resource);
+                case MyMessageViewModel.MessageStatus.Readed:
+                    resource = readMessageMark.Value;
                     break;
                 default:
                     resource = null;
                     break;
             }
+
             return resource;
         }
 

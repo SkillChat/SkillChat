@@ -10,26 +10,26 @@ namespace SkillChat.Client.ViewModel.Models
     {
         public DateTimeOffset LastReceivedMessageDate { get; set; } = DateTimeOffset.MinValue;
         public string LastReceivedMessageId { get; set; } = "";
-        public DateTimeOffset LastReadMessageDate { get; set; } = DateTimeOffset.MinValue;
-        public string LastReadMessageId { get; set; } = "";
+        public DateTimeOffset LastReadedMessageDate { get; set; } = DateTimeOffset.MinValue;
+        public string LastReadedMessageId { get; set; } = "";
         public string ChatId { get; set; } = "";
 
         public bool Update(MessageStatusModel newStatus)
         {
             bool result = false;
-            if ((LastReadMessageDate < newStatus.LastReadMessageDate || LastReadMessageDate == DateTimeOffset.MinValue)
+            if ((LastReadedMessageDate < newStatus.LastReadedMessageDate || LastReadedMessageDate == DateTimeOffset.MinValue)
                 && (ChatId == newStatus.ChatId || string.IsNullOrWhiteSpace(ChatId)))
             {
-                LastReadMessageDate = newStatus.LastReadMessageDate;
-                LastReadMessageId = newStatus.LastReadMessageId;
+                LastReadedMessageDate = newStatus.LastReadedMessageDate;
+                LastReadedMessageId = newStatus.LastReadedMessageId;
                 result = true;
             }
 
-            if ((LastReceivedMessageDate < newStatus.LastReadMessageDate || LastReadMessageDate == DateTimeOffset.MinValue)
+            if ((LastReceivedMessageDate < newStatus.LastReadedMessageDate || LastReadedMessageDate == DateTimeOffset.MinValue)
                 && (ChatId == newStatus.ChatId || string.IsNullOrWhiteSpace(ChatId)))
             {
-                LastReceivedMessageDate = newStatus.LastReadMessageDate;
-                LastReceivedMessageId = newStatus.LastReadMessageId;
+                LastReceivedMessageDate = newStatus.LastReadedMessageDate;
+                LastReceivedMessageId = newStatus.LastReadedMessageId;
                 result = true;
             }else if (LastReceivedMessageDate < newStatus.LastReceivedMessageDate 
                       && (ChatId == newStatus.ChatId || string.IsNullOrWhiteSpace(ChatId)))
@@ -40,7 +40,5 @@ namespace SkillChat.Client.ViewModel.Models
             }
             return result;
         }
-
-
     }
 }

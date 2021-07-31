@@ -11,6 +11,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Raven.Client.Documents;
 using SkillChat.Server.Domain.MessStatus;
 
 namespace SkillChat.Server.Hubs
@@ -58,6 +59,7 @@ namespace SkillChat.Server.Hubs
             await _ravenSession.StoreAsync(messageItem);
             await _ravenSession.SaveChangesAsync();
 
+            //todo Отправлять только участникам чата
             await Clients.Group(_loginedGroup).SendAsync(new ReceiveMessage
             {
                 Id = messageItem.Id,
@@ -150,32 +152,46 @@ namespace SkillChat.Server.Hubs
         public async Task SendUserMessageStatus(HubMessageStatus messageStatus)
         {
             bool isChatStatusUpdate = false;
-            var uid = Context.Items["uid"] as string;
-            var chat = await _ravenSession.LoadAsync<Chat>(messageStatus.ChatId);
+            var uid = Context.Items["uid"] as string;            
+            
+            //var chat = await _ravenSession.LoadAsync<Chat>(messageStatus.ChatId);
             var newStatus = mapper.Map<MessageStatus>(messageStatus);
-            if (chat.MessageStatus == null)
+            var userStatusId = messageStatus.ChatId + uid;
+            var chatStatusId = messageStatus.ChatId;
+                
+            var statuses = await _ravenSession.LoadAsync<MessageStatus>(new[]
             {
-                chat.MessageStatus = newStatus;
+                chatStatusId, userStatusId
+            });
+            
+            if (statuses[chatStatusId] == null)
+            {
+                statuses[chatStatusId] = newStatus;
+                statuses[chatStatusId].Id = chatStatusId;
                 isChatStatusUpdate = true;
             }
             else
             {
-                isChatStatusUpdate = chat.MessageStatus.Update(newStatus);
+                isChatStatusUpdate = statuses[chatStatusId].Update(newStatus);
             }
-            var member = chat.Members.Find(m => m.UserId == uid);
-            if (member?.MessageStatus == null)
+
+            if (statuses[userStatusId] == null)
             {
-                member.MessageStatus = newStatus;
+                statuses[userStatusId] = newStatus;
+                statuses[userStatusId].Id = userStatusId;
+                await _ravenSession.StoreAsync(statuses[userStatusId]);
             }
             else
             {
-                member?.MessageStatus.Update(newStatus);
+                statuses[userStatusId].Update(newStatus);
             }
             await _ravenSession.SaveChangesAsync();
+            
             if (isChatStatusUpdate)
             {
-                var receiveStatus = mapper.Map<ReceiveMessageStatus>(chat.MessageStatus);
-                receiveStatus.ChatId = chat.Id;
+                var receiveStatus = mapper.Map<ReceiveMessageStatus>(statuses[chatStatusId]);
+                receiveStatus.ChatId = chatStatusId;
+                //todo Отправлять только участникам чата
                 await Clients.Group(_loginedGroup).SendAsync(receiveStatus);
             }
         }

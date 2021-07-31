@@ -16,6 +16,7 @@ using Raven.Client.ServerWide;
 using Raven.Client.ServerWide.Operations;
 using Raven.Embedded;
 using SkillChat.Server.Domain;
+using SkillChat.Server.Domain.MessStatus;
 
 namespace SkillChat.Server
 {
@@ -101,6 +102,8 @@ namespace SkillChat.Server
                         OwnerId = ""
                     };
                     session.Store(firstChat);
+                    var chatStatus = new MessageStatus() {Id = firstChat.Id};
+                    session.Store(chatStatus);
                     session.SaveChanges();
                 }
 
@@ -125,13 +128,22 @@ namespace SkillChat.Server
 
         public static void ConfigureRevisions(this IDocumentStore store)
         {
+            var messagesStatusRevConfig = new RevisionsCollectionConfiguration()
+            {
+                Disabled = true
+            };
             store.Maintenance.Send(new ConfigureRevisionsOperation(new RevisionsConfiguration
             {
+                Collections = new Dictionary<string, RevisionsCollectionConfiguration>()
+                 {
+                     {"MessageStatuses", messagesStatusRevConfig}
+                 },
                 Default = new RevisionsCollectionConfiguration
                 {
                     Disabled = false,
                     PurgeOnDelete = false,
                 }
+                
             }));
         }
 

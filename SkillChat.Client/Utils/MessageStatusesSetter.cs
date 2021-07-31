@@ -34,7 +34,6 @@ namespace SkillChat.Client.Utils
                 .VisualChildren;
 
             // Определение границ вьюпорта
-            //var messageScrollerTopBound = messagesScroller.TransformedBounds.Value.Transform.M32;
             var messageScrollerBottomBound = messagesScroller.TransformedBounds.Value.Transform.M32 +
                                          messagesScroller.Viewport.Height;
 
@@ -65,9 +64,9 @@ namespace SkillChat.Client.Utils
                         // Если Clip равен нулю, то контейнер сообщений вне зоны видимости 
                         if (messageVisual.TransformedBounds.Value.Clip.IsEmpty) continue;
 
-                        if (messageVisualTopBound < messageScrollerBottomBound)
+                        if (messageVisualTopBound + (messageVisual.Bounds.Height-2) < messageScrollerBottomBound)
                         {
-                            var messagePresenterContext = (messageVisual as ContentPresenter).DataContext;
+                            var messagePresenterContext = (messageVisual as ContentPresenter)?.DataContext;
                             if (messagePresenterContext is UserMessageViewModel message)
                             {
                                 if (statusService != null)
@@ -82,7 +81,7 @@ namespace SkillChat.Client.Utils
                                     Debug.WriteLine($"---{DateTime.Now : H:mm:ss ffffff} Последнее видимое сообщение -- '{message.Text}' с id = {message.Id}, " +
                                                     $"но сервис статусов сообщение = null!");
                                     return;
-                                }
+                                }                                    
                             }
                         }
                     }
