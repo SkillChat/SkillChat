@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using SkillChat.Server.Domain.MessStatus;
 
 namespace SkillChat.Server.Domain
 {
@@ -29,6 +30,10 @@ namespace SkillChat.Server.Domain
         /// Наименование чата
         /// </summary>
         public string ChatName { get; set; }
+        /// <summary>
+        /// Последнее полученное/прочитанное сообщение в чате
+        /// </summary>
+        public string MessageStatusId { get; set; }
     }
         
     public enum ChatType

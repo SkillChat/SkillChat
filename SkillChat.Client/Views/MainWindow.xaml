@@ -12,6 +12,7 @@
     xmlns:interactivity="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
     xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
     xmlns:utils="clr-namespace:SkillChat.Client.Utils"
+    xmlns:converters="clr-namespace:SkillChat.Client.Utils.Converters"
     Title="{Binding Title}"
     Name="WindowChat"
     Width="800"
@@ -44,7 +45,9 @@
   </interactivity:Interaction.Behaviors>
 
     <Window.Resources>
+        <!-- //todo Перенести в другую папку -->
         <utils:GridLengthValueConverter x:Key="GridLengthValueConverter" />
+        <converters:MessageStatusMarkConverter x:Key="MarkConverter" />
     </Window.Resources>
 
     <Window.Styles>
@@ -229,6 +232,7 @@
                         IsVisible="{Binding ProfileViewModel.IsShowChat}" ZIndex="-1">
                         <ScrollViewer Name="MessagesSV" HorizontalScrollBarVisibility="Disabled">
                             <ItemsControl
+                              Name="MessagesList"
                                 Grid.Row="3"
                                 Grid.Column="0"
                                 Grid.ColumnSpan="3"
@@ -588,11 +592,18 @@
                                                         Classes="message"
                                                         IsReadOnly="True"
                                                         Text="{Binding Text}" />
-                                                    <TextBlock
+                                                    <StackPanel
+                                                        Orientation="Horizontal"
+                                                        Grid.Row="2"
                                                         HorizontalAlignment="Right"
-                                                        VerticalAlignment="Bottom"
-                                                        Classes="time"
-                                                        Text="{Binding Time}" />
+                                                        VerticalAlignment="Bottom">
+                                                        <Image 
+                                                            Source ="{Binding Status,
+                                                            Converter={StaticResource MarkConverter}}" />
+                                                        <TextBlock
+                                                            Classes="time"
+                                                            Text="{Binding Time}" />
+                                                    </StackPanel>
                                                 </Grid>
                                             </Border>
                                         </StackPanel>
@@ -621,7 +632,7 @@
                           HorizontalContentAlignment="Left"
                           BorderThickness="0"
                           Width="148"
-                          x:Name="AttachFile" 
+                          x:Name="AttachFile"
                           Command="{Binding AttachFileClick}" >
                         <StackPanel Orientation="Horizontal">
                           <Button

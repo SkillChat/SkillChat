@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -11,6 +12,8 @@ using SkillChat.Server.ServiceModel.Molds.Chats;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SkillChat.Server.Domain.MessStatus;
+using Sparrow.Logging;
 
 namespace SkillChat.Server.ServiceInterface
 {
@@ -22,20 +25,52 @@ namespace SkillChat.Server.ServiceInterface
         [Authenticate]
         public async Task<MessagePage> Get(GetMessages request)
         {
-            var messages = RavenSession.Query<Message>().Where(e => e.ChatId == request.ChatId).OrderByDescending(x => x.PostTime);
-            var result = new MessagePage();
-            if (request.BeforePostTime != null)
+            var req = request; //Видел где то, что при создании переменной внутри метода ускоряет работу
+            var session = Request.ThrowIfUnauthorized();
+            var uid = session.UserAuthId;
+
+            var messages = RavenSession.Query<Message>()
+                .Where(e => e.ChatId == req.ChatId)
+                .OrderByDescending(x => x.PostTime);
+            
+            var statuses = await RavenSession.LoadAsync<MessageStatus>(new[]
             {
-                messages = messages.Where(x => x.PostTime.UtcDateTime < request.BeforePostTime.Value.UtcDateTime);
+                req.ChatId, req.ChatId+uid
+            });
+            if (statuses[req.ChatId] == null)
+            {
+                statuses[req.ChatId] = new MessageStatus
+                {
+                    Id = req.ChatId
+                };
+                await RavenSession.StoreAsync(statuses[req.ChatId]);
             }
-            var pageSize = request.PageSize ?? 10;
+            
+            if (statuses[req.ChatId+uid] == null)
+            {
+                statuses[req.ChatId+uid] = new MessageStatus
+                {
+                    Id = req.ChatId+uid
+                };
+                await RavenSession.StoreAsync(statuses[req.ChatId+uid]);
+            }
+
+            await RavenSession.SaveChangesAsync();
+            var result = new MessagePage();
+            result.ChatMessageStatus = Mapper.Map<MessageStatusMold>(statuses[req.ChatId]);
+            result.MemberMessageStatus = Mapper.Map<MessageStatusMold>(statuses[req.ChatId+uid]);
+            if (req.BeforePostTime != null)
+            {
+                messages = messages.Where(x => x.PostTime.UtcDateTime < req.BeforePostTime.Value.UtcDateTime);
+            }
+            var pageSize = req.PageSize ?? 10;
             
             var docs = 
                 await messages.Take(pageSize)
                     .Include(x => x.UserId)
                     .Include(s => s.Attachments)
                     .ToListAsync();
-
+            
             result.Messages = new List<MessageMold>();
             foreach (var doc in docs)
             {

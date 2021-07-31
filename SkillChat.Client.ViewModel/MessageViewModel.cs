@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reactive;
+using System.Xml.Serialization;
 using PropertyChanged;
 using ReactiveUI;
 using SkillChat.Interface.Extensions;
@@ -30,7 +31,26 @@ namespace SkillChat.Client.ViewModel
     }
 
     [AddINotifyPropertyChangedInterface]
-    public class MyMessageViewModel : MessageViewModel { }
+    public class MyMessageViewModel : MessageViewModel
+    {
+        public MessageStatus Status { get; set; }
+        public enum MessageStatus
+        {
+            Sended,
+            Received,
+            Readed
+        }
+
+        public MyMessageViewModel() : base()
+        {
+
+        }
+
+        public delegate void StatusHandler(MessageViewModel message);
+        public event StatusHandler SendedEvent;
+        public event StatusHandler ReceivedEvent;
+        public event StatusHandler ReadEvent;
+    }
 
     [AddINotifyPropertyChangedInterface]
     public class MyAttachmentViewModel : MessageViewModel

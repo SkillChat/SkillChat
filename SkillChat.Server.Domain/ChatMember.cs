@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using SkillChat.Server.Domain;
+using SkillChat.Server.Domain.MessStatus;
 
 namespace SkillChat.Server.Domain
 {
@@ -8,6 +10,10 @@ namespace SkillChat.Server.Domain
     {
         public string UserId { get; set; }
         public ChatMemberRole UserRole { get; set; }
+        /// <summary>
+        /// Последнее полученное/прочитанное сообщение пользователя
+        /// </summary>
+        public string MessageStatusId { get; set; }
     }
 
     public enum ChatMemberRole

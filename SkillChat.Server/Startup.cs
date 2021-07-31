@@ -26,13 +26,15 @@ namespace SkillChat.Server
             services.AddSingleton(Configuration);
             services.AddSingleton<IAppSettings, AppSettings>();
             services.AddSingleton<AppHost>();
+            
+            var mapper = AppModelMapping.ConfigureMapping();
+            services.AddSingleton<IMapper>(mapper);           
 
             services.AddRavenDbServices();
 
             services.AddSignalR();
 
-            var mapper = AppModelMapping.ConfigureMapping();
-            services.AddSingleton<IMapper>(mapper);
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

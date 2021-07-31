@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration;
+using SkillChat.Client.MappingConfigurations;
 using SkillChat.Interface;
 using SkillChat.Server.ServiceModel.Molds.Attachment;
 
@@ -22,6 +23,7 @@ namespace SkillChat.Client
         {
             cfg.CreateMap<AttachmentHubMold, AttachmentMold>();
             cfg.CreateMap<AttachmentMold, AttachmentHubMold>();
+            MessageStatusesMapper.ConfigureModelMapping(cfg);
         }
     }
 }
