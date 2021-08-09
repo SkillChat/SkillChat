@@ -26,6 +26,8 @@ namespace SkillChat.Server
             services.AddSingleton(Configuration);
             services.AddSingleton<IAppSettings, AppSettings>();
             services.AddSingleton<AppHost>();
+            services.AddSingleton<IHaveVersions, DotNetCorePackageList>();
+            services.AddSingleton<DotNetVersionHelper>();
 
             services.AddRavenDbServices();
 
