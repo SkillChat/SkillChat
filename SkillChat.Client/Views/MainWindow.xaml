@@ -167,15 +167,6 @@
                     <!--Profile - Шапка профиля -->
                     <Grid Grid.Column="2" Width="{Binding GridWidth}" ZIndex="1">
                         <StackPanel Orientation="Horizontal">
-                            <Button
-                                VerticalAlignment="Center"
-                                Background="Transparent"
-                                IsVisible="{Binding !SettingsActive}"
-                                BorderThickness="0"
-                                Command="{Binding LoadMessageHistoryCommand}"
-                                Content="Cтарые сообщения"
-                                FontSize="12"
-                                HorizontalAlignment="Left" />
                             <TextBlock Foreground="#4F4F4F"
                                        FontWeight="600"
                                        IsVisible="{Binding SettingsActive}"
