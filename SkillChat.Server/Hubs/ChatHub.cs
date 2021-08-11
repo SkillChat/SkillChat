@@ -69,6 +69,34 @@ namespace SkillChat.Server.Hubs
             Log.Information($"User {Context.Items["nickname"]}({Context.Items["login"]}) send message in main chat");
         }
 
+        public async Task UpdateMessage(HubEditedMessage hubEditedMessage)
+        {
+            try
+            {
+                var mes = await _ravenSession.LoadAsync<Message>(hubEditedMessage.Id);
+
+                if (mes.Text.Trim()!=hubEditedMessage.Message.Trim())
+                {
+                    mes.Text = hubEditedMessage.Message.Trim();
+                    mes.LastEditTime = DateTimeOffset.Now;
+                    await _ravenSession.SaveChangesAsync();
+
+                    await Clients.Group(_loginedGroup).SendAsync(new ReceiveEditedMessage()
+                    {
+                        Id = hubEditedMessage.Id,
+                        Message = mes.Text,
+                        LastEditTime = mes.LastEditTime.Value,
+                    });
+                    Log.Information($"User {Context.Items["nickname"]}({Context.Items["login"]}) edited message in main chat");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
         public async Task Login(string token, string operatingSystem, string ipAddress, string nameVersionClient)
         {
             var jwtAuthProviderReader = (JwtAuthProviderReader)AuthenticateService.GetAuthProvider("jwt");

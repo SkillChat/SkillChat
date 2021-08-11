@@ -11,12 +11,12 @@ using SkillChat.Server.ServiceModel.Molds;
 using SkillChat.Server.ServiceModel.Molds.Attachment;
 using Splat;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using System.Reactive;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -185,6 +185,17 @@ namespace SkillChat.Client.ViewModel
                         }
                     });
 
+                    ///Обновление отредактированных сообщений в окне чата.
+                    _connection.Subscribe<ReceiveEditedMessage>(async data =>
+                    {
+                        if (messageDictionary.TryGetValue(data.Id, out var keyValue))
+                        {
+                            keyValue.Text = data.Message;
+                            keyValue.LastEditTime = data.LastEditTime;
+                        }
+                    });
+
+                    ///Получает новые сообщения и добавляет их в окно чата. 
                     _connection.Subscribe<ReceiveMessage>(async data =>
                     {
                         var isMyMessage = User.Id == data.UserId;
@@ -252,6 +263,7 @@ namespace SkillChat.Client.ViewModel
                         }
 
                         MessageReceived?.Invoke(new ReceivedMessageArgs(newMessage));
+                        messageDictionary[newMessage.Id] = newMessage;
                     });
 
                     _connection.Closed += connectionOnClosed();
@@ -266,7 +278,7 @@ namespace SkillChat.Client.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    //Изменение параеметров TextBox в случае ошибки                    
+                    //Изменение параметров TextBox в случае ошибки                    
                     User.Error("неверный логин или пароль");
                     ErrorBe?.Invoke();
                     IsShowingLoginPage = _connection.State != HubConnectionState.Connected ? true : false;
@@ -279,11 +291,27 @@ namespace SkillChat.Client.ViewModel
                 ConnectCommand.Execute(null);
             }
 
+            //Команда выбирает последнее отправленное сообщение пользователя 
+            EditLastMessageCommand = ReactiveCommand.Create(EditLastMessageMethod);
+
+            //Выход из режима редактирования (Escape)
+            EndEditCommand = ReactiveCommand.Create(EndEditMethod);
+
+            //Команда для отправки сообщения 
             SendCommand = ReactiveCommand.CreateFromTask(async () =>
                 {
                     try
                     {
-                        await _hub.SendMessage(new HubMessage(ChatId, MessageText));
+                        if (idEditMessage != null)
+                        {
+                            await _hub.UpdateMessage(new HubEditedMessage(idEditMessage, ChatId, MessageText)); ///Отправка отредактированного сообщения 
+                            idEditMessage = null;
+                        }
+                        else
+                        {
+                            await _hub.SendMessage(new HubMessage(ChatId, MessageText)); ///Обычная отправка сообщения
+                        }
+
                         MessageText = null;
                     }
                     catch (Exception ex)
@@ -324,7 +352,7 @@ namespace SkillChat.Client.ViewModel
                         newMessage.PostTime = item.PostTime;
                         newMessage.UserNickname = item.UserNickName;
                         newMessage.UserId = item.UserId;
-
+                        newMessage.LastEditTime = item.LastEditTime;
                         newMessage.Attachments = item.Attachments?.Select(s => new AttachmentMessageViewModel(s)).ToList();
 
                         var container = Messages.FirstOrDefault();
@@ -362,6 +390,8 @@ namespace SkillChat.Client.ViewModel
                         {
                             message.ShowNickname = firstInBlock == message;
                         }
+
+                        messageDictionary[newMessage.Id] = newMessage;
                     }
                 }
                 catch (Exception e)
@@ -469,7 +499,45 @@ namespace SkillChat.Client.ViewModel
             ProfileViewModel.SignOutCommand = SignOutCommand;
             ProfileViewModel.LoadMessageHistoryCommand = LoadMessageHistoryCommand;
         }
+        /// <summary>
+        /// Метод выхода из режима редактирования
+        /// </summary>
+        private void EndEditMethod()
+        {
+            if (idEditMessage != null)
+            {
+                if (idEditMessage != null && messageDictionary.TryGetValue(idEditMessage, out var editedMessage))
+                {
+                    editedMessage.Selected = false;
+                }
+                MessageText = null;
+                idEditMessage = null;
+            }
+        }
 
+        /// <summary>
+        /// Метод для выбора последнего сообщения от текущего
+        /// пользователя и переход в режим редактирования
+        /// </summary>
+        private void EditLastMessageMethod()
+        {
+            if (string.IsNullOrEmpty(MessageText))
+            {
+                foreach (var messages in Messages.Reverse())
+                {
+                    foreach (var item in messages.Messages.Reverse())
+                    {
+                        if (User.Id == item.UserId)
+                        {
+                            idEditMessage = item.Id;
+                            MessageText = item.Text;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+       
         public DateTimeOffset ExpireTime { get; set; }
 
         private Func<Exception, Task> connectionOnClosed()
@@ -523,9 +591,15 @@ namespace SkillChat.Client.ViewModel
 
         public ICommand ConnectCommand { get; }
 
+        public ICommand EditLastMessageCommand { get; }
+
         public ICommand SendCommand { get; }
 
+        public ICommand EndEditCommand { get; }
+
         public bool KeySendMessage { get; set; }
+
+        public bool IsEdited => idEditMessage != null;
 
         public ICommand LoadMessageHistoryCommand { get; }
         public ICommand SignOutCommand { get; }
@@ -548,10 +622,31 @@ namespace SkillChat.Client.ViewModel
 
         public SettingsViewModel SettingsViewModel { get; set; }
 
-        /// <summary>Происходит при добавлении нового сообщения в коллекцию сообщений</summary>
+        /// <summary>
+        /// Происходит при добавлении нового сообщения в коллекцию сообщений
+        /// </summary>
         public event Action<ReceivedMessageArgs> MessageReceived;
 
         public CurrentUserViewModel User { get; set; }
+
+        /// <summary>
+        /// Переменная для хранения Id редактируемого сообщения
+        /// </summary>
+        private string idEditMessage { get; set; }
+
+        /// <summary>
+        /// Словарь состоящий из всех сообщений
+        /// </summary>
+        private Dictionary<string, MessageViewModel> messageDictionary = new Dictionary<string, MessageViewModel>();
+
+        /// <summary>
+        /// Выбирает из коллекции сообщение, выбранное пользователем и выводит его текст в MessageText
+        /// </summary>
+        public void EditSelectMessage(MessageViewModel message)
+        {
+            idEditMessage = message.Id;
+            MessageText = message.Text;
+        }
 
         /// <summary>
         /// Сброс параметров

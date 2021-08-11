@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reactive;
+using System.Windows.Input;
 using PropertyChanged;
 using ReactiveUI;
+using ServiceStack;
 using SkillChat.Interface.Extensions;
 using SkillChat.Server.ServiceModel.Molds;
 using SkillChat.Server.ServiceModel.Molds.Attachment;
@@ -91,9 +93,22 @@ namespace SkillChat.Client.ViewModel
         
         public DateTimeOffset PostTime { get; set; }
 
+        public DateTimeOffset? LastEditTime { get; set; }
+
         public string Time { get; set; }
 
+        public bool Selected { get; set; }
+
+        public bool Edited => LastEditTime != null;
+
         public List<AttachmentMessageViewModel> Attachments { get; set; }
+        
+        public void SelectEditMessage()
+        {
+            Selected = true;
+            var mw = Locator.Current.GetService<MainWindowViewModel>();
+            mw.EditSelectMessage(this);
+        }
     }
 
     [AddINotifyPropertyChangedInterface]

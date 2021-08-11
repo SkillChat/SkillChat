@@ -242,6 +242,8 @@
                                         <Setter Property="Padding" Value="10,0,10,5" />
                                         <Setter Property="FontSize" Value="14" />
                                         <Setter Property="Foreground" Value="Transparent" />
+                                        <Setter Property="ContextMenu" Value="{x:Null}"/>
+                                        <Setter Property="ContextFlyout" Value="{x:Null}"/>
                                     </Style>
                                     <Style Selector="TextBox.message">
                                         <Setter Property="Padding" Value="10,0,10,5" />
@@ -250,6 +252,8 @@
                                         <Setter Property="Background" Value="Transparent" />
                                         <Setter Property="BorderThickness" Value="0" />
                                         <Setter Property="TextWrapping" Value="Wrap" />
+                                        <Setter Property="ContextMenu" Value="{x:Null}"/>
+                                        <Setter Property="ContextFlyout" Value="{x:Null}"/>
                                     </Style>
                                     <Style Selector="TextBlock.time">
                                         <Setter Property="FontSize" Value="12" />
@@ -431,12 +435,23 @@
                                                         Classes="message"
                                                         IsReadOnly="True"
                                                         Text="{Binding Text}" />
-                                                    <TextBlock
-                                                        Grid.Row="1"
-                                                        HorizontalAlignment="Right"
-                                                        VerticalAlignment="Bottom"
-                                                        Classes="time"
-                                                        Text="{Binding Time}" />
+                                                  <StackPanel
+                                                      Orientation="Horizontal"
+                                                      Grid.Row="1"
+                                                      HorizontalAlignment="Right"
+                                                      VerticalAlignment="Bottom">
+                                                      <Image
+                                                          Height="10"
+                                                          Width="10"
+                                                          IsVisible="{Binding Edited}">
+                                                          <Image.Source>
+                                                              <svg:SvgImage Source="/Assets/Edit.svg" />
+                                                          </Image.Source>
+                                                      </Image>
+                                                      <TextBlock
+                                                          Classes="time"
+                                                          Text="{Binding Time}" />
+                                                  </StackPanel>
                                                 </Grid>
                                             </Border>
                                         </StackPanel>
@@ -572,6 +587,19 @@
                                     </DataTemplate>
                                     <DataTemplate DataType="{x:Type viewModel:MyMessageViewModel}">
                                         <StackPanel Margin="0,0,0,3" HorizontalAlignment="Right">
+                                            <StackPanel.ContextMenu>
+                                                <ContextMenu BorderBrush="#FF9337" BorderThickness="1" >
+                                                    <MenuItem
+                                                        HorizontalAlignment="Left"
+                                                        Height="31"
+                                                        Width="150"
+                                                        Command="{Binding SelectEditMessage}">
+                                                        <MenuItem.Header>
+                                                            <TextBlock Text="Редактировать" Width="150" Height="31" FontWeight="400" FontSize="15" Padding="20 8 38 7" />
+                                                        </MenuItem.Header>
+                                                    </MenuItem>
+                                                </ContextMenu>
+                                            </StackPanel.ContextMenu>
                                             <Border
                                                 Padding="10,5"
                                                 Background="#DDD5F4"
@@ -587,12 +615,25 @@
                                                         Grid.Row="1"
                                                         Classes="message"
                                                         IsReadOnly="True"
-                                                        Text="{Binding Text}" />
-                                                    <TextBlock
-                                                        HorizontalAlignment="Right"
-                                                        VerticalAlignment="Bottom"
-                                                        Classes="time"
-                                                        Text="{Binding Time}" />
+                                                        Text="{Binding Text}">
+                                                    </TextBox>
+                                                    <StackPanel
+                                                      Orientation="Horizontal"
+                                                      Grid.Row="2"
+                                                      HorizontalAlignment="Right"
+                                                      VerticalAlignment="Bottom">
+                                                      <Image
+                                                          Height="10"
+                                                          Width="10"
+                                                          IsVisible="{Binding Edited}">
+                                                          <Image.Source>
+                                                              <svg:SvgImage Source="/Assets/Edit.svg" />
+                                                          </Image.Source>
+                                                      </Image>
+                                                      <TextBlock 
+                                                          Classes="time"
+                                                          Text="{Binding Time}"/>
+                                                    </StackPanel>
                                                 </Grid>
                                             </Border>
                                         </StackPanel>
