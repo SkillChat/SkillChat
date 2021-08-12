@@ -31,15 +31,19 @@
              Height="20"/>
     </Button>
     <!--Текстовое поле ввода сообщения  -->
-    <TextBox
-      Name="InputMessageTB"
-      Classes="SendMessageText"
-      Grid.Column="1"
-      Text="{Binding MessageText}">
-      <TextBox.KeyBindings>
-        <KeyBinding Command="{Binding SendCommand}" Gesture="{Binding Path=KeySendMessage,Converter={StaticResource keyConverter}}" />
-      </TextBox.KeyBindings>
-    </TextBox>
+    <Grid Grid.Column="1" Classes="SendMessageGrid" ColumnDefinitions="Auto,*">
+            <Image Grid.Column="0" Classes="EditedMessageImage"/>
+            <TextBox Grid.Column="1"
+                Name="InputMessageTB"
+                Classes="SendMessageText"
+                Text="{Binding MessageText}">
+                <TextBox.KeyBindings>
+                    <KeyBinding Command="{Binding SendCommand}" Gesture="{Binding Path=KeySendMessage,Converter={StaticResource keyConverter}}" />
+                    <KeyBinding Command="{Binding EditLastMessageCommand}" Gesture="Up" />
+                    <KeyBinding Command="{Binding EndEditCommand}" Gesture="Escape" />
+                </TextBox.KeyBindings>
+            </TextBox>
+    </Grid>
     <!--  Кнопка отправки сообщения  -->
     <Button
         x:Name="sendButton"

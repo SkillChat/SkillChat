@@ -37,6 +37,14 @@ namespace SkillChat.Client.ViewModel
                             Text = "Есть кто?",
                             PostTime = DateTimeOffset.Now,
                             Id = "2"
+                        },
+                        new MyMessageViewModel()
+                        {
+                            UserNickname = "kibnet",
+                            Text = "Есть тут кто-то?",
+                            PostTime = DateTimeOffset.Now,
+                            LastEditTime = DateTimeOffset.Now,
+                            Id = "3",
                         }
                     }
                 },

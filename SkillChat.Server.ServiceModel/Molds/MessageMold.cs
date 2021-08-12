@@ -26,6 +26,9 @@ namespace SkillChat.Server.ServiceModel.Molds
         [Description("Идентификатор чата")]
         public string ChatId { get; set; }
 
+        [Description("Время последнего редактирования")]
+        public DateTimeOffset? LastEditTime { get; set; }
+
         [Description("Вложения")]
         public List<AttachmentMold> Attachments { get; set; }
     }

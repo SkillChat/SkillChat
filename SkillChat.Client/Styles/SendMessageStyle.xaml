@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia">
 
-    <!--Начало: Стили кнопки отпрвки сообщений-->
+    <!--Начало: Стили кнопки отправки сообщений-->
     <Style Selector="Button.Send-Btn /template/ ContentPresenter">
         <Setter Property="Width" Value="30"/>
         <Setter Property="Height" Value="30"/>
@@ -18,6 +18,22 @@
         <Setter Property="FontSize" Value="{DynamicResource H4}"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="Watermark" Value="Сообщение"/>
+    </Style>
+
+    <Style Selector="Grid.SendMessageGrid">
+        <Setter Property="Background" Value="White"/>
+    </Style>
+
+    <Style Selector="Image.EditedMessageImage">
+        <Setter Property="Width" Value="14.5"/>
+        <Setter Property="Height" Value="14"/>
+        <Setter Property="Margin" Value="10.5,7.5,0,8.5"/>
+        <Setter Property="IsVisible" Value="{Binding IsEdited}"/>
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/Edit.svg"/>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!--Кнопка отправки сообщений-->
