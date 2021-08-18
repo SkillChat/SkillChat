@@ -303,17 +303,21 @@ namespace SkillChat.Client.ViewModel
                 {
                     try
                     {
-                        if (idEditMessage != null)
+                        MessageText = MessageText.Trim(); //Удаление пробелов в начале и конце сообщения
+                        if (MessageText != string.Empty) //Проверка на пустое сообщение
                         {
-                            await _hub.UpdateMessage(new HubEditedMessage(idEditMessage, ChatId, MessageText)); ///Отправка отредактированного сообщения 
-                            idEditMessage = null;
-                        }
-                        else
-                        {
-                            await _hub.SendMessage(new HubMessage(ChatId, MessageText)); ///Обычная отправка сообщения
-                        }
+                            if (idEditMessage != null)
+                            {
+                                await _hub.UpdateMessage(new HubEditedMessage(idEditMessage, ChatId, MessageText)); ///Отправка отредактированного сообщения 
+                                idEditMessage = null;
+                            }
+                            else
+                            {
+                                await _hub.SendMessage(new HubMessage(ChatId, MessageText)); ///Обычная отправка сообщения
+                            }
 
-                        MessageText = null;
+                            MessageText = null;
+                        }
                     }
                     catch (Exception ex)
                     {
