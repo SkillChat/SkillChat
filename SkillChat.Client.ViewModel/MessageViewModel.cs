@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Reactive;
-using System.Windows.Input;
 using PropertyChanged;
 using ReactiveUI;
 using ServiceStack;
@@ -14,50 +14,6 @@ using Splat;
 
 namespace SkillChat.Client.ViewModel
 {
-    public interface IMessagesContainerViewModel
-    {
-        ObservableCollection<MessageViewModel> Messages { get;set; }
-    }
-
-    [AddINotifyPropertyChangedInterface]
-    public class MyMessagesContainerViewModel:IMessagesContainerViewModel
-    {
-        public ObservableCollection<MessageViewModel> Messages { get;set; } = new ObservableCollection<MessageViewModel>();
-    }
-    
-    [AddINotifyPropertyChangedInterface]
-    public class UserMessagesContainerViewModel:IMessagesContainerViewModel
-    {
-        public ObservableCollection<MessageViewModel> Messages { get;set; } = new ObservableCollection<MessageViewModel>();
-    }
-
-    [AddINotifyPropertyChangedInterface]
-    public class MyMessageViewModel : MessageViewModel { }
-
-    [AddINotifyPropertyChangedInterface]
-    public class MyAttachmentViewModel : MessageViewModel
-    {
-    }
-
-    [AddINotifyPropertyChangedInterface]
-    public class UserMessageViewModel : MessageViewModel
-    {
-        public UserMessageViewModel()
-        {
-            UserProfileInfoCommand = ReactiveCommand.Create<string>(async userId =>
-            {
-                var profileViewModel = Locator.Current.GetService<IProfile>();
-                await profileViewModel.Open(userId);
-            });
-        }
-
-        public UserProfileMold ProfileMold { get; set; }
-        public  ReactiveCommand<string, Unit> UserProfileInfoCommand { get; set; }
-    }
-
-    [AddINotifyPropertyChangedInterface]
-    public class UserAttachmentViewModel : MessageViewModel {}
-
     [AddINotifyPropertyChangedInterface]
     public class MessageViewModel
     {
@@ -75,6 +31,16 @@ namespace SkillChat.Client.ViewModel
                     Time = local.ToString("t");
                 }
             });
+            if (!IsMyMessage)
+            {
+                UserProfileInfoCommand = ReactiveCommand.Create<string>(async userId =>
+                {
+                    var profileViewModel = Locator.Current.GetService<IProfile>();
+                    await profileViewModel.Open(userId);
+                });
+            }
+
+
         }
 
         public string Id { get; set; }
@@ -90,7 +56,7 @@ namespace SkillChat.Client.ViewModel
         public string Text { get; set; }
 
         public string TextAligned => $"{Text}{Time}";
-        
+
         public DateTimeOffset PostTime { get; set; }
 
         public DateTimeOffset? LastEditTime { get; set; }
@@ -99,10 +65,36 @@ namespace SkillChat.Client.ViewModel
 
         public bool Selected { get; set; }
 
+        public bool IsMyMessage { get; set; }
+
+        public enum StatusMessage
+        {
+            MyFirstMessage,
+            MyNotFirstMessage,
+            SomeonesFirstMessage,
+            SomeonesNotFirstMessage
+        }
+
+        public StatusMessage Status
+        {
+            get
+            {
+                if (IsMyMessage)
+                    return ShowNickname ? StatusMessage.MyFirstMessage : StatusMessage.MyNotFirstMessage;
+                return ShowNickname ? StatusMessage.SomeonesFirstMessage : StatusMessage.SomeonesNotFirstMessage;
+            }
+        }
+
+        public bool IsTextNullOrEmpty => Text.IsNullOrEmpty();
+
+        public bool IsAttachmentMessage { get; set; }
+
         public bool Edited => LastEditTime != null;
 
         public List<AttachmentMessageViewModel> Attachments { get; set; }
-        
+        public UserProfileMold ProfileMold { get; set; }
+        public ReactiveCommand<string, Unit> UserProfileInfoCommand { get; set; }
+
         public void SelectEditMessage()
         {
             Selected = true;
@@ -134,19 +126,18 @@ namespace SkillChat.Client.ViewModel
                     _isDownload = await mainWindowViewModel.DownloadAttachment(attachment);
                     Text = !_isDownload ? "Загрузить" : "Открыть";
                 }
-                else mainWindowViewModel.OpenAttachment(attachment.FileName);                 
+                else mainWindowViewModel.OpenAttachment(attachment.FileName);
             });
 
 
         }
-
         public string SizeName => Size.SizeCalculating();
         public string Extensions => Path.GetExtension(FileName).Replace(".", "").ToUpper();
-        public string Text { get ; set; }
-
+        public string Text { get; set; }
+        public bool IsMyMessage { get; set; }
         private bool _isDownload { get; set; }
 
-        private bool _hashDownloadFile(AttachmentMold attachment) 
+        private bool _hashDownloadFile(AttachmentMold attachment)
         {
             var fileInfo = new FileInfo(attachment.FileName);
             var result = fileInfo.Exists;

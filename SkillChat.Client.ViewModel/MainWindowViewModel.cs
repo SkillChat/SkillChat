@@ -75,7 +75,7 @@ namespace SkillChat.Client.ViewModel
             User.Login = settings.Login;
             Tokens = new TokenResult { AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken };
 
-            Messages = new ObservableCollection<IMessagesContainerViewModel>();
+            Messages = new ObservableCollection<MessageViewModel>();
 
             var bits = Environment.Is64BitOperatingSystem ? "PC 64bit, " : "PC 32bit, ";
             var operatingSystem = bits + RuntimeInformation.OSDescription;
@@ -172,15 +172,14 @@ namespace SkillChat.Client.ViewModel
                     {
                         try
                         {
-                            var updateMessages = Messages.Where(s => s is UserMessagesContainerViewModel);
-                            foreach (var message in updateMessages)
+                            foreach (var item in Messages)
                             {
-                                foreach (var item in message.Messages.Where(s => s.UserId == user.Id))
+                                if (item.UserId==user.Id)
                                 {
-                                    item.UserNickname = user.DisplayName;
+                                    if (item.ShowNickname) item.UserNickname = user.DisplayName;
                                 }
                             }
-
+                            
                             ProfileViewModel.UpdateUserProfile(user.DisplayName, user.Id);
                         }
                         catch (Exception e)
@@ -202,70 +201,36 @@ namespace SkillChat.Client.ViewModel
                     ///Получает новые сообщения и добавляет их в окно чата. 
                     _connection.Subscribe<ReceiveMessage>(async data =>
                     {
-                        var isMyMessage = User.Id == data.UserId;
-                        var hasAttachments = data.Attachments != null && data.Attachments.Count > 0;
-
-                        MessageViewModel newMessage;
-
-                        if (isMyMessage)
-                        {
-                            newMessage = hasAttachments ? new MyAttachmentViewModel() : new MyMessageViewModel();
-                        }
-                        else
-                        {
-                            newMessage = hasAttachments ? new UserAttachmentViewModel() : new UserMessageViewModel();
-                        }
+                        MessageViewModel newMessage = new MessageViewModel();
 
                         newMessage.Id = data.Id;
                         newMessage.Text = data.Message;
                         newMessage.PostTime = data.PostTime;
                         newMessage.UserNickname = data.UserNickname??data.UserLogin;
                         newMessage.UserId = data.UserId;
-                        
+                        newMessage.IsMyMessage = User.Id == data.UserId;
+                        newMessage.IsAttachmentMessage = data.Attachments != null && data.Attachments.Count > 0;
+
                         newMessage.Attachments = data.Attachments?
                             .Select(s =>
                             { 
                                 var attah = mapper?.Map<AttachmentMold>(s);
-                                return new AttachmentMessageViewModel(attah);
+                                var newAttachment = new AttachmentMessageViewModel(attah);
+                                return newAttachment;
                             }).ToList();
-
-                        var container = Messages.LastOrDefault();
-                       
-                        if (isMyMessage)
+                        
+                        if (Messages.Count!=0)
                         {
-                            if (!(container is MyMessagesContainerViewModel))
+                            if (Messages.Last().UserId != data.UserId)
                             {
-                                container = new MyMessagesContainerViewModel();
-                                Messages.Add(container);
+                                newMessage.ShowNickname = true;
                             }
                         }
                         else
                         {
-                            if (container is UserMessagesContainerViewModel)
-                            {
-                                var lastMessage = container.Messages.LastOrDefault();
-                                if (lastMessage?.UserId != newMessage.UserId)
-                                {
-                                    container = new UserMessagesContainerViewModel();
-                                    Messages.Add(container);
-                                }
-                            }
-                            else
-                            {
-                                container = new UserMessagesContainerViewModel();
-                                Messages.Add(container);
-                            }
-
-                            if (!windowIsFocused || SettingsViewModel.IsOpened)
-                                Notify.NewMessage(newMessage.UserNickname, newMessage.Text.Replace("\r\n", " "));
-                        }
-
-                        container.Messages.Add(newMessage);
-                        if (container.Messages.First() == newMessage)
-                        {
                             newMessage.ShowNickname = true;
                         }
-
+                        Messages.Add(newMessage);
                         MessageReceived?.Invoke(new ReceivedMessageArgs(newMessage));
                         messageDictionary[newMessage.Id] = newMessage;
                     });
@@ -273,7 +238,6 @@ namespace SkillChat.Client.ViewModel
                     _connection.Closed += connectionOnClosed();
                     await _connection.StartAsync();
                     await _hub.Login(Tokens.AccessToken, operatingSystem, ipAddress, nameVersionClient);
-                    //Messages.Add("Connection started");
                     IsShowingLoginPage = false;
                     IsShowingRegisterPage = false;
                     User.ErrorMessageLoginPage.ResetDisplayErrorMessage();
@@ -331,27 +295,15 @@ namespace SkillChat.Client.ViewModel
             LoadMessageHistoryCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 try
-                {
-                    var first = Messages.FirstOrDefault()?.Messages.FirstOrDefault();
+                { 
+                    var first = Messages?.FirstOrDefault();
                     var request = new GetMessages {ChatId = ChatId, BeforePostTime = first?.PostTime};
-                    
+
                     // Логика выбора сообщений по id чата
                     var result = await serviceClient.GetAsync(request);
                     foreach (var item in result.Messages)
                     {
-                        var isMyMessage = User.Id == item.UserId;
-                        var hasAttachments = item.Attachments != null && item.Attachments.Count > 0;
-
-                        MessageViewModel newMessage;
-
-                        if (isMyMessage)
-                        {
-                            newMessage = hasAttachments ? new MyAttachmentViewModel() : new MyMessageViewModel();
-                        }
-                        else
-                        {
-                            newMessage = hasAttachments ? new UserAttachmentViewModel() : new UserMessageViewModel();
-                        }
+                        MessageViewModel newMessage = new MessageViewModel();
 
                         newMessage.Id = item.Id;
                         newMessage.Text = item.Text;
@@ -359,46 +311,29 @@ namespace SkillChat.Client.ViewModel
                         newMessage.UserNickname = item.UserNickName;
                         newMessage.UserId = item.UserId;
                         newMessage.LastEditTime = item.LastEditTime;
-                        newMessage.Attachments = item.Attachments?.Select(s => new AttachmentMessageViewModel(s)).ToList();
+                        newMessage.IsMyMessage = User.Id == item.UserId;
+                        newMessage.IsAttachmentMessage = item.Attachments != null && item.Attachments.Count > 0;
+                        newMessage.Attachments = item.Attachments?
+                            .Select(s =>
+                            {
+                                var newAttachment = new AttachmentMessageViewModel(s);
+                                newAttachment.IsMyMessage = newMessage.IsMyMessage;
+                                return newAttachment;
+                            }).ToList();
 
-                        var container = Messages.FirstOrDefault();
+                        if (Messages.Count!=0)
+                        {
+                            if (Messages.First().UserId != newMessage.UserId)
+                            {
+                                Messages.First().ShowNickname = true;
+                            }
+                        }
                        
-                        if (isMyMessage)
-                        {
-                            if (!(container is MyMessagesContainerViewModel))
-                            {
-                                container = new MyMessagesContainerViewModel();
-                                Messages.Insert(0, container);
-                            }
-                        }
-                        else
-                        {
-                            if (container is UserMessagesContainerViewModel)
-                            {
-                                var firstMessage = container.Messages.FirstOrDefault();
-                                if (firstMessage?.UserId != newMessage.UserId)
-                                {
-                                    container = new UserMessagesContainerViewModel();
-                                    Messages.Insert(0, container);
-                                }
-                            }
-                            else
-                            {
-                                container = new UserMessagesContainerViewModel();
-                                Messages.Insert(0, container);
-                            }
-                        }
-
-                        container.Messages.Insert(0, newMessage);
-
-                        var firstInBlock = container.Messages.First();
-                        foreach (var message in container.Messages)
-                        {
-                            message.ShowNickname = firstInBlock == message;
-                        }
-
+                        Messages.Insert(0, newMessage);
                         messageDictionary[newMessage.Id] = newMessage;
                     }
+
+                    if (Messages.Count !=0) Messages.First().ShowNickname = true;
                 }
                 catch (Exception e)
                 {
@@ -540,11 +475,11 @@ namespace SkillChat.Client.ViewModel
             {
                 foreach (var messages in Messages.Reverse())
                 {
-                    foreach (var item in messages.Messages.Reverse())
+                    if (User.Id == messages.UserId)
                     {
-                        if (User.Id == item.UserId)
+                        if (User.Id == messages.UserId)
                         {
-                            EditMessage(item);
+                            EditMessage(messages);
                             return;
                         }
                     }
@@ -594,7 +529,7 @@ namespace SkillChat.Client.ViewModel
         {
             AttachMenuVisible = !AttachMenuVisible;
         }
-        public ObservableCollection<IMessagesContainerViewModel> Messages { get; set; }
+        public ObservableCollection<MessageViewModel> Messages { get; set; }
 
         public TokenResult Tokens { get; set; }
 

@@ -1,0 +1,143 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia">
+    <!--Border-->
+    <Style Selector="Border.textMessage">
+        <Setter Property="Padding" Value="10,5"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="2"/>
+    </Style>
+
+    <Style Selector="Border.attachmentMessage">
+        <Setter Property="Padding" Value="10,10,10,5"/>
+        <Setter Property="Margin" Value="0,0,0,5"/>
+        <Setter Property="CornerRadius" Value="2"/>
+    </Style>
+
+    <Style Selector="Border.line">
+        <Setter Property="BorderThickness" Value="0 1 0 0"/>
+    </Style>
+
+    <!--TextBox-->
+    <Style Selector="TextBox.message">
+        <Setter Property="Padding" Value="10,0,10,5" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="AcceptsReturn" Value="True" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="ContextMenu" Value="{x:Null}"/>
+        <Setter Property="ContextFlyout" Value="{x:Null}"/>
+    </Style>
+
+    <!--Image-->
+    <Style Selector="Image.edit">
+        <Setter Property="Height" Value="10"/>
+        <Setter Property="Width" Value="10"/>
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/Edit.svg"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style Selector="Image.file">
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Width" Value="60"/>
+        <Setter Property="Height" Value="70"/>
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/file.svg"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style Selector="Image.circle">
+        <Setter Property="Width" Value="30"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/circle.svg"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style Selector="Image.ok-wht">
+        <Setter Property="Width" Value="13"/>
+        <Setter Property="Height" Value="8.5"/>
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/ok-wht.svg"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--MenuItem-->
+    <Style Selector="MenuItem.menuitem">
+        <Setter Property="Height" Value="31"/>
+        <Setter Property="Width" Value="150"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+    </Style>
+
+    <!--TextBlock-->
+    <Style Selector="TextBlock.UserLogin">
+        <Setter Property="Padding" Value="10,0,0,0"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+
+    <Style Selector="TextBlock.UserDownload">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="TextAlignment" Value="Left"/>
+        <Setter Property="Foreground" Value="#FF9337"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="TextDecorations" Value="Underline"/>
+    </Style>
+
+    <Style Selector="TextBlock.fileName">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="VerticalAlignment" Value="Bottom"/>
+        <Setter Property="TextAlignment" Value="Left"/>
+    </Style>
+
+    <Style Selector="TextBlock.extensions">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Foreground" Value="#828282"/>
+        <Setter Property="Margin" Value="0 0 2 0"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+
+    <Style Selector="TextBlock.sizeName">
+        <Setter Property="Width" Value="150"/>
+        <Setter Property="TextWrapping" Value="NoWrap"/>
+    </Style>
+
+    <Style Selector="TextBlock.line">
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="TextWrapping" Value="NoWrap"/>
+    </Style>
+
+    <Style Selector="TextBlock.message">
+        <Setter Property="Padding" Value="10,0,10,5" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="Transparent" />
+        <Setter Property="ContextMenu" Value="{x:Null}"/>
+        <Setter Property="ContextFlyout" Value="{x:Null}"/>
+    </Style>
+
+    <Style Selector="TextBlock.time">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="#828282" />
+    </Style>
+
+    <Style Selector="TextBlock.itemTextBlock">
+        <Setter Property="Width" Value="150"/>
+        <Setter Property="Height" Value="31"/>
+        <Setter Property="FontWeight" Value="400"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="Padding" Value="20,8,38,7"/>
+    </Style>
+</Styles>

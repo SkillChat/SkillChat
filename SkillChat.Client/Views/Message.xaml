@@ -1,0 +1,124 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:interactivity="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+             xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
+             xmlns:utils="clr-namespace:SkillChat.Client.Utils"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SkillChat.Client.Views.Message">
+    <UserControl.Resources>
+        <utils:BoolToObjectConverter x:Key="BoolToObjectConverter"/>
+        <SolidColorBrush x:Key="PurpleColor" Color="#9976FB"/>
+        <SolidColorBrush x:Key="DarkPurpleColor" Color="#5027C7"/>
+        <SolidColorBrush x:Key="OrangeColor" Color="#FF9337"/>
+    </UserControl.Resources>
+    <Grid RowDefinitions="Auto,*">
+        <ItemsControl
+          Grid.Row="0"
+          Items="{Binding Attachments}"
+          IsVisible="{Binding IsAttachmentMessage}">
+            <ItemsControl.DataTemplates>
+                <DataTemplate>
+                    <Border
+                        MaxWidth="280">
+                        <Grid ColumnDefinitions="Auto, Auto, Auto">
+                            <Image
+                                Grid.Column="0"
+                                Classes="file">
+                            </Image>
+                            <Image
+                                Grid.Column="0"
+                                Classes="circle">
+                            </Image>
+                            <Image
+                                Grid.Column="0"
+                                Classes="ok-wht">
+                            </Image>
+                            <Grid
+                                Grid.Column="1"
+                                RowDefinitions="*, Auto"
+                                ColumnDefinitions="*, Auto"
+                                Margin="5">
+                                <TextBlock
+                                  Grid.Row="0"
+                                  Grid.Column="0"
+                                  Classes="UserDownload"
+                                  Foreground="{Binding IsMyMessage,
+                               Converter={StaticResource BoolToObjectConverter},
+                               ConverterParameter={StaticResource DarkPurpleColor},
+                               FallbackValue={StaticResource OrangeColor}}"
+                                  Text="{Binding Text}">
+                                    <interactivity:Interaction.Behaviors>
+                                        <core:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #Downdold}">
+                                            <core:InvokeCommandAction Command="{Binding DownloadCommand}" CommandParameter="{Binding Path=.}"/>
+                                        </core:EventTriggerBehavior>
+                                    </interactivity:Interaction.Behaviors>
+                                </TextBlock>
+                                <TextBlock
+                                  Grid.Row="0"
+                                  Grid.Column="0"
+                                  Classes="fileName"
+                                  Text="{Binding FileName}"/>
+                                <StackPanel
+                                      Orientation="Horizontal"
+                                      Grid.Row="1"
+                                      Grid.Column="0">
+                                    <Grid
+                                        RowDefinitions="*, Auto"
+                                        ColumnDefinitions="Auto, Auto, Auto">
+                                        <TextBlock
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            Classes="extensions"
+                                            Text="{Binding Extensions}"/>
+                                        <TextBlock
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            Classes="extensions line"
+                                            Text="/"/>
+                                        <TextBlock
+                                            Grid.Row="0"
+                                            Grid.Column="2"
+                                            Classes="extensions sizeName"
+                                            Text="{Binding SizeName}"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.DataTemplates>
+        </ItemsControl>
+        <Border
+            Grid.Row="1"
+            IsVisible="{Binding !IsTextNullOrEmpty}"
+            Classes.line="{Binding IsAttachmentMessage}"
+            BorderBrush="{Binding IsMyMessage,
+                      Converter={StaticResource BoolToObjectConverter},
+                      ConverterParameter={StaticResource PurpleColor},
+                      FallbackValue={StaticResource OrangeColor}}">
+            <Grid>
+                <TextBlock
+                    Classes="message"
+                    Text="{Binding TextAligned}"
+                    TextWrapping="Wrap"/>
+                <TextBox
+                    Classes="message"
+                    IsReadOnly="True"
+                    Text="{Binding Text}"/>
+            </Grid>
+        </Border>
+        <StackPanel
+            Orientation="Horizontal"
+            Grid.Row="1"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom">
+            <Image Classes="edit" IsVisible="{Binding Edited}"/>
+            <TextBlock
+                Classes="time"
+                Text="{Binding Time}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
