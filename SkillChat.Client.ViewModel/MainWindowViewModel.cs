@@ -21,6 +21,7 @@ using System.Reactive;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using SkillChat.Client.ViewModel;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -34,6 +35,7 @@ namespace SkillChat.Client.ViewModel
         {
             Locator.CurrentMutable.RegisterConstant(this);
             User = new CurrentUserViewModel();
+            RegisterUser = new RegisterUserViewModel();
             Locator.CurrentMutable.RegisterConstant<ICurrentUser>(User);
             configuration = Locator.Current.GetService<IConfiguration>();
             settings = configuration?.GetSection("ChatClientSettings")?.Get<ChatClientSettings>();
@@ -111,8 +113,9 @@ namespace SkillChat.Client.ViewModel
 
                     if (Tokens == null || Tokens.AccessToken.IsNullOrEmpty())
                     {
-                        Tokens = await serviceClient.PostAsync(new AuthViaPassword
-                        { Login = User.UserName, Password = User.Password });
+                            Tokens = await serviceClient.PostAsync(new AuthViaPassword
+                            { Login = User.UserName, Password = User.Password });
+                        
                         settings.AccessToken = Tokens.AccessToken;
                         settings.RefreshToken = Tokens.RefreshToken;
                         settings.UserName = User.UserName;
@@ -272,17 +275,15 @@ namespace SkillChat.Client.ViewModel
                     //Messages.Add("Connection started");
                     IsShowingLoginPage = false;
                     IsShowingRegisterPage = false;
-                    ValidationError = "";
-                    IsConnected = true;
+                    User.ErrorMessageLoginPage.ResetDisplayErrorMessage();
+                    IsConnected = _connection.State == HubConnectionState.Connected;
                     User.Password = "";
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    //Изменение параметров TextBox в случае ошибки                    
-                    User.Error("неверный логин или пароль");
+                    User.ErrorMessageLoginPage.GetErrorMessage(e.ToStatusCode().ToString());
                     ErrorBe?.Invoke();
-                    IsShowingLoginPage = _connection.State != HubConnectionState.Connected ? true : false;
-                    //Messages.Add(ex.Message);
+                    IsShowingLoginPage = _connection.State != HubConnectionState.Connected;
                 }
             });
 
@@ -432,22 +433,23 @@ namespace SkillChat.Client.ViewModel
                     IsShowingLoginPage = true;
                 }
             });
-            IsShowingLoginPage = true;
 
-            // Скрывает окно регистрации
-            IsShowingRegisterPage = false;
             IsShowingLoginPage = true;
+            IsShowingRegisterPage = false;
+
             GoToRegisterCommand = ReactiveCommand.Create<object>(_ =>
             {
+                RegisterUser.ErrorMessageRegisterPage.ResetDisplayErrorMessage();
                 IsShowingRegisterPage = true;
                 IsShowingLoginPage = false;
                 RegisterUser.Login = User.UserName;
                 User.Password = "";
             });
 
-            RegisterUser = new RegisterUserViewModel();
+            
             RegisterUser.GoToLoginCommand = ReactiveCommand.Create<object>(_ =>
             {
+                User.ErrorMessageLoginPage.ResetDisplayErrorMessage();
                 IsShowingRegisterPage = false;
                 IsShowingLoginPage = true;
                 RegisterUser.Password = "";
@@ -459,10 +461,12 @@ namespace SkillChat.Client.ViewModel
                 var request = new RegisterNewUser();
                 try
                 {
-                    ValidationError = "";
-                    if (string.IsNullOrWhiteSpace(RegisterUser.Login) ||
-                        string.IsNullOrWhiteSpace(RegisterUser.Password))
-                        throw new Exception("Не заполнены логин и/или пароль");
+                    RegisterUser.ErrorMessageRegisterPage.ResetDisplayErrorMessage();
+                    if (string.IsNullOrWhiteSpace(RegisterUser.Login) || string.IsNullOrWhiteSpace(RegisterUser.Password))
+                    {
+                        RegisterUser.ErrorMessageRegisterPage.GetErrorMessage("Не заполнены Логин и/или Пароль");
+                        return;
+                    }
                     request.Login = RegisterUser.Login;
                     request.Password = RegisterUser.Password;
                     request.UserName = RegisterUser.UserName;
@@ -475,10 +479,11 @@ namespace SkillChat.Client.ViewModel
                     configuration.GetSection("ChatClientSettings").Set(settings);
                     ConnectCommand.Execute(null);
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    Debug.WriteLine($"Ошибка регистрации {ex.Message}");
-                    ValidationError = ex.Message;
+                    Debug.WriteLine($"Ошибка регистрации {e.Message}");
+
+                        RegisterUser.ErrorMessageRegisterPage.GetErrorMessage(e.ToStatusCode().ToString());
                 }
 
             });
@@ -552,6 +557,9 @@ namespace SkillChat.Client.ViewModel
                 catch (Exception e)
                 {
                     IsShowingLoginPage = true;
+                    ErrorBe?.Invoke(); // Меняет стиль цвета текст боксов в окне входа
+                    User.ErrorMessageLoginPage.GetErrorMessage(e.ToStatusCode().ToString());
+                    RegisterUser.ErrorMessageRegisterPage.GetErrorMessage(e.ToStatusCode().ToString());
                 }
             };
         }
@@ -617,7 +625,6 @@ namespace SkillChat.Client.ViewModel
         public string ValidationError { get; set; }
 
         public ReactiveCommand<object, Unit> GoToRegisterCommand { get; }
-        public RegisterUserViewModel RegisterUser { get; set; }
         public ICommand RegisterCommand { get; }
 
         public SettingsViewModel SettingsViewModel { get; set; }
@@ -627,6 +634,9 @@ namespace SkillChat.Client.ViewModel
         /// </summary>
         public event Action<ReceivedMessageArgs> MessageReceived;
 
+        /// <summary>
+        /// Свойство предоставляет доступ к полям, свойствам и методам экземпляра класса CurrentUserViewModel
+        /// </summary>
         public CurrentUserViewModel User { get; set; }
 
         /// <summary>
@@ -647,13 +657,15 @@ namespace SkillChat.Client.ViewModel
             idEditMessage = message.Id;
             MessageText = message.Text;
         }
+        public RegisterUserViewModel RegisterUser { get; set; }
 
         /// <summary>
-        /// Сброс параметров
+        /// Сброс сообщения об ошибке и стиля "Error" для элементов View
         /// </summary>
         public void ResetErrorCommand()
         {
-            User.Reset();
+            User.ErrorMessageLoginPage.ResetDisplayErrorMessage();
+            RegisterUser.ErrorMessageRegisterPage.ResetDisplayErrorMessage();
             ResetError?.Invoke();
         }
 

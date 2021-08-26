@@ -9,6 +9,10 @@ namespace SkillChat.Client.ViewModel
     [AddINotifyPropertyChangedInterface]
     public class RegisterUserViewModel
     {
+        public RegisterUserViewModel()
+        {
+            ErrorMessageRegisterPage = new ErrorMessageViewModel();
+        }
 
         public string Password { get; set; }
         public bool Consent { get; set; }
@@ -18,6 +22,8 @@ namespace SkillChat.Client.ViewModel
 
         public ICommand RegisterCommand { get; }
         public ICommand GoToLoginCommand { get; set; }
+
+        public ErrorMessageViewModel ErrorMessageRegisterPage { get; set; }
 
     }
 }

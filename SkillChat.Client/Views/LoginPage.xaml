@@ -233,7 +233,7 @@
             FontSize="13"
             FontWeight="400"
             Foreground="#FF9337"
-            Text="{Binding User.ErrorMsg}">
+            Text="{Binding User.ErrorMessageLoginPage.ErrorMsg}">
         </TextBlock>
         <Button
             x:Name="connectButton"
