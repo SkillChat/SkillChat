@@ -45,7 +45,7 @@ namespace SkillChat.Server.Hubs
             var messageItem = new Message
             {
                 UserId = Context.Items["uid"] as string,
-                Text = hubMessage.Message,
+                Text = hubMessage.Message.Trim(),
                 PostTime = DateTimeOffset.UtcNow,
                 ChatId = hubMessage.ChatId,
                 Attachments = hubMessage.Attachments?.Select(s => s.Id).ToList()
