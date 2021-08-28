@@ -684,6 +684,8 @@ namespace SkillChat.Client.ViewModel
             HeaderMenuPopup
         }
 
+        public bool IsFirstRun { get; set; } = true;
+
         public void WindowStates(WindowState state)
         {
             switch (state)
@@ -692,6 +694,7 @@ namespace SkillChat.Client.ViewModel
                     SettingsViewModel.Close();
                     ProfileViewModel.ContextMenuClose();
                     ProfileViewModel.Close();
+                    IsFirstRun = true;
                     break;
                 case WindowState.OpenProfile:
                     SettingsViewModel.Close();
