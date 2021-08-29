@@ -84,6 +84,7 @@
     <Grid>
         <Grid ColumnDefinitions="100,*">
             <StackPanel Background="#7F57F0">
+                <!--  Кнопка профиля (на левой панеле)  -->
                 <Image Width="60" Margin="20">
                     <Image.Source>
                         <svg:SvgImage Source="/Assets/SkillChat_small.svg" />
@@ -95,7 +96,7 @@
                         BorderThickness="0"
                         Cursor="Hand"
                         Classes="profile"
-                        Command="{Binding ProfileViewModel.OpenProfilePanelCommand}">
+                        Command="{Binding ProfileViewModel.OpenProfilePanelCommand }">
                     <Image Width="13.33" Height="18.65" Margin="20" Name="profile_white_icon" />
                 </Button>
                 <Button
@@ -109,7 +110,7 @@
                     <Image Name="profile_orange_icon" Margin="20" Width="13.33" Height="18.65" />
                 </Button>
             </StackPanel>
-
+            <!--  Кнопка открытия настроек  -->
             <Button Background="Transparent"
                     VerticalAlignment="Bottom"
                     Margin="0 0 0 30"
@@ -135,7 +136,7 @@
 
             <Grid Grid.Column="1" RowDefinitions="80,*">
 
-                <!--Header-->
+                <!--  Header  -->
                 <Grid ZIndex="1" Background="#F2F2F2">
 
                     <Grid.ColumnDefinitions>
@@ -144,16 +145,22 @@
                         <ColumnDefinition Width="2"/>
                         <ColumnDefinition
                             Width="{Binding ColumndefinitionWidth2,Converter={StaticResource GridLengthValueConverter}}" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
+                    <!--  Информация о чате  -->
                     <StackPanel
+                        Grid.Column="0"
                         Margin="20,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center">
+                        <!--  Название чата/настройки  -->
                         <TextBlock
                             FontSize="16"
                             FontWeight="SemiBold"
                             Text="{Binding TextHeaderMain}" />
+                        <!--  Участники чата  -->
                         <TextBlock
                             FontSize="14"
                             FontWeight="Regular"
@@ -162,11 +169,9 @@
                             TextTrimming="WordEllipsis" />
                     </StackPanel>
 
-                    <Grid Grid.Column="1" Background="#E0E0E0"/>
-
-                    <!--Profile - Шапка профиля -->
-                    <Grid Grid.Column="2" Width="{Binding GridWidth}" ZIndex="1">
-                        <StackPanel Orientation="Horizontal">
+                    <Grid ZIndex="1" Grid.Column="2">
+                        <!--  Выбранные настройки  -->
+                        <StackPanel Orientation="Horizontal" Grid.Column="0" HorizontalAlignment="Left">
                             <TextBlock Foreground="#4F4F4F"
                                        FontWeight="600"
                                        IsVisible="{Binding SettingsActive}"
@@ -175,30 +180,37 @@
                                        FontSize="15" 
                                        Text="{Binding TextHeaderMenuInSettings}"/>
                         </StackPanel>
-                        <profile:Header DataContext="{Binding ProfileViewModel}" />
-                        <!--Profile - Exit -->
-                        <Grid ZIndex="2" Width="140" Height="30" HorizontalAlignment="Right" Margin="0 52 18 0">
+                    </Grid>
+                      <Grid ZIndex="1" Grid.Column="4">
+                          <!--  Информация о профиле -->
+                        <Grid ZIndex="1" Width="300" Height="300" HorizontalAlignment="Right">
+                           <profile:Header DataContext="{Binding ProfileViewModel}" />
+                        </Grid>
+                        <!--  Профиль - выход -->
+                         <Grid ZIndex="2" Width="140" Height="30" HorizontalAlignment="Right">
                             <profile:Exit DataContext="{Binding ProfileViewModel}" />
                         </Grid>
-                        <!--Settings - Header -->
+                        <!--  Настройки - Header -->
                         <Grid ZIndex="1" HorizontalAlignment="Right" VerticalAlignment="Top"
                               Margin="0 20 28 0" Width="40" Height="40" Background="Transparent">
                             <settings:Header DataContext="{Binding SettingsViewModel}" />
                         </Grid>
-                        <!--Settings - Panel -->
-                        <Grid ZIndex="1" IsHitTestVisible="{Binding SettingsViewModel.IsContextMenu}"
+                        <!--  Настройки - Panel -->
+                        <Grid ZIndex="2" IsHitTestVisible="{Binding SettingsViewModel.IsContextMenu}"
                               HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Height="62"
                               Margin="0 47 47 0" Background="Transparent">
                             <settings:More DataContext="{Binding SettingsViewModel}" />
                         </Grid>
-                    </Grid>
-                </Grid>
+                      </Grid>
 
-                <!--Settings-->
+                    </Grid>
+
+                    <!--  Окно настроек  -->
                 <Grid Grid.Row="1" IsVisible="{Binding SettingsViewModel.IsOpened}">
                     <settings:Settings DataContext="{Binding SettingsViewModel}" />
                 </Grid>
 
+                <!--  Фон  -->
                 <Grid Grid.Column="1" ZIndex="-1" Grid.Row="1" ColumnDefinitions="*,Auto">
                     <Grid.Background>
                         <ImageBrush
@@ -291,7 +303,7 @@
                         <views:SendMessageControl />
                     </Border>
                     <!--Profile - panel -->
-                    <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Background="#ffffff">
+                    <Grid Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Right" Background="#ffffff">
                         <profile:Settings DataContext="{Binding ProfileViewModel}" />
                     </Grid>
                 </Grid>
