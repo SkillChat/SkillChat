@@ -72,7 +72,7 @@ namespace SkillChat.Client.ViewModel
             SettingsViewModel.SetSelectedOnSettingsItemEvent += e => { TextHeaderMenuInSettings = SettingsViewModel.SettingsMenuActiveMain ? "Сообщения и чаты" : "Аудит входа"; };
 
             Width(false);
-            User.UserName = settings.UserName;
+            User.Login = settings.Login;
             Tokens = new TokenResult { AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken };
 
             Messages = new ObservableCollection<IMessagesContainerViewModel>();
@@ -114,11 +114,12 @@ namespace SkillChat.Client.ViewModel
                     if (Tokens == null || Tokens.AccessToken.IsNullOrEmpty())
                     {
                             Tokens = await serviceClient.PostAsync(new AuthViaPassword
-                            { Login = User.UserName, Password = User.Password });
+                            { Login = User.Login, Password = User.Password });
                         
                         settings.AccessToken = Tokens.AccessToken;
                         settings.RefreshToken = Tokens.RefreshToken;
                         settings.UserName = User.UserName;
+                        settings.Login = User.Login;
                         configuration.GetSection("ChatClientSettings").Set(settings);
                     }
 
@@ -447,7 +448,6 @@ namespace SkillChat.Client.ViewModel
                 ResetError?.Invoke();
                 IsShowingRegisterPage = true;
                 IsShowingLoginPage = false;
-                RegisterUser.Login = User.UserName;
                 User.Password = "";
             });
 
@@ -459,7 +459,6 @@ namespace SkillChat.Client.ViewModel
                 IsShowingRegisterPage = false;
                 IsShowingLoginPage = true;
                 RegisterUser.Password = "";
-                User.UserName = RegisterUser.Login;
             });
             IsConnected = false; //Скрывает окно чата            
             RegisterCommand = ReactiveCommand.CreateFromTask(async () =>
@@ -482,8 +481,13 @@ namespace SkillChat.Client.ViewModel
 
                     settings.AccessToken = Tokens.AccessToken;
                     settings.RefreshToken = Tokens.RefreshToken;
-                    settings.UserName = RegisterUser.Login;
+                    settings.UserName = RegisterUser.UserName;
+                    settings.Login = RegisterUser.Login;
                     configuration.GetSection("ChatClientSettings").Set(settings);
+
+                    //Очистка полей регистрации
+                    RegisterUser.Clear();;
+
                     ConnectCommand.Execute(null);
                 }
                 catch (Exception e)

@@ -13,6 +13,16 @@ namespace SkillChat.Client.ViewModel
         {
             ErrorMessageRegisterPage = new ErrorMessageViewModel();
         }
+        /// <summary>
+        /// Очистка полей регистрации
+        /// </summary>
+        public void Clear()
+        {
+            Login = "";
+            Password = "";
+            UserName = "";
+            Consent = false;
+        }
 
         public string Password { get; set; }
         public bool Consent { get; set; }

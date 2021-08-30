@@ -10,6 +10,8 @@
 
         public string UserName { get; set; }
 
+        public string Login { get; set; }
+
         public string AttachmentDefaultPath { get; set; }
     }
 }

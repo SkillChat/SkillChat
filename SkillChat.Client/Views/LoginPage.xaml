@@ -166,7 +166,7 @@
                     </Panel>
                     <TextBox x:Name="LoginTbx"
                              Classes="Base"
-                             Text="{Binding User.UserName}">
+                             Text="{Binding User.Login}">
                              <i:Interaction.Behaviors>
                               <ia:EventTriggerBehavior EventName="KeyDown" SourceObject="{Binding #PasswordTB}">
                                <ia:InvokeCommandAction Command="{Binding ResetErrorCommand}" CommandParameter="{x:Null}" />
