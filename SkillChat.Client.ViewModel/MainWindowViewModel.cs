@@ -519,8 +519,7 @@ namespace SkillChat.Client.ViewModel
                 {
                     editedMessage.Selected = false;
                 }
-                MessageText = null;
-                idEditMessage = null;
+                EditMessage(null);
             }
         }
 
@@ -538,8 +537,7 @@ namespace SkillChat.Client.ViewModel
                     {
                         if (User.Id == item.UserId)
                         {
-                            idEditMessage = item.Id;
-                            MessageText = item.Text;
+                            EditMessage(item);
                             return;
                         }
                     }
@@ -649,6 +647,11 @@ namespace SkillChat.Client.ViewModel
         private string idEditMessage { get; set; }
 
         /// <summary>
+        /// Переменная для хранения флага - было ли задано положение курсора.
+        /// </summary>
+        public bool IsCursorSet { get; set; }
+
+        /// <summary>
         /// Словарь состоящий из всех сообщений
         /// </summary>
         private Dictionary<string, MessageViewModel> messageDictionary = new Dictionary<string, MessageViewModel>();
@@ -656,11 +659,13 @@ namespace SkillChat.Client.ViewModel
         /// <summary>
         /// Выбирает из коллекции сообщение, выбранное пользователем и выводит его текст в MessageText
         /// </summary>
-        public void EditSelectMessage(MessageViewModel message)
+        public void EditMessage(MessageViewModel message)
         {
-            idEditMessage = message.Id;
-            MessageText = message.Text;
+            idEditMessage = message?.Id;
+            MessageText = message?.Text;
+            IsCursorSet = false;
         }
+
         public RegisterUserViewModel RegisterUser { get; set; }
 
         /// <summary>

@@ -107,7 +107,7 @@ namespace SkillChat.Client.ViewModel
         {
             Selected = true;
             var mw = Locator.Current.GetService<MainWindowViewModel>();
-            mw.EditSelectMessage(this);
+            mw.EditMessage(this);
         }
     }
 
