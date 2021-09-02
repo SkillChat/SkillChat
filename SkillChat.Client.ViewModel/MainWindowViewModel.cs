@@ -444,6 +444,7 @@ namespace SkillChat.Client.ViewModel
             GoToRegisterCommand = ReactiveCommand.Create<object>(_ =>
             {
                 RegisterUser.ErrorMessageRegisterPage.ResetDisplayErrorMessage();
+                ResetError?.Invoke();
                 IsShowingRegisterPage = true;
                 IsShowingLoginPage = false;
                 RegisterUser.Login = User.UserName;
@@ -454,6 +455,7 @@ namespace SkillChat.Client.ViewModel
             RegisterUser.GoToLoginCommand = ReactiveCommand.Create<object>(_ =>
             {
                 User.ErrorMessageLoginPage.ResetDisplayErrorMessage();
+                ResetError?.Invoke();
                 IsShowingRegisterPage = false;
                 IsShowingLoginPage = true;
                 RegisterUser.Password = "";
@@ -469,6 +471,7 @@ namespace SkillChat.Client.ViewModel
                     if (string.IsNullOrWhiteSpace(RegisterUser.Login) || string.IsNullOrWhiteSpace(RegisterUser.Password))
                     {
                         RegisterUser.ErrorMessageRegisterPage.GetErrorMessage("Не заполнены Логин и/или Пароль");
+                        ErrorBe?.Invoke();
                         return;
                     }
                     request.Login = RegisterUser.Login;
@@ -488,8 +491,8 @@ namespace SkillChat.Client.ViewModel
                     Debug.WriteLine($"Ошибка регистрации {e.Message}");
 
                         RegisterUser.ErrorMessageRegisterPage.GetErrorMessage(e.ToStatusCode().ToString());
+                        ErrorBe?.Invoke();
                 }
-
             });
 
             NotifyCommand = ReactiveCommand.Create<object>(obj =>
