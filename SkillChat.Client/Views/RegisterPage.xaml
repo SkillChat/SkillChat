@@ -11,45 +11,66 @@
   x:Class="SkillChat.Client.Views.RegisterPage">
   <UserControl.Styles>
     <Style Selector="TextBlock.UpperWatermark">
-      <Setter Property="FontSize" Value="14" />
+      <Setter Property="Margin" Value="2,0" />
+      <Setter Property="FontSize" Value="12" />
       <Setter Property="Foreground" Value="#9F81F3" />
       <Setter Property="HorizontalAlignment" Value="Left" />
       <Setter Property="VerticalAlignment" Value="Center" />
       <Setter Property="FontStyle" Value="Italic"/>
-      <Setter Property="FontWeight" Value="300"/> 
-      <Setter Property="FontFamily" Value="OpenSans"/>
     </Style>
-    <Style Selector="TextBox.RegisterParam">
+    <Style Selector="TextBox">
       <Setter Property="FontSize" Value="18" />
-      <Setter Property="Foreground" Value="#7F57F0" />
-      <Setter Property="Height" Value="50"/>
-      <Setter Property="Width" Value="380"/>
-      <Setter Property="BorderThickness" Value="2"/>
-      <Setter Property="BorderBrush" Value="#7F57F0"/>
+      <Setter Property="Height" Value="44"/>
+      <Setter Property="Width" Value="294"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="BorderBrush" Value="#9976FB"/>
       <Setter Property="Background" Value="#FFFFFF"/>
       <Setter Property="Padding" Value="10"/>
       <Setter Property="TextAlignment" Value="Center"/>
       <Setter Property="TextWrapping" Value="Wrap"/>
     </Style>
-    <Style Selector="Border">
-      <Setter Property="CornerRadius" Value="2" />
-    </Style>
+
+      <Style Selector="Border">
+          <Setter Property="CornerRadius" Value="2" />
+          <Setter Property="BorderThickness" Value="2" />
+          <Setter Property="Width" Value="300" />
+          <Setter Property="Height" Value="50" />
+      </Style>
+
     <Style Selector="Button /template/ ContentPresenter">
       <Setter Property="CornerRadius" Value="2" />
     </Style>
-    <Style Selector="Button">
-      <Setter Property="FontSize" Value="18" />
-      <Setter Property="Foreground" Value="#FFFFFF" />
-      <Setter Property="Background" Value="#FFA85E" />
-    </Style>
+      <Style Selector="Button">
+          <Setter Property="FontSize" Value="18" />
+          <Setter Property="Foreground" Value="#FFFFFF" />
+      </Style>
+      <Style Selector="Button:disabled">
+          <Setter Property="Opacity" Value="1" />
+          <Setter Property="Background" Value="#D1C0FF" />
+          <Setter Property="BorderBrush" Value="#D1C0FF" />
+      </Style>
 
-    <Style Selector="Button:disabled">
-      <Setter Property="Opacity" Value="1" />
-      <Setter Property="Background" Value="#FFA85E" />
-      <Setter Property="BorderBrush" Value="#D1C0FF" />
-    </Style>
+      <Style Selector="TextBox.Base">
+          <Setter Property="Foreground" Value="#7F57F0" />
+      </Style>
+      <Style Selector="Border.Base">
+          <Setter Property="BorderBrush" Value="#9976FB"/>
+      </Style>
+
+
+    <Style Selector="TextBlock.Error">
+          <Setter Property="Foreground" Value="#FFA85E" />
+      </Style>
+      <Style Selector="TextBox.Error">
+          <Setter Property="Foreground" Value="#FFC797" />
+      </Style>
+      <Style Selector="Border.Error">
+          <Setter Property="BorderBrush" Value="#FFA85E"/>
+      </Style>
+
+
   </UserControl.Styles>
-  <Grid>
+  <Grid >
     <Grid.Background>
       <ImageBrush
           Source="/Assets/background.png"
@@ -58,50 +79,82 @@
           DestinationRect="0,0,152,152"
           TileMode="Tile" />
     </Grid.Background>
-    <Grid
-          MaxWidth="1600"
-          MaxHeight="900"
+    <Grid ShowGridLines="False"
+          MaxWidth="380"
+          MaxHeight="600"
           HorizontalAlignment="Center"
           VerticalAlignment="Center"
-          RowDefinitions="*,Auto">
-      <Image
-          MaxWidth="140"
-          MaxHeight="186"
-          Margin="86,86,86,29.16"
-          Stretch="Uniform">
+          RowDefinitions="150,320,130">
+        <Image
+            MaxWidth="180"
+            MaxHeight="130"
+            Margin="86,6,86,0"
+            Stretch="Uniform">
         <Image.Source>
           <svg:SvgImage Source="/Assets/SkillChat_big.svg" />
         </Image.Source>
       </Image>
+
       <StackPanel
           Grid.Row="1"
           MaxWidth="380"
-          HorizontalAlignment="Center">
+          MaxHeight="293"
+          HorizontalAlignment="Center"
+          Margin="0 30 0 0 ">
 
         <StackPanel>
-          <TextBlock Classes="UpperWatermark" Text="Логин" />
-          <TextBox
-              Classes="RegisterParam"
-              Text="{Binding RegisterUser.Login}"/>
-        </StackPanel>
-        <StackPanel
-          Margin="0,7,0,0">
-          <TextBlock Classes="UpperWatermark" Text="Пароль" />
-          <TextBox
-              Classes="RegisterParam"
-               PasswordChar="*"
-              Text="{Binding RegisterUser.Password}"/>
+          <TextBlock Name="LoginTextBlock" Classes="UpperWatermark" Text="Логин" />
+          <Border Background="White"
+                  Name="LoginBorder"
+                  Classes="Base">
+            <TextBox
+                Name="LoginTextBox"
+                Classes="Base"
+                Text="{Binding RegisterUser.Login}">
+                <i:Interaction.Behaviors>
+                    <ia:EventTriggerBehavior EventName="KeyDown" SourceObject="{Binding #LoginTextBox}">
+                        <ia:InvokeCommandAction Command="{Binding ResetErrorCommand}" CommandParameter="{x:Null}" />
+                    </ia:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </TextBox>
+          </Border>
         </StackPanel>
 
         <StackPanel
           Margin="0,7,0,0">
-          <TextBlock Classes="UpperWatermark" Text="Имя" />
-          <TextBox
-              Classes="RegisterParam"
-              Text="{Binding RegisterUser.UserName}"/>
+          <TextBlock Name="PasswordTextBlock" Classes="UpperWatermark" Text="Пароль" />
+          <Border Background="White"
+                  Name="PasswordBorder"
+                  Classes="Base">
+            <TextBox
+                Name="PasswordTextBox"
+                Classes="Base"
+                PasswordChar="*"
+                Text="{Binding RegisterUser.Password}">
+                <i:Interaction.Behaviors>
+                    <ia:EventTriggerBehavior EventName="KeyDown" SourceObject="{Binding #PasswordTextBox}">
+                        <ia:InvokeCommandAction Command="{Binding ResetErrorCommand}" CommandParameter="{x:Null}" />
+                    </ia:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </TextBox>
+          </Border>
         </StackPanel>
+
         <StackPanel
-          Orientation="Horizontal"
+          Margin="0,7,0,0">
+          <TextBlock Name="NickNameTextBlock" Classes="UpperWatermark" Text="Имя" />
+          <Border Background="White"
+                  Name="NickNameBorder"
+                  Classes="Base">
+              <TextBox
+                  Name="NickNameTextBox"
+                  Classes="Base"
+                  Text="{Binding RegisterUser.UserName}"/>
+          </Border>
+        </StackPanel>
+
+        <StackPanel
+          Orientation="Vertical"
           HorizontalAlignment="Center"
           Margin="0,19,0,5">
           <CheckBox
@@ -115,44 +168,45 @@
             Padding="12,0,0,0"
             Content="Соглашаюсь на обработку персональных данных"/>
 
+          <TextBlock
+              Height="15"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Bottom"
+              FontStyle="Italic"
+              FontSize="13"
+              FontWeight="400"
+              Foreground="#FF9337"
+              Text="{Binding RegisterUser.ErrorMessageRegisterPage.ErrorMsg}"/>
         </StackPanel>
-        <TextBlock
-            Height="15"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Bottom"
-            FontStyle="Italic"
-            FontSize="13"
-            FontWeight="400"
-            Foreground="#FF9337"
-            Text="{Binding RegisterUser.ErrorMessageRegisterPage.ErrorMsg}"
-          />
-        <Button
-            Grid.Column="2"
-            MinWidth="300"
-            Margin="0,30,0,20"
-            Padding="10"
-            Command="{Binding RegisterCommand}"
-            Content="Зарегистрироваться"
-            IsEnabled="{Binding RegisterUser.Consent}"/>
-        <TextBlock
-            x:Name="registerLinkTB"
-            Margin="0,0,0,32"
-            HorizontalAlignment="Center"
-            Background="#0000"
-            Classes="ClearContainer"
-            Cursor="Hand"
-            FontSize="16"
-            FontWeight="600"
-            Foreground="#FFA85E"
-            Text="Войти">
-          <i:Interaction.Behaviors>
-            <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #registerLinkTB}">
-              <ia:InvokeCommandAction Command="{Binding RegisterUser.GoToLoginCommand}" CommandParameter="{x:Null}" />
-            </ia:EventTriggerBehavior>
-          </i:Interaction.Behaviors>
-        </TextBlock>
       </StackPanel>
-
+        <StackPanel Grid.Row="2">
+            <Button
+                MinWidth="300"
+                MaxWidth="300"
+                Margin="0,10,0,20"
+                Padding="0 10 0 10"
+                BorderThickness="3"
+                Command="{Binding RegisterCommand}"
+                Content="Зарегистрироваться"
+                IsEnabled="{Binding RegisterUser.Consent}"/>
+            <TextBlock
+                x:Name="registerLinkTB"
+                Margin="0,0,0,32"
+                HorizontalAlignment="Center"
+                Background="#0000"
+                Classes="ClearContainer"
+                Cursor="Hand"
+                FontSize="16"
+                FontWeight="600"
+                Foreground="#FFA85E"
+                Text="Войти">
+                <i:Interaction.Behaviors>
+                    <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #registerLinkTB}">
+                        <ia:InvokeCommandAction Command="{Binding RegisterUser.GoToLoginCommand}" CommandParameter="{x:Null}" />
+                    </ia:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </TextBlock>
+        </StackPanel>
     </Grid>
   </Grid>
 </UserControl>

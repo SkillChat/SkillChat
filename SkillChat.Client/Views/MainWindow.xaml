@@ -17,7 +17,7 @@
     Width="800"
     Height="600"
     MinWidth="360"
-    MinHeight="530"
+    MinHeight="600"
     Icon="/Assets/skillchat-logo.ico"
     mc:Ignorable="d">
     <Design.DataContext>

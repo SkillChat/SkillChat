@@ -9,7 +9,7 @@
     xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
     xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
     xmlns:sys="clr-namespace:System;assembly=netstandard"
-    Background="White"
+    Background="White"  
     mc:Ignorable="d">
   <UserControl.Styles>
     <Style Selector="ToggleButton.passwordBoxRevealButtonSkillChat">
@@ -132,17 +132,17 @@
           DestinationRect="0,0,152,152"
           TileMode="Tile" />
     </Grid.Background>
-    <Grid
-        MaxWidth="380"
-        MaxHeight="620"
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center"
-        RowDefinitions="*,Auto">
+    <Grid ShowGridLines="False"
+          MaxWidth="380"
+          MaxHeight="600"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Center"
+          RowDefinitions="150,320,130">
       <Image
           MaxWidth="180"
-          MaxHeight="241"
-          Margin="86,86,86,66"
-          Stretch="Uniform">
+            MaxHeight="130"
+            Margin="86,6,86,0"
+            Stretch="Uniform">
         <Image.Source>
           <svg:SvgImage Source="/Assets/SkillChat_big.svg" />
         </Image.Source>
@@ -150,8 +150,10 @@
       <StackPanel
           Grid.Row="1"
           MaxWidth="380"
-          HorizontalAlignment="Center">
-        <StackPanel>
+          HorizontalAlignment="Center"
+          Margin="0 70 0 0">
+        <StackPanel
+            Margin="0 30 0 20">
           <TextBlock Classes="UpperWatermark" 
                      x:Name="LoginTB"
                      Text="Логин"  />
@@ -222,48 +224,48 @@
               </Panel>
             </StackPanel>
           </Border>
+          <TextBlock
+              HorizontalAlignment="Center"
+              Name="ErrorTbx"
+              Height="30"
+              Background="#0000"
+              Classes="ClearContainer"
+              FontStyle="Italic"
+              FontSize="13"
+              FontWeight="400"
+              Foreground="#FF9337"
+              Text="{Binding User.ErrorMessageLoginPage.ErrorMsg}">
+          </TextBlock>
         </StackPanel>
-        <TextBlock
-            HorizontalAlignment="Center"
-            Name="ErrorTbx"
-            Height="30"
-            Background="#0000"
-            Classes="ClearContainer"
-            FontStyle="Italic"
-            FontSize="13"
-            FontWeight="400"
-            Foreground="#FF9337"
-            Text="{Binding User.ErrorMessageLoginPage.ErrorMsg}">
-        </TextBlock>
-        <Button
-            x:Name="connectButton"
-            Grid.Row="2"
-            Grid.Column="2"
-            MinWidth="300"
-            Margin="0,17,0,20"
-            Padding="10"
-            BorderThickness="3"
-            Command="{Binding ConnectCommand}"
-            Content="Войти"
-            IsEnabled="{Binding User.IsPassword}"/>
-        <TextBlock
-            x:Name="registerLinkTB"
-            Margin="0,0,0,32"
-            HorizontalAlignment="Center"
-            Background="#0000"
-            Classes="ClearContainer"
-            Cursor="Hand"
-            FontSize="16"
-            FontWeight="600"
-            Foreground="#FFA85E"
-            Text="Зарегистрироваться">
-          <i:Interaction.Behaviors>
-            <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #registerLinkTB}">
-              <ia:InvokeCommandAction Command="{Binding GoToRegisterCommand}" CommandParameter="{x:Null}" />
-            </ia:EventTriggerBehavior>
-          </i:Interaction.Behaviors>
-        </TextBlock>
       </StackPanel>
+        <StackPanel Grid.Row="2">
+            <Button
+                x:Name="connectButton"
+                MinWidth="300"
+                Margin="0,10,0,20"
+                Padding="0 10 0 10"
+                BorderThickness="3"
+                Command="{Binding ConnectCommand}"
+                Content="Войти"
+                IsEnabled="{Binding User.IsPassword}"/>
+            <TextBlock
+                x:Name="registerLinkTB"
+                Margin="0,0,0,32"
+                HorizontalAlignment="Center"
+                Background="#0000"
+                Classes="ClearContainer"
+                Cursor="Hand"
+                FontSize="16"
+                FontWeight="600"
+                Foreground="#FFA85E"
+                Text="Зарегистрироваться">
+                <i:Interaction.Behaviors>
+                    <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #registerLinkTB}">
+                        <ia:InvokeCommandAction Command="{Binding GoToRegisterCommand}" CommandParameter="{x:Null}" />
+                    </ia:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </TextBlock>
+        </StackPanel>
     </Grid>
   </Grid>
 </UserControl>
