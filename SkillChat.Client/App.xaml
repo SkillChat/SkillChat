@@ -15,6 +15,7 @@
         <StyleInclude Source="/Styles/ProfileStyle.xaml" />
         <StyleInclude Source="/Styles/SettingsStyle.xaml" />
         <StyleInclude Source="/Styles/SendMessageStyle.xaml" />
+        <StyleInclude Source="/Styles/MessageStyle.xaml" />
         <Style Selector="TextBlock">
             <Setter Property="FontFamily" Value="Open Sans" />
         </Style>
