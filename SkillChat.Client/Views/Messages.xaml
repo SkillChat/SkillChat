@@ -25,7 +25,7 @@
                             Converter={StaticResource BoolToObjectConverter},
                             ConverterParameter={StaticResource HorizontalAlignmentRight},
                             FallbackValue={StaticResource HorizontalAlignmentLeft}}"
-        Margin="{Binding Status, Converter={StaticResource StackPanelMarginConverter}}">
+        Margin="{Binding ViewType, Converter={StaticResource StackPanelMarginConverter}}">
         <StackPanel.ContextMenu>
             <ContextMenu BorderBrush="#FF9337" BorderThickness="1" IsVisible="{Binding IsMyMessage}" >
                 <MenuItem

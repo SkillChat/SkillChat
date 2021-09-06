@@ -40,8 +40,6 @@ namespace SkillChat.Client.ViewModel
                     await profileViewModel.Open(userId);
                 });
             }
-
-
         }
 
         public string Id { get; set; }
@@ -68,7 +66,7 @@ namespace SkillChat.Client.ViewModel
 
         public bool IsMyMessage { get; set; }
 
-        public enum StatusMessage
+        public enum ViewTypeMessage
         {
             MyFirstMessage,
             MyNotFirstMessage,
@@ -76,13 +74,13 @@ namespace SkillChat.Client.ViewModel
             SomeonesNotFirstMessage
         }
 
-        public StatusMessage Status
+        public ViewTypeMessage ViewType
         {
             get
             {
                 if (IsMyMessage)
-                    return ShowNickname ? StatusMessage.MyFirstMessage : StatusMessage.MyNotFirstMessage;
-                return ShowNickname ? StatusMessage.SomeonesFirstMessage : StatusMessage.SomeonesNotFirstMessage;
+                    return ShowNickname ? ViewTypeMessage.MyFirstMessage : ViewTypeMessage.MyNotFirstMessage;
+                return ShowNickname ? ViewTypeMessage.SomeonesFirstMessage : ViewTypeMessage.SomeonesNotFirstMessage;
             }
         }
 
