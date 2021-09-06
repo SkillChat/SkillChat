@@ -109,22 +109,38 @@ namespace SkillChat.Server.Hubs
                 Context.Items["uid"] = jwtPayload["sub"];
                 Context.Items["session"] = jwtPayload["session"];
 
+                var logOn = new LogOn
+                {
+                    Id = jwtPayload["sub"],
+                    UserLogin = jwtPayload["name"],
+                    Error = LogOn.LogOnStatus.Ok,
+                };
+
                 var user = await _ravenSession.LoadAsync<User>(jwtPayload["sub"]);
                 if (user != null)
                 {
                     Context.Items["nickname"] = user.DisplayName;
                 }
-
-                var logOn = new LogOn
+                else
                 {
-                    Id = jwtPayload["sub"],
-                    UserLogin = jwtPayload["name"],
-                };
+                    //Если пользователя нет в БД
+                    await Clients.Caller.SendAsync(new LogOn
+                    {
+                        Error = LogOn.LogOnStatus.ErrorUserNotFound
+                    });
+                    throw new TokenException("User not found");
+                }
+
                 if (long.TryParse(jwtPayload["exp"], out long expire))
                 {
                     logOn.ExpireTime = DateTimeOffset.FromUnixTimeSeconds(expire);
                     if (logOn.ExpireTime < DateTimeOffset.UtcNow)
                     {
+                        //Если время жизни токена закончилось
+                        await Clients.Caller.SendAsync(new LogOn
+                        {
+                            Error = LogOn.LogOnStatus.ErrorExpiredToken
+                        });
                         throw new TokenException("Token is expired");
                     }
                 }
@@ -163,10 +179,6 @@ namespace SkillChat.Server.Hubs
             }
             catch (Exception e)
             {
-                await Clients.Caller.SendAsync(new LogOn
-                {
-                    Error = true
-                });
                 Log.Warning($"Bad token from connection {Context.ConnectionId}");
             }
         }
