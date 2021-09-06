@@ -210,7 +210,6 @@ namespace SkillChat.Client.ViewModel
                         newMessage.UserNickname = data.UserNickname??data.UserLogin;
                         newMessage.UserId = data.UserId;
                         newMessage.IsMyMessage = User.Id == data.UserId;
-                        newMessage.IsAttachmentMessage = data.Attachments != null && data.Attachments.Count > 0;
 
                         newMessage.Attachments = data.Attachments?
                             .Select(s =>
@@ -313,7 +312,6 @@ namespace SkillChat.Client.ViewModel
                         newMessage.UserId = item.UserId;
                         newMessage.LastEditTime = item.LastEditTime;
                         newMessage.IsMyMessage = User.Id == item.UserId;
-                        newMessage.IsAttachmentMessage = item.Attachments != null && item.Attachments.Count > 0;
                         newMessage.Attachments = item.Attachments?
                             .Select(s =>
                             {

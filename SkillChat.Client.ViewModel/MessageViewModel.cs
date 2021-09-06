@@ -88,7 +88,7 @@ namespace SkillChat.Client.ViewModel
 
         public bool IsTextNullOrEmpty => Text.IsNullOrEmpty();
 
-        public bool IsAttachmentMessage { get; set; }
+        public bool IsAttachmentMessage => Attachments?.Any() ?? false;
 
         public bool Edited => LastEditTime != null;
 
