@@ -31,5 +31,8 @@ namespace SkillChat.Server.ServiceModel.Molds
 
         [Description("Вложения")]
         public List<AttachmentMold> Attachments { get; set; }
+
+        [Description("Идентификатор сообщения на которое отвечает пользователь")]
+        public string IdReplyMessage { get; set; }
     }
 }

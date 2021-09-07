@@ -17,13 +17,14 @@
     <Grid RowDefinitions="Auto,*">
         <ItemsControl
           Grid.Row="0"
+          Padding="7,0,7,0"
           Items="{Binding Attachments}"
           IsVisible="{Binding IsAttachmentMessage}">
             <ItemsControl.DataTemplates>
                 <DataTemplate>
                     <Border
                         MaxWidth="280">
-                        <Grid ColumnDefinitions="Auto, Auto, Auto">
+                        <Grid ColumnDefinitions="Auto, Auto, Auto" Margin="0,0,0,10">
                             <Image
                                 Grid.Column="0"
                                 Classes="file">
@@ -91,34 +92,15 @@
                 </DataTemplate>
             </ItemsControl.DataTemplates>
         </ItemsControl>
-        <Border
-            Grid.Row="1"
-            IsVisible="{Binding !IsTextNullOrEmpty}"
-            Classes.line="{Binding IsAttachmentMessage}"
-            BorderBrush="{Binding IsMyMessage,
-                      Converter={StaticResource BoolToObjectConverter},
-                      ConverterParameter={StaticResource PurpleColor},
-                      FallbackValue={StaticResource OrangeColor}}">
-            <Grid>
-                <TextBlock
-                    Classes="message"
-                    Text="{Binding TextAligned}"
-                    TextWrapping="Wrap"/>
-                <TextBox
-                    Classes="message"
-                    IsReadOnly="True"
-                    Text="{Binding Text}"/>
-            </Grid>
-        </Border>
-        <StackPanel
-            Orientation="Horizontal"
-            Grid.Row="1"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Bottom">
-            <Image Classes="edit" IsVisible="{Binding Edited}"/>
-            <TextBlock
-                Classes="time"
-                Text="{Binding Time}"/>
-        </StackPanel>
+		<Grid Grid.Row="1" IsVisible="{Binding !IsTextNullOrEmpty}">
+			<TextBlock
+				Classes="message"
+				Text="{Binding TextAligned}"
+				TextWrapping="Wrap"/>
+			<TextBox
+				Classes="message"
+				IsReadOnly="True"
+				Text="{Binding Text}"/>
+		</Grid>
     </Grid>
 </UserControl>

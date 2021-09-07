@@ -49,6 +49,7 @@ namespace SkillChat.Client.ViewModel
         public string UserNickname { get; set; }
 
         public string DisplayNickname => ShowNickname ? UserNickname : null;
+        public string ReplyDisplayNickname=>!IsMyMessage? UserNickname : "Вы";
 
         public bool ShowNickname { get; set; }
 
@@ -93,12 +94,52 @@ namespace SkillChat.Client.ViewModel
         public List<AttachmentMessageViewModel> Attachments { get; set; }
         public UserProfileMold ProfileMold { get; set; }
         public ReactiveCommand<string, Unit> UserProfileInfoCommand { get; set; }
+        public MessageViewModel ReplyMessageViewModel
+        { 
+            get
+            {
+                var mw = Locator.Current.GetService<MainWindowViewModel>();
+                return IdReplyMessage.IsNullOrEmpty() ? null: mw.messageDictionary[IdReplyMessage];
+            } 
+        }
+        public string IdReplyMessage { get; set; }
+        public bool IsReplyMessage
+        {
+            get
+            {
+                return IdReplyMessage.IsNullOrEmpty() ? false : true;
+            }
+        }
+        
+        ///Меню
+       public ObservableCollection<MenuItemObject> MenuItems
+        {
+            get
+            {
+                var MenuItems = new ObservableCollection<MenuItemObject>(new List<MenuItemObject>());
+                if (IsMyMessage)
+                {
+                    MenuItems.Add(new MenuItemObject { Command = new RelayCommand<object>(SelectEditMessage), Content = "Редактировать" });
+                    MenuItems.Add(new MenuItemObject { Command = new RelayCommand<object>(SelectRespondingMessage), Content = "Ответить" });
+                }
+                else
+                {
+                    MenuItems.Add(new MenuItemObject { Command = new RelayCommand<object>(SelectRespondingMessage), Content = "Ответить" });
+                }
 
-        public void SelectEditMessage()
+                return MenuItems;
+            }
+        }
+        private void SelectEditMessage(object o)
         {
             Selected = true;
             var mw = Locator.Current.GetService<MainWindowViewModel>();
             mw.EditMessage(this);
+        }
+        private void SelectRespondingMessage(object o)
+        {
+            var mw = Locator.Current.GetService<MainWindowViewModel>();
+            mw.ReplyMessage(this);
         }
     }
 

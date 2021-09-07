@@ -77,7 +77,7 @@ namespace SkillChat.Client.ViewModel
             Tokens = new TokenResult { AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken };
 
             Messages = new ObservableCollection<MessageViewModel>();
-
+            SelectedReplyMessage = new MessageViewModel();
             var bits = Environment.Is64BitOperatingSystem ? "PC 64bit, " : "PC 32bit, ";
             var operatingSystem = bits + RuntimeInformation.OSDescription;
 
@@ -242,6 +242,7 @@ namespace SkillChat.Client.ViewModel
                         newMessage.UserId = data.UserId;
                         newMessage.IsMyMessage = User.Id == data.UserId;
 
+                        newMessage.IdReplyMessage = data.IdReplyMessage;
                         newMessage.Attachments = data.Attachments?
                             .Select(s =>
                             {
@@ -309,7 +310,8 @@ namespace SkillChat.Client.ViewModel
                             }
                             else
                             {
-                                await _hub.SendMessage(new HubMessage(ChatId, MessageText)); ///Обычная отправка сообщения
+                                await _hub.SendMessage(new HubMessage(ChatId, MessageText, SelectedReplyMessage.Id));
+                                CancelReply();
                             }
 
                             MessageText = null;
@@ -351,7 +353,9 @@ namespace SkillChat.Client.ViewModel
                                 return newAttachment;
                             }).ToList();
 
-                        if (Messages.Count != 0)
+                        newMessage.IdReplyMessage = item.IdReplyMessage; ///Надо подумать!!!!
+                        
+                        if (Messages.Count!=0)
                         {
                             if (Messages.First().UserId != newMessage.UserId)
                             {
@@ -562,6 +566,8 @@ namespace SkillChat.Client.ViewModel
         }
         public ObservableCollection<MessageViewModel> Messages { get; set; }
 
+        public MessageViewModel SelectedReplyMessage { get; set; }
+
         public TokenResult Tokens { get; set; }
 
         public string Title => IsSignedIn ? $"SkillChat - {User.UserName}[{ChatName}]" : $"SkillChat";
@@ -624,10 +630,12 @@ namespace SkillChat.Client.ViewModel
         /// </summary>
         public bool IsCursorSet { get; set; }
 
+        public bool IsSelectReplyMessage { get; set; }
+
         /// <summary>
         /// Словарь состоящий из всех сообщений
         /// </summary>
-        private Dictionary<string, MessageViewModel> messageDictionary = new Dictionary<string, MessageViewModel>();
+        public Dictionary<string, MessageViewModel> messageDictionary = new Dictionary<string, MessageViewModel>();
 
         /// <summary>
         /// Выбирает из коллекции сообщение, выбранное пользователем и выводит его текст в MessageText
@@ -638,7 +646,18 @@ namespace SkillChat.Client.ViewModel
             MessageText = message?.Text;
             IsCursorSet = false;
         }
+        public void ReplyMessage(MessageViewModel message)
+        {
+            IsSelectReplyMessage = true;
+            SelectedReplyMessage = message;
+        }
 
+        public void CancelReply()
+        {
+            SelectedReplyMessage.Id=string.Empty;
+            IsSelectReplyMessage = false;
+        }
+       
         public RegisterUserViewModel RegisterUser { get; set; }
 
         /// <summary>

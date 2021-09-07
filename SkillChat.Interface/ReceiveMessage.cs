@@ -14,5 +14,6 @@ namespace SkillChat.Interface
         public DateTimeOffset PostTime { get; set; }
         public string ChatId { get; set; }
         public List<AttachmentHubMold> Attachments { get; set; }
+        public string IdReplyMessage { get; set; }
     }
 }

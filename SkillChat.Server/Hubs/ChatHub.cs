@@ -48,7 +48,8 @@ namespace SkillChat.Server.Hubs
                 Text = hubMessage.Message.Trim(),
                 PostTime = DateTimeOffset.UtcNow,
                 ChatId = hubMessage.ChatId,
-                Attachments = hubMessage.Attachments?.Select(s => s.Id).ToList()
+                Attachments = hubMessage.Attachments?.Select(s => s.Id).ToList(),
+                IdReplyMessage = hubMessage.IdReplyMessage
             };
 
             await _ravenSession.StoreAsync(messageItem);
@@ -63,10 +64,13 @@ namespace SkillChat.Server.Hubs
                 PostTime = messageItem.PostTime,
                 ChatId = hubMessage.ChatId,
                 UserId = messageItem.UserId,
-                Attachments = hubMessage.Attachments
+                Attachments = hubMessage.Attachments,
+                IdReplyMessage = hubMessage.IdReplyMessage
             });
 
-            Log.Information($"User {Context.Items["nickname"]}({Context.Items["login"]}) send message in main chat");
+            var logMessage = hubMessage.IdReplyMessage.IsNullOrEmpty() ? $"User {Context.Items["nickname"]}({Context.Items["login"]}) send message in main chat" :
+                                                                              $"User {Context.Items["nickname"]}({Context.Items["login"]}) responded to the message in main chat";
+            Log.Information(logMessage);
         }
 
         public async Task UpdateMessage(HubEditedMessage hubEditedMessage)

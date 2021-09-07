@@ -3,16 +3,16 @@
         xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia">
     <!--Border-->
     <Style Selector="Border.textMessage">
-        <Setter Property="Padding" Value="10,5"/>
+        <Setter Property="Padding" Value="4,0,4,6"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="CornerRadius" Value="2"/>
+        <Setter Property="CornerRadius" Value="4"/>
     </Style>
 
-    <Style Selector="Border.attachmentMessage">
-        <Setter Property="Padding" Value="10,10,10,5"/>
-        <Setter Property="Margin" Value="0,0,0,5"/>
-        <Setter Property="CornerRadius" Value="2"/>
-    </Style>
+	  <Style Selector="Border.replyMessage">
+	  	  <Setter Property="Padding" Value="11,5,11,0"/>
+	  	  <Setter Property="BorderThickness" Value="0"/>
+	  	  <Setter Property="CornerRadius" Value="4"/>
+	  </Style>
 
     <Style Selector="Border.line">
         <Setter Property="BorderThickness" Value="0 1 0 0"/>
@@ -20,8 +20,21 @@
 
     <!--TextBox-->
     <Style Selector="TextBox.message">
-        <Setter Property="Padding" Value="10,0,10,5" />
+        <Setter Property="Padding" Value="6,0,10,0" />
         <Setter Property="FontSize" Value="14" />
+        <Setter Property="AcceptsReturn" Value="True" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="ContextMenu" Value="{x:Null}"/>
+        <Setter Property="ContextFlyout" Value="{x:Null}"/>
+    </Style>
+
+    <Style Selector="TextBox.replyMessage">
+        <Setter Property="Padding" Value="0,0,10,5" />
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontStyle" Value="Italic"/>
+		    <Setter Property="Foreground" Value="#4F4F4F"/>
         <Setter Property="AcceptsReturn" Value="True" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
@@ -34,6 +47,7 @@
     <Style Selector="Image.edit">
         <Setter Property="Height" Value="10"/>
         <Setter Property="Width" Value="10"/>
+        <Setter Property="Margin" Value="0,0,2,0"/>
         <Setter Property="Source">
             <Setter.Value>
                 <svg:SvgImage Source="/Assets/Edit.svg"/>
@@ -42,7 +56,7 @@
     </Style>
 
     <Style Selector="Image.file">
-        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Margin" Value="0,5,5,5"/>
         <Setter Property="Width" Value="60"/>
         <Setter Property="Height" Value="70"/>
         <Setter Property="Source">
@@ -73,18 +87,23 @@
     </Style>
 
     <!--MenuItem-->
-    <Style Selector="MenuItem.menuitem">
-        <Setter Property="Height" Value="31"/>
-        <Setter Property="Width" Value="150"/>
-        <Setter Property="HorizontalAlignment" Value="Left"/>
+    <Style Selector="MenuItem">
+		<Setter Property="Command" Value="{Binding Command}"/>
+        <Setter Property="Header" Value="{Binding Content}"/>
+        <Setter Property="CommandParameter" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContextMenu}}, Path=DataContext}"/>
     </Style>
 
     <!--TextBlock-->
     <Style Selector="TextBlock.UserLogin">
-        <Setter Property="Padding" Value="10,0,0,0"/>
-        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Padding" Value="6,5,0,0"/>
+		    <Setter Property="FontSize" Value="14"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+
+    <Style Selector="TextBlock.ReplyUserLogin">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
     </Style>
 
     <Style Selector="TextBlock.UserDownload">
@@ -110,7 +129,6 @@
     </Style>
 
     <Style Selector="TextBlock.sizeName">
-        <Setter Property="Width" Value="150"/>
         <Setter Property="TextWrapping" Value="NoWrap"/>
     </Style>
 
@@ -120,7 +138,7 @@
     </Style>
 
     <Style Selector="TextBlock.message">
-        <Setter Property="Padding" Value="10,0,10,5" />
+        <Setter Property="Padding" Value="0,0,10,5" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="Foreground" Value="Transparent" />
         <Setter Property="ContextMenu" Value="{x:Null}"/>
@@ -128,13 +146,18 @@
     </Style>
 
     <Style Selector="TextBlock.time">
+        <Setter Property="FontSize" Value="12" />        
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="#828282" />
+    </Style>
+
+    <Style Selector="TextBlock.replyTime">
         <Setter Property="FontSize" Value="12" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Foreground" Value="#828282" />
     </Style>
 
     <Style Selector="TextBlock.itemTextBlock">
-        <Setter Property="Width" Value="150"/>
         <Setter Property="Height" Value="31"/>
         <Setter Property="FontWeight" Value="400"/>
         <Setter Property="FontSize" Value="15"/>

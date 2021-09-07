@@ -3,6 +3,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia">
 
+	<Style Selector="Border.sendMessage">
+		<Setter Property="MinHeight" Value="50"/>
+		<Setter Property="MaxHeight" Value="270"/>
+		<Setter Property="Background" Value="#E0E0E0"/>
+		<Setter Property="BorderBrush" Value="#E0E0E0"/>
+	</Style>
+	
     <!--Начало: Стили кнопки отправки сообщений-->
     <Style Selector="Button.Send-Btn /template/ ContentPresenter">
         <Setter Property="Width" Value="30"/>
@@ -182,6 +189,16 @@
     <Style Selector="ListBoxItem:selected:focus /template/ ContentPresenter">
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Background" Value="{DynamicResource White}"/>
+    </Style>
+
+    <!--Ответ на сообщение-->
+
+    <Style Selector="Image.CancelImage">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/x_rest.svg" />
+            </Setter.Value>
+        </Setter>
     </Style>
 
 </Styles>
