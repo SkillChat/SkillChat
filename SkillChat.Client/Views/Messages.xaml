@@ -30,7 +30,7 @@
                             FallbackValue={StaticResource HorizontalAlignmentLeft}}"
         Margin="{Binding ViewType, Converter={StaticResource StackPanelMarginConverter}}">
         <StackPanel.ContextMenu>
-            <ContextMenu BorderBrush="#FF9337" BorderThickness="1" Items="{Binding MenuItems}"/>
+            <ContextMenu Items="{Binding MenuItems}"/>
         </StackPanel.ContextMenu>
         <Border
             Classes="textMessage"

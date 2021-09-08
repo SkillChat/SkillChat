@@ -34,7 +34,7 @@
         <Setter Property="Padding" Value="0,0,10,5" />
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="FontStyle" Value="Italic"/>
-		    <Setter Property="Foreground" Value="#4F4F4F"/>
+		<Setter Property="Foreground" Value="#4F4F4F"/>
         <Setter Property="AcceptsReturn" Value="True" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
@@ -86,17 +86,10 @@
         </Setter>
     </Style>
 
-    <!--MenuItem-->
-    <Style Selector="MenuItem">
-		<Setter Property="Command" Value="{Binding Command}"/>
-        <Setter Property="Header" Value="{Binding Content}"/>
-        <Setter Property="CommandParameter" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContextMenu}}, Path=DataContext}"/>
-    </Style>
-
     <!--TextBlock-->
     <Style Selector="TextBlock.UserLogin">
         <Setter Property="Padding" Value="6,5,0,0"/>
-		    <Setter Property="FontSize" Value="14"/>
+		<Setter Property="FontSize" Value="14"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Cursor" Value="Hand"/>
     </Style>

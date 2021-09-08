@@ -1,0 +1,55 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:sys="clr-namespace:System;assembly=netstandard">
+
+	<Style Selector="ContextMenu">
+		<Setter Property="BorderBrush" Value="#FF9337"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="Padding" Value="0"/>
+	</Style>
+	<Style Selector="ContextMenu/template/ Border">
+		<Setter Property="CornerRadius" Value="2"/>
+	</Style>
+	
+	<Style Selector="MenuItem">
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="Padding" Value="20,7,20,7"/>
+		<Setter Property="Foreground" Value="Black"/>
+		<Setter Property="FontSize" Value="15"/>
+		<Setter Property="Command" Value="{Binding Command}"/>
+		<Setter Property="Header" Value="{Binding Content}"/>
+		<Setter Property="CommandParameter" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContextMenu}}, Path=DataContext}"/>
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Border Name="root"
+						Background="{TemplateBinding Background}"
+						BorderBrush="{TemplateBinding BorderBrush}">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIGT"/>
+						</Grid.ColumnDefinitions>
+						<ContentPresenter Name="PART_HeaderPresenter"
+                              Content="{TemplateBinding Header}"
+                              Margin="{TemplateBinding Padding}"
+                              VerticalAlignment="Center"
+                              Grid.Column="0">
+							<ContentPresenter.DataTemplates>
+								<DataTemplate  DataType="sys:String">
+									<AccessText Text="{Binding}"/>
+								</DataTemplate>
+							</ContentPresenter.DataTemplates>
+						</ContentPresenter>
+					</Grid>
+				</Border>
+			</ControlTemplate>
+		</Setter>
+	</Style>
+
+	<Style Selector="MenuItem:selected">
+		<Setter Property="Foreground" Value="White"/>
+	</Style>
+	
+	<Style Selector="MenuItem:selected /template/ Border#root">
+		<Setter Property="Background" Value="#FF9337"/>
+	</Style>
+</Styles>
