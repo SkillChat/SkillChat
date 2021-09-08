@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reactive;
 using PropertyChanged;
 using ReactiveUI;
@@ -39,8 +40,6 @@ namespace SkillChat.Client.ViewModel
                     await profileViewModel.Open(userId);
                 });
             }
-
-
         }
 
         public string Id { get; set; }
@@ -67,7 +66,7 @@ namespace SkillChat.Client.ViewModel
 
         public bool IsMyMessage { get; set; }
 
-        public enum StatusMessage
+        public enum ViewTypeMessage
         {
             MyFirstMessage,
             MyNotFirstMessage,
@@ -75,19 +74,19 @@ namespace SkillChat.Client.ViewModel
             SomeonesNotFirstMessage
         }
 
-        public StatusMessage Status
+        public ViewTypeMessage ViewType
         {
             get
             {
                 if (IsMyMessage)
-                    return ShowNickname ? StatusMessage.MyFirstMessage : StatusMessage.MyNotFirstMessage;
-                return ShowNickname ? StatusMessage.SomeonesFirstMessage : StatusMessage.SomeonesNotFirstMessage;
+                    return ShowNickname ? ViewTypeMessage.MyFirstMessage : ViewTypeMessage.MyNotFirstMessage;
+                return ShowNickname ? ViewTypeMessage.SomeonesFirstMessage : ViewTypeMessage.SomeonesNotFirstMessage;
             }
         }
 
         public bool IsTextNullOrEmpty => Text.IsNullOrEmpty();
 
-        public bool IsAttachmentMessage { get; set; }
+        public bool IsAttachmentMessage => Attachments?.Any() ?? false;
 
         public bool Edited => LastEditTime != null;
 
@@ -108,8 +107,18 @@ namespace SkillChat.Client.ViewModel
     {
         public AttachmentMessageViewModel(AttachmentMold attachment)
         {
-            var mainWindowViewModel = Locator.Current.GetService<MainWindowViewModel>();
-            _isDownload = mainWindowViewModel.IsExistAttachment(attachment);
+            var attachmentManager = Locator.Current.GetService<AttachmentManager>();
+            Init(attachment, attachmentManager);
+        }
+
+        public AttachmentMessageViewModel(AttachmentMold attachment, AttachmentManager attachmentManager)
+        {
+            Init(attachment, attachmentManager);
+        }
+
+        public void Init(AttachmentMold attachment, AttachmentManager attachmentManager)
+        {
+            _isDownload = attachmentManager.IsExistAttachment(attachment);
 
             Id = attachment.Id;
             SenderId = attachment.SenderId;
@@ -123,26 +132,22 @@ namespace SkillChat.Client.ViewModel
             {
                 if (!_isDownload)
                 {
-                    _isDownload = await mainWindowViewModel.DownloadAttachment(attachment);
+                    _isDownload = await attachmentManager.DownloadAttachment(attachment);
                     Text = !_isDownload ? "Загрузить" : "Открыть";
                 }
-                else mainWindowViewModel.OpenAttachment(attachment.FileName);
+                else attachmentManager.OpenAttachment(attachment.FileName);
             });
-
-
         }
+
         public string SizeName => Size.SizeCalculating();
-        public string Extensions => Path.GetExtension(FileName).Replace(".", "").ToUpper();
-        public string Text { get; set; }
-        public bool IsMyMessage { get; set; }
-        private bool _isDownload { get; set; }
 
-        private bool _hashDownloadFile(AttachmentMold attachment)
-        {
-            var fileInfo = new FileInfo(attachment.FileName);
-            var result = fileInfo.Exists;
-            return result;
-        }
+        public string Extensions => Path.GetExtension(FileName).Replace(".", "").ToUpper();
+
+        public string Text { get; set; }
+
+        public bool IsMyMessage { get; set; }
+
+        private bool _isDownload { get; set; }
 
         public ReactiveCommand<AttachmentMold, Unit> DownloadCommand { get; set; }
     }

@@ -4,9 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:utils="clr-namespace:SkillChat.Client.Utils"
              xmlns:views="clr-namespace:SkillChat.Client.Views"
+             xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
              xmlns:interactivity="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              x:Class="SkillChat.Client.Views.Messages">
+    <Design.DataContext>
+        <viewModel:DesignMessageViewModel IsMyMessage="false" ShowNickname="false"/>
+    </Design.DataContext>
     <UserControl.Resources>
         <utils:BoolToObjectConverter x:Key="BoolToObjectConverter"/>
         <utils:StackPanelMarginConverter x:Key="StackPanelMarginConverter"/>
@@ -21,7 +25,7 @@
                             Converter={StaticResource BoolToObjectConverter},
                             ConverterParameter={StaticResource HorizontalAlignmentRight},
                             FallbackValue={StaticResource HorizontalAlignmentLeft}}"
-        Margin="{Binding Status, Converter={StaticResource StackPanelMarginConverter}}">
+        Margin="{Binding ViewType, Converter={StaticResource StackPanelMarginConverter}}">
         <StackPanel.ContextMenu>
             <ContextMenu BorderBrush="#FF9337" BorderThickness="1" IsVisible="{Binding IsMyMessage}" >
                 <MenuItem

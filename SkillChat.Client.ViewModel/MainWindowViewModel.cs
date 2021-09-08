@@ -58,6 +58,7 @@ namespace SkillChat.Client.ViewModel
             }
 
             serviceClient = new JsonServiceClient(settings.HostUrl);
+            Locator.CurrentMutable.RegisterConstant(new AttachmentManager(settings.AttachmentDefaultPath, serviceClient));
 
             ProfileViewModel = new ProfileViewModel(serviceClient);
             Locator.CurrentMutable.RegisterConstant<IProfile>(ProfileViewModel);
@@ -209,7 +210,6 @@ namespace SkillChat.Client.ViewModel
                         newMessage.UserNickname = data.UserNickname??data.UserLogin;
                         newMessage.UserId = data.UserId;
                         newMessage.IsMyMessage = User.Id == data.UserId;
-                        newMessage.IsAttachmentMessage = data.Attachments != null && data.Attachments.Count > 0;
 
                         newMessage.Attachments = data.Attachments?
                             .Select(s =>
@@ -312,7 +312,6 @@ namespace SkillChat.Client.ViewModel
                         newMessage.UserId = item.UserId;
                         newMessage.LastEditTime = item.LastEditTime;
                         newMessage.IsMyMessage = User.Id == item.UserId;
-                        newMessage.IsAttachmentMessage = item.Attachments != null && item.Attachments.Count > 0;
                         newMessage.Attachments = item.Attachments?
                             .Select(s =>
                             {
@@ -666,7 +665,7 @@ namespace SkillChat.Client.ViewModel
         public string TextHeaderMain { get; set; } = "Чат";
         public bool SettingsActive { get; set; }
         public string TextHeaderMenuInSettings { get; set; }
-
+        
         public void Width(bool isWindow)
         {
             if (!isWindow)
@@ -695,61 +694,6 @@ namespace SkillChat.Client.ViewModel
             await AttachmentViewModel.Open(attachmentsPatch);
 
             AttachMenuVisible = false;
-        }
-
-        public void OpenAttachment(string fileName)
-        {
-            var path = Path.Combine(settings?.AttachmentDefaultPath, fileName);
-            Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
-        }
-
-        public bool IsExistAttachment(AttachmentMold data) 
-        {        
-            var fileInfo = new FileInfo(Path.Combine(settings?.AttachmentDefaultPath, data.FileName));
-            return fileInfo.Exists && fileInfo.Length == data.Size;
-        }
-
-        public async Task<bool> DownloadAttachment(AttachmentMold data)
-        {
-            try
-            {
-                //Тут надо убрать префикс получаемого файла
-                var pref = "attachment/";
-                var attachment = await serviceClient.GetAsync(new GetAttachment { Id = data.Id.Replace(pref, string.Empty) });     
-                if (attachment == null) return false;
-
-                var savePath = Path.Combine(settings?.AttachmentDefaultPath, data.FileName);
-                var saveFileInfo = new FileInfo(savePath);
-                if (!saveFileInfo.Directory.Exists)
-                {
-                    saveFileInfo.Directory.Create();                    
-                }
-
-                if (!string.IsNullOrEmpty(savePath))
-                {
-                    await using (var fileStream = File.Create(savePath, (int)attachment.Length))
-                    {
-                        const int bufferSize = 4194304; 
-                        var buffer = new byte[bufferSize];
-                        attachment.Seek(0, SeekOrigin.Begin);
-
-                        while (attachment.Position < attachment.Length)
-                        {
-                            var read = await attachment.ReadAsync(buffer, 0, bufferSize);
-                            await fileStream.WriteAsync(buffer, 0, read);
-                        }
-
-                        await fileStream.FlushAsync();
-                    }               
-                }
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                //TODO вывести ошибку в будущем
-                return false;
-            }
         }
     }
 
