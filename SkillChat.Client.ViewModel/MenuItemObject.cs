@@ -1,12 +1,13 @@
-﻿using System;
+﻿using ReactiveUI;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Input;
 
 namespace SkillChat.Client.ViewModel
 {
-    public class MenuItemObject : MenuObservableObject
-    {
+    public class MenuItemObject : ReactiveObject
+    {     
         private ICommand _command;
         private string _content;
 
@@ -15,8 +16,7 @@ namespace SkillChat.Client.ViewModel
             get { return _command; }
             set
             {
-                _command = value;
-                OnPropertyChanged();
+                this.RaiseAndSetIfChanged(ref _command, value);
             }
         }
 
@@ -25,8 +25,7 @@ namespace SkillChat.Client.ViewModel
             get { return _content; }
             set
             {
-                _content = value;
-                OnPropertyChanged();
+                this.RaiseAndSetIfChanged(ref _content, value);
             }
         }
     }

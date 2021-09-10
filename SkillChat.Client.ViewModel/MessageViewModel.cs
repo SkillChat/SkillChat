@@ -119,12 +119,12 @@ namespace SkillChat.Client.ViewModel
                 var MenuItems = new ObservableCollection<MenuItemObject>(new List<MenuItemObject>());
                 if (IsMyMessage)
                 {
-                    MenuItems.Add(new MenuItemObject { Command = new RelayCommand<object>(SelectEditMessage), Content = "Редактировать" });
-                    MenuItems.Add(new MenuItemObject { Command = new RelayCommand<object>(SelectRespondingMessage), Content = "Ответить" });
+                    MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectEditMessage), Content = "Редактировать" });
+                    MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectRespondingMessage), Content = "Ответить" });
                 }
                 else
                 {
-                    MenuItems.Add(new MenuItemObject { Command = new RelayCommand<object>(SelectRespondingMessage), Content = "Ответить" });
+                    MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectRespondingMessage), Content = "Ответить" });
                 }
 
                 return MenuItems;
