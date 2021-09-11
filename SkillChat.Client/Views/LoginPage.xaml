@@ -42,84 +42,11 @@
         </Setter.Value>
       </Setter>
     </Style>
-
-
     <Style Selector="ToggleButton.passwordBoxRevealButtonSkillChat:not(ToggleButton:checked) /template/ Path#PART_GlyphElement_Hide">
       <Setter Property="IsVisible" Value="False" />
     </Style>
-
     <Style Selector="ToggleButton.passwordBoxRevealButtonSkillChat:checked /template/ Path#PART_GlyphElement_Reveal">
       <Setter Property="IsVisible" Value="False" />
-    </Style>
-    <!--End Password Style    -->
-
-
-    <Style Selector="TextBlock.UpperWatermark">
-      <Setter Property="FontSize" Value="12" />
-      <Setter Property="Foreground" Value="#9F81F3" />
-      <Setter Property="HorizontalAlignment" Value="Left" />
-      <Setter Property="VerticalAlignment" Value="Center" />
-      <Setter Property="FontStyle" Value="Italic" />
-    </Style>
-    <Style Selector="TextBlock.Error">
-      <Setter Property="Foreground" Value="#FFA85E" />
-    </Style>
-    <Style Selector="TextBox">
-      <Setter Property="FontSize" Value="18" />
-      <Setter Property="BorderBrush" Value="#FFFFFF"/>
-      <Setter Property="BorderThickness" Value="0"/>
-      <Setter Property="Margin" Value="0,2" />
-      <Setter Property="Height" Value="42" />
-      <Setter Property="VerticalContentAlignment" Value="Center"/>
-      <Setter Property="Width" Value="220"/>
-      <Setter Property="VerticalAlignment" Value="Center"/>
-      <Setter Property="Background" Value="#FFFFFF"/>
-      <Setter Property="TextAlignment" Value="Center"/>
-      <Setter Property="TextWrapping" Value="Wrap"/>
-    </Style>
-    <Style Selector="TextBox.Base">
-      <Setter Property="Foreground" Value="#7F57F0" />
-    </Style>
-    <Style Selector="TextBox.Error">
-      <Setter Property="Foreground" Value="#FFC797" />
-    </Style>
-
-    <Style Selector="Image.ImageTbx">
-      <Setter Property="Width" Value="20" />
-      <Setter Property="Height" Value="20" />
-      <Setter Property="IsVisible" Value="{Binding User.PassError}"/>
-    </Style>
-    <Style Selector="Border">
-      <Setter Property="CornerRadius" Value="2" />
-      <Setter Property="BorderThickness" Value="2" />
-      <Setter Property="Width" Value="300" />
-      <Setter Property="Height" Value="50" />
-    </Style>
-    
-    <Style Selector="Border.Base">
-      <Setter Property="BorderBrush" Value="#9976FB"></Setter>
-    </Style>
-    <Style Selector="Border.Error">
-      <Setter Property="BorderBrush" Value="#FFA85E"></Setter>
-    </Style>
-    <Style Selector="Button /template/ ContentPresenter">
-      <Setter Property="CornerRadius" Value="2" />
-    </Style>
-    <Style Selector="Button">
-      <Setter Property="FontSize" Value="18" />
-      <Setter Property="Foreground" Value="#FFFFFF" />
-    </Style>
-
-    <Style Selector="Button:disabled">
-      <Setter Property="Opacity" Value="1" />
-      <Setter Property="Background" Value="#D1C0FF" />
-      <Setter Property="BorderBrush" Value="#D1C0FF" />
-    </Style>
-    <Style Selector="TextBlock:ClearContainer">
-      <Setter Property="FontSize" Value="16" />
-      <Setter Property="Background" Value="#ffffff00" />
-      <Setter Property="Foreground" Value="#FFA85E" />
-      <Setter Property="Margin" Value="0,0,0,40" />
     </Style>
   </UserControl.Styles>
 
@@ -155,17 +82,20 @@
         <StackPanel
             Margin="0 30 0 20">
           <TextBlock Classes="UpperWatermark" 
+                     Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}"
                      x:Name="LoginTB"
                      Text="Логин"  />
           <Border Background="White"
                   Name="LoginBr"
-                  Classes="Base">
+                  Classes="BorderEnterPages Base"
+                  Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}">
             <StackPanel  Orientation="Horizontal">
                     <Panel Margin="16,16,5 ,16"
                            Width="20">
                     </Panel>
                     <TextBox x:Name="LoginTbx"
-                             Classes="Base"
+                             Classes="TextBoxEnterPages Base"
+                             Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}"
                              Text="{Binding User.Login}">
                              <i:Interaction.Behaviors>
                               <ia:EventTriggerBehavior EventName="KeyDown" SourceObject="{Binding #PasswordTB}">
@@ -174,22 +104,20 @@
                             </i:Interaction.Behaviors>
                      </TextBox>
                      <Panel Margin="5,15,16,15">
-                      <Image Classes="ImageTbx">
-                             <Image.Source>
-                               <svg:SvgImage Source="/Assets/atention.svg" />
-                             </Image.Source>
-                           </Image>
+                      <Image Classes="ImageTbx"/>
                          </Panel>
               </StackPanel>
           </Border>
         </StackPanel>
         <StackPanel Margin="0,7,0,0">
           <TextBlock Classes="UpperWatermark"
+                     Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}"
                      x:Name="PasswordTBL"
                      Text="Пароль" />
           <Border Background="White"
                   x:Name="PasswordBr"
-                  Classes="Base">
+                  Classes="BorderEnterPages Base"
+                  Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}">
             <StackPanel  Orientation="Horizontal">
               <Panel Margin="16,16,5 ,16"
                      Width="18">
@@ -202,7 +130,8 @@
               </Panel>
               <TextBox
               x:Name="PasswordTB"
-              Classes="Base"              
+              Classes="TextBoxEnterPages Base" 
+              Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}"
               Text="{Binding User.Password}"
               PasswordChar="*">
                 <TextBox.KeyBindings>
@@ -216,11 +145,7 @@
               </TextBox>
               <Panel Margin="5,15,16,15">
                 <Image
-                  Classes="ImageTbx">
-                  <Image.Source>
-                    <svg:SvgImage Source="/Assets/atention.svg" />
-                  </Image.Source>
-                </Image>
+                  Classes="ImageTbx"/>
               </Panel>
             </StackPanel>
           </Border>
@@ -240,6 +165,7 @@
       </StackPanel>
         <StackPanel Grid.Row="2">
             <Button
+                Classes="ButtonEnterPages"
                 x:Name="connectButton"
                 MinWidth="300"
                 Margin="0,10,0,20"

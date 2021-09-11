@@ -9,68 +9,8 @@
   mc:Ignorable="d"
   Background="White"
   x:Class="SkillChat.Client.Views.RegisterPage">
-  <UserControl.Styles>
-    <Style Selector="TextBlock.UpperWatermark">
-      <Setter Property="Margin" Value="2,0" />
-      <Setter Property="FontSize" Value="12" />
-      <Setter Property="Foreground" Value="#9F81F3" />
-      <Setter Property="HorizontalAlignment" Value="Left" />
-      <Setter Property="VerticalAlignment" Value="Center" />
-      <Setter Property="FontStyle" Value="Italic"/>
-    </Style>
-    <Style Selector="TextBox">
-      <Setter Property="FontSize" Value="18" />
-      <Setter Property="Height" Value="44"/>
-      <Setter Property="Width" Value="294"/>
-      <Setter Property="BorderThickness" Value="0"/>
-      <Setter Property="BorderBrush" Value="#9976FB"/>
-      <Setter Property="Background" Value="#FFFFFF"/>
-      <Setter Property="Padding" Value="10"/>
-      <Setter Property="TextAlignment" Value="Center"/>
-      <Setter Property="TextWrapping" Value="Wrap"/>
-    </Style>
 
-      <Style Selector="Border">
-          <Setter Property="CornerRadius" Value="2" />
-          <Setter Property="BorderThickness" Value="2" />
-          <Setter Property="Width" Value="300" />
-          <Setter Property="Height" Value="50" />
-      </Style>
-
-    <Style Selector="Button /template/ ContentPresenter">
-      <Setter Property="CornerRadius" Value="2" />
-    </Style>
-      <Style Selector="Button">
-          <Setter Property="FontSize" Value="18" />
-          <Setter Property="Foreground" Value="#FFFFFF" />
-      </Style>
-      <Style Selector="Button:disabled">
-          <Setter Property="Opacity" Value="1" />
-          <Setter Property="Background" Value="#D1C0FF" />
-          <Setter Property="BorderBrush" Value="#D1C0FF" />
-      </Style>
-
-      <Style Selector="TextBox.Base">
-          <Setter Property="Foreground" Value="#7F57F0" />
-      </Style>
-      <Style Selector="Border.Base">
-          <Setter Property="BorderBrush" Value="#9976FB"/>
-      </Style>
-
-
-    <Style Selector="TextBlock.Error">
-          <Setter Property="Foreground" Value="#FFA85E" />
-      </Style>
-      <Style Selector="TextBox.Error">
-          <Setter Property="Foreground" Value="#FFC797" />
-      </Style>
-      <Style Selector="Border.Error">
-          <Setter Property="BorderBrush" Value="#FFA85E"/>
-      </Style>
-
-
-  </UserControl.Styles>
-  <Grid >
+  <Grid>
     <Grid.Background>
       <ImageBrush
           Source="/Assets/background.png"
@@ -80,6 +20,7 @@
           TileMode="Tile" />
     </Grid.Background>
     <Grid ShowGridLines="False"
+          Margin="0 0"
           MaxWidth="380"
           MaxHeight="600"
           HorizontalAlignment="Center"
@@ -103,13 +44,19 @@
           Margin="0 30 0 0 ">
 
         <StackPanel>
-          <TextBlock Name="LoginTextBlock" Classes="UpperWatermark" Text="Логин" />
+          <TextBlock Name="LoginTextBlock"
+                     Classes="UpperWatermark"
+                     Classes.Error="{Binding RegisterUser.ErrorMessageRegisterPage.IsError}"
+                     Margin="2 0"
+                     Text="Логин" />
           <Border Background="White"
                   Name="LoginBorder"
-                  Classes="Base">
+                  Classes="BorderEnterPages Base"
+                  Classes.Error="{Binding RegisterUser.ErrorMessageRegisterPage.IsError}">
             <TextBox
                 Name="LoginTextBox"
-                Classes="Base"
+                Classes="TextBoxEnterPages Base"
+                Classes.Error="{Binding RegisterUser.ErrorMessageRegisterPage.IsError}"
                 Text="{Binding RegisterUser.Login}">
                 <i:Interaction.Behaviors>
                     <ia:EventTriggerBehavior EventName="KeyDown" SourceObject="{Binding #LoginTextBox}">
@@ -122,13 +69,19 @@
 
         <StackPanel
           Margin="0,7,0,0">
-          <TextBlock Name="PasswordTextBlock" Classes="UpperWatermark" Text="Пароль" />
+          <TextBlock Name="PasswordTextBlock"
+                     Classes="UpperWatermark"
+                     Classes.Error="{Binding RegisterUser.ErrorMessageRegisterPage.IsError}"
+                     Margin="2 0"
+                     Text="Пароль" />
           <Border Background="White"
                   Name="PasswordBorder"
-                  Classes="Base">
+                  Classes="BorderEnterPages Base"
+                  Classes.Error="{Binding RegisterUser.ErrorMessageRegisterPage.IsError}">
             <TextBox
                 Name="PasswordTextBox"
-                Classes="Base"
+                Classes="TextBoxEnterPages Base"
+                Classes.Error="{Binding RegisterUser.ErrorMessageRegisterPage.IsError}"
                 PasswordChar="*"
                 Text="{Binding RegisterUser.Password}">
                 <i:Interaction.Behaviors>
@@ -142,13 +95,19 @@
 
         <StackPanel
           Margin="0,7,0,0">
-          <TextBlock Name="NickNameTextBlock" Classes="UpperWatermark" Text="Имя" />
+          <TextBlock Name="NickNameTextBlock"
+                     Classes="UpperWatermark"
+                     Classes.Error="{Binding RegisterUser.ErrorMessageRegisterPage.IsError}"
+                     Margin="2 0"
+                     Text="Имя" />
           <Border Background="White"
                   Name="NickNameBorder"
-                  Classes="Base">
+                  Classes="BorderEnterPages Base"
+                  Classes.Error="{Binding RegisterUser.ErrorMessageRegisterPage.IsError}">
               <TextBox
                   Name="NickNameTextBox"
-                  Classes="Base"
+                  Classes="TextBoxEnterPages Base"
+                  Classes.Error="{Binding RegisterUser.ErrorMessageRegisterPage.IsError}"
                   Text="{Binding RegisterUser.UserName}"/>
           </Border>
         </StackPanel>
@@ -165,7 +124,7 @@
             BorderBrush="#9976FB"
             BorderThickness="1"
             IsChecked="{Binding RegisterUser.Consent}"
-            Padding="12,0,0,0"
+            Padding="5,0,0,0"
             Content="Соглашаюсь на обработку персональных данных"/>
 
           <TextBlock
@@ -180,7 +139,8 @@
         </StackPanel>
       </StackPanel>
         <StackPanel Grid.Row="2">
-            <Button
+          <Button
+                Classes="ButtonEnterPages"
                 MinWidth="300"
                 MaxWidth="300"
                 Margin="0,10,0,20"

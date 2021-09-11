@@ -1,0 +1,86 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia">
+
+    <!--TextBlock-->
+    <Style Selector="TextBlock.UpperWatermark">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="#9F81F3" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontStyle" Value="Italic" />
+    </Style>
+    <Style Selector="TextBlock.Error">
+        <Setter Property="Foreground" Value="#FFA85E" />
+    </Style>
+    <Style Selector="TextBlock:ClearContainer">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Background" Value="#ffffff00" />
+        <Setter Property="Foreground" Value="#FFA85E" />
+        <Setter Property="Margin" Value="0,0,0,40" />
+    </Style>
+
+    <!--TextBox-->
+    <Style Selector="TextBox.TextBoxEnterPages">
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="BorderBrush" Value="#FFFFFF"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Margin" Value="0,2" />
+        <Setter Property="Height" Value="42" />
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Width" Value="220"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Background" Value="#FFFFFF"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+    <Style Selector="TextBox.Base">
+        <Setter Property="Foreground" Value="#7F57F0" />
+    </Style>
+    <Style Selector="TextBox.Error">
+        <Setter Property="Foreground" Value="#FFC797" />
+    </Style>
+
+    <!--Border-->
+    <Style Selector="Border.BorderEnterPages">
+        <Setter Property="CornerRadius" Value="2" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="Width" Value="300" />
+        <Setter Property="Height" Value="50" />
+    </Style>
+    <Style Selector="Border.Base">
+        <Setter Property="BorderBrush" Value="#9976FB"/>
+    </Style>
+    <Style Selector="Border.Error">
+        <Setter Property="BorderBrush" Value="#FFA85E"/>
+    </Style>
+
+    <!--Image-->
+    <Style Selector="Image.ImageTbx">
+        <Setter Property="Width" Value="20" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="IsVisible" Value="{Binding User.ErrorMessageLoginPage.IsError}"/>
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/atention.svg" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--Button-->
+    <Style Selector="Button.ButtonEnterPages /template/ ContentPresenter">
+        <Setter Property="CornerRadius" Value="2" />
+    </Style>
+    <Style Selector="Button.ButtonEnterPages">
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="Foreground" Value="#FFFFFF" />
+    </Style>
+
+    <Style Selector="Button.ButtonEnterPages:disabled">
+        <Setter Property="Opacity" Value="1" />
+        <Setter Property="Background" Value="#D1C0FF" />
+        <Setter Property="BorderBrush" Value="#D1C0FF" />
+    </Style>
+
+
+</Styles>
