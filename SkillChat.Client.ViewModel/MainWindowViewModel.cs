@@ -76,7 +76,7 @@ namespace SkillChat.Client.ViewModel
             User.Login = settings.Login;
             Tokens = new TokenResult { AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken };
 
-            Messages = new ObservableCollection<MessageViewModel>();
+            Messages = new ObservableCollection<IMessageViewModel>();
 
             var bits = Environment.Is64BitOperatingSystem ? "PC 64bit, " : "PC 32bit, ";
             var operatingSystem = bits + RuntimeInformation.OSDescription;
@@ -175,9 +175,12 @@ namespace SkillChat.Client.ViewModel
                         {
                             foreach (var item in Messages)
                             {
-                                if (item.UserId==user.Id)
+                                if (item is MessageViewModel it)
                                 {
-                                    if (item.ShowNickname) item.UserNickname = user.DisplayName;
+                                    if (it.UserId==user.Id)
+                                    {
+                                        if (it.ShowNickname) it.UserNickname = user.DisplayName;
+                                    }
                                 }
                             }
                             
@@ -221,7 +224,8 @@ namespace SkillChat.Client.ViewModel
                         
                         if (Messages.Count!=0)
                         {
-                            if (Messages.Last().UserId != data.UserId)
+                            var lastMessage = Messages.Last();
+                            if (lastMessage is MessageViewModel last &&  last.UserId != data.UserId)
                             {
                                 newMessage.ShowNickname = true;
                             }
@@ -296,43 +300,44 @@ namespace SkillChat.Client.ViewModel
             {
                 try
                 { 
-                    var first = Messages?.FirstOrDefault();
-                    var request = new GetMessages {ChatId = ChatId, BeforePostTime = first?.PostTime};
-
-                    // Логика выбора сообщений по id чата
-                    var result = await serviceClient.GetAsync(request);
-                    foreach (var item in result.Messages)
+                    var firstMessage = Messages?.FirstOrDefault();
+                    if (firstMessage is MessageViewModel first)
                     {
-                        MessageViewModel newMessage = new MessageViewModel();
-
-                        newMessage.Id = item.Id;
-                        newMessage.Text = item.Text;
-                        newMessage.PostTime = item.PostTime;
-                        newMessage.UserNickname = item.UserNickName;
-                        newMessage.UserId = item.UserId;
-                        newMessage.LastEditTime = item.LastEditTime;
-                        newMessage.IsMyMessage = User.Id == item.UserId;
-                        newMessage.Attachments = item.Attachments?
-                            .Select(s =>
-                            {
-                                var newAttachment = new AttachmentMessageViewModel(s);
-                                newAttachment.IsMyMessage = newMessage.IsMyMessage;
-                                return newAttachment;
-                            }).ToList();
-
-                        if (Messages.Count!=0)
+                        var request = new GetMessages {ChatId = ChatId, BeforePostTime = first?.PostTime};
+                        // Логика выбора сообщений по id чата
+                        var result = await serviceClient.GetAsync(request);
+                        foreach (var item in result.Messages)
                         {
-                            if (Messages.First().UserId != newMessage.UserId)
-                            {
-                                Messages.First().ShowNickname = true;
-                            }
-                        }
-                       
-                        Messages.Insert(0, newMessage);
-                        messageDictionary[newMessage.Id] = newMessage;
-                    }
+                            MessageViewModel newMessage = new MessageViewModel();
 
-                    if (Messages.Count !=0) Messages.First().ShowNickname = true;
+                            newMessage.Id = item.Id;
+                            newMessage.Text = item.Text;
+                            newMessage.PostTime = item.PostTime;
+                            newMessage.UserNickname = item.UserNickName;
+                            newMessage.UserId = item.UserId;
+                            newMessage.LastEditTime = item.LastEditTime;
+                            newMessage.IsMyMessage = User.Id == item.UserId;
+                            newMessage.Attachments = item.Attachments?
+                                .Select(s =>
+                                {
+                                    var newAttachment = new AttachmentMessageViewModel(s);
+                                    newAttachment.IsMyMessage = newMessage.IsMyMessage;
+                                    return newAttachment;
+                                }).ToList();
+
+                            if (Messages.Count!=0)
+                            {
+                                if (first.UserId != newMessage.UserId)
+                                {
+                                    first.ShowNickname = true;
+                                }
+                            }
+                           
+                            Messages.Insert(0, newMessage);
+                            messageDictionary[newMessage.Id] = newMessage;
+                        }
+                        if (Messages.Count !=0) first.ShowNickname = true;
+                    }
                 }
                 catch (Exception e)
                 {
@@ -472,16 +477,13 @@ namespace SkillChat.Client.ViewModel
         {
             if (string.IsNullOrEmpty(MessageText))
             {
-                foreach (var messages in Messages.Reverse())
+                foreach (var messageViewModel in Messages.Reverse())
                 {
-                    if (User.Id == messages.UserId)
-                    {
-                        if (User.Id == messages.UserId)
-                        {
-                            EditMessage(messages);
-                            return;
-                        }
-                    }
+                    if (messageViewModel is not MessageViewModel message) continue;
+                    if (User.Id != message.UserId) continue;
+                    if (User.Id != message.UserId) continue;
+                    EditMessage(message);
+                    return;
                 }
             }
         }
@@ -528,7 +530,7 @@ namespace SkillChat.Client.ViewModel
         {
             AttachMenuVisible = !AttachMenuVisible;
         }
-        public ObservableCollection<MessageViewModel> Messages { get; set; }
+        public ObservableCollection<IMessageViewModel> Messages { get; set; }
 
         public TokenResult Tokens { get; set; }
 

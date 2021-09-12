@@ -17,7 +17,7 @@ namespace SkillChat.Client.ViewModel
             MessageText =
                 "Привет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\n";
 
-            Messages = new ObservableCollection<MessageViewModel>
+            Messages = new ObservableCollection<IMessageViewModel>
             {
                 new MessageViewModel
                 {

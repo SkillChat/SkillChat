@@ -1,0 +1,23 @@
+﻿<UserControl
+    x:Class="SkillChat.Client.Views.Uc.NewMessageLine.NewMessageLineView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
+    xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
+    xmlns:views="clr-namespace:SkillChat.Client.Views"
+    xmlns:utils="clr-namespace:SkillChat.Client.Utils"
+    xmlns:interactivity="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions">
+    <Border
+        BorderThickness="0"
+        Background="#E0E0E0"
+        Height="30"
+        HorizontalAlignment="Stretch">
+        <TextBlock Text="Новые сообщения"
+                   FontSize="14"/>
+    </Border>
+</UserControl>

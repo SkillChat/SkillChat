@@ -16,7 +16,7 @@ using Splat;
 namespace SkillChat.Client.ViewModel
 {
     [AddINotifyPropertyChangedInterface]
-    public class MessageViewModel
+    public class MessageViewModel : IMessageViewModel
     {
         public MessageViewModel()
         {
