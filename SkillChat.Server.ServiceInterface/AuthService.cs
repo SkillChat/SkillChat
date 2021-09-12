@@ -51,6 +51,7 @@ namespace SkillChat.Server.ServiceInterface
             }
 
             defaultChat.Members.Add(new ChatMember() {UserId = user.Id, UserRole = ChatMemberRole.Participient});
+            UserMessageStatus status = new UserMessageStatus(user.Id, defaultChat.Id);
             await RavenSession.SaveChangesAsync();
         }
 

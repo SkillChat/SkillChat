@@ -22,8 +22,12 @@ namespace SkillChat.Server.ServiceInterface
         [Authenticate]
         public async Task<MessagePage> Get(GetMessages request)
         {
+            var session = Request.ThrowIfUnauthorized();
+            var uid = session.UserAuthId;
             var messages = RavenSession.Query<Message>().Where(e => e.ChatId == request.ChatId).OrderByDescending(x => x.PostTime);
+            var userStatus = await RavenSession.LoadAsync<UserMessageStatus>(uid + request.ChatId);
             var result = new MessagePage();
+            result.MessageStatus = Mapper.Map<UserMessageStatusMold>(userStatus);
             if (request.BeforePostTime != null)
             {
                 messages = messages.Where(x => x.PostTime.UtcDateTime < request.BeforePostTime.Value.UtcDateTime);

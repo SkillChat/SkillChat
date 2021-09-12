@@ -44,6 +44,8 @@ namespace SkillChat.Server
             cfg.CreateMap<Settings, UserChatSettings>();
             cfg.CreateMap<SetSettings, Settings>()
                 .ForMember(m => m.Id, e => e.Ignore());
+
+            cfg.CreateMap<UserMessageStatus, UserMessageStatusMold>();
         }
     }
 }
