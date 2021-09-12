@@ -17,6 +17,11 @@ namespace SkillChat.Client.ViewModel
         public string ErrorMsg { get; private set; }
 
         /// <summary>
+        /// Св-во меняет визуальное отображение надписей и полей ввода при возникновении ошибок
+        /// </summary>
+        public bool IsError { get; set; } = false;
+
+        /// <summary>
         /// Метод принимает статус или текст ошибки и инициализирует свойство ErrorMsg,
         /// привязанное к свойству "Text" элемента, выводящего сообщения об ошибках во View.
         /// </summary>

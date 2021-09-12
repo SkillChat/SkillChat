@@ -247,7 +247,7 @@ namespace SkillChat.Client.ViewModel
                 catch (Exception e)
                 {
                     User.ErrorMessageLoginPage.GetErrorMessage(e.ToStatusCode().ToString());
-                    ErrorBe?.Invoke();
+                    User.ErrorMessageLoginPage.IsError = true;
                     IsShowingLoginPage = _connection.State != HubConnectionState.Connected;
                 }
             });
@@ -379,7 +379,7 @@ namespace SkillChat.Client.ViewModel
             GoToRegisterCommand = ReactiveCommand.Create<object>(_ =>
             {
                 RegisterUser.ErrorMessageRegisterPage.ResetDisplayErrorMessage();
-                ResetError?.Invoke();
+                RegisterUser.ErrorMessageRegisterPage.IsError = false;
                 IsShowingRegisterPage = true;
                 IsShowingLoginPage = false;
                 User.Password = "";
@@ -389,7 +389,7 @@ namespace SkillChat.Client.ViewModel
             RegisterUser.GoToLoginCommand = ReactiveCommand.Create<object>(_ =>
             {
                 User.ErrorMessageLoginPage.ResetDisplayErrorMessage();
-                ResetError?.Invoke();
+                User.ErrorMessageLoginPage.IsError = false;
                 IsShowingRegisterPage = false;
                 IsShowingLoginPage = true;
                 RegisterUser.Password = "";
@@ -404,7 +404,7 @@ namespace SkillChat.Client.ViewModel
                     if (string.IsNullOrWhiteSpace(RegisterUser.Login) || string.IsNullOrWhiteSpace(RegisterUser.Password))
                     {
                         RegisterUser.ErrorMessageRegisterPage.GetErrorMessage("Не заполнены Логин и/или Пароль");
-                        ErrorBe?.Invoke();
+                        RegisterUser.ErrorMessageRegisterPage.IsError = true;
                         return;
                     }
                     request.Login = RegisterUser.Login;
@@ -429,7 +429,7 @@ namespace SkillChat.Client.ViewModel
                     Debug.WriteLine($"Ошибка регистрации {e.Message}");
 
                         RegisterUser.ErrorMessageRegisterPage.GetErrorMessage(e.ToStatusCode().ToString());
-                        ErrorBe?.Invoke();
+                        RegisterUser.ErrorMessageRegisterPage.IsError = true;
                 }
             });
 
@@ -500,8 +500,9 @@ namespace SkillChat.Client.ViewModel
                 catch (Exception e)
                 {
                     IsShowingLoginPage = true;
-                    ErrorBe?.Invoke(); // Меняет стиль цвета текст боксов в окне входа
+                    User.ErrorMessageLoginPage.IsError = true;
                     User.ErrorMessageLoginPage.GetErrorMessage(e.ToStatusCode().ToString());
+                    RegisterUser.ErrorMessageRegisterPage.IsError = true;
                     RegisterUser.ErrorMessageRegisterPage.GetErrorMessage(e.ToStatusCode().ToString());
                 }
             };
@@ -616,11 +617,9 @@ namespace SkillChat.Client.ViewModel
         {
             User.ErrorMessageLoginPage.ResetDisplayErrorMessage();
             RegisterUser.ErrorMessageRegisterPage.ResetDisplayErrorMessage();
-            ResetError?.Invoke();
+            User.ErrorMessageLoginPage.IsError = false;
+            RegisterUser.ErrorMessageRegisterPage.IsError = false;
         }
-
-        public event Action ErrorBe;
-        public event Action ResetError;
 
         public enum WindowState
         {
