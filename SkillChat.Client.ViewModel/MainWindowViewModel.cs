@@ -228,6 +228,19 @@ namespace SkillChat.Client.ViewModel
                             keyValue.Text = data.Message;
                             keyValue.LastEditTime = data.LastEditTime;
                         }
+
+                        foreach (var message in Messages)
+                        {
+                            if (!message.IdQuotedMessage.IsNullOrEmpty())
+                            {
+                                if (message.IdQuotedMessage == data.Id)
+                                {
+                                    message.QuotedMessageViewModel.Text = data.Message;
+                                    message.QuotedMessageViewModel.LastEditTime = data.LastEditTime;
+                                }
+                            }
+                            
+                        }
                     });
 
                     ///Получает новые сообщения и добавляет их в окно чата. 
@@ -241,8 +254,7 @@ namespace SkillChat.Client.ViewModel
                         newMessage.UserNickname = data.UserNickname ?? data.UserLogin;
                         newMessage.UserId = data.UserId;
                         newMessage.IsMyMessage = User.Id == data.UserId;
-
-                        newMessage.IdReplyMessage = data.IdReplyMessage;
+                        newMessage.IdQuotedMessage = data.IdReplyMessage;
                         newMessage.Attachments = data.Attachments?
                             .Select(s =>
                             {
@@ -250,8 +262,12 @@ namespace SkillChat.Client.ViewModel
                                 var newAttachment = new AttachmentMessageViewModel(attah);
                                 return newAttachment;
                             }).ToList();
+                        if (!data.IdReplyMessage.IsNullOrEmpty())
+                        {
+                            newMessage.QuotedMessageViewModel = messageDictionary[data.IdReplyMessage];
+                        }
 
-                        if (Messages.Count != 0)
+                        if (Messages.Count!=0)
                         {
                             if (Messages.Last().UserId != data.UserId)
                             {
@@ -338,12 +354,7 @@ namespace SkillChat.Client.ViewModel
                     {
                         MessageViewModel newMessage = new MessageViewModel();
 
-                        newMessage.Id = item.Id;
-                        newMessage.Text = item.Text;
-                        newMessage.PostTime = item.PostTime;
-                        newMessage.UserNickname = item.UserNickName;
-                        newMessage.UserId = item.UserId;
-                        newMessage.LastEditTime = item.LastEditTime;
+                        if (mapper != null) newMessage = mapper.Map<MessageViewModel>(item);
                         newMessage.IsMyMessage = User.Id == item.UserId;
                         newMessage.Attachments = item.Attachments?
                             .Select(s =>
@@ -353,8 +364,24 @@ namespace SkillChat.Client.ViewModel
                                 return newAttachment;
                             }).ToList();
 
-                        newMessage.IdReplyMessage = item.IdReplyMessage; ///Надо подумать!!!!
-                        
+                        if (item.QuotedMessage!=null)
+                        {
+                            newMessage.IdQuotedMessage = item.QuotedMessage.Id;
+                            MessageViewModel quotedMessage = new MessageViewModel();
+
+                            if (mapper != null) quotedMessage = mapper.Map<MessageViewModel>(item.QuotedMessage);
+                            quotedMessage.UserNickname = item.QuotedMessage.UserNickName;
+                            quotedMessage.IsMyMessage = User.Id == item.QuotedMessage.UserId;
+                            quotedMessage.Attachments = item.QuotedMessage.Attachments?
+                                .Select(s =>
+                                {
+                                    var newAttachment = new AttachmentMessageViewModel(s);
+                                    newAttachment.IsMyMessage = newMessage.IsMyMessage;
+                                    return newAttachment;
+                                }).ToList();
+                            newMessage.QuotedMessageViewModel = quotedMessage;
+                        }
+
                         if (Messages.Count!=0)
                         {
                             if (Messages.First().UserId != newMessage.UserId)
@@ -654,7 +681,7 @@ namespace SkillChat.Client.ViewModel
 
         public void CancelReply()
         {
-            SelectedReplyMessage.Id=string.Empty;
+            SelectedReplyMessage = new MessageViewModel();
             IsSelectReplyMessage = false;
         }
        

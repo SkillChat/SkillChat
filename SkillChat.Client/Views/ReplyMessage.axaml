@@ -31,7 +31,7 @@
 			<DockPanel Grid.Row="0" VerticalAlignment="Top">
 				<TextBlock DockPanel.Dock="Left"
 					Classes="ReplyUserLogin"
-					Text="{Binding ReplyDisplayNickname}"/>
+					Text="{Binding QuotedDisplayNickname}"/>
 				<StackPanel 
                     DockPanel.Dock="Right" 
                     Orientation="Horizontal"

@@ -35,6 +35,7 @@ namespace SkillChat.Server.ServiceInterface
                 await messages.Take(pageSize)
                     .Include(x => x.UserId)
                     .Include(s => s.Attachments)
+                    .Include(i=>i.IdReplyMessage)
                     .ToListAsync();
 
             result.Messages = new List<MessageMold>();
@@ -58,9 +59,33 @@ namespace SkillChat.Server.ServiceInterface
                     }
                 }
 
+                if (!doc.IdReplyMessage.IsNullOrEmpty())
+                {
+                    var mes = await RavenSession.LoadAsync<Message>(doc.IdReplyMessage);
+                    var quotedMessage = Mapper.Map<MessageMold>(mes);
+                    quotedMessage.UserNickName = string.IsNullOrWhiteSpace(user.DisplayName) ? user.Login : user.DisplayName;
+
+                    if (mes.Attachments != null)
+                    {
+                        var attach = await RavenSession.LoadAsync<Attachment>(mes.Attachments);
+                        quotedMessage.Attachments = new List<AttachmentMold>();
+
+                        foreach (var id in mes.Attachments)
+                        {
+                            if (attach.TryGetValue(id, out var attachment))
+                            {
+                                quotedMessage.Attachments.Add(Mapper.Map<AttachmentMold>(attachment));
+                            }
+                        }
+                    }
+
+                    message.QuotedMessage = quotedMessage;
+                }
+
                 if (user != null)
                 {
                     message.UserNickName = string.IsNullOrWhiteSpace(user.DisplayName) ? user.Login : user.DisplayName;
+
                 }
                 result.Messages.Add(message);
             }

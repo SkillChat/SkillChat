@@ -49,7 +49,7 @@ namespace SkillChat.Client.ViewModel
         public string UserNickname { get; set; }
 
         public string DisplayNickname => ShowNickname ? UserNickname : null;
-        public string ReplyDisplayNickname=>!IsMyMessage? UserNickname : "Вы";
+        public string QuotedDisplayNickname=>!IsMyMessage? UserNickname : "Вы";
 
         public bool ShowNickname { get; set; }
 
@@ -94,22 +94,9 @@ namespace SkillChat.Client.ViewModel
         public List<AttachmentMessageViewModel> Attachments { get; set; }
         public UserProfileMold ProfileMold { get; set; }
         public ReactiveCommand<string, Unit> UserProfileInfoCommand { get; set; }
-        public MessageViewModel ReplyMessageViewModel
-        { 
-            get
-            {
-                var mw = Locator.Current.GetService<MainWindowViewModel>();
-                return IdReplyMessage.IsNullOrEmpty() ? null: mw.messageDictionary[IdReplyMessage];
-            } 
-        }
-        public string IdReplyMessage { get; set; }
-        public bool IsReplyMessage
-        {
-            get
-            {
-                return IdReplyMessage.IsNullOrEmpty() ? false : true;
-            }
-        }
+        public MessageViewModel QuotedMessageViewModel { get; set; }
+        public string IdQuotedMessage { get; set; }
+        public bool IsQuotedMessage => !IdQuotedMessage.IsNullOrEmpty();
         
         ///Меню
        public ObservableCollection<MenuItemObject> MenuItems
