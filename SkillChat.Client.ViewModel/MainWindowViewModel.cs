@@ -114,9 +114,9 @@ namespace SkillChat.Client.ViewModel
 
                     if (Tokens == null || Tokens.AccessToken.IsNullOrEmpty())
                     {
-                            Tokens = await serviceClient.PostAsync(new AuthViaPassword
-                            { Login = User.Login, Password = User.Password });
-                        
+                        Tokens = await serviceClient.PostAsync(new AuthViaPassword
+                        { Login = User.Login, Password = User.Password });
+
                         settings.AccessToken = Tokens.AccessToken;
                         settings.RefreshToken = Tokens.RefreshToken;
                         settings.UserName = User.UserName;
@@ -135,38 +135,69 @@ namespace SkillChat.Client.ViewModel
 
                     _connection.Subscribe<LogOn>(async data =>
                     {
-                        if (data.Error)
+                        LogOn.LogOnStatus error = data.Error;
+                        switch (error)
                         {
-                            IsSignedIn = false;
-                            serviceClient.BearerToken = Tokens.RefreshToken;
-                            try
-                            {
-                                Tokens = await serviceClient.PostAsync(new PostRefreshToken());
-                                settings.AccessToken = Tokens.AccessToken;
-                                settings.RefreshToken = Tokens.RefreshToken;
-                                configuration.GetSection("ChatClientSettings").Set(configuration);
-                                await _hub.Login(Tokens.AccessToken, operatingSystem, ipAddress, nameVersionClient);
-                            }
-                            catch (Exception e)
-                            {
-                                Tokens = null;
-                            }
+                            case LogOn.LogOnStatus.ErrorUserNotFound: //Пользователь не найден
+                                {
+                                    try
+                                    {
+                                        SignOutCommand.Execute(null);
+                                        IsShowingLoginPage = false;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                    }
+                                    finally
+                                    {
+                                        RegisterUser.ErrorMessageRegisterPage.GetErrorMessage("Пользователь не найден");
+                                        RegisterUser.Login = settings.Login;
+                                        IsShowingRegisterPage = true;
+                                    }
+                                    break;
+                                }
+                            case LogOn.LogOnStatus.ErrorExpiredToken: //Срок действия токена истек
+                                {
+                                    IsSignedIn = false;
+                                    serviceClient.BearerToken = Tokens.RefreshToken;
+                                    try
+                                    {
+                                        Tokens = await serviceClient.PostAsync(new PostRefreshToken());
+                                        settings.AccessToken = Tokens.AccessToken;
+                                        settings.RefreshToken = Tokens.RefreshToken;
+                                        configuration.GetSection("ChatClientSettings").Set(configuration);
+                                        await _hub.Login(Tokens.AccessToken, operatingSystem, ipAddress, nameVersionClient);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        User.ErrorMessageLoginPage.GetErrorMessage("419");
+                                        SignOutCommand.Execute(null);
+                                    }
+                                    break;
+                                }
+                            case LogOn.LogOnStatus.Ok: //Автовход по токену
+                                {
+                                    IsSignedIn = true;
+                                    User.Id = data.Id;
+                                    User.Login = data.UserLogin;
+                                    ExpireTime = data.ExpireTime;
+                                    var chats = await serviceClient.GetAsync(new GetChatsList());
+                                    var chat = chats.Chats.FirstOrDefault();
+                                    ChatId = chat?.Id;
+                                    ChatName = chat?.ChatName;
+                                    LoadMessageHistoryCommand.Execute(null);
+                                    //Получаем настройки
+                                    SettingsViewModel.ChatSettings = await serviceClient.GetAsync(new GetMySettings());
+                                    KeySendMessage = SettingsViewModel.ChatSettings.SendingMessageByEnterKey;
+                                    break;
+                                }
+                            default:
+                                {
+                                    User.ErrorMessageLoginPage.GetErrorMessage(((int)error).ToString());
+                                    break;
+                                }
                         }
-                        else
-                        {
-                            IsSignedIn = true;
-                            User.Id = data.Id;
-                            User.Login = data.UserLogin;
-                            ExpireTime = data.ExpireTime;
-                            var chats = await serviceClient.GetAsync(new GetChatsList());
-                            var chat = chats.Chats.FirstOrDefault();
-                            ChatId = chat?.Id;
-                            ChatName = chat?.ChatName;
-                            LoadMessageHistoryCommand.Execute(null);
-                            //Получаем настройки
-                            SettingsViewModel.ChatSettings = await serviceClient.GetAsync(new GetMySettings());
-                            KeySendMessage = SettingsViewModel.ChatSettings.SendingMessageByEnterKey;
-                        }
+
                     });
 
                     _connection.Subscribe<UpdateUserDisplayName>(async user =>
@@ -175,12 +206,12 @@ namespace SkillChat.Client.ViewModel
                         {
                             foreach (var item in Messages)
                             {
-                                if (item.UserId==user.Id)
+                                if (item.UserId == user.Id)
                                 {
                                     if (item.ShowNickname) item.UserNickname = user.DisplayName;
                                 }
                             }
-                            
+
                             ProfileViewModel.UpdateUserProfile(user.DisplayName, user.Id);
                         }
                         catch (Exception e)
@@ -207,19 +238,19 @@ namespace SkillChat.Client.ViewModel
                         newMessage.Id = data.Id;
                         newMessage.Text = data.Message;
                         newMessage.PostTime = data.PostTime;
-                        newMessage.UserNickname = data.UserNickname??data.UserLogin;
+                        newMessage.UserNickname = data.UserNickname ?? data.UserLogin;
                         newMessage.UserId = data.UserId;
                         newMessage.IsMyMessage = User.Id == data.UserId;
 
                         newMessage.Attachments = data.Attachments?
                             .Select(s =>
-                            { 
+                            {
                                 var attah = mapper?.Map<AttachmentMold>(s);
                                 var newAttachment = new AttachmentMessageViewModel(attah);
                                 return newAttachment;
                             }).ToList();
-                        
-                        if (Messages.Count!=0)
+
+                        if (Messages.Count != 0)
                         {
                             if (Messages.Last().UserId != data.UserId)
                             {
@@ -295,9 +326,9 @@ namespace SkillChat.Client.ViewModel
             LoadMessageHistoryCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 try
-                { 
+                {
                     var first = Messages?.FirstOrDefault();
-                    var request = new GetMessages {ChatId = ChatId, BeforePostTime = first?.PostTime};
+                    var request = new GetMessages { ChatId = ChatId, BeforePostTime = first?.PostTime };
 
                     // Логика выбора сообщений по id чата
                     var result = await serviceClient.GetAsync(request);
@@ -320,19 +351,19 @@ namespace SkillChat.Client.ViewModel
                                 return newAttachment;
                             }).ToList();
 
-                        if (Messages.Count!=0)
+                        if (Messages.Count != 0)
                         {
                             if (Messages.First().UserId != newMessage.UserId)
                             {
                                 Messages.First().ShowNickname = true;
                             }
                         }
-                       
+
                         Messages.Insert(0, newMessage);
                         messageDictionary[newMessage.Id] = newMessage;
                     }
 
-                    if (Messages.Count !=0) Messages.First().ShowNickname = true;
+                    if (Messages.Count != 0) Messages.First().ShowNickname = true;
                 }
                 catch (Exception e)
                 {
@@ -385,7 +416,7 @@ namespace SkillChat.Client.ViewModel
                 User.Password = "";
             });
 
-            
+
             RegisterUser.GoToLoginCommand = ReactiveCommand.Create<object>(_ =>
             {
                 User.ErrorMessageLoginPage.ResetDisplayErrorMessage();
@@ -420,7 +451,7 @@ namespace SkillChat.Client.ViewModel
                     configuration.GetSection("ChatClientSettings").Set(settings);
 
                     //Очистка полей регистрации
-                    RegisterUser.Clear();;
+                    RegisterUser.Clear(); ;
 
                     ConnectCommand.Execute(null);
                 }
@@ -428,8 +459,8 @@ namespace SkillChat.Client.ViewModel
                 {
                     Debug.WriteLine($"Ошибка регистрации {e.Message}");
 
-                        RegisterUser.ErrorMessageRegisterPage.GetErrorMessage(e.ToStatusCode().ToString());
-                        RegisterUser.ErrorMessageRegisterPage.IsError = true;
+                    RegisterUser.ErrorMessageRegisterPage.GetErrorMessage(e.ToStatusCode().ToString());
+                    RegisterUser.ErrorMessageRegisterPage.IsError = true;
                 }
             });
 
@@ -485,7 +516,7 @@ namespace SkillChat.Client.ViewModel
                 }
             }
         }
-       
+
         public DateTimeOffset ExpireTime { get; set; }
 
         private Func<Exception, Task> connectionOnClosed()
@@ -524,7 +555,7 @@ namespace SkillChat.Client.ViewModel
         {
             AttachMenuVisible = false;
         }
-        
+
         public void AttachMenuCommand()
         {
             AttachMenuVisible = !AttachMenuVisible;
@@ -664,7 +695,7 @@ namespace SkillChat.Client.ViewModel
         public string TextHeaderMain { get; set; } = "Чат";
         public bool SettingsActive { get; set; }
         public string TextHeaderMenuInSettings { get; set; }
-        
+
         public void Width(bool isWindow)
         {
             if (!isWindow)

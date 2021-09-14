@@ -42,6 +42,10 @@ namespace SkillChat.Client.ViewModel
                     ErrorMsg = "Этот Логин уже существует";
                     break;
 
+                case ErrorExpiredToken:
+                    ErrorMsg = "Срок действия аутентификации истек";
+                    break;
+
                 default:
                     ErrorMsg = message;
                     break;
@@ -59,6 +63,6 @@ namespace SkillChat.Client.ViewModel
         public const string ErrorConnection = "500";
         public const string ErrorAuthentication = "404";
         public const string ErrorRegistration = "400";
-
+        public const string ErrorExpiredToken = "419";
     }
 }
