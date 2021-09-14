@@ -32,7 +32,9 @@ namespace SkillChat.Client
                 .ForMember(m => m.ProfileMold, e => e.Ignore())
                 .ForMember(m => m.Time, e => e.Ignore())
                 .ForMember(m => m.UserProfileInfoCommand, e => e.Ignore())
-                .ForMember(m => m.MenuItems, e => e.Ignore())
+                .ForMember(m => m.IsChecked, e => e.Ignore())
+                .ForMember(m => m.selectMsgMode, e => e.Ignore())
+                .ForMember(m => m.MenuItems, e => e.Ignore());
                 .ForMember(m => m.IsQuotedMessage, e => e.Ignore());
             cfg.CreateMap<ReceiveMessage, MessageViewModel>()
                 .ForMember(m => m.ShowNickname, e => e.Ignore())

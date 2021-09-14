@@ -23,7 +23,9 @@
         <sys:Double x:Key="MinWidth0">0</sys:Double>
     </UserControl.Resources>
 	<DockPanel>
-		<CheckBox DockPanel.Dock="Left"/>
+		<CheckBox DockPanel.Dock="Left"
+                  IsVisible="{Binding Mv.SelectMessagesMode.IsTurnedSelectMode}"
+                  IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
 		<StackPanel
 		Grid.Column="1"
         HorizontalAlignment="{Binding IsMyMessage,

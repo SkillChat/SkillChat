@@ -16,8 +16,9 @@ using Splat;
 namespace SkillChat.Client.ViewModel
 {
     [AddINotifyPropertyChangedInterface]
-    public class MessageViewModel
+    public class MessageViewModel: IEquatable<MessageViewModel>
     {
+        
         public MessageViewModel()
         {
             this.WhenAnyValue(x => x.PostTime).Subscribe(t =>
@@ -40,6 +41,9 @@ namespace SkillChat.Client.ViewModel
                     await profileViewModel.Open(userId);
                 });
             }
+
+            selectMsgMode = Locator.Current.GetService<SelectMessages>();
+            Mv = Locator.Current.GetService<MainWindowViewModel>();
         }
 
         public string Id { get; set; }
@@ -66,6 +70,27 @@ namespace SkillChat.Client.ViewModel
         public bool Selected { get; set; }
 
         public bool IsMyMessage { get; set; }
+
+        public SelectMessages selectMsgMode;
+        public MainWindowViewModel Mv { get; }
+        private bool isChecked;
+        public bool IsChecked
+        {
+            get => isChecked;
+            set
+            {
+                isChecked = value;
+
+                if (isChecked)
+                {
+                    selectMsgMode.SelectedMessagesTempCollection.Add(this);
+                }
+                else
+                {
+                    selectMsgMode.SelectedMessagesTempCollection.Remove(this);
+                }
+            }
+        }
 
         public enum ViewTypeMessage
         {
@@ -147,7 +172,13 @@ namespace SkillChat.Client.ViewModel
         }
         private void SelectMessage(object o)
         {
-            
+            selectMsgMode.IsTurnedSelectMode = true;
+            IsChecked = true;
+        }
+
+        public bool Equals(MessageViewModel other)
+        {
+            return this.Text == other.Text && this.Time == other.Time;
         }
     }
 
@@ -197,7 +228,6 @@ namespace SkillChat.Client.ViewModel
         public bool IsMyMessage { get; set; }
 
         private bool _isDownload { get; set; }
-
         public ReactiveCommand<AttachmentMold, Unit> DownloadCommand { get; set; }
     }
 }

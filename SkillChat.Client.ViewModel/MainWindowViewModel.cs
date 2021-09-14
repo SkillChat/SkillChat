@@ -36,6 +36,8 @@ namespace SkillChat.Client.ViewModel
             Locator.CurrentMutable.RegisterConstant(this);
             User = new CurrentUserViewModel();
             RegisterUser = new RegisterUserViewModel();
+            SelectMessagesMode = new SelectMessages();
+            Locator.CurrentMutable.RegisterConstant<SelectMessages>(SelectMessagesMode);
             Locator.CurrentMutable.RegisterConstant<ICurrentUser>(User);
             configuration = Locator.Current.GetService<IConfiguration>();
             settings = configuration?.GetSection("ChatClientSettings")?.Get<ChatClientSettings>();
@@ -671,6 +673,11 @@ namespace SkillChat.Client.ViewModel
         public ICommand RegisterCommand { get; }
 
         public SettingsViewModel SettingsViewModel { get; set; }
+
+        /// <summary>
+        /// Свойство предоставляет доступ к полям, свойствам и методам экземпляра класса SelectMessages.
+        /// </summary>
+        public SelectMessages SelectMessagesMode { get; set; }
 
         /// <summary>
         /// Происходит при добавлении нового сообщения в коллекцию сообщений
