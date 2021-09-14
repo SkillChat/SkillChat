@@ -22,6 +22,8 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using SkillChat.Client.ViewModel;
+using SkillChat.Client.ViewModel.Models;
+using SkillChat.Client.ViewModel.Services;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -30,6 +32,7 @@ namespace SkillChat.Client.ViewModel
     {
         IConfiguration configuration;
         ChatClientSettings settings;
+        private IUserMessagesStatusService statusService;
 
         public MainWindowViewModel()
         {
@@ -41,6 +44,8 @@ namespace SkillChat.Client.ViewModel
             settings = configuration?.GetSection("ChatClientSettings")?.Get<ChatClientSettings>();
 
             var mapper = Locator.Current.GetService<IMapper>();
+            statusService = Locator.Current.GetService<IUserMessagesStatusService>();
+            statusService?.SetSendStatusMethod(SendUserMessagesStatus);
 
             if (settings == null)
             {
@@ -104,6 +109,7 @@ namespace SkillChat.Client.ViewModel
             {
                 try
                 {
+                    //todo Выделить соединение с хабом в отдельный сервис, что бы не дергать mainvm для отправки сообщений
                     _connection = new HubConnectionBuilder()
                         .WithUrl(settings.HostUrl + "/ChatHub")
                         .Build();
@@ -696,6 +702,11 @@ namespace SkillChat.Client.ViewModel
             await AttachmentViewModel.Open(attachmentsPatch);
 
             AttachMenuVisible = false;
+        }
+
+        public void SendUserMessagesStatus(HubUserMessageStatus status)
+        {
+            _hub.SendUserMessageStatus(status);
         }
     }
 

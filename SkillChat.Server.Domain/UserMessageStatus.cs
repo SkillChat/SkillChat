@@ -23,5 +23,22 @@ namespace SkillChat.Server.Domain
             UserId = userId;
             ChatId = chatId;
         }
+        
+        public static bool operator == (UserMessageStatus status1, UserMessageStatus status2)
+        {
+            return status1?.LastReceivedMessageDate == status2?.LastReceivedMessageDate
+                   && status1?.LastReadedMessageDate == status2?.LastReadedMessageDate
+                   && status1?.Id == status2?.Id
+                   && status1?.UserId == status2?.UserId
+                   && status1?.ChatId == status2?.ChatId;
+        }
+        public static bool operator !=(UserMessageStatus status1, UserMessageStatus status2)
+        {
+            return !(status1?.LastReceivedMessageDate == status2?.LastReceivedMessageDate
+                   && status1?.LastReadedMessageDate == status2?.LastReadedMessageDate
+                   && status1?.Id == status2?.Id
+                   && status1?.UserId == status2?.UserId
+                   && status1?.ChatId == status2?.ChatId);
+        }
     }
 }

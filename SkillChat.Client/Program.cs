@@ -1,9 +1,11 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Avalonia;
 using Avalonia.ReactiveUI;
 using Microsoft.Extensions.Configuration;
 using SkillChat.Client.Utils;
 using SkillChat.Client.ViewModel;
+using SkillChat.Client.ViewModel.Services;
 using SkillChat.Client.Views;
 using SkillChat.Interface;
 using Splat;
@@ -28,6 +30,7 @@ namespace SkillChat.Client
             Locator.CurrentMutable.RegisterConstant(configuration, typeof(IConfiguration));
             Locator.CurrentMutable.Register<INotify>(() => new NotifyWindow());
             Locator.CurrentMutable.Register<ICanOpenFileDialog>(() => new CanOpenFileDialog());
+            Locator.CurrentMutable.Register(() =>  new UserMessagesStatusServiceService(), typeof(IUserMessagesStatusService));
 
             var mapper = AppModelMapping.ConfigureMapping();
             Locator.CurrentMutable.Register<IMapper>(() => mapper);

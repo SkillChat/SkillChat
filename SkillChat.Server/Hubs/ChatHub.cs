@@ -10,19 +10,22 @@ using SkillChat.Server.Domain;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace SkillChat.Server.Hubs
 {
     public class ChatHub : Hub, IChatHub
     {
-        public ChatHub(IAsyncDocumentSession ravenSession)
+        public ChatHub(IAsyncDocumentSession ravenSession, IMapper mapper)
         {
             _ravenSession = ravenSession;
+            _mapper = mapper;
         }
 
         private string _loginedGroup = "Logined";
 
         private readonly IAsyncDocumentSession _ravenSession;
+        private IMapper _mapper;
 
         public async Task UpdateMyDisplayName(string userDispalyName)
         {
@@ -169,6 +172,24 @@ namespace SkillChat.Server.Hubs
                 });
                 Log.Warning($"Bad token from connection {Context.ConnectionId}");
             }
+        }
+        public async Task SendUserMessageStatus(HubUserMessageStatus userStatus)
+        {
+            var newStatus = _mapper.Map<UserMessageStatus>(userStatus);
+            var status = await _ravenSession.LoadAsync<UserMessageStatus>(userStatus.Id);
+            if (newStatus == status) return;
+            if (status.LastReceivedMessageDate < newStatus.LastReceivedMessageDate)
+            {
+                status.LastReceivedMessageDate = newStatus.LastReceivedMessageDate;
+                status.LastReceivedMessageId = newStatus.LastReceivedMessageId;
+            }
+            if (status.LastReadedMessageDate < newStatus.LastReadedMessageDate)
+            {
+                status.LastReadedMessageDate = newStatus.LastReadedMessageDate;
+                status.LastReadedMessageId = newStatus.LastReadedMessageId;
+            }
+
+            await _ravenSession.SaveChangesAsync();
         }
     }
 }

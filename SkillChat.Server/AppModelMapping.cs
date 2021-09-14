@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration;
+using SkillChat.Interface;
 using SkillChat.Server.Domain;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
@@ -46,6 +47,9 @@ namespace SkillChat.Server
                 .ForMember(m => m.Id, e => e.Ignore());
 
             cfg.CreateMap<UserMessageStatus, UserMessageStatusMold>();
+            cfg.CreateMap<HubUserMessageStatus, UserMessageStatus>()
+                .ForMember(m => m.ChatId, o => o.Ignore())
+                .ForMember(m => m.UserId, o => o.Ignore());
         }
     }
 }
