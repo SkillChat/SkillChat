@@ -211,4 +211,29 @@
         </Setter>
     </Style>
 
+	<!--SelectMessageBorderControl-->
+	
+	<Style Selector="Button.CopyToClipboard">
+		<Setter Property="Width" Value="18"/>
+		<Setter Property="Height" Value="18"/>
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="Margin" Value="20,0,0,0"/>
+		<Setter Property="Padding" Value="0"/>
+		<Setter Property="BorderThickness" Value="0"/>
+	</Style>
+
+	<Style Selector="Button.CopyToClipboard Image#CopyToClipboard">
+		<Setter Property="Source">
+			<Setter.Value>
+				<svg:SvgImage Source="/Assets/copy_to_clipboard.svg" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style Selector="TextBlock.CopyToClipboard">
+		<Setter Property="FontSize" Value="15"/>
+		<Setter Property="Margin" Value="15,5,0,0"/>
+		<Setter Property="Foreground" Value="#4F4F4F"/>
+	</Style>
+
 </Styles>

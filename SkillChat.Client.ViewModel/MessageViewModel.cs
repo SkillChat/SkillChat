@@ -115,10 +115,12 @@ namespace SkillChat.Client.ViewModel
                 {
                     MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectEditMessage), Content = "Редактировать" });
                     MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectQuotedMessage), Content = "Ответить" });
+                    MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectMessage), Content = "Выбрать сообщение" });
                 }
                 else
                 {
                     MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectQuotedMessage), Content = "Ответить" });
+                    MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectMessage), Content = "Выбрать сообщение" });
                 }
 
                 return MenuItems;
@@ -142,6 +144,10 @@ namespace SkillChat.Client.ViewModel
         {
             var mw = Locator.Current.GetService<MainWindowViewModel>();
             mw.QuoteMessage(this);
+        }
+        private void SelectMessage(object o)
+        {
+            
         }
     }
 
