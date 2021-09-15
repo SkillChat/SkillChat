@@ -49,14 +49,9 @@ namespace SkillChat.Client.ViewModel
                 });
 
                 CheckOff();
-                IsTurnedSelectMode = false;
             });
 
-            TurnOffSelectModeCommand = ReactiveCommand.Create(() =>
-            {
-                CheckOff();
-                IsTurnedSelectMode = false;
-            });
+            TurnOffSelectModeCommand = ReactiveCommand.Create(CheckOff);
         }
        
         /// <summary>
@@ -71,6 +66,7 @@ namespace SkillChat.Client.ViewModel
             }
             SelectedMessagesTempCollection.Clear();
             CountCheckedMsg = 0;
+            IsTurnedSelectMode = false;
         }
 
         /// <summary>
