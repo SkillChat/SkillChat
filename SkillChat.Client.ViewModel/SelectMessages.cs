@@ -6,7 +6,11 @@ using PropertyChanged;
 using ReactiveUI;
 using ServiceStack;
 using Splat;
+using Avalonia;
+using Avalonia.Input.Platform;
+
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -23,18 +27,41 @@ namespace SkillChat.Client.ViewModel
         /// </summary>
         public ObservableCollection<MessageViewModel> SelectedMessagesTempCollection { get; set; }
 
-        /// <summary>
-        /// Команда вызывается из контектного меню сообщения. Включает режим выбора сообщений, помечает это сообщение выбранным
-        /// и добавляет в SelectedMessagesTempCollection
-        /// </summary>
-        public ICommand SelectedModeTurnOnCommand { get; }
-
         public SelectMessages()
         {
             SelectedMessagesTempCollection = new ObservableCollection<MessageViewModel>();
 
+            CopyToClipboardCommand = ReactiveCommand.CreateFromTask( async () =>
+            {
+                await Task.Run(() =>
+                {
+                    string text = "";
+                    foreach (var message in SelectedMessagesTempCollection)
+                    {
+                        string txt = $"{message.UserNickname}\n {message.Text}\n {message.Time}\n";
+                        text += txt;
+                    }
+                    AvaloniaLocator.Current.GetService<IClipboard>().SetTextAsync(text);
+                });
+            });
 
+            TurnOffSelectModeCommand = ReactiveCommand.Create(() =>
+            {
+                SelectedMessagesTempCollection.Clear();
+                IsTurnedSelectMode = false;
+            });
         }
+
+
+        /// <summary>
+        /// Команда вызывается из SelectMessageBorderControl. Копирует NickName, Text, Time выбранных сообщений в буфер обмена
+        /// </summary>
+        public ICommand CopyToClipboardCommand { get; }
+
+        /// <summary>
+        /// Команда для выхода из режима выбора сообщений
+        /// </summary>
+        public ICommand TurnOffSelectModeCommand { get; }
 
     }
 }

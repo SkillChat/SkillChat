@@ -6,11 +6,11 @@
              x:Class="SkillChat.Client.Views.SelectMessageBorderControl">
 	<Border
 		Classes="sendMessage"
-		IsVisible="{Binding ProfileViewModel.IsShowChat}"
+		IsVisible="{Binding SelectMessagesMode.IsTurnedSelectMode}"
 		BorderThickness="10,10,10,10">
 		<Grid ColumnDefinitions="Auto,*">
 			<Button Grid.Column="0"	
-					Command="{Binding}" Classes="CopyToClipboard">
+					Command="{Binding SelectMessagesMode.CopyToClipboardCommand}" Classes="CopyToClipboard">
 				<Image Name="CopyToClipboard"
 					   Width="18"
 					   Height="18"/>

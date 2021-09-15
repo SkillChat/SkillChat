@@ -8,6 +8,7 @@ using ReactiveUI;
 using ServiceStack;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
+using Splat;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -76,6 +77,7 @@ namespace SkillChat.Client.ViewModel
                     LoginAuditCollection.Add(LoginAuditView);
                 }
             });
+
         }
 
         public void Close()
