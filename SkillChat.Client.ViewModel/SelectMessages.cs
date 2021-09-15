@@ -43,16 +43,28 @@ namespace SkillChat.Client.ViewModel
                     }
                     AvaloniaLocator.Current.GetService<IClipboard>().SetTextAsync(text);
                 });
+                ///
+                test();
+                IsTurnedSelectMode = false;
+                ///
             });
 
             TurnOffSelectModeCommand = ReactiveCommand.Create(() =>
             {
+                test();
                 SelectedMessagesTempCollection.Clear();
                 IsTurnedSelectMode = false;
             });
         }
-
-
+       
+        public void test()
+        {
+            var mv = Locator.Current.GetService<MainWindowViewModel>();
+            foreach (var item in mv.Messages)
+            {
+                item.IsChecked = false;
+            }
+        }
         /// <summary>
         /// Команда вызывается из SelectMessageBorderControl. Копирует NickName, Text, Time выбранных сообщений в буфер обмена
         /// </summary>

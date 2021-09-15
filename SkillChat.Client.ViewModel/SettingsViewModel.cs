@@ -112,7 +112,11 @@ namespace SkillChat.Client.ViewModel
             Settings,
             Audit
         }
-
+        public void SelectMessage()
+        {
+            Locator.Current.GetService<SelectMessages>().IsTurnedSelectMode = true;
+            CloseContextMenu();
+        }
 
         public bool SettingsMenuActiveMain => SelectedItem == SelectedMenuItem.Settings;
         public bool AuditMenuActiveMain => SelectedItem == SelectedMenuItem.Audit;

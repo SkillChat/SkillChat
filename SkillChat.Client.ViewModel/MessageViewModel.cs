@@ -89,8 +89,6 @@ namespace SkillChat.Client.ViewModel
                 {
                     selectMsgMode.SelectedMessagesTempCollection.Remove(this);
                 }
-
-                if (!selectMsgMode.IsTurnedSelectMode) isChecked = false;
             }
         }
 
