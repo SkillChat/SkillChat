@@ -84,10 +84,12 @@ namespace SkillChat.Client.ViewModel
                 if (isChecked)
                 {
                     selectMsgMode.SelectedMessagesTempCollection.Add(this);
+                    selectMsgMode.CountCheckedMsg++;
                 }
                 else
                 {
                     selectMsgMode.SelectedMessagesTempCollection.Remove(this);
+                    selectMsgMode.CountCheckedMsg--;
                 }
             }
         }

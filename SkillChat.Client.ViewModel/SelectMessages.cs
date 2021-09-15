@@ -22,6 +22,8 @@ namespace SkillChat.Client.ViewModel
         /// </summary>
         public bool IsTurnedSelectMode { get; set; }
 
+        public int CountCheckedMsg { get; set; }
+
         /// <summary>
         /// Коллекция для временного (оперативного) хранения выбранных сообщений
         /// </summary>
@@ -30,6 +32,8 @@ namespace SkillChat.Client.ViewModel
         public SelectMessages()
         {
             SelectedMessagesTempCollection = new ObservableCollection<MessageViewModel>();
+
+            CountCheckedMsg = 0;
 
             CopyToClipboardCommand = ReactiveCommand.CreateFromTask( async () =>
             {
@@ -43,28 +47,32 @@ namespace SkillChat.Client.ViewModel
                     }
                     AvaloniaLocator.Current.GetService<IClipboard>().SetTextAsync(text);
                 });
-                ///
-                test();
+
+                CheckOff();
                 IsTurnedSelectMode = false;
-                ///
             });
 
             TurnOffSelectModeCommand = ReactiveCommand.Create(() =>
             {
-                test();
-                SelectedMessagesTempCollection.Clear();
+                CheckOff();
                 IsTurnedSelectMode = false;
             });
         }
        
-        public void test()
+        /// <summary>
+        /// Метод переводит чек боксы выбранных сообщений в false и очищает коллекцию выбранных сообщений
+        /// </summary>
+        public void CheckOff()
         {
             var mv = Locator.Current.GetService<MainWindowViewModel>();
             foreach (var item in mv.Messages)
             {
                 item.IsChecked = false;
             }
+            SelectedMessagesTempCollection.Clear();
+            CountCheckedMsg = 0;
         }
+
         /// <summary>
         /// Команда вызывается из SelectMessageBorderControl. Копирует NickName, Text, Time выбранных сообщений в буфер обмена
         /// </summary>
