@@ -132,8 +132,9 @@
                         </Button>
                     </Grid>
                 </Grid>
-                <Grid Grid.Row="2">
-                    <TextBlock Margin="0 20 0 0" Padding="0 0 1 0" HorizontalAlignment="Center" FontStyle="Italic"
+                <Grid Grid.Row="2" Width="390">
+                    <TextBlock Margin="0 20 0 0" Padding="0 0 1 0" 
+                               HorizontalAlignment="Center" FontStyle="Italic"
                                Foreground="#BDBDBD"
                                FontWeight="400" FontSize="16" Text="{Binding Login}" />
                     <Button
