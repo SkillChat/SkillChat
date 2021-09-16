@@ -22,9 +22,9 @@
 	  Classes="sendMessage"
 	  IsVisible="{Binding ProfileViewModel.IsShowChat}"
 	  BorderThickness="{Binding IsSelectReplyMessage,
-											Converter={StaticResource BoolToObjectConverter},
-											ConverterParameter={StaticResource ThicknessReplyMessage},
-											FallbackValue={StaticResource ThicknessMessage}}">
+						Converter={StaticResource BoolToObjectConverter},
+						ConverterParameter={StaticResource ThicknessReplyMessage},
+						FallbackValue={StaticResource ThicknessMessage}}">
 	  <Grid RowDefinitions="Auto,Auto">
 		  <Grid Grid.Row="0"
 				ColumnDefinitions="Auto,*"
@@ -44,9 +44,9 @@
 					  Classes="UserLogin"
 					  Text="{Binding UserNickname}"/>
 				  <views:Message Padding="{Binding IsAttachmentMessage,
-																	 Converter={StaticResource BoolToObjectConverter},
-																	 ConverterParameter={StaticResource ThicknessSixLeft},
-																	 FallbackValue={StaticResource ThicknessZero}}"/>
+										   Converter={StaticResource BoolToObjectConverter},
+										   ConverterParameter={StaticResource ThicknessSixLeft},
+										   FallbackValue={StaticResource ThicknessZero}}"/>
 			  </StackPanel>
 		  </Grid>
 		  <Grid Grid.Row="1"
@@ -60,24 +60,27 @@
 						 Height="16"/>
 			  </Button>
 			  <!--Текстовое поле ввода сообщения  -->
-			  <Grid Grid.Column="1" Classes="SendMessageGrid" ColumnDefinitions="Auto,*">
-				  <Image Grid.Column="0" Classes="EditedMessageImage"/>
-				  <TextBox Grid.Column="1"
-						   Name="InputMessageTB"
-						   Classes="SendMessageText"
-						   Text="{Binding MessageText}">
-					  <TextBox.KeyBindings>
-						  <KeyBinding Command="{Binding SendCommand}" Gesture="{Binding Path=KeySendMessage,Converter={StaticResource keyConverter}}" />
-						  <KeyBinding Command="{Binding EditLastMessageCommand}" Gesture="Up" />
-						  <KeyBinding Command="{Binding EndEditCommand}" Gesture="Escape" />
-					  </TextBox.KeyBindings>
-				  </TextBox>
-			  </Grid>
+			  <Border Grid.Column="1" Classes.editMessageText="{Binding IsEditMessage}"	Background="White">
+				  <Grid ColumnDefinitions="Auto,*">
+					  <Image Grid.Column="0" Classes="EditedMessageImage"/>
+					  <TextBox Grid.Column="1"
+							   Name="InputMessageTB"
+							   Classes="SendMessageText"
+							   Text="{Binding MessageText}">
+						  <TextBox.KeyBindings>
+							  <KeyBinding Command="{Binding SendCommand}" Gesture="{Binding Path=KeySendMessage,Converter={StaticResource keyConverter}}" />
+							  <KeyBinding Command="{Binding EditLastMessageCommand}" Gesture="Up" />
+							  <KeyBinding Command="{Binding EndEditCommand}" Gesture="Escape" />
+						  </TextBox.KeyBindings>
+					  </TextBox>
+				  </Grid>
+			  </Border>			  
 			  <!--  Кнопка отправки сообщения  -->
 			  <Button
 				  x:Name="sendButton"
 				  Grid.Column="2"
 				  Classes="Send-Btn sendMsg"
+				  Classes.sendEditMsg="{Binding IsEditMessage}"
 				  Command="{Binding SendCommand}" >
 				  <Image
 					  Name="buttonImage"

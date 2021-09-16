@@ -227,13 +227,23 @@ namespace SkillChat.Client.ViewModel
                         {
                             keyValue.Text = data.Message;
                             keyValue.LastEditTime = data.LastEditTime;
+                            if (!data.IdReplyMessage.IsNullOrEmpty())
+                            {
+                                keyValue.QuotedMessageViewModel = messageDictionary[data.IdReplyMessage];
+                                keyValue.IsQuotedMessage = true;
+                            }
+                            else
+                            {
+                                keyValue.QuotedMessageViewModel = null;
+                                keyValue.IsQuotedMessage = false;
+                            }
                         }
 
                         foreach (var message in Messages)
                         {
-                            if (!message.IdQuotedMessage.IsNullOrEmpty())
+                            if (message.IsQuotedMessage)
                             {
-                                if (message.IdQuotedMessage == data.Id)
+                                if (message.QuotedMessageViewModel.Id == data.Id)
                                 {
                                     message.QuotedMessageViewModel.Text = data.Message;
                                     message.QuotedMessageViewModel.LastEditTime = data.LastEditTime;
@@ -254,7 +264,11 @@ namespace SkillChat.Client.ViewModel
                         newMessage.UserNickname = data.UserNickname ?? data.UserLogin;
                         newMessage.UserId = data.UserId;
                         newMessage.IsMyMessage = User.Id == data.UserId;
-                        newMessage.IdQuotedMessage = data.IdReplyMessage;
+                        if (!data.IdReplyMessage.IsNullOrEmpty())
+                        {
+                            newMessage.IsQuotedMessage = true;
+                            newMessage.QuotedMessageViewModel = messageDictionary[data.IdReplyMessage];
+                        }
                         newMessage.Attachments = data.Attachments?
                             .Select(s =>
                             {
@@ -316,17 +330,19 @@ namespace SkillChat.Client.ViewModel
                 {
                     try
                     {
+                        var IdReplyMes = SelectedReplyMessage.Id.IsNullOrEmpty() ? "" : SelectedReplyMessage.Id;
                         MessageText = MessageText.Trim(); //Удаление пробелов в начале и конце сообщения
                         if (MessageText != string.Empty) //Проверка на пустое сообщение
                         {
                             if (idEditMessage != null)
                             {
-                                await _hub.UpdateMessage(new HubEditedMessage(idEditMessage, ChatId, MessageText)); ///Отправка отредактированного сообщения 
+                                await _hub.UpdateMessage(new HubEditedMessage(idEditMessage, ChatId, MessageText), IdReplyMes); ///Отправка отредактированного сообщения 
                                 idEditMessage = null;
+                                CancelReply();
                             }
                             else
                             {
-                                await _hub.SendMessage(new HubMessage(ChatId, MessageText, SelectedReplyMessage.Id));
+                                await _hub.SendMessage(new HubMessage(ChatId, MessageText), IdReplyMes);
                                 CancelReply();
                             }
 
@@ -366,7 +382,7 @@ namespace SkillChat.Client.ViewModel
 
                         if (item.QuotedMessage!=null)
                         {
-                            newMessage.IdQuotedMessage = item.QuotedMessage.Id;
+                            newMessage.IsQuotedMessage = true;
                             MessageViewModel quotedMessage = new MessageViewModel();
 
                             if (mapper != null) quotedMessage = mapper.Map<MessageViewModel>(item.QuotedMessage);
@@ -652,11 +668,16 @@ namespace SkillChat.Client.ViewModel
         /// </summary>
         private string idEditMessage { get; set; }
 
+        public bool IsEditMessage => !idEditMessage.IsNullOrEmpty();
+
         /// <summary>
         /// Переменная для хранения флага - было ли задано положение курсора.
         /// </summary>
         public bool IsCursorSet { get; set; }
 
+        /// <summary>
+        /// Флаг отвечающий за режим цитирования сообщений
+        /// </summary>
         public bool IsSelectReplyMessage { get; set; }
 
         /// <summary>
@@ -672,13 +693,27 @@ namespace SkillChat.Client.ViewModel
             idEditMessage = message?.Id;
             MessageText = message?.Text;
             IsCursorSet = false;
+            if (message!=null)
+            {
+                if (message.IsQuotedMessage) ReplyMessage(message.QuotedMessageViewModel);
+            }
+            else
+            {
+                CancelReply();
+            }
         }
+        /// <summary>
+        /// Начало режима цитирования
+        /// </summary>
+        /// <param name="message"></param>
         public void ReplyMessage(MessageViewModel message)
         {
             IsSelectReplyMessage = true;
             SelectedReplyMessage = message;
         }
-
+        /// <summary>
+        /// Выход из режима цитирования
+        /// </summary>
         public void CancelReply()
         {
             SelectedReplyMessage = new MessageViewModel();

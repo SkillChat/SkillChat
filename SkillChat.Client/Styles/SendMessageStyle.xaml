@@ -13,7 +13,7 @@
     <!--Начало: Стили кнопки отправки сообщений-->
     <Style Selector="Button.Send-Btn /template/ ContentPresenter">
         <Setter Property="Width" Value="30"/>
-        <Setter Property="Height" Value="30"/>
+        <Setter Property="Height" Value="32"/>
         <Setter Property="Padding" Value="0"/>
         <Setter Property="BorderThickness" Value="0"/>
     </Style>
@@ -43,10 +43,20 @@
         </Setter>
     </Style>
 
+	<Style Selector="Border.editMessageText">
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="CornerRadius" Value="1"/>
+		<Setter Property="BorderBrush" Value="#FF9337"/>
+	</Style>
+
     <!--Кнопка отправки сообщений-->
     <Style Selector="Button.sendMsg /template/ ContentPresenter">
         <Setter Property="Background" Value="#C4C4C4"/>
     </Style>
+
+	<Style Selector="Button.sendEditMsg /template/ ContentPresenter">
+		<Setter Property="Background" Value="#FF9337"/>
+	</Style>
 
     <Style Selector="Button.sendAttach /template/ ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource White}"/>

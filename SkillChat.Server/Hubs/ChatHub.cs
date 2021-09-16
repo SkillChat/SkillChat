@@ -40,7 +40,7 @@ namespace SkillChat.Server.Hubs
             }
         }
 
-        public async Task SendMessage(HubMessage hubMessage)
+        public async Task SendMessage(HubMessage hubMessage, string IdReplyMessage)
         {
             var messageItem = new Message
             {
@@ -49,7 +49,7 @@ namespace SkillChat.Server.Hubs
                 PostTime = DateTimeOffset.UtcNow,
                 ChatId = hubMessage.ChatId,
                 Attachments = hubMessage.Attachments?.Select(s => s.Id).ToList(),
-                IdReplyMessage = hubMessage.IdReplyMessage
+                IdReplyMessage = IdReplyMessage
             };
 
             await _ravenSession.StoreAsync(messageItem);
@@ -65,24 +65,25 @@ namespace SkillChat.Server.Hubs
                 ChatId = hubMessage.ChatId,
                 UserId = messageItem.UserId,
                 Attachments = hubMessage.Attachments,
-                IdReplyMessage = hubMessage.IdReplyMessage
+                IdReplyMessage = IdReplyMessage
             });
 
-            var logMessage = hubMessage.IdReplyMessage.IsNullOrEmpty() ? $"User {Context.Items["nickname"]}({Context.Items["login"]}) send message in main chat" :
+            var logMessage = IdReplyMessage.IsNullOrEmpty() ? $"User {Context.Items["nickname"]}({Context.Items["login"]}) send message in main chat" :
                                                                               $"User {Context.Items["nickname"]}({Context.Items["login"]}) responded to the message in main chat";
             Log.Information(logMessage);
         }
 
-        public async Task UpdateMessage(HubEditedMessage hubEditedMessage)
+        public async Task UpdateMessage(HubEditedMessage hubEditedMessage, string IdReplyMessage)
         {
             try
             {
                 var mes = await _ravenSession.LoadAsync<Message>(hubEditedMessage.Id);
 
-                if (mes.Text.Trim()!=hubEditedMessage.Message.Trim())
+                if (mes.Text.Trim()!=hubEditedMessage.Message.Trim()||mes.IdReplyMessage!=IdReplyMessage)
                 {
                     mes.Text = hubEditedMessage.Message.Trim();
                     mes.LastEditTime = DateTimeOffset.Now;
+                    mes.IdReplyMessage = IdReplyMessage;
                     await _ravenSession.SaveChangesAsync();
 
                     await Clients.Group(_loginedGroup).SendAsync(new ReceiveEditedMessage()
@@ -90,6 +91,7 @@ namespace SkillChat.Server.Hubs
                         Id = hubEditedMessage.Id,
                         Message = mes.Text,
                         LastEditTime = mes.LastEditTime.Value,
+                        IdReplyMessage=IdReplyMessage
                     });
                     Log.Information($"User {Context.Items["nickname"]}({Context.Items["login"]}) edited message in main chat");
                 }

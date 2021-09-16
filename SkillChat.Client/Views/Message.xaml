@@ -6,7 +6,6 @@
              xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
              xmlns:utils="clr-namespace:SkillChat.Client.Utils"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SkillChat.Client.Views.Message">
     <UserControl.Resources>
         <utils:BoolToObjectConverter x:Key="BoolToObjectConverter"/>
@@ -47,9 +46,9 @@
                                   Grid.Column="0"
                                   Classes="UserDownload"
                                   Foreground="{Binding IsMyMessage,
-                               Converter={StaticResource BoolToObjectConverter},
-                               ConverterParameter={StaticResource DarkPurpleColor},
-                               FallbackValue={StaticResource OrangeColor}}"
+                                               Converter={StaticResource BoolToObjectConverter},
+                                               ConverterParameter={StaticResource DarkPurpleColor},
+                                               FallbackValue={StaticResource OrangeColor}}"
                                   Text="{Binding Text}">
                                     <interactivity:Interaction.Behaviors>
                                         <core:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #Downdold}">

@@ -60,7 +60,8 @@ namespace SkillChat.Client.ViewModel
                     uploadedAttachment
                         .Select(s => _mapper.Map<AttachmentHubMold>(s)).ToList();
                 MessageText = MessageText.Trim(); //Удаление пробелов в начале и конце сообщения
-                await _hub.SendMessage(new HubMessage(chatId, MessageText, attachmentDisplayMold, mw.SelectedReplyMessage.Id));
+                var IdReplyMes = mw.SelectedReplyMessage.Id.IsNullOrEmpty() ? "" : mw.SelectedReplyMessage.Id;
+                await _hub.SendMessage(new HubMessage(chatId, MessageText, attachmentDisplayMold), IdReplyMes);
                 mw.CancelReply();
                 IsOpen = false;
                 MessageText = string.Empty;

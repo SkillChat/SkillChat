@@ -94,12 +94,19 @@ namespace SkillChat.Client.ViewModel
         public List<AttachmentMessageViewModel> Attachments { get; set; }
         public UserProfileMold ProfileMold { get; set; }
         public ReactiveCommand<string, Unit> UserProfileInfoCommand { get; set; }
+        /// <summary>
+        /// Цитируемое сообщение 
+        /// </summary>
         public MessageViewModel QuotedMessageViewModel { get; set; }
-        public string IdQuotedMessage { get; set; }
-        public bool IsQuotedMessage => !IdQuotedMessage.IsNullOrEmpty();
-        
-        ///Меню
-       public ObservableCollection<MenuItemObject> MenuItems
+        /// <summary>
+        /// Флаг показывает, что данное сообщение отвечает на другое сообщение  
+        /// </summary>
+        public bool IsQuotedMessage { get; set; }
+
+        /// <summary>
+        /// Коллекция меню элементов 
+        /// </summary>
+        public ObservableCollection<MenuItemObject> MenuItems
         {
             get
             {
@@ -117,12 +124,20 @@ namespace SkillChat.Client.ViewModel
                 return MenuItems;
             }
         }
+        /// <summary>
+        /// Редактирование сообщения
+        /// </summary>
+        /// <param name="o"></param>
         private void SelectEditMessage(object o)
         {
             Selected = true;
             var mw = Locator.Current.GetService<MainWindowViewModel>();
             mw.EditMessage(this);
         }
+        /// <summary>
+        /// Ответ на сообщение
+        /// </summary>
+        /// <param name="o"></param>
         private void SelectRespondingMessage(object o)
         {
             var mw = Locator.Current.GetService<MainWindowViewModel>();

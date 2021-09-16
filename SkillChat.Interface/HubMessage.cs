@@ -6,24 +6,21 @@ namespace SkillChat.Interface
     {
         public HubMessage() { }
 
-        public HubMessage(string chatId, string message,string idReplyMessage)
+        public HubMessage(string chatId, string message)
         {
             ChatId = chatId;
-            Message = message;
-            IdReplyMessage = idReplyMessage;
+            Message = message;            
         }
 
-        public HubMessage(string chatId, string message, List<AttachmentHubMold> attachment, string idReplyMessage)
+        public HubMessage(string chatId, string message, List<AttachmentHubMold> attachment)
         {
             ChatId = chatId;
             Message = message;
-            Attachments = attachment;
-            IdReplyMessage = idReplyMessage;
+            Attachments = attachment;           
         }
 
         public string Message { get; set; }
         public string ChatId { get; set; }
         public List<AttachmentHubMold> Attachments { get; set; }
-        public string IdReplyMessage { get; set; }
     }
 }

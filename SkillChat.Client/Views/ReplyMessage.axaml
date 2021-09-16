@@ -72,9 +72,9 @@
 									  Grid.Column="0"
 									  Classes="UserDownload"
 									  Foreground="{Binding IsMyMessage,
-                               Converter={StaticResource BoolToObjectConverter},
-                               ConverterParameter={StaticResource DarkPurpleColor},
-                               FallbackValue={StaticResource OrangeColor}}"
+												   Converter={StaticResource BoolToObjectConverter},
+												   ConverterParameter={StaticResource DarkPurpleColor},
+												   FallbackValue={StaticResource OrangeColor}}"
 									  Text="{Binding Text}">
 										<interactivity:Interaction.Behaviors>
 											<core:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #Downdold}">
