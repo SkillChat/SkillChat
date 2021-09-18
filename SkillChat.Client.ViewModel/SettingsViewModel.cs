@@ -18,6 +18,8 @@ namespace SkillChat.Client.ViewModel
         {
             ChatSettings = new UserChatSettings();
 
+            this.ObservableForProperty(m => m.TypeEnter).Subscribe(change => TypeEnterEvent?.Invoke(change.Value));
+
             LoginAuditCollection = new ObservableCollection<LoginAuditViewModel>();
 
             ContextMenuCommand = ReactiveCommand.CreateFromTask(async () =>
