@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace SkillChat.Client.Views
 {
-    public partial class ReplyMessage : UserControl
+    public partial class QuotedMessage : UserControl
     {
-        public ReplyMessage()
+        public QuotedMessage()
         {
             InitializeComponent();
         }

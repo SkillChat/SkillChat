@@ -59,7 +59,7 @@
                     </TextBlock>
                 </StackPanel>
 				<Grid Grid.Row="1" IsVisible="{Binding IsQuotedMessage}">
-					<views:ReplyMessage DataContext="{Binding QuotedMessageViewModel}"/>
+					<views:QuotedMessage DataContext="{Binding QuotedMessage}"/>
 				</Grid>
                 <views:Message Grid.Row="2" Padding="0,0,10,0"/>
                 <StackPanel 

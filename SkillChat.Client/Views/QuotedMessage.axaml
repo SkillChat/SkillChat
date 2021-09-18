@@ -7,7 +7,7 @@
              xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              xmlns:utils="clr-namespace:SkillChat.Client.Utils"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SkillChat.Client.Views.ReplyMessage">
+             x:Class="SkillChat.Client.Views.QuotedMessage">
     <UserControl.Resources>
         <utils:BoolToObjectConverter x:Key="BoolToObjectConverter"/>
         <SolidColorBrush x:Key="DarkPurpleColor" Color="#5027C7"/>
@@ -18,7 +18,7 @@
         <sys:Double x:Key="MinWidth0">0</sys:Double>
     </UserControl.Resources>
 	<Border
-            Classes="replyMessage"
+            Classes="QuotedMessage"
             MinWidth="{Binding IsAttachmentMessage,
                       Converter={StaticResource BoolToObjectConverter}, 
                       ConverterParameter={StaticResource MinWidth250}, 
@@ -30,7 +30,7 @@
 		<Grid RowDefinitions="Auto,*,Auto">
 			<DockPanel Grid.Row="0" VerticalAlignment="Top">
 				<TextBlock DockPanel.Dock="Left"
-					Classes="ReplyUserLogin"
+					Classes="QuotedUserLogin"
 					Text="{Binding QuotedDisplayNickname}"/>
 				<StackPanel 
                     DockPanel.Dock="Right" 
@@ -38,7 +38,7 @@
                     HorizontalAlignment="Right"
 				            Margin="10,0,0,0">
 					<Image Classes="edit" IsVisible="{Binding Edited}"/>
-					<TextBlock Classes="replyTime" Text="{Binding Time}"/>
+					<TextBlock Classes="QuotedTime" Text="{Binding Time}"/>
 				</StackPanel>
 			</DockPanel>
 			<ItemsControl
@@ -123,7 +123,7 @@
 					Text="{Binding TextAligned}"
 					TextWrapping="Wrap"/>
 				<TextBox
-					Classes="replyMessage"
+					Classes="QuotedMessage"
 					IsReadOnly="True"
 					Text="{Binding Text}"/>
 			</Grid>

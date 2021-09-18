@@ -13,7 +13,7 @@
     <utils:KeyConverter x:Key="keyConverter"/>
 	<utils:BoolToObjectConverter x:Key="BoolToObjectConverter"/>
 	<Thickness x:Key="ThicknessMessage">10,10,10,10</Thickness>
-	<Thickness x:Key="ThicknessReplyMessage">10,0,10,10</Thickness>
+	<Thickness x:Key="ThicknessQuotedMessage">10,0,10,10</Thickness>
 	<Thickness x:Key="ThicknessSixLeft">6,0,0,0</Thickness>
 	<Thickness x:Key="ThicknessZero">0</Thickness>
   </UserControl.Resources>
@@ -21,17 +21,17 @@
   <Border 
 	  Classes="sendMessage"
 	  IsVisible="{Binding ProfileViewModel.IsShowChat}"
-	  BorderThickness="{Binding IsSelectReplyMessage,
+	  BorderThickness="{Binding IsSelectQuotedMessage,
 						Converter={StaticResource BoolToObjectConverter},
-						ConverterParameter={StaticResource ThicknessReplyMessage},
+						ConverterParameter={StaticResource ThicknessQuotedMessage},
 						FallbackValue={StaticResource ThicknessMessage}}">
 	  <Grid RowDefinitions="Auto,Auto">
 		  <Grid Grid.Row="0"
 				ColumnDefinitions="Auto,*"
 				Margin="0,0,0,2"
-				IsVisible="{Binding IsSelectReplyMessage}">
+				IsVisible="{Binding IsSelectQuotedMessage}">
 			  <Button Grid.Column="0"
-					  Command="{Binding CancelReply}" Classes="attachBtn Send-Btn">
+					  Command="{Binding CancelQuoted}" Classes="attachBtn Send-Btn">
 				  <Image Classes="CancelImage"
 						 Width="20"
 						 Height="20"/>
@@ -39,7 +39,7 @@
 			  <StackPanel Grid.Column="1"
 						  Orientation="Vertical"
 						  HorizontalAlignment="Left"
-						  DataContext="{Binding SelectedReplyMessage}">
+						  DataContext="{Binding SelectedQuotedMessage}">
 				  <TextBlock
 					  Classes="UserLogin"
 					  Text="{Binding UserNickname}"/>

@@ -49,7 +49,7 @@ namespace SkillChat.Client.ViewModel
         public string UserNickname { get; set; }
 
         public string DisplayNickname => ShowNickname ? UserNickname : null;
-        public string QuotedDisplayNickname=>!IsMyMessage? UserNickname : "Вы";
+        public string QuotedDisplayNickname=> !IsMyMessage ? UserNickname : "Вы";
 
         public bool ShowNickname { get; set; }
 
@@ -97,11 +97,11 @@ namespace SkillChat.Client.ViewModel
         /// <summary>
         /// Цитируемое сообщение 
         /// </summary>
-        public MessageViewModel QuotedMessageViewModel { get; set; }
+        public MessageViewModel QuotedMessage { get; set; }
         /// <summary>
         /// Флаг показывает, что данное сообщение отвечает на другое сообщение  
         /// </summary>
-        public bool IsQuotedMessage { get; set; }
+        public bool IsQuotedMessage => QuotedMessage != null;
 
         /// <summary>
         /// Коллекция меню элементов 
@@ -114,11 +114,11 @@ namespace SkillChat.Client.ViewModel
                 if (IsMyMessage)
                 {
                     MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectEditMessage), Content = "Редактировать" });
-                    MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectRespondingMessage), Content = "Ответить" });
+                    MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectQuotedMessage), Content = "Ответить" });
                 }
                 else
                 {
-                    MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectRespondingMessage), Content = "Ответить" });
+                    MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectQuotedMessage), Content = "Ответить" });
                 }
 
                 return MenuItems;
@@ -138,10 +138,10 @@ namespace SkillChat.Client.ViewModel
         /// Ответ на сообщение
         /// </summary>
         /// <param name="o"></param>
-        private void SelectRespondingMessage(object o)
+        private void SelectQuotedMessage(object o)
         {
             var mw = Locator.Current.GetService<MainWindowViewModel>();
-            mw.ReplyMessage(this);
+            mw.QuoteMessage(this);
         }
     }
 

@@ -8,7 +8,7 @@
         <Setter Property="CornerRadius" Value="4"/>
     </Style>
 
-	  <Style Selector="Border.replyMessage">
+	  <Style Selector="Border.QuotedMessage">
 	  	  <Setter Property="Padding" Value="11,5,11,0"/>
 	  	  <Setter Property="BorderThickness" Value="0"/>
 	  	  <Setter Property="CornerRadius" Value="4"/>
@@ -30,7 +30,7 @@
         <Setter Property="ContextFlyout" Value="{x:Null}"/>
     </Style>
 
-    <Style Selector="TextBox.replyMessage">
+    <Style Selector="TextBox.QuotedMessage">
         <Setter Property="Padding" Value="0,0,10,5" />
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="FontStyle" Value="Italic"/>
@@ -94,7 +94,7 @@
         <Setter Property="Cursor" Value="Hand"/>
     </Style>
 
-    <Style Selector="TextBlock.ReplyUserLogin">
+    <Style Selector="TextBlock.QuotedUserLogin">
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
     </Style>
@@ -144,7 +144,7 @@
         <Setter Property="Foreground" Value="#828282" />
     </Style>
 
-    <Style Selector="TextBlock.replyTime">
+    <Style Selector="TextBlock.QuotedTime">
         <Setter Property="FontSize" Value="12" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Foreground" Value="#828282" />

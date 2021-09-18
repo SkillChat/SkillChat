@@ -35,7 +35,7 @@ namespace SkillChat.Server.ServiceInterface
                 await messages.Take(pageSize)
                     .Include(x => x.UserId)
                     .Include(s => s.Attachments)
-                    .Include(i=>i.IdReplyMessage)
+                    .Include(i=>i.IdQuotedMessage)
                     .ToListAsync();
 
             result.Messages = new List<MessageMold>();
@@ -43,43 +43,25 @@ namespace SkillChat.Server.ServiceInterface
             {
                 var user = await RavenSession.LoadAsync<User>(doc.UserId);
                 var message = Mapper.Map<MessageMold>(doc);
+            
+                message = await GetAttachments(doc,message);
 
-                if (doc.Attachments != null)
+                if (!doc.IdQuotedMessage.IsNullOrEmpty())
                 {
-                    var attach = await RavenSession.LoadAsync<Attachment>(doc.Attachments);
-                    message.Attachments = new List<AttachmentMold>();
+                   
+                    var mes = await RavenSession.LoadAsync<Message>(doc.IdQuotedMessage);
 
-                    foreach (var id in doc.Attachments)
+                    message.QuotedMessage = Mapper.Map<MessageMold>(mes);
+                    var userQuitedMessage = await RavenSession.LoadAsync<User>(message.QuotedMessage.UserId);
+
+
+                    message.QuotedMessage = await GetAttachments(mes,message.QuotedMessage);
+
+                    if (userQuitedMessage!=null)
                     {
-                        if (attach.TryGetValue(id, out var attachment))
-                        {
-                            message.Attachments.Add(Mapper.Map<AttachmentMold>(attachment));
-                        }
-                        //TODO учесть в будущем показ потерянных файлов
-                    }
-                }
-
-                if (!doc.IdReplyMessage.IsNullOrEmpty())
-                {
-                    var mes = await RavenSession.LoadAsync<Message>(doc.IdReplyMessage);
-                    var quotedMessage = Mapper.Map<MessageMold>(mes);
-                    quotedMessage.UserNickName = string.IsNullOrWhiteSpace(user.DisplayName) ? user.Login : user.DisplayName;
-
-                    if (mes.Attachments != null)
-                    {
-                        var attach = await RavenSession.LoadAsync<Attachment>(mes.Attachments);
-                        quotedMessage.Attachments = new List<AttachmentMold>();
-
-                        foreach (var id in mes.Attachments)
-                        {
-                            if (attach.TryGetValue(id, out var attachment))
-                            {
-                                quotedMessage.Attachments.Add(Mapper.Map<AttachmentMold>(attachment));
-                            }
-                        }
+                        message.QuotedMessage.UserNickName = string.IsNullOrWhiteSpace(userQuitedMessage.DisplayName) ? userQuitedMessage.Login : userQuitedMessage.DisplayName;
                     }
 
-                    message.QuotedMessage = quotedMessage;
                 }
 
                 if (user != null)
@@ -91,7 +73,6 @@ namespace SkillChat.Server.ServiceInterface
             }
             return result;
         }
-
         [Authenticate]
         public async Task<ChatPage> Get(GetChatsList request)
         {
@@ -104,6 +85,30 @@ namespace SkillChat.Server.ServiceInterface
             {
                 Chats = chats.Select(e => Mapper.Map<ChatMold>(e)).ToList()
             };
+        }
+        /// <summary>
+        /// Получает все вложения сообщения, если они есть.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="messageMold"></param>
+        /// <returns></returns>
+        private async Task<MessageMold> GetAttachments(Message message, MessageMold messageMold)
+        {
+            if (message.Attachments != null)
+            {
+                var attach = await RavenSession.LoadAsync<Attachment>(message.Attachments);
+                messageMold.Attachments = new List<AttachmentMold>();
+
+                foreach (var id in message.Attachments)
+                {
+                    if (attach.TryGetValue(id, out var attachment))
+                    {
+                        messageMold.Attachments.Add(Mapper.Map<AttachmentMold>(attachment));
+                    }
+                    //TODO учесть в будущем показ потерянных файлов
+                }
+            }
+            return messageMold;
         }
     }
 }

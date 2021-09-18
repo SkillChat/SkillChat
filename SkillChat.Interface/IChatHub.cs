@@ -5,8 +5,8 @@ namespace SkillChat.Interface
 {
     public interface IChatHub : IServerMethods
     {
-        Task SendMessage(HubMessage hubMessage, string IdReplyMessage);
-        Task UpdateMessage(HubEditedMessage hubEditedMessage, string IdReplyMessage);
+        Task SendMessage(HubMessage hubMessage);
+        Task UpdateMessage(HubEditedMessage hubEditedMessage);
         Task UpdateMyDisplayName(string userDispalyName);
         Task Login(string token, string operatingSystem, string ipAddress, string nameVersionClient);
     }
