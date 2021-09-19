@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SkillChat.Server.Domain
 {
-    /// <summary>id = userId + chatId</summary>
+    /// <summary>id = userId + '/' + chatId</summary>
     public class UserMessageStatus
     {
         public string Id { get; set; }
@@ -19,7 +19,7 @@ namespace SkillChat.Server.Domain
 
         public UserMessageStatus(string userId, string chatId)
         {
-            this.Id = userId + chatId;
+            this.Id = userId + '/' + chatId;
             UserId = userId;
             ChatId = chatId;
         }

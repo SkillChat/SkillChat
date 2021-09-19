@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using SkillChat.Server.ServiceModel.Molds.Status;
 
 namespace SkillChat.Server.ServiceModel.Molds.Chats
 {

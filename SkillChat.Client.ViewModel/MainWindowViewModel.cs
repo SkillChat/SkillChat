@@ -168,6 +168,7 @@ namespace SkillChat.Client.ViewModel
                             var chat = chats.Chats.FirstOrDefault();
                             ChatId = chat?.Id;
                             ChatName = chat?.ChatName;
+                            statusService?.LoadUserStatus(mapper?.Map<UserMessageStatusModel>(chat?.UserStatus));
                             LoadMessageHistoryCommand.Execute(null);
                             //Получаем настройки
                             SettingsViewModel.ChatSettings = await serviceClient.GetAsync(new GetMySettings());
@@ -241,6 +242,7 @@ namespace SkillChat.Client.ViewModel
                             newMessage.ShowNickname = true;
                         }
                         Messages.Add(newMessage);
+                        statusService.UpdateReceivedStatus(newMessage.Id, newMessage.PostTime);
                         MessageReceived?.Invoke(new ReceivedMessageArgs(newMessage));
                         messageDictionary[newMessage.Id] = newMessage;
                     });
@@ -338,7 +340,7 @@ namespace SkillChat.Client.ViewModel
                                     first.ShowNickname = true;
                                 }
                             }
-                           
+                            statusService.UpdateReceivedStatus(newMessage.Id, newMessage.PostTime);
                             Messages.Insert(0, newMessage);
                             messageDictionary[newMessage.Id] = newMessage;
                         }

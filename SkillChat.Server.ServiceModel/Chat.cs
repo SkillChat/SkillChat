@@ -5,6 +5,7 @@ using System.Text;
 using ServiceStack;
 using SkillChat.Server.ServiceModel.Molds;
 using SkillChat.Server.ServiceModel.Molds.Chats;
+using SkillChat.Server.ServiceModel.Molds.Status;
 
 namespace SkillChat.Server.ServiceModel
 {
@@ -27,5 +28,11 @@ namespace SkillChat.Server.ServiceModel
     [ApiResponse(HttpStatusCode.BadRequest, "Неверно составлен запрос", ResponseType = typeof(void))]
     [Route("/chats", "GET", Summary = "Получение списка чатов", Notes = "Получение списка чатов")]
     public class GetChatsList: IReturn<ChatPage>
+    {}
+    
+    [Api("UserMessageStatus")]
+    [ApiResponse(HttpStatusCode.BadRequest, "Неверно составлен запрос", ResponseType = typeof(void))]
+    [Route("/userStatuses", "GET", Summary = "Получение списка статусов пользователя", Notes = "Получение списка статусов пользователя")]
+    public class GetStatuses: IReturn<UserMessageStatusPage>
     {}
 }

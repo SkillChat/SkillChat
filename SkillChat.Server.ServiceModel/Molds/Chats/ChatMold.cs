@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using SkillChat.Server.ServiceModel.Molds.Status;
 
 namespace SkillChat.Server.ServiceModel.Molds.Chats
 {
@@ -14,6 +15,7 @@ namespace SkillChat.Server.ServiceModel.Molds.Chats
         public ChatTypeMold ChatType { get; set; }
         [Description("Список членов")]
         public List<ChatMemberMold> Members { get; set; }
+        public UserMessageStatusMold UserStatus { get; set; }
         [Description("Название чата")]
         public string ChatName { get; set; }
     }

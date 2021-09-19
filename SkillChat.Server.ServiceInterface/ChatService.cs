@@ -11,6 +11,8 @@ using SkillChat.Server.ServiceModel.Molds.Chats;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ServiceStack.Script;
+using SkillChat.Server.ServiceModel.Molds.Status;
 
 namespace SkillChat.Server.ServiceInterface
 {
@@ -27,7 +29,6 @@ namespace SkillChat.Server.ServiceInterface
             var messages = RavenSession.Query<Message>().Where(e => e.ChatId == request.ChatId).OrderByDescending(x => x.PostTime);
             var userStatus = await RavenSession.LoadAsync<UserMessageStatus>(uid + request.ChatId);
             var result = new MessagePage();
-            result.MessageStatus = Mapper.Map<UserMessageStatusMold>(userStatus);
             if (request.BeforePostTime != null)
             {
                 messages = messages.Where(x => x.PostTime.UtcDateTime < request.BeforePostTime.Value.UtcDateTime);
@@ -78,11 +79,16 @@ namespace SkillChat.Server.ServiceInterface
             var uid = session.UserAuthId;
             var chats = await RavenSession.Query<Chat>()
                 .Where(chat => chat.Members.Any(member => member.UserId == uid))
+                .Include(s => uid + '/' + s.Id)
                 .ToListAsync();
-            return new ChatPage
+            ChatPage res = new ChatPage();
+            foreach (var chat in chats)
             {
-                Chats = chats.Select(e => Mapper.Map<ChatMold>(e)).ToList()
-            };
+                var newChat = Mapper.Map<ChatMold>(chat);
+                newChat.UserStatus = Mapper.Map<UserMessageStatusMold>(await RavenSession.LoadAsync<UserMessageStatus>(uid + '/' + chat.Id));
+                res.Chats.Add(newChat);
+            }
+            return res;
         }
     }
 }

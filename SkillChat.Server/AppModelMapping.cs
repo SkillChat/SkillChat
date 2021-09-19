@@ -6,6 +6,7 @@ using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
 using SkillChat.Server.ServiceModel.Molds.Attachment;
 using SkillChat.Server.ServiceModel.Molds.Chats;
+using SkillChat.Server.ServiceModel.Molds.Status;
 
 namespace SkillChat.Server
 {

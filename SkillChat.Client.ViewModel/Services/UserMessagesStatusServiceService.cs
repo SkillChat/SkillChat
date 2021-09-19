@@ -53,6 +53,7 @@ namespace SkillChat.Client.ViewModel.Services
             }
         }
         public void SetSendStatusMethod(Action<HubUserMessageStatus> sendMethod) => this.sendMethod = sendMethod;
+        public void LoadUserStatus(UserMessageStatusModel m) => model = m;
 
     }
 }
