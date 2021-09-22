@@ -49,6 +49,7 @@ namespace SkillChat.Client.ViewModel
         public string UserNickname { get; set; }
 
         public string DisplayNickname => ShowNickname ? UserNickname : null;
+        public string QuotedDisplayNickname=> !IsMyMessage ? UserNickname : "Вы";
 
         public bool ShowNickname { get; set; }
 
@@ -93,12 +94,54 @@ namespace SkillChat.Client.ViewModel
         public List<AttachmentMessageViewModel> Attachments { get; set; }
         public UserProfileMold ProfileMold { get; set; }
         public ReactiveCommand<string, Unit> UserProfileInfoCommand { get; set; }
+        /// <summary>
+        /// Цитируемое сообщение 
+        /// </summary>
+        public MessageViewModel QuotedMessage { get; set; }
+        /// <summary>
+        /// Флаг показывает, что данное сообщение отвечает на другое сообщение  
+        /// </summary>
+        public bool IsQuotedMessage => QuotedMessage != null;
 
-        public void SelectEditMessage()
+        /// <summary>
+        /// Коллекция меню элементов 
+        /// </summary>
+        public ObservableCollection<MenuItemObject> MenuItems
+        {
+            get
+            {
+                var MenuItems = new ObservableCollection<MenuItemObject>(new List<MenuItemObject>());
+                if (IsMyMessage)
+                {
+                    MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectEditMessage), Content = "Редактировать" });
+                    MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectQuotedMessage), Content = "Ответить" });
+                }
+                else
+                {
+                    MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectQuotedMessage), Content = "Ответить" });
+                }
+
+                return MenuItems;
+            }
+        }
+        /// <summary>
+        /// Редактирование сообщения
+        /// </summary>
+        /// <param name="o"></param>
+        private void SelectEditMessage(object o)
         {
             Selected = true;
             var mw = Locator.Current.GetService<MainWindowViewModel>();
             mw.EditMessage(this);
+        }
+        /// <summary>
+        /// Ответ на сообщение
+        /// </summary>
+        /// <param name="o"></param>
+        private void SelectQuotedMessage(object o)
+        {
+            var mw = Locator.Current.GetService<MainWindowViewModel>();
+            mw.QuoteMessage(this);
         }
     }
 

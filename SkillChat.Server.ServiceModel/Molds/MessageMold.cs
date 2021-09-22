@@ -31,5 +31,8 @@ namespace SkillChat.Server.ServiceModel.Molds
 
         [Description("Вложения")]
         public List<AttachmentMold> Attachments { get; set; }
+
+        [Description("Цитируемое сообщение")]
+        public MessageMold QuotedMessage { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.SignalR;
 using Raven.Client.Documents.Session;
 using Serilog;
 using ServiceStack;
@@ -7,7 +8,10 @@ using ServiceStack.Host;
 using SignalR.EasyUse.Server;
 using SkillChat.Interface;
 using SkillChat.Server.Domain;
+using SkillChat.Server.ServiceModel.Molds.Attachment;
+using Splat;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,11 +19,13 @@ namespace SkillChat.Server.Hubs
 {
     public class ChatHub : Hub, IChatHub
     {
-        public ChatHub(IAsyncDocumentSession ravenSession)
+       
+        public ChatHub(IAsyncDocumentSession ravenSession, IMapper mapper)
         {
             _ravenSession = ravenSession;
+            Mapper = mapper;
         }
-
+        private IMapper Mapper;
         private string _loginedGroup = "Logined";
 
         private readonly IAsyncDocumentSession _ravenSession;
@@ -48,44 +54,54 @@ namespace SkillChat.Server.Hubs
                 Text = hubMessage.Message.Trim(),
                 PostTime = DateTimeOffset.UtcNow,
                 ChatId = hubMessage.ChatId,
-                Attachments = hubMessage.Attachments?.Select(s => s.Id).ToList()
+                Attachments = hubMessage.Attachments?.Select(s => s.Id).ToList(),
+                IdQuotedMessage = hubMessage.IdQuotedMessage
             };
 
             await _ravenSession.StoreAsync(messageItem);
             await _ravenSession.SaveChangesAsync();
+
+            var quotedReceiveMessage = await GetQuotedReceiveMessage(hubMessage.IdQuotedMessage);
 
             await Clients.Group(_loginedGroup).SendAsync(new ReceiveMessage
             {
                 Id = messageItem.Id,
                 UserLogin = Context.Items["login"] as string,
                 UserNickname = Context.Items["nickname"] as string,
-                Message = hubMessage.Message,
+                Text = hubMessage.Message,
                 PostTime = messageItem.PostTime,
                 ChatId = hubMessage.ChatId,
                 UserId = messageItem.UserId,
-                Attachments = hubMessage.Attachments
+                Attachments = hubMessage.Attachments,
+                QuotedMessage= quotedReceiveMessage
             });
 
-            Log.Information($"User {Context.Items["nickname"]}({Context.Items["login"]}) send message in main chat");
+            var logMessage = hubMessage.IdQuotedMessage.IsNullOrEmpty() ? $"User {Context.Items["nickname"]}({Context.Items["login"]}) send message in main chat" :
+                                                                              $"User {Context.Items["nickname"]}({Context.Items["login"]}) responded to the message in main chat";
+            Log.Information(logMessage);
         }
-
+        
         public async Task UpdateMessage(HubEditedMessage hubEditedMessage)
         {
             try
             {
                 var mes = await _ravenSession.LoadAsync<Message>(hubEditedMessage.Id);
 
-                if (mes.Text.Trim()!=hubEditedMessage.Message.Trim())
+                if (mes.Text.Trim()!=hubEditedMessage.Message.Trim()||mes.IdQuotedMessage!= hubEditedMessage.IdQuotedMessage)
                 {
                     mes.Text = hubEditedMessage.Message.Trim();
                     mes.LastEditTime = DateTimeOffset.Now;
+                    mes.IdQuotedMessage = hubEditedMessage.IdQuotedMessage;
                     await _ravenSession.SaveChangesAsync();
 
+                    var quotedReceiveMessage = await GetQuotedReceiveMessage(hubEditedMessage.IdQuotedMessage);
+                   
                     await Clients.Group(_loginedGroup).SendAsync(new ReceiveEditedMessage()
                     {
                         Id = hubEditedMessage.Id,
-                        Message = mes.Text,
+                        Text = mes.Text,
                         LastEditTime = mes.LastEditTime.Value,
+                        QuotedMessage= quotedReceiveMessage
                     });
                     Log.Information($"User {Context.Items["nickname"]}({Context.Items["login"]}) edited message in main chat");
                 }
@@ -181,6 +197,58 @@ namespace SkillChat.Server.Hubs
             {
                 Log.Warning($"Bad token from connection {Context.ConnectionId}");
             }
+        }
+        /// <summary>
+        /// Получает список вложений
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        private async Task<List<AttachmentHubMold>> GetAttachments(Message message)
+        {
+            var Attachments = new List<AttachmentHubMold>();
+            if (message.Attachments != null)
+            {
+                var attach = await _ravenSession.LoadAsync<Attachment>(message.Attachments);
+
+                foreach (var id in message.Attachments)
+                {
+                    if (attach.TryGetValue(id, out var attachment))
+                    {
+                        Attachments.Add(Mapper.Map<AttachmentHubMold>(attachment));
+                    }
+                }
+            }
+            return Attachments;
+        }
+        /// <summary>
+        /// Получает ReceiveMessage из баззы данных по ID
+        /// </summary>
+        /// <param name="IdQuotedMessage"></param>
+        /// <returns></returns>
+        private async Task<ReceiveMessage> GetQuotedReceiveMessage(string IdQuotedMessage)
+        {
+            ReceiveMessage quotedReceiveMessage;
+
+           
+
+            if (!IdQuotedMessage.IsNullOrEmpty())
+            {
+                var quotedMessage = await _ravenSession.LoadAsync<Message>(IdQuotedMessage);
+                var user = await _ravenSession.LoadAsync<User>(quotedMessage.UserId);
+                quotedReceiveMessage = new ReceiveMessage()
+                {
+                    Id = quotedMessage.Id,
+                    UserLogin = user.Login,
+                    UserNickname = user.DisplayName,
+                    Text = quotedMessage.Text,
+                    PostTime = quotedMessage.PostTime,
+                    ChatId = quotedMessage.ChatId,
+                    UserId = quotedMessage.UserId,
+                    Attachments = await GetAttachments(quotedMessage),
+                };
+            }
+            else quotedReceiveMessage = null;
+            return quotedReceiveMessage;
         }
     }
 }

@@ -3,10 +3,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia">
 
+	<Style Selector="Border.sendMessage">
+		<Setter Property="MinHeight" Value="50"/>
+		<Setter Property="MaxHeight" Value="270"/>
+		<Setter Property="Background" Value="#E0E0E0"/>
+		<Setter Property="BorderBrush" Value="#E0E0E0"/>
+	</Style>
+	
     <!--Начало: Стили кнопки отправки сообщений-->
     <Style Selector="Button.Send-Btn /template/ ContentPresenter">
         <Setter Property="Width" Value="30"/>
-        <Setter Property="Height" Value="30"/>
+        <Setter Property="Height" Value="32"/>
         <Setter Property="Padding" Value="0"/>
         <Setter Property="BorderThickness" Value="0"/>
     </Style>
@@ -36,10 +43,20 @@
         </Setter>
     </Style>
 
+	<Style Selector="Border.editMessageText">
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="CornerRadius" Value="1"/>
+		<Setter Property="BorderBrush" Value="#FF9337"/>
+	</Style>
+
     <!--Кнопка отправки сообщений-->
     <Style Selector="Button.sendMsg /template/ ContentPresenter">
         <Setter Property="Background" Value="#C4C4C4"/>
     </Style>
+
+	<Style Selector="Button.sendEditMsg /template/ ContentPresenter">
+		<Setter Property="Background" Value="#FF9337"/>
+	</Style>
 
     <Style Selector="Button.sendAttach /template/ ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource White}"/>
@@ -182,6 +199,16 @@
     <Style Selector="ListBoxItem:selected:focus /template/ ContentPresenter">
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Background" Value="{DynamicResource White}"/>
+    </Style>
+
+    <!--Ответ на сообщение-->
+
+    <Style Selector="Image.CancelImage">
+        <Setter Property="Source">
+            <Setter.Value>
+                <svg:SvgImage Source="/Assets/x_rest.svg" />
+            </Setter.Value>
+        </Setter>
     </Style>
 
 </Styles>

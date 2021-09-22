@@ -290,18 +290,7 @@
                     </StackPanel>
                   </Border>
                     <!--  Блок отправки сообщения  -->
-                    <Border Grid.Column="0"
-                            Grid.Row="2"
-                            MinHeight="50"
-                            MaxHeight="270"
-                            ZIndex="-1"
-                            Margin="0"
-                            IsVisible="{Binding ProfileViewModel.IsShowChat}"
-                            Background="#E0E0E0"
-                            BorderBrush="#E0E0E0"
-                            BorderThickness="10">
-                        <views:SendMessageControl />
-                    </Border>
+                  <views:SendMessageControl Grid.Column="0" Grid.Row="2" ZIndex="-1"/>                 
                     <!--Profile - panel -->
                     <Grid Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Right" Background="#ffffff">
                         <profile:Settings DataContext="{Binding ProfileViewModel}" />

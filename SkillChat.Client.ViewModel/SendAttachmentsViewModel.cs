@@ -52,17 +52,17 @@ namespace SkillChat.Client.ViewModel
         public async Task SendMessage()
         {
             var uploadedAttachment = UploadAttachment();
-
+            var mw = Locator.Current.GetService<MainWindowViewModel>();
             if (uploadedAttachment != null && uploadedAttachment.Count > 0)
             {
-              
                 var chatId = GetChatId();
                 var attachmentDisplayMold =
                     uploadedAttachment
                         .Select(s => _mapper.Map<AttachmentHubMold>(s)).ToList();
                 MessageText = MessageText.Trim(); //Удаление пробелов в начале и конце сообщения
-                await _hub.SendMessage(new HubMessage(chatId, MessageText, attachmentDisplayMold));
-
+                var IdReplyMes = mw.SelectedQuotedMessage?.Id.IsNullOrEmpty() ?? true ? "" : mw.SelectedQuotedMessage.Id;
+                await _hub.SendMessage(new HubMessage(chatId, MessageText, attachmentDisplayMold, IdReplyMes));
+                mw.CancelQuoted();
                 IsOpen = false;
                 MessageText = string.Empty;
             }

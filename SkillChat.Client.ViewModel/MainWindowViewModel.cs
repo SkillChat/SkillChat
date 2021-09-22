@@ -77,7 +77,6 @@ namespace SkillChat.Client.ViewModel
             Tokens = new TokenResult { AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken };
 
             Messages = new ObservableCollection<MessageViewModel>();
-
             var bits = Environment.Is64BitOperatingSystem ? "PC 64bit, " : "PC 32bit, ";
             var operatingSystem = bits + RuntimeInformation.OSDescription;
 
@@ -225,23 +224,45 @@ namespace SkillChat.Client.ViewModel
                     {
                         if (messageDictionary.TryGetValue(data.Id, out var keyValue))
                         {
-                            keyValue.Text = data.Message;
+                            keyValue.Text = data.Text;
                             keyValue.LastEditTime = data.LastEditTime;
+
+                            if (data.QuotedMessage != null)
+                            {
+                                MessageViewModel newQuotedMessage = mapper.Map<MessageViewModel>(data.QuotedMessage);
+                                if (messageDictionary.TryGetValue(data.QuotedMessage.Id, out var message))
+                                {
+                                    mapper.Map(newQuotedMessage, message);
+                                    keyValue.QuotedMessage = message;
+                                }
+                                else
+                                {
+                                    newQuotedMessage.IsMyMessage = User.Id == data.QuotedMessage.UserId;
+                                    newQuotedMessage.Attachments = data.QuotedMessage.Attachments?
+                                                                            .Select(s =>
+                                                                            {
+                                                                                var attah = mapper?.Map<AttachmentMold>(s);
+                                                                                var newAttachment = new AttachmentMessageViewModel(attah);
+                                                                                return newAttachment;
+                                                                            }).ToList();
+
+                                    messageDictionary[data.QuotedMessage.Id] = newQuotedMessage;
+                                    keyValue.QuotedMessage = newQuotedMessage;
+                                }
+                            }
+                            else
+                            {
+                                keyValue.QuotedMessage = null;
+                            }
                         }
                     });
 
                     ///Получает новые сообщения и добавляет их в окно чата. 
                     _connection.Subscribe<ReceiveMessage>(async data =>
                     {
-                        MessageViewModel newMessage = new MessageViewModel();
+                        MessageViewModel newMessage = mapper.Map<MessageViewModel>(data);
 
-                        newMessage.Id = data.Id;
-                        newMessage.Text = data.Message;
-                        newMessage.PostTime = data.PostTime;
-                        newMessage.UserNickname = data.UserNickname ?? data.UserLogin;
-                        newMessage.UserId = data.UserId;
                         newMessage.IsMyMessage = User.Id == data.UserId;
-
                         newMessage.Attachments = data.Attachments?
                             .Select(s =>
                             {
@@ -249,7 +270,28 @@ namespace SkillChat.Client.ViewModel
                                 var newAttachment = new AttachmentMessageViewModel(attah);
                                 return newAttachment;
                             }).ToList();
+                        if (data.QuotedMessage != null)
+                        {
+                            MessageViewModel newQuotedMessage = mapper.Map<MessageViewModel>(data.QuotedMessage);
+                            if (messageDictionary.TryGetValue(data.QuotedMessage.Id, out var quotedMessage))
+                            {
+                                mapper.Map(newQuotedMessage, quotedMessage);
+                                newMessage.QuotedMessage = quotedMessage;
+                            }
+                            else
+                            {
+                                newQuotedMessage.IsMyMessage = User.Id == data.QuotedMessage.UserId;
+                                newQuotedMessage.Attachments = data.QuotedMessage.Attachments?
+                                    .Select(s =>
+                                    {
+                                        var attah = mapper?.Map<AttachmentMold>(s);
+                                        var newAttachment = new AttachmentMessageViewModel(attah);
+                                        return newAttachment;
+                                    }).ToList();
 
+                                messageDictionary[newQuotedMessage.Id] = newQuotedMessage;
+                            }
+                        }
                         if (Messages.Count != 0)
                         {
                             if (Messages.Last().UserId != data.UserId)
@@ -299,17 +341,23 @@ namespace SkillChat.Client.ViewModel
                 {
                     try
                     {
+                        var IdQuotedMes = SelectedQuotedMessage == null ? "" : SelectedQuotedMessage.Id;
                         MessageText = MessageText.Trim(); //Удаление пробелов в начале и конце сообщения
                         if (MessageText != string.Empty) //Проверка на пустое сообщение
                         {
                             if (idEditMessage != null)
                             {
-                                await _hub.UpdateMessage(new HubEditedMessage(idEditMessage, ChatId, MessageText)); ///Отправка отредактированного сообщения 
+                                if (IdQuotedMes != idEditMessage)
+                                {
+                                    await _hub.UpdateMessage(new HubEditedMessage(idEditMessage, ChatId, MessageText, IdQuotedMes)); ///Отправка отредактированного сообщения
+                                }
                                 idEditMessage = null;
+                                CancelQuoted();
                             }
                             else
                             {
-                                await _hub.SendMessage(new HubMessage(ChatId, MessageText)); ///Обычная отправка сообщения
+                                await _hub.SendMessage(new HubMessage(ChatId, MessageText, IdQuotedMes));
+                                CancelQuoted();
                             }
 
                             MessageText = null;
@@ -332,24 +380,39 @@ namespace SkillChat.Client.ViewModel
 
                     // Логика выбора сообщений по id чата
                     var result = await serviceClient.GetAsync(request);
+
                     foreach (var item in result.Messages)
                     {
-                        MessageViewModel newMessage = new MessageViewModel();
-
-                        newMessage.Id = item.Id;
-                        newMessage.Text = item.Text;
-                        newMessage.PostTime = item.PostTime;
-                        newMessage.UserNickname = item.UserNickName;
-                        newMessage.UserId = item.UserId;
-                        newMessage.LastEditTime = item.LastEditTime;
-                        newMessage.IsMyMessage = User.Id == item.UserId;
-                        newMessage.Attachments = item.Attachments?
-                            .Select(s =>
+                        MessageViewModel ToMessageViewModel(MessageMold messageMold)
+                        {
+                            MessageViewModel messageViewModel = mapper.Map<MessageViewModel>(messageMold);
+                            messageViewModel.IsMyMessage = User.Id == messageMold.UserId;
+                            if (messageDictionary.TryGetValue(messageMold.Id, out var message))
                             {
-                                var newAttachment = new AttachmentMessageViewModel(s);
-                                newAttachment.IsMyMessage = newMessage.IsMyMessage;
-                                return newAttachment;
-                            }).ToList();
+                                mapper.Map(messageViewModel, message);
+                                messageViewModel = message;
+                            }
+                            else
+                            {
+                                messageDictionary[messageViewModel.Id] = messageViewModel;
+                            }
+
+                            messageViewModel.Attachments = messageMold.Attachments?
+                                .Select(s =>
+                                {
+                                    var newAttachment = new AttachmentMessageViewModel(s);
+                                    newAttachment.IsMyMessage = messageViewModel.IsMyMessage;
+                                    return newAttachment;
+                                }).ToList();
+                            return messageViewModel;
+                        }
+
+                        var newMessage = ToMessageViewModel(item);
+
+                        if (item.QuotedMessage != null)
+                        {
+                            newMessage.QuotedMessage = ToMessageViewModel(item.QuotedMessage);
+                        }
 
                         if (Messages.Count != 0)
                         {
@@ -360,7 +423,8 @@ namespace SkillChat.Client.ViewModel
                         }
 
                         Messages.Insert(0, newMessage);
-                        messageDictionary[newMessage.Id] = newMessage;
+
+
                     }
 
                     if (Messages.Count != 0) Messages.First().ShowNickname = true;
@@ -374,6 +438,7 @@ namespace SkillChat.Client.ViewModel
             {
                 try
                 {
+                    messageDictionary.Clear();
                     Messages.Clear();
                     MessageText = null;
                     Tokens = null;
@@ -562,6 +627,8 @@ namespace SkillChat.Client.ViewModel
         }
         public ObservableCollection<MessageViewModel> Messages { get; set; }
 
+        public MessageViewModel SelectedQuotedMessage { get; set; }
+
         public TokenResult Tokens { get; set; }
 
         public string Title => IsSignedIn ? $"SkillChat - {User.UserName}[{ChatName}]" : $"SkillChat";
@@ -619,10 +686,17 @@ namespace SkillChat.Client.ViewModel
         /// </summary>
         private string idEditMessage { get; set; }
 
+        public bool IsEditMessage => !idEditMessage.IsNullOrEmpty();
+
         /// <summary>
         /// Переменная для хранения флага - было ли задано положение курсора.
         /// </summary>
         public bool IsCursorSet { get; set; }
+
+        /// <summary>
+        /// Флаг отвечающий за режим цитирования сообщений
+        /// </summary>
+        public bool IsSelectQuotedMessage => SelectedQuotedMessage != null;
 
         /// <summary>
         /// Словарь состоящий из всех сообщений
@@ -637,6 +711,29 @@ namespace SkillChat.Client.ViewModel
             idEditMessage = message?.Id;
             MessageText = message?.Text;
             IsCursorSet = false;
+            if (message != null)
+            {
+                if (message.IsQuotedMessage) QuoteMessage(message.QuotedMessage);
+            }
+            else
+            {
+                CancelQuoted();
+            }
+        }
+        /// <summary>
+        /// Начало режима цитирования
+        /// </summary>
+        /// <param name="message"></param>
+        public void QuoteMessage(MessageViewModel message)
+        {
+            SelectedQuotedMessage = message;
+        }
+        /// <summary>
+        /// Выход из режима цитирования
+        /// </summary>
+        public void CancelQuoted()
+        {
+            SelectedQuotedMessage = null;
         }
 
         public RegisterUserViewModel RegisterUser { get; set; }
