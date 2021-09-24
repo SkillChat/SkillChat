@@ -87,7 +87,9 @@ namespace SkillChat.Server.Hubs
             {
                 var mes = await _ravenSession.LoadAsync<Message>(hubEditedMessage.Id);
 
-                if (mes.Text.Trim()!=hubEditedMessage.Message.Trim()||mes.IdQuotedMessage!= hubEditedMessage.IdQuotedMessage)
+                if (mes.UserId == Context.Items["uid"]?.ToString() && 
+                	(mes.Text.Trim()!=hubEditedMessage.Message.Trim() 
+                	|| mes.IdQuotedMessage!= hubEditedMessage.IdQuotedMessage))
                 {
                     mes.Text = hubEditedMessage.Message.Trim();
                     mes.LastEditTime = DateTimeOffset.Now;

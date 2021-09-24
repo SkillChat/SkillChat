@@ -439,6 +439,7 @@ namespace SkillChat.Client.ViewModel
                 try
                 {
                     messageDictionary.Clear();
+                    EndEditCommand.Execute(null); 
                     Messages.Clear();
                     MessageText = null;
                     Tokens = null;
