@@ -24,7 +24,7 @@
     </UserControl.Resources>
 	<DockPanel>
 		<CheckBox DockPanel.Dock="Left"
-                  IsVisible="{Binding Mv.SelectMessagesMode.IsTurnedSelectMode}"
+                  IsVisible="{Binding SelectMsgMode.IsTurnedSelectMode}"
                   IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
 		<StackPanel
 		Grid.Column="1"
@@ -34,7 +34,7 @@
                             FallbackValue={StaticResource HorizontalAlignmentLeft}}"
         Margin="{Binding ViewType, Converter={StaticResource StackPanelMarginConverter}}">
 			<StackPanel.ContextMenu>
-				<ContextMenu Items="{Binding MenuItems}"/>
+				<ContextMenu Items="{Binding MenuItems}" IsVisible="{Binding SelectMsgMode.IsSelectModeOff}"/>
 			</StackPanel.ContextMenu>
 			<Border
 				Classes="textMessage"

@@ -114,7 +114,8 @@ namespace SkillChat.Client.ViewModel
         }
         public void SelectMessage()
         {
-            Locator.Current.GetService<SelectMessages>().IsTurnedSelectMode = true;
+            var selectMes = Locator.Current.GetService<SelectMessages>();
+            selectMes.IsTurnedSelectMode = true;
             CloseContextMenu();
         }
 

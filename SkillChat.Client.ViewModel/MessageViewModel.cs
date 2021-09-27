@@ -16,7 +16,7 @@ using Splat;
 namespace SkillChat.Client.ViewModel
 {
     [AddINotifyPropertyChangedInterface]
-    public class MessageViewModel: IEquatable<MessageViewModel>
+    public class MessageViewModel
     {
         
         public MessageViewModel()
@@ -42,8 +42,21 @@ namespace SkillChat.Client.ViewModel
                 });
             }
 
-            selectMsgMode = Locator.Current.GetService<SelectMessages>();
-            Mv = Locator.Current.GetService<MainWindowViewModel>();
+            SelectMsgMode = Locator.Current.GetService<SelectMessages>();
+
+            this.ObservableForProperty(m => m.IsChecked).Subscribe(IsCheckedChanged);
+        }
+
+        private void IsCheckedChanged(IObservedChange<MessageViewModel, bool> change)
+        {
+            if (IsChecked)
+            {
+                SelectMsgMode.Select(this);
+            }
+            else
+            {
+                SelectMsgMode.UnSelect(this);
+            }
         }
 
         public string Id { get; set; }
@@ -71,28 +84,9 @@ namespace SkillChat.Client.ViewModel
 
         public bool IsMyMessage { get; set; }
 
-        public SelectMessages selectMsgMode;
-        public MainWindowViewModel Mv { get; }
-        private bool isChecked;
-        public bool IsChecked
-        {
-            get => isChecked;
-            set
-            {
-                isChecked = value;
+        public SelectMessages SelectMsgMode { get; set; }
 
-                if (isChecked)
-                {
-                    selectMsgMode.SelectedMessagesTempCollection.Add(this);
-                    selectMsgMode.CountCheckedMsg++;
-                }
-                else
-                {
-                    selectMsgMode.SelectedMessagesTempCollection.Remove(this);
-                    selectMsgMode.CountCheckedMsg--;
-                }
-            }
-        }
+        public bool IsChecked { get; set; }
 
         public enum ViewTypeMessage
         {
@@ -174,14 +168,10 @@ namespace SkillChat.Client.ViewModel
         }
         private void SelectMessage(object o)
         {
-            selectMsgMode.IsTurnedSelectMode = true;
+            SelectMsgMode.IsTurnedSelectMode = true;
             IsChecked = true;
         }
 
-        public bool Equals(MessageViewModel other)
-        {
-            return this.Text == other.Text && this.Time == other.Time;
-        }
     }
 
     [AddINotifyPropertyChangedInterface]
@@ -230,6 +220,7 @@ namespace SkillChat.Client.ViewModel
         public bool IsMyMessage { get; set; }
 
         private bool _isDownload { get; set; }
+
         public ReactiveCommand<AttachmentMold, Unit> DownloadCommand { get; set; }
     }
 }

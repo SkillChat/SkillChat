@@ -6,11 +6,10 @@ using PropertyChanged;
 using ReactiveUI;
 using ServiceStack;
 using Splat;
-using Avalonia;
-using Avalonia.Input.Platform;
-
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
+using SkillChat.Client.ViewModel.Interfaces;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -22,50 +21,89 @@ namespace SkillChat.Client.ViewModel
         /// </summary>
         public bool IsTurnedSelectMode { get; set; }
 
+        /// <summary>
+        /// Переменная - флаг для вкл./выкл. возможности вызывать контекстное меню в режиме выбора сообщений
+        /// </summary>
+        public bool IsSelectModeOff { get; set; } = true;
+
+        /// <summary>
+        /// Счётчик выбранных сообщений
+        /// </summary>
         public int CountCheckedMsg { get; set; }
 
         /// <summary>
         /// Коллекция для временного (оперативного) хранения выбранных сообщений
         /// </summary>
-        public ObservableCollection<MessageViewModel> SelectedMessagesTempCollection { get; set; }
+        public ObservableCollection<MessageViewModel> SelectedCollection { get; set; }
 
         public SelectMessages()
         {
-            SelectedMessagesTempCollection = new ObservableCollection<MessageViewModel>();
+            SelectedCollection = new ObservableCollection<MessageViewModel>();
 
-            CountCheckedMsg = 0;
+            // При изменении SelectedCollection - изменяется счётчик CountCheckedMsg
+            SelectedCollection.CollectionChanged += (sender, args) => CountCheckedMsg = SelectedCollection.Count;
 
-            CopyToClipboardCommand = ReactiveCommand.CreateFromTask( async () =>
+            CopyToClipboardCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 await Task.Run(() =>
                 {
-                    string text = "";
-                    foreach (var message in SelectedMessagesTempCollection)
+                    StringBuilder text = new StringBuilder();
+                    var sortByDateMessage = SelectedCollection.OrderBy(m => m.Time);
+
+                    foreach (var message in sortByDateMessage)
                     {
                         string txt = $"{message.UserNickname}\n {message.Text}\n {message.Time}\n";
-                        text += txt;
+                        text.Append(txt);
                     }
-                    AvaloniaLocator.Current.GetService<IClipboard>().SetTextAsync(text);
+
+                    var clipboard = Locator.Current.GetService<IClipboardMessage>();
+                    clipboard.SetTextToClipboard(text.ToString());
                 });
 
                 CheckOff();
             });
 
-            TurnOffSelectModeCommand = ReactiveCommand.Create(CheckOff);
+            TurnOffSelectModeCommand = ReactiveCommand.CreateFromTask(async () => { await Task.Run(CheckOff); });
+
+            this.ObservableForProperty(f => f.IsTurnedSelectMode).Subscribe(IsTurnedSelectModeChanged);
+
         }
-       
+
+        private void IsTurnedSelectModeChanged(IObservedChange<SelectMessages, bool> change)
+        {
+            switch (IsTurnedSelectMode)
+            {
+                case true:
+                    IsSelectModeOff = false;
+                    break;
+
+                case false:
+                    IsSelectModeOff = true;
+                    break;
+            }
+        }
+
+        public void Select(MessageViewModel item)
+        {
+            SelectedCollection.Add(item);
+        }
+
+        public void UnSelect(MessageViewModel item)
+        {
+            SelectedCollection.Remove(item);
+        }
+
         /// <summary>
         /// Метод переводит чек боксы выбранных сообщений в false и очищает коллекцию выбранных сообщений
         /// </summary>
         public void CheckOff()
         {
-            var mv = Locator.Current.GetService<MainWindowViewModel>();
-            foreach (var item in mv.Messages)
+            foreach (var item in SelectedCollection.ToList())
             {
                 item.IsChecked = false;
             }
-            SelectedMessagesTempCollection.Clear();
-            CountCheckedMsg = 0;
+
+            SelectedCollection.Clear();
             IsTurnedSelectMode = false;
         }
 
