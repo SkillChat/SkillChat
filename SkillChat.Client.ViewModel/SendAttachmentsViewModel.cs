@@ -92,15 +92,11 @@ namespace SkillChat.Client.ViewModel
             var response = new SetAttachment();
             var result = new List<AttachmentMold>();
 
-            Task.WaitAll(
-                AttachmentsPath.Select(attachment => Task.Run(() =>
-                {
-                    var reqestResult =
-                        _serviceClient
-                            .PostFileWithRequest<AttachmentMold>(File.OpenRead(attachment), new FileInfo(attachment).Name, response);
-
-                    result.Add(reqestResult);
-                })).ToArray());
+            foreach (var attachment in AttachmentsPath)
+            {
+                var reqestResult = _serviceClient.PostFileWithRequest<AttachmentMold>(File.OpenRead(attachment), new FileInfo(attachment).Name, response);
+                result.Add(reqestResult);
+            }
 
             return result;
         }
