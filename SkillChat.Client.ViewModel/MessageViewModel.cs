@@ -18,7 +18,6 @@ namespace SkillChat.Client.ViewModel
     [AddINotifyPropertyChangedInterface]
     public class MessageViewModel
     {
-        
         public MessageViewModel()
         {
             this.WhenAnyValue(x => x.PostTime).Subscribe(t =>
@@ -33,6 +32,7 @@ namespace SkillChat.Client.ViewModel
                     Time = local.ToString("t");
                 }
             });
+
             if (!IsMyMessage)
             {
                 UserProfileInfoCommand = ReactiveCommand.Create<string>(async userId =>
@@ -66,6 +66,7 @@ namespace SkillChat.Client.ViewModel
         public string UserNickname { get; set; }
 
         public string DisplayNickname => ShowNickname ? UserNickname : null;
+
         public string QuotedDisplayNickname=> !IsMyMessage ? UserNickname : "Вы";
 
         public bool ShowNickname { get; set; }
@@ -115,10 +116,12 @@ namespace SkillChat.Client.ViewModel
         public List<AttachmentMessageViewModel> Attachments { get; set; }
         public UserProfileMold ProfileMold { get; set; }
         public ReactiveCommand<string, Unit> UserProfileInfoCommand { get; set; }
+
         /// <summary>
         /// Цитируемое сообщение 
         /// </summary>
         public MessageViewModel QuotedMessage { get; set; }
+
         /// <summary>
         /// Флаг показывает, что данное сообщение отвечает на другое сообщение  
         /// </summary>
@@ -147,6 +150,7 @@ namespace SkillChat.Client.ViewModel
                 return MenuItems;
             }
         }
+
         /// <summary>
         /// Редактирование сообщения
         /// </summary>
@@ -157,6 +161,7 @@ namespace SkillChat.Client.ViewModel
             var mw = Locator.Current.GetService<MainWindowViewModel>();
             mw.EditMessage(this);
         }
+
         /// <summary>
         /// Ответ на сообщение
         /// </summary>
@@ -166,12 +171,12 @@ namespace SkillChat.Client.ViewModel
             var mw = Locator.Current.GetService<MainWindowViewModel>();
             mw.QuoteMessage(this);
         }
+
         private void SelectMessage(object o)
         {
             SelectMsgMode.IsTurnedSelectMode = true;
             IsChecked = true;
         }
-
     }
 
     [AddINotifyPropertyChangedInterface]

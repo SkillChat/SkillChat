@@ -77,13 +77,13 @@ namespace SkillChat.Client.ViewModel
                     LoginAuditCollection.Add(LoginAuditView);
                 }
             });
-
         }
 
         public void Close()
         {
             IsOpened = false;
         }
+
         public void CloseContextMenu()
         {
             IsContextMenu = false;
@@ -112,6 +112,7 @@ namespace SkillChat.Client.ViewModel
             Settings,
             Audit
         }
+
         public void SelectMessage()
         {
             var selectMes = Locator.Current.GetService<SelectMessages>();
@@ -126,8 +127,7 @@ namespace SkillChat.Client.ViewModel
         public event Action<bool> TypeEnterEvent;
         public event Action<bool> ContextMenuSettingsActiveEvent;
         public event Action<Enum> SetSelectedOnSettingsItemEvent;
-
-
+        
         public UserChatSettings ChatSettings { get; set; }
         public static ReactiveCommand<object, Unit> MorePointerPressedCommand { get; set; }
 
