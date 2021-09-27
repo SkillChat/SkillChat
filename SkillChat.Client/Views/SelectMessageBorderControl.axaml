@@ -8,21 +8,28 @@
 		Classes="sendMessage"
 		IsVisible="{Binding SelectMessagesMode.IsTurnedSelectMode}"
 		BorderThickness="10,10,10,10">
-		<Grid ColumnDefinitions="Auto,*">
-			<Button Grid.Column="0"	
-					Command="{Binding SelectMessagesMode.CopyToClipboardCommand}" 
-					Classes="SelectMessageBorder CopyToClipboard">
-				<StackPanel Orientation="Horizontal">
-					<Image Name="CopyToClipboard" Height="18" Width="18"/>
-					<TextBlock Classes="CopyToClipboard" Margin="15,0,0,0" Text="Скопировать в буфер обмена"/>
-					<TextBlock Classes="CopyToClipboard" Margin="10 0 0 0" Text="{Binding SelectMessagesMode.CountCheckedMsg}"/>
-				</StackPanel>		
-			</Button>
-			<StackPanel Grid.Column="1" HorizontalAlignment="Right">
-				<Button Classes="SelectMessageBorder" Command="{Binding SelectMessagesMode.TurnOffSelectModeCommand}">
-					<TextBlock Classes="CopyToClipboard"  Text="Отмена"/>
-				</Button>
-			</StackPanel>
-		</Grid>
+		<Grid ColumnDefinitions="*,Auto">
+      <WrapPanel Grid.Column="0">
+        <Button HorizontalAlignment="Left"
+                Command="{Binding SelectMessagesMode.CopyToClipboardCommand}"
+                Classes="SelectMessageBorder CopyToClipboard" ToolTip.Tip="Скопировать в буфер обмена">
+          <WrapPanel Orientation="Horizontal">
+            <Image 
+              Classes="CopyToClipboard"
+              Name="CopyToClipboard" 
+                   Height="18" Width="18"/>
+            <TextBlock Classes="CopyToClipboard" Margin="10 0 0 0" Text="{Binding SelectMessagesMode.CountCheckedMsg}"/>
+          </WrapPanel>
+        </Button>
+      </WrapPanel>
+      <WrapPanel Grid.Column="1">
+          <Button 
+                  HorizontalAlignment="Right"
+                  Classes="SelectMessageBorder"
+                  Command="{Binding SelectMessagesMode.TurnOffSelectModeCommand}">
+              <TextBlock Classes="CopyToClipboard"  Text="Отмена"/>
+          </Button>
+      </WrapPanel>
+    </Grid>
 	</Border>	
 </UserControl>
