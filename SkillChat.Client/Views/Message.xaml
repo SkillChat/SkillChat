@@ -13,93 +13,93 @@
         <SolidColorBrush x:Key="DarkPurpleColor" Color="#5027C7"/>
         <SolidColorBrush x:Key="OrangeColor" Color="#FF9337"/>
     </UserControl.Resources>
-    <Grid RowDefinitions="Auto,*">
-        <ItemsControl
-          Grid.Row="0"
-          Padding="7,0,7,0"
-          Items="{Binding Attachments}"
-          IsVisible="{Binding IsAttachmentMessage}">
-            <ItemsControl.DataTemplates>
-                <DataTemplate>
-                    <Border
-                        MaxWidth="280">
-                        <Grid ColumnDefinitions="Auto, Auto, Auto" Margin="0,0,0,10">
-                            <Image
-                                Grid.Column="0"
-                                Classes="file">
-                            </Image>
-                            <Image
-                                Grid.Column="0"
-                                Classes="circle">
-                            </Image>
-                            <Image
-                                Grid.Column="0"
-                                Classes="ok-wht">
-                            </Image>
-                            <Grid
-                                Grid.Column="1"
-                                RowDefinitions="*, Auto"
-                                ColumnDefinitions="*, Auto"
-                                Margin="5">
-                                <TextBlock
-                                  Grid.Row="0"
-                                  Grid.Column="0"
-                                  Classes="UserDownload"
-                                  Foreground="{Binding IsMyMessage,
+  <Grid RowDefinitions="Auto,*">
+    <ItemsControl
+      Grid.Row="0"
+      Padding="7,0,7,0"
+      Items="{Binding Attachments}"
+      IsVisible="{Binding IsAttachmentMessage}">
+      <ItemsControl.DataTemplates>
+        <DataTemplate>
+          <Border
+            MaxWidth="280">
+            <Grid ColumnDefinitions="Auto, Auto, Auto" Margin="0,0,0,10">
+              <Image
+                Grid.Column="0"
+                Classes="file">
+              </Image>
+              <Image
+                Grid.Column="0"
+                Classes="circle">
+              </Image>
+              <Image
+                Grid.Column="0"
+                Classes="ok-wht">
+              </Image>
+              <Grid
+                Grid.Column="1"
+                RowDefinitions="*, Auto"
+                ColumnDefinitions="*, Auto"
+                Margin="5">
+                <TextBlock
+                  Grid.Row="0"
+                  Grid.Column="0"
+                  Classes="UserDownload"
+                  Foreground="{Binding IsMyMessage,
                                                Converter={StaticResource BoolToObjectConverter},
                                                ConverterParameter={StaticResource DarkPurpleColor},
                                                FallbackValue={StaticResource OrangeColor}}"
-                                  Text="{Binding Text}">
-                                    <interactivity:Interaction.Behaviors>
-                                        <core:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #Downdold}">
-                                            <core:InvokeCommandAction Command="{Binding DownloadCommand}" CommandParameter="{Binding Path=.}"/>
-                                        </core:EventTriggerBehavior>
-                                    </interactivity:Interaction.Behaviors>
-                                </TextBlock>
-                                <TextBlock
-                                  Grid.Row="0"
-                                  Grid.Column="0"
-                                  Classes="fileName"
-                                  Text="{Binding FileName}"/>
-                                <StackPanel
-                                      Orientation="Horizontal"
-                                      Grid.Row="1"
-                                      Grid.Column="0">
-                                    <Grid
-                                        RowDefinitions="*, Auto"
-                                        ColumnDefinitions="Auto, Auto, Auto">
-                                        <TextBlock
-                                            Grid.Row="0"
-                                            Grid.Column="0"
-                                            Classes="extensions"
-                                            Text="{Binding Extensions}"/>
-                                        <TextBlock
-                                            Grid.Row="0"
-                                            Grid.Column="1"
-                                            Classes="extensions line"
-                                            Text="/"/>
-                                        <TextBlock
-                                            Grid.Row="0"
-                                            Grid.Column="2"
-                                            Classes="extensions sizeName"
-                                            Text="{Binding SizeName}"/>
-                                    </Grid>
-                                </StackPanel>
-                            </Grid>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </ItemsControl.DataTemplates>
-        </ItemsControl>
-		<Grid Grid.Row="1" IsVisible="{Binding !IsTextNullOrEmpty}">
-			<TextBlock
-				Classes="message"
-				Text="{Binding TextAligned}"
-				TextWrapping="Wrap"/>
-			<TextBox
-				Classes="message"
-				IsReadOnly="True"
-				Text="{Binding Text}"/>
-		</Grid>
+                  Text="{Binding Text}">
+                  <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #Downdold}">
+                      <core:InvokeCommandAction Command="{Binding DownloadCommand}" CommandParameter="{Binding Path=.}"/>
+                    </core:EventTriggerBehavior>
+                  </interactivity:Interaction.Behaviors>
+                </TextBlock>
+                <TextBlock
+                  Grid.Row="0"
+                  Grid.Column="0"
+                  Classes="fileName"
+                  Text="{Binding FileName}"/>
+                <StackPanel
+                    Orientation="Horizontal"
+                    Grid.Row="1"
+                    Grid.Column="0">
+                  <Grid
+                    RowDefinitions="*, Auto"
+                    ColumnDefinitions="Auto, Auto, Auto">
+                    <TextBlock
+                      Grid.Row="0"
+                      Grid.Column="0"
+                      Classes="extensions"
+                      Text="{Binding Extensions}"/>
+                    <TextBlock
+                      Grid.Row="0"
+                      Grid.Column="1"
+                      Classes="extensions line"
+                      Text="/"/>
+                    <TextBlock
+                      Grid.Row="0"
+                      Grid.Column="2"
+                      Classes="extensions sizeName"
+                      Text="{Binding SizeName}"/>
+                  </Grid>
+                </StackPanel>
+              </Grid>
+            </Grid>
+          </Border>
+        </DataTemplate>
+      </ItemsControl.DataTemplates>
+    </ItemsControl>
+    <Grid Grid.Row="1" IsVisible="{Binding !IsTextNullOrEmpty}">
+      <TextBlock
+        Classes="message"
+        Text="{Binding TextAligned}"
+        TextWrapping="Wrap"/>
+      <TextBox
+        Classes="message"
+        IsReadOnly="True"
+        Text="{Binding Text}"/>
     </Grid>
+  </Grid>   
 </UserControl>
