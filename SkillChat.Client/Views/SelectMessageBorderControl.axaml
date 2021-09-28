@@ -13,13 +13,13 @@
         <Button HorizontalAlignment="Left"
                 Command="{Binding SelectMessagesMode.CopyToClipboardCommand}"
                 Classes="SelectMessageBorder CopyToClipboard" ToolTip.Tip="Скопировать в буфер обмена">
-          <WrapPanel Orientation="Horizontal">
+          <StackPanel Orientation="Horizontal">
             <Image 
               Classes="CopyToClipboard"
               Name="CopyToClipboard" 
                    Height="18" Width="18"/>
             <TextBlock Classes="CopyToClipboard" Margin="10 0 0 0" Text="{Binding SelectMessagesMode.CountCheckedMsg}"/>
-          </WrapPanel>
+          </StackPanel>
         </Button>
       </WrapPanel>
       <WrapPanel Grid.Column="1">
