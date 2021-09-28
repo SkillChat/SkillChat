@@ -291,7 +291,7 @@
                   </Border>
                     <!--  Блок отправки сообщения  -->
 					          <views:SelectMessageBorderControl Grid.Column="0" Grid.Row="2" IsVisible="{Binding SelectMessagesMode.IsTurnedSelectMode}"/>	
-                    <views:SendMessageControl Grid.Column="0" Grid.Row="2" ZIndex="-1" IsVisible="{Binding SelectMessagesMode.IsSelectModeOff}"/>                 
+                    <views:SendMessageControl Grid.Column="0" Grid.Row="2" ZIndex="-1" IsVisible="{Binding !SelectMessagesMode.IsTurnedSelectMode}"/>                 
                     <!--Profile - panel -->
                     <Grid Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Right" Background="#ffffff">
                         <profile:Settings DataContext="{Binding ProfileViewModel}" />

@@ -22,11 +22,6 @@ namespace SkillChat.Client.ViewModel
         public bool IsTurnedSelectMode { get; set; }
 
         /// <summary>
-        /// Переменная - флаг для вкл./выкл. возможности вызывать контекстное меню в режиме выбора сообщений
-        /// </summary>
-        public bool IsSelectModeOff { get; set; } = true;
-
-        /// <summary>
         /// Счётчик выбранных сообщений
         /// </summary>
         public int CountCheckedMsg { get; set; }
@@ -64,23 +59,6 @@ namespace SkillChat.Client.ViewModel
             });
 
             TurnOffSelectModeCommand = ReactiveCommand.CreateFromTask(async () => { await Task.Run(CheckOff); });
-
-            this.ObservableForProperty(f => f.IsTurnedSelectMode).Subscribe(IsTurnedSelectModeChanged);
-
-        }
-
-        private void IsTurnedSelectModeChanged(IObservedChange<SelectMessages, bool> change)
-        {
-            switch (IsTurnedSelectMode)
-            {
-                case true:
-                    IsSelectModeOff = false;
-                    break;
-
-                case false:
-                    IsSelectModeOff = true;
-                    break;
-            }
         }
 
         public void Select(MessageViewModel item)
