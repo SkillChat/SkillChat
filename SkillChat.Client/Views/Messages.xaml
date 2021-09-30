@@ -22,56 +22,62 @@
         <sys:Double x:Key="MinWidth250">250</sys:Double>
         <sys:Double x:Key="MinWidth0">0</sys:Double>
     </UserControl.Resources>
-
-    <StackPanel
+	<DockPanel>
+		<CheckBox DockPanel.Dock="Left"
+                  IsVisible="{Binding SelectMsgMode.IsTurnedSelectMode}"
+                  IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
+		<StackPanel
+		Grid.Column="1"
         HorizontalAlignment="{Binding IsMyMessage,
                             Converter={StaticResource BoolToObjectConverter},
                             ConverterParameter={StaticResource HorizontalAlignmentRight},
                             FallbackValue={StaticResource HorizontalAlignmentLeft}}"
         Margin="{Binding ViewType, Converter={StaticResource StackPanelMarginConverter}}">
-        <StackPanel.ContextMenu>
-            <ContextMenu Items="{Binding MenuItems}"/>
-        </StackPanel.ContextMenu>
-        <Border
-            Classes="textMessage"
-            MinWidth="{Binding IsAttachmentMessage,
+			<StackPanel.ContextMenu>
+				<ContextMenu Items="{Binding MenuItems}" IsVisible="{Binding !SelectMsgMode.IsTurnedSelectMode}"/>
+			</StackPanel.ContextMenu>
+			<Border
+				Classes="textMessage"
+				MinWidth="{Binding IsAttachmentMessage,
                       Converter={StaticResource BoolToObjectConverter}, 
                       ConverterParameter={StaticResource MinWidth250}, 
                       FallbackValue={StaticResource MinWidth0}}"
-            Background="{Binding IsMyMessage,
-                        Converter={StaticResource BoolToObjectConverter},
-                        ConverterParameter={StaticResource GrayColor},
-                        FallbackValue={StaticResource WhiteColor}}">
-            <Grid RowDefinitions="Auto,Auto,Auto">
-                <StackPanel Grid.Row="0" 
-                            Orientation="Horizontal" 
-                            Margin="0,0,0,4">
-                    <TextBlock
-                        Classes="UserLogin"
-						IsVisible="{Binding !IsMyMessage}"
-                        Text="{Binding DisplayNickname}"
-                        x:Name="UserDisplayNickname">
-                        <interactivity:Interaction.Behaviors>
-                            <core:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #UserDisplayNickname}">
-                                <core:InvokeCommandAction Command="{Binding UserProfileInfoCommand}" CommandParameter="{Binding UserId}"/>
-                            </core:EventTriggerBehavior>
-                        </interactivity:Interaction.Behaviors>
-                    </TextBlock>
-                </StackPanel>
-				<Grid Grid.Row="1" IsVisible="{Binding IsQuotedMessage}">
-					<views:QuotedMessage DataContext="{Binding QuotedMessage}"/>
+				Background="{Binding IsMyMessage,
+                    Converter={StaticResource BoolToObjectConverter},
+                    ConverterParameter={StaticResource GrayColor},
+                    FallbackValue={StaticResource WhiteColor}}">
+				<Grid RowDefinitions="Auto,Auto,Auto">
+					<StackPanel Grid.Row="0"
+								Orientation="Horizontal"
+								Margin="0,0,0,4">
+						<TextBlock
+							Classes="UserLogin"
+										IsVisible="{Binding !IsMyMessage}"
+							Text="{Binding DisplayNickname}"
+							x:Name="UserDisplayNickname">
+							<interactivity:Interaction.Behaviors>
+								<core:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #UserDisplayNickname}">
+									<core:InvokeCommandAction Command="{Binding UserProfileInfoCommand}" CommandParameter="{Binding UserId}"/>
+								</core:EventTriggerBehavior>
+							</interactivity:Interaction.Behaviors>
+						</TextBlock>
+					</StackPanel>
+					<Grid Grid.Row="1" IsVisible="{Binding IsQuotedMessage}">
+					    <views:QuotedMessage DataContext="{Binding QuotedMessage}"/>
+					</Grid>
+					<views:Message Grid.Row="2" Padding="0,0,10,0"/>
+					<StackPanel
+						Grid.Row="2"
+						Orientation="Horizontal"
+						HorizontalAlignment="Right"
+						VerticalAlignment="Bottom"
+						Margin="0,0,6,0"	>
+						<Image Classes="edit" IsVisible="{Binding Edited}"/>
+						<TextBlock Classes="time" Text="{Binding Time}"/>
+					</StackPanel>
 				</Grid>
-                <views:Message Grid.Row="2" Padding="0,0,10,0"/>
-                <StackPanel 
-                    Grid.Row="2"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom"
-                    Margin="0,0,6,0"	>
-                  <Image Classes="edit" IsVisible="{Binding Edited}"/>
-                  <TextBlock Classes="time" Text="{Binding Time}"/>
-			  </StackPanel>
-            </Grid>
-        </Border>
-    </StackPanel>
+			</Border>
+		</StackPanel>
+	</DockPanel>
+	
 </UserControl>

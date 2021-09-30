@@ -8,6 +8,7 @@ using ReactiveUI;
 using ServiceStack;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
+using Splat;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -82,6 +83,7 @@ namespace SkillChat.Client.ViewModel
         {
             IsOpened = false;
         }
+
         public void CloseContextMenu()
         {
             IsContextMenu = false;
@@ -111,6 +113,12 @@ namespace SkillChat.Client.ViewModel
             Audit
         }
 
+        public void SelectMessage()
+        {
+            var selectMes = Locator.Current.GetService<SelectMessages>();
+            selectMes.IsTurnedSelectMode = true;
+            CloseContextMenu();
+        }
 
         public bool SettingsMenuActiveMain => SelectedItem == SelectedMenuItem.Settings;
         public bool AuditMenuActiveMain => SelectedItem == SelectedMenuItem.Audit;
@@ -119,8 +127,7 @@ namespace SkillChat.Client.ViewModel
         public event Action<bool> TypeEnterEvent;
         public event Action<bool> ContextMenuSettingsActiveEvent;
         public event Action<Enum> SetSelectedOnSettingsItemEvent;
-
-
+        
         public UserChatSettings ChatSettings { get; set; }
         public static ReactiveCommand<object, Unit> MorePointerPressedCommand { get; set; }
 

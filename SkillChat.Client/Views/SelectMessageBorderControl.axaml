@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="40"
+             x:Class="SkillChat.Client.Views.SelectMessageBorderControl">
+	<Border
+		Classes="sendMessage"
+		IsVisible="{Binding SelectMessagesMode.IsTurnedSelectMode}"
+		BorderThickness="10,10,10,10">
+		<Grid ColumnDefinitions="*,Auto">
+      <WrapPanel Grid.Column="0">
+        <Button HorizontalAlignment="Left"
+                Command="{Binding SelectMessagesMode.CopyToClipboardCommand}"
+                Classes="SelectMessageBorder CopyToClipboard" ToolTip.Tip="Скопировать в буфер обмена">
+          <StackPanel Orientation="Horizontal">
+            <Image 
+              Classes="CopyToClipboard"
+              Name="CopyToClipboard" 
+                   Height="18" Width="18"/>
+            <TextBlock Classes="CopyToClipboard" Margin="10 0 0 0" Text="{Binding SelectMessagesMode.CountCheckedMsg}"/>
+          </StackPanel>
+        </Button>
+      </WrapPanel>
+      <WrapPanel Grid.Column="1">
+          <Button 
+                  HorizontalAlignment="Right"
+                  Classes="SelectMessageBorder"
+                  Command="{Binding SelectMessagesMode.TurnOffSelectModeCommand}">
+              <TextBlock Classes="CopyToClipboard"  Text="Отмена"/>
+          </Button>
+      </WrapPanel>
+    </Grid>
+	</Border>	
+</UserControl>

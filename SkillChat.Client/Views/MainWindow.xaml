@@ -16,7 +16,7 @@
     Name="WindowChat"
     Width="800"
     Height="600"
-    MinWidth="360"
+    MinWidth="375"
     MinHeight="600"
     Icon="/Assets/skillchat-logo.ico"
     mc:Ignorable="d">
@@ -290,7 +290,8 @@
                     </StackPanel>
                   </Border>
                     <!--  Блок отправки сообщения  -->
-                  <views:SendMessageControl Grid.Column="0" Grid.Row="2" ZIndex="-1"/>                 
+					          <views:SelectMessageBorderControl Grid.Column="0" Grid.Row="2" IsVisible="{Binding SelectMessagesMode.IsTurnedSelectMode}"/>	
+                    <views:SendMessageControl Grid.Column="0" Grid.Row="2" ZIndex="-1" IsVisible="{Binding !SelectMessagesMode.IsTurnedSelectMode}"/>                 
                     <!--Profile - panel -->
                     <Grid Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Right" Background="#ffffff">
                         <profile:Settings DataContext="{Binding ProfileViewModel}" />

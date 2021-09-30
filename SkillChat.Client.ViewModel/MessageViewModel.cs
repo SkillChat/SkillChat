@@ -32,6 +32,7 @@ namespace SkillChat.Client.ViewModel
                     Time = local.ToString("t");
                 }
             });
+
             if (!IsMyMessage)
             {
                 UserProfileInfoCommand = ReactiveCommand.Create<string>(async userId =>
@@ -39,6 +40,22 @@ namespace SkillChat.Client.ViewModel
                     var profileViewModel = Locator.Current.GetService<IProfile>();
                     await profileViewModel.Open(userId);
                 });
+            }
+
+            SelectMsgMode = Locator.Current.GetService<SelectMessages>();
+
+            this.ObservableForProperty(m => m.IsChecked).Subscribe(IsCheckedChanged);
+        }
+
+        private void IsCheckedChanged(IObservedChange<MessageViewModel, bool> change)
+        {
+            if (IsChecked)
+            {
+                SelectMsgMode.Select(this);
+            }
+            else
+            {
+                SelectMsgMode.UnSelect(this);
             }
         }
 
@@ -49,6 +66,7 @@ namespace SkillChat.Client.ViewModel
         public string UserNickname { get; set; }
 
         public string DisplayNickname => ShowNickname ? UserNickname : null;
+
         public string QuotedDisplayNickname=> !IsMyMessage ? UserNickname : "Вы";
 
         public bool ShowNickname { get; set; }
@@ -66,6 +84,10 @@ namespace SkillChat.Client.ViewModel
         public bool Selected { get; set; }
 
         public bool IsMyMessage { get; set; }
+
+        public SelectMessages SelectMsgMode { get; set; }
+
+        public bool IsChecked { get; set; }
 
         public enum ViewTypeMessage
         {
@@ -94,10 +116,12 @@ namespace SkillChat.Client.ViewModel
         public List<AttachmentMessageViewModel> Attachments { get; set; }
         public UserProfileMold ProfileMold { get; set; }
         public ReactiveCommand<string, Unit> UserProfileInfoCommand { get; set; }
+
         /// <summary>
         /// Цитируемое сообщение 
         /// </summary>
         public MessageViewModel QuotedMessage { get; set; }
+
         /// <summary>
         /// Флаг показывает, что данное сообщение отвечает на другое сообщение  
         /// </summary>
@@ -115,15 +139,18 @@ namespace SkillChat.Client.ViewModel
                 {
                     MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectEditMessage), Content = "Редактировать" });
                     MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectQuotedMessage), Content = "Ответить" });
+                    MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectMessage), Content = "Выбрать сообщение" });
                 }
                 else
                 {
                     MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectQuotedMessage), Content = "Ответить" });
+                    MenuItems.Add(new MenuItemObject { Command = ReactiveCommand.Create<object>(SelectMessage), Content = "Выбрать сообщение" });
                 }
 
                 return MenuItems;
             }
         }
+
         /// <summary>
         /// Редактирование сообщения
         /// </summary>
@@ -134,6 +161,7 @@ namespace SkillChat.Client.ViewModel
             var mw = Locator.Current.GetService<MainWindowViewModel>();
             mw.EditMessage(this);
         }
+
         /// <summary>
         /// Ответ на сообщение
         /// </summary>
@@ -142,6 +170,12 @@ namespace SkillChat.Client.ViewModel
         {
             var mw = Locator.Current.GetService<MainWindowViewModel>();
             mw.QuoteMessage(this);
+        }
+
+        private void SelectMessage(object o)
+        {
+            SelectMsgMode.IsTurnedSelectMode = true;
+            IsChecked = true;
         }
     }
 

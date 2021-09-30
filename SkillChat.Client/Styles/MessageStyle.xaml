@@ -156,4 +156,21 @@
         <Setter Property="FontSize" Value="15"/>
         <Setter Property="Padding" Value="20,8,38,7"/>
     </Style>
+
+	<!--CheckBox-->
+	<Style Selector="CheckBox">
+		<Setter Property="Margin" Value="0,0,23,0"/>
+		<Setter Property="BorderThickness" Value="1"/>
+	</Style>
+	
+	<Style Selector="CheckBox/template/ Border">
+		<Setter Property="CornerRadius" Value="2"/>
+	</Style>
+
+	<Style Selector="CheckBox /template/ Path#checkMark">
+		<Setter Property="Height" Value="11"/>
+		<Setter Property="Width" Value="15"/>
+		<Setter Property="Data" Value="M1 5L5.5 9.5L14 1"/>
+	</Style>
+	
 </Styles>
