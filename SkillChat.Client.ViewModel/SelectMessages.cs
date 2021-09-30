@@ -40,20 +40,17 @@ namespace SkillChat.Client.ViewModel
 
             CopyToClipboardCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                await Task.Run(() =>
+                StringBuilder text = new StringBuilder();
+                var sortByDateMessage = SelectedCollection.OrderBy(m => m.Time);
+
+                foreach (var message in sortByDateMessage)
                 {
-                    StringBuilder text = new StringBuilder();
-                    var sortByDateMessage = SelectedCollection.OrderBy(m => m.Time);
+                    string txt = $"{message.UserNickname}\n {message.Text}\n {message.Time}\n";
+                    text.Append(txt);
+                }
 
-                    foreach (var message in sortByDateMessage)
-                    {
-                        string txt = $"{message.UserNickname}\n {message.Text}\n {message.Time}\n";
-                        text.Append(txt);
-                    }
-
-                    var clipboard = Locator.Current.GetService<IClipboardMessage>();
-                    clipboard.SetTextToClipboard(text.ToString());
-                });
+                var clipboard = Locator.Current.GetService<IClipboard>();
+                await clipboard.SetTextAsync(text.ToString());
 
                 CheckOff();
             });

@@ -29,7 +29,7 @@ namespace SkillChat.Client
             Locator.CurrentMutable.RegisterConstant(configuration, typeof(IConfiguration));
             Locator.CurrentMutable.Register<INotify>(() => new NotifyWindow());
             Locator.CurrentMutable.Register<ICanOpenFileDialog>(() => new CanOpenFileDialog());
-            Locator.CurrentMutable.Register<IClipboardMessage>(() => new SetMessagesToClipboard());
+            Locator.CurrentMutable.Register<IClipboard>(() => new AvaloniaClipboard());
 
             var mapper = AppModelMapping.ConfigureMapping();
             Locator.CurrentMutable.Register<IMapper>(() => mapper);
