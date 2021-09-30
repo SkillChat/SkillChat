@@ -312,6 +312,7 @@ namespace SkillChat.Client.ViewModel
                         Messages.Add(newMessage);
                         MessageReceived?.Invoke(new ReceivedMessageArgs(newMessage));
                         messageDictionary[newMessage.Id] = newMessage;
+                        AutoScrollWhenSendingMyMessage = User.Id == newMessage.UserId;
                     });
 
                     _connection.Closed += connectionOnClosed();
@@ -660,6 +661,7 @@ namespace SkillChat.Client.ViewModel
         public ICommand EndEditCommand { get; }
 
         public bool KeySendMessage { get; set; }
+        public bool AutoScrollWhenSendingMyMessage { get; set; }
 
         public bool IsEdited => idEditMessage != null;
 

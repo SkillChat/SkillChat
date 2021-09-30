@@ -2,6 +2,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using ReactiveUI;
 using SkillChat.Client.ViewModel;
 
 namespace SkillChat.Client.Views
@@ -14,9 +15,22 @@ namespace SkillChat.Client.Views
             MessagesScroller = this.Get<ScrollViewer>("MessagesSV");
             MessagesScroller.ScrollChanged += MessagesScroller_ScrollChanged;
             this.DataContextChanged += SetDataContextMethod;
+            MessagesScroller.ObservableForProperty(m => m.Viewport.Height)
+                .Subscribe(change => ViewportHeightEvent(change.Value));
 #if DEBUG
             this.AttachDevTools();
 #endif
+        }
+
+        /// <summary>
+        /// Метод, который при изменении высоты прижимает контент к нижнему краю. 
+        /// </summary>
+        /// <param name="Height"></param>
+        private void ViewportHeightEvent(double Height)
+        {
+            var deltaHeight = CurrentHeight - Height;
+            MessagesScroller.Offset += new Vector(0, deltaHeight);
+            CurrentHeight = Height;
         }
 
         MainWindowViewModel ViewModel => DataContext as MainWindowViewModel;
@@ -40,6 +54,7 @@ namespace SkillChat.Client.Views
                     {
                         // можно задать нужную позицию
                         MessagesScroller.ScrollToEnd();
+                        CurrentHeight = MessagesScroller.Viewport.Height;
                         ViewModel.IsFirstRun = false;
                     }
                     else if (verticaloffsetvalue.Equals(0))
@@ -56,6 +71,7 @@ namespace SkillChat.Client.Views
             }
         }
 
+        private double CurrentHeight { get; set; }
         private double LastVerticaloffsetmax { get; set; }
         private bool isLoaded = true;
 
@@ -101,8 +117,10 @@ namespace SkillChat.Client.Views
 
             if (e.Property.PropertyType.Name == "Size")
                 if (ViewModel != null)
-                    if (ViewModel.SettingsViewModel.AutoScroll)
+                {
+                    if (ViewModel.SettingsViewModel.AutoScroll || ViewModel.AutoScrollWhenSendingMyMessage)
                         MessagesScroller.ScrollToEnd();
+                }
             MessagesScroller.PropertyChanged -= ScrollMethod;
         }
 
