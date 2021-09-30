@@ -14,8 +14,8 @@
 	<utils:BoolToObjectConverter x:Key="BoolToObjectConverter"/>
 	<Thickness x:Key="ThicknessMessage">10,10,10,10</Thickness>
 	<Thickness x:Key="ThicknessQuotedMessage">10,0,10,10</Thickness>
-	<Thickness x:Key="ThicknessSixLeft">6,0,0,0</Thickness>
-	<Thickness x:Key="ThicknessZero">0</Thickness>
+	<Thickness x:Key="ThicknessSixLeft">6,3,0,10</Thickness>
+	<Thickness x:Key="ThicknessZero">0,3,0,10</Thickness>
   </UserControl.Resources>
   
   <Border 
@@ -27,27 +27,31 @@
 						FallbackValue={StaticResource ThicknessMessage}}">
 	  <Grid RowDefinitions="Auto,Auto">
 		  <Grid Grid.Row="0"
-				ColumnDefinitions="Auto,*"
-				Margin="0,0,0,2"
+				ColumnDefinitions="*,Auto"
+				Margin="10,0,0,0"
 				IsVisible="{Binding IsSelectQuotedMessage}">
-			  <Button Grid.Column="0"
-					  Command="{Binding CancelQuoted}" Classes="attachBtn Send-Btn">
+        <Grid Grid.Column="0"
+                  RowDefinitions="*,*"
+                  DataContext="{Binding SelectedQuotedMessage}">
+          <TextBlock Grid.Row="0" HorizontalAlignment="Left"
+                     Classes="UserLogin"
+                     Text="{Binding UserNickname}"/>
+          <Grid Grid.Row="1" MaxHeight="95" >
+              <ScrollViewer Padding="{Binding IsAttachmentMessage,
+										   Converter={StaticResource BoolToObjectConverter},
+										   ConverterParameter={StaticResource ThicknessSixLeft},
+										   FallbackValue={StaticResource ThicknessZero}}">
+                  <views:Message HorizontalAlignment="Left"/>
+              </ScrollViewer>
+          </Grid>
+        </Grid>
+        <Button Grid.Column="1" 
+                HorizontalAlignment="Right"
+                Command="{Binding CancelQuoted}" Classes="attachBtn Send-Btn">
 				  <Image Classes="CancelImage"
 						 Width="20"
 						 Height="20"/>
 			  </Button>
-			  <StackPanel Grid.Column="1"
-						  Orientation="Vertical"
-						  HorizontalAlignment="Left"
-						  DataContext="{Binding SelectedQuotedMessage}">
-				  <TextBlock
-					  Classes="UserLogin"
-					  Text="{Binding UserNickname}"/>
-				  <views:Message Padding="{Binding IsAttachmentMessage,
-										   Converter={StaticResource BoolToObjectConverter},
-										   ConverterParameter={StaticResource ThicknessSixLeft},
-										   FallbackValue={StaticResource ThicknessZero}}"/>
-			  </StackPanel>
 		  </Grid>
 		  <Grid Grid.Row="1"
 				ColumnDefinitions="Auto,*,Auto">
@@ -63,18 +67,23 @@
 			  <Border Grid.Column="1" Classes.editMessageText="{Binding IsEditMessage}"	Background="White">
 				  <Grid ColumnDefinitions="Auto,*">
 					  <Image Grid.Column="0" Classes="EditedMessageImage"/>
-					  <TextBox Grid.Column="1"
-							   Name="InputMessageTB"
-							   Classes="SendMessageText"
-							   Text="{Binding MessageText}">
-						  <TextBox.KeyBindings>
-							  <KeyBinding Command="{Binding SendCommand}" Gesture="{Binding Path=KeySendMessage,Converter={StaticResource keyConverter}}" />
-							  <KeyBinding Command="{Binding EditLastMessageCommand}" Gesture="Up" />
-							  <KeyBinding Command="{Binding EndEditCommand}" Gesture="Escape" />
-						  </TextBox.KeyBindings>
-					  </TextBox>
-				  </Grid>
-			  </Border>			  
+            <Grid Grid.Column="1" MaxHeight="100">
+              <ScrollViewer Padding="0,5,0,5">
+                  <TextBox
+                      Name="InputMessageTB"
+                      Classes="SendMessageText"
+                      Text="{Binding MessageText}">
+                      <TextBox.KeyBindings>
+                          <KeyBinding Command="{Binding SendCommand}" Gesture="{Binding Path=KeySendMessage,Converter={StaticResource keyConverter}}" />
+                          <KeyBinding Command="{Binding EditLastMessageCommand}" Gesture="Up" />
+                          <KeyBinding Command="{Binding EndEditCommand}" Gesture="Escape" />
+                      </TextBox.KeyBindings>
+                  </TextBox>
+              </ScrollViewer>
+            </Grid>
+          </Grid>
+			  </Border>
+			  
 			  <!--  Кнопка отправки сообщения  -->
 			  <Button
 				  x:Name="sendButton"

@@ -131,7 +131,7 @@
     </Style>
 
     <Style Selector="TextBlock.message">
-        <Setter Property="Padding" Value="0,0,10,5" />
+        <Setter Property="Padding" Value="0,0,10,0" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="Foreground" Value="Transparent" />
         <Setter Property="ContextMenu" Value="{x:Null}"/>
