@@ -67,6 +67,7 @@ namespace SkillChat.Client.ViewModel
             ProfileViewModel.IsOpenProfileEvent += () => WindowStates(WindowState.OpenProfile);
 
             AttachmentViewModel = new SendAttachmentsViewModel(serviceClient);
+            MessageCleaningViewModel = new MessageCleaningViewModel();
 
             SettingsViewModel = new SettingsViewModel(serviceClient);
             SettingsViewModel.OpenSettingsActiveEvent += (e) => { WindowStates(WindowState.WindowSettings); };
@@ -545,6 +546,13 @@ namespace SkillChat.Client.ViewModel
                 SettingsViewModel.CloseContextMenu();
             });
 
+            MessageCleaningCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                SettingsViewModel.CloseContextMenu();
+                SettingsViewModel.IsOpened = false;
+                MessageCleaningViewModel.OpenCommand.Execute(null);
+            });
+
             ProfileViewModel.SignOutCommand = SignOutCommand;
             ProfileViewModel.LoadMessageHistoryCommand = LoadMessageHistoryCommand;
         }
@@ -655,14 +663,20 @@ namespace SkillChat.Client.ViewModel
         public bool IsEdited => idEditMessage != null;
 
         public ICommand LoadMessageHistoryCommand { get; }
+
         public ICommand SignOutCommand { get; }
+
+        public ICommand MessageCleaningCommand { get; }
+
         public bool windowIsFocused { get; set; }
+
         public static ReactiveCommand<object, Unit> NotifyCommand { get; set; }
 
         public static ReactiveCommand<object, Unit> PointerPressedCommand { get; set; }
 
         public ProfileViewModel ProfileViewModel { get; set; }
         public SendAttachmentsViewModel AttachmentViewModel { get; set; }
+        public MessageCleaningViewModel MessageCleaningViewModel { get; set; }
 
         public bool IsShowingLoginPage { get; set; }
         public bool IsShowingRegisterPage { get; set; }
@@ -832,7 +846,9 @@ namespace SkillChat.Client.ViewModel
         }
     }
 
-    /// <summary>Хранилище аргументов события MessageReceived</summary>
+    /// <summary>
+    /// Хранилище аргументов события MessageReceived
+    /// </summary>
     public class ReceivedMessageArgs
     {
         public ReceivedMessageArgs(MessageViewModel message)
