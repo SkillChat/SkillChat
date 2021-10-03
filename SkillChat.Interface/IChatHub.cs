@@ -1,4 +1,5 @@
-﻿using SignalR.EasyUse.Interface;
+﻿using System.Collections.Generic;
+using SignalR.EasyUse.Interface;
 using System.Threading.Tasks;
 
 namespace SkillChat.Interface
@@ -9,5 +10,6 @@ namespace SkillChat.Interface
         Task UpdateMessage(HubEditedMessage hubEditedMessage);
         Task UpdateMyDisplayName(string userDispalyName);
         Task Login(string token, string operatingSystem, string ipAddress, string nameVersionClient);
+        Task DeleteForMe(List<string> idMessages);
     }
 }

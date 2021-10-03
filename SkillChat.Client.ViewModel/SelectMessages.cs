@@ -10,12 +10,14 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using SkillChat.Client.ViewModel.Interfaces;
+using SkillChat.Interface;
 
 namespace SkillChat.Client.ViewModel
 {
     [AddINotifyPropertyChangedInterface]
     public class SelectMessages
     {
+        private IChatHub _hub;
         /// <summary>
         /// Переменная - флаг для вкл./выкл. режима выбора сообщений
         /// </summary>
@@ -33,6 +35,8 @@ namespace SkillChat.Client.ViewModel
 
         public SelectMessages()
         {
+            MainWindowViewModel = Locator.Current.GetService<MainWindowViewModel>();
+
             SelectedCollection = new ObservableCollection<MessageViewModel>();
 
             // При изменении SelectedCollection - изменяется счётчик CountCheckedMsg
@@ -54,6 +58,24 @@ namespace SkillChat.Client.ViewModel
 
                 CheckOff();
             });
+
+            DeleteMessagesCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                List<string> idDeleteMessages = new List<string>();
+                foreach (var item in SelectedCollection)
+                {
+                    idDeleteMessages.Add(item.Id);
+                }
+                await _hub.DeleteForMe(idDeleteMessages);
+
+                foreach (var item in SelectedCollection)
+                {
+                    MainWindowViewModel.Messages.Remove(item);
+                }
+
+                CheckOff();
+            });
+
 
             TurnOffSelectModeCommand = ReactiveCommand.CreateFromTask(async () => { await Task.Run(CheckOff); });
         }
@@ -92,5 +114,22 @@ namespace SkillChat.Client.ViewModel
         /// </summary>
         public ICommand TurnOffSelectModeCommand { get; }
 
+        /// <summary>
+        /// Команда удаляет выбранные сообщения для текущего пользователя.
+        /// </summary>
+        public ICommand DeleteMessagesCommand { get; }
+
+        /// <summary>
+        /// Метод включает режим выбора сообщений из контектного меню, вызываемого кнопкой "..." на панели главного окна приложения
+        /// </summary>
+        public void SelectModeOn()
+        {
+            IsTurnedSelectMode = true;
+            MainWindowViewModel.SettingsViewModel.CloseContextMenu();
+        }
+
+        public MainWindowViewModel MainWindowViewModel { get; set; }
+
+        public void SetChatHub(IChatHub chatHub) => _hub = chatHub;
     }
 }

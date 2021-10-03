@@ -113,6 +113,7 @@ namespace SkillChat.Client.ViewModel
                     _hub = _connection.CreateHub<IChatHub>();
                     ProfileViewModel.SetChatHub(_hub);
                     AttachmentViewModel.SetChatHub(_hub);
+                    SelectMessagesMode.SetChatHub(_hub);
 
                     if (Tokens == null || Tokens.AccessToken.IsNullOrEmpty())
                     {

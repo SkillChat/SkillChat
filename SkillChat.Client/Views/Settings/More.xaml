@@ -21,23 +21,9 @@
                 Background="#0000"
                 Cursor="Hand"
                 Classes="SelectedMore"
-                Command="{Binding SelectMessage}">
+                Command="{Binding SelectMessagesMode.SelectModeOn}">
                 <Button.Content>
                     <TextBlock Text="Выбрать сообщения" FontWeight="400" FontSize="13" Padding="15 0" />
-                </Button.Content>
-            </Button>
-
-            <Button
-                Width="200"
-                Height="30"
-                BorderBrush="Transparent"
-                Background="#0000"
-                Cursor="Hand"
-                Command="{Binding SettingsViewModel.OpenSettingsCommand}"
-                HorizontalContentAlignment="Left"
-                Classes="SelectedMore">
-                <Button.Content>
-                    <TextBlock Text="Настройки" FontWeight="400" FontSize="13" Padding="15 0" />
                 </Button.Content>
             </Button>
 
@@ -52,6 +38,20 @@
                 Classes="SelectedMore">
                 <Button.Content>
                     <TextBlock Text="Очистить историю" FontWeight="400" FontSize="13" Padding="15 0" />
+                </Button.Content>
+            </Button>
+
+            <Button
+                Width="200"
+                Height="30"
+                BorderBrush="Transparent"
+                Background="#0000"
+                Cursor="Hand"
+                Command="{Binding SettingsViewModel.OpenSettingsCommand}"
+                HorizontalContentAlignment="Left"
+                Classes="SelectedMore">
+                <Button.Content>
+                    <TextBlock Text="Настройки" FontWeight="400" FontSize="13" Padding="15 0" />
                 </Button.Content>
             </Button>
         </WrapPanel>

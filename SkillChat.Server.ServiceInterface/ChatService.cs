@@ -69,10 +69,23 @@ namespace SkillChat.Server.ServiceInterface
                     message.UserNickName = string.IsNullOrWhiteSpace(user.DisplayName) ? user.Login : user.DisplayName;
 
                 }
-                result.Messages.Add(message);
+
+                var session = Request.ThrowIfUnauthorized();
+                var userId = session?.UserAuthId;
+
+                if (message.NotDisplayFor != null && message.NotDisplayFor.Contains(userId))
+                {
+                    continue;
+                }
+                else
+                {
+                    result.Messages.Add(message);
+                }
             }
+
             return result;
         }
+
         [Authenticate]
         public async Task<ChatPage> Get(GetChatsList request)
         {

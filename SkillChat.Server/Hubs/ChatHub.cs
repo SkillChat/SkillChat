@@ -115,6 +115,30 @@ namespace SkillChat.Server.Hubs
             }
         }
 
+        public async Task DeleteForMe(List<string> idDeleteMessages)
+        {
+            try
+            {
+                Message message;
+
+                foreach (var item in idDeleteMessages)
+                {
+                    message = await _ravenSession.LoadAsync<Message>(item);
+                    if (message.NotDisplayFor == null)
+                    {
+                        message.NotDisplayFor = new List<string>();
+                    }
+                    message.NotDisplayFor.Add(Context.Items["uid"]?.ToString());
+                    await _ravenSession.SaveChangesAsync();
+                }
+            }
+            catch
+            {
+
+            }
+
+        }
+
         public async Task Login(string token, string operatingSystem, string ipAddress, string nameVersionClient)
         {
             var jwtAuthProviderReader = (JwtAuthProviderReader)AuthenticateService.GetAuthProvider("jwt");

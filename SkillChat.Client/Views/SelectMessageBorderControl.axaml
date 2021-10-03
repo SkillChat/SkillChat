@@ -18,9 +18,22 @@
               Classes="CopyToClipboard"
               Name="CopyToClipboard" 
                    Height="18" Width="18"/>
-            <TextBlock Classes="CopyToClipboard" Margin="10 0 0 0" Text="{Binding SelectMessagesMode.CountCheckedMsg}"/>
           </StackPanel>
         </Button>
+
+        <Button HorizontalAlignment="Left"
+                Margin="25 0 0 0"
+                Command="{Binding SelectMessagesMode.DeleteMessagesCommand}"
+                Classes="SelectMessageBorder CopyToClipboard" ToolTip.Tip="Удалить выбранные сообщения">
+            <StackPanel Orientation="Horizontal">
+                <Image
+                    Classes="CopyToClipboard"
+                    Name="DeleteSelectedMessages"
+                    Height="18" Width="18"/>
+            </StackPanel>
+        </Button>
+        <TextBlock Classes="CopyToClipboard" VerticalAlignment="Center" Margin="25 0 0 0" Text="Выбрано сообщений:"/>
+        <TextBlock Classes="CopyToClipboard" VerticalAlignment="Center" Margin="10 0 0 0" Text="{Binding SelectMessagesMode.CountCheckedMsg}"/>
       </WrapPanel>
       <WrapPanel Grid.Column="1">
           <Button 
