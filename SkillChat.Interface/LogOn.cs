@@ -7,6 +7,7 @@ namespace SkillChat.Interface
     {
         public string Id { get; set; }
         public string UserLogin { get; set; }
+        public string UserName { get; set; }
         public DateTimeOffset ExpireTime { get; set; }
         public enum LogOnStatus
         {

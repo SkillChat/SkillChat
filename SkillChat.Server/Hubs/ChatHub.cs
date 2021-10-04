@@ -127,16 +127,17 @@ namespace SkillChat.Server.Hubs
                 Context.Items["uid"] = jwtPayload["sub"];
                 Context.Items["session"] = jwtPayload["session"];
 
+
                 var logOn = new LogOn
                 {
                     Id = jwtPayload["sub"],
                     UserLogin = jwtPayload["name"],
                     Error = LogOn.LogOnStatus.Ok,
                 };
-
                 var user = await _ravenSession.LoadAsync<User>(jwtPayload["sub"]);
                 if (user != null)
                 {
+                    logOn.UserName = user.DisplayName;
                     Context.Items["nickname"] = user.DisplayName;
                 }
                 else
