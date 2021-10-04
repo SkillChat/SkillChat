@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using PropertyChanged;
 using ReactiveUI;
+using SkillChat.Interface;
 using Splat;
 
 namespace SkillChat.Client.ViewModel
@@ -9,8 +10,7 @@ namespace SkillChat.Client.ViewModel
     [AddINotifyPropertyChangedInterface]
     public class MessageCleaningViewModel
     {
-        public delegate void InitData();
-        public MainWindowViewModel MainWindowViewModel;
+        private IChatHub _hub;
 
         public MessageCleaningViewModel()
         {
@@ -19,6 +19,10 @@ namespace SkillChat.Client.ViewModel
             CleaningAllCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 MainWindowViewModel.Messages.Clear();
+                _hub.CleanChatForMe(MainWindowViewModel.ChatId);
+                MainWindowViewModel.EndEditCommand.Execute(null);
+                MainWindowViewModel.CancelQuoted();
+                MainWindowViewModel.SelectMessagesMode.TurnOffSelectModeCommand.Execute(null);
                 Close();
             });
 
@@ -48,13 +52,15 @@ namespace SkillChat.Client.ViewModel
             ConfirmSelectionCommand = CleaningAllCommand;
         }
 
+        public delegate void InitData();
         public ICommand OpenCommand { get; }
         public ICommand CleaningAllCommand { get; }
         public ICommand ConfirmSelectionCommand { get; set; }
         public bool IsOpened { get; set; }
-        public event InitData Init;
         public string ConfirmationQuestion { get; set; }
         public string ButtonName { get; set; }
-
+        public MainWindowViewModel MainWindowViewModel { get; set; }
+        public void SetChatHub(IChatHub chatHub) => _hub = chatHub;
+        public event InitData Init;
     }
 }

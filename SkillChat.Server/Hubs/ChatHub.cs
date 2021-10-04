@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SkillChat.Server.ServiceInterface;
 
 namespace SkillChat.Server.Hubs
 {
@@ -114,7 +115,11 @@ namespace SkillChat.Server.Hubs
                 throw;
             }
         }
-
+        /// <summary>
+        /// Удаление сообщений (для пользователя)
+        /// </summary>
+        /// <param name="idDeleteMessages"></param>
+        /// <returns></returns>
         public async Task DeleteForMe(List<string> idDeleteMessages)
         {
             try
@@ -137,6 +142,26 @@ namespace SkillChat.Server.Hubs
 
             }
 
+        }
+        /// <summary>
+        /// Очистка чата (для пользователя)
+        /// </summary>
+        /// <param name="messagesHistoryDateBegin">дата/время после которого загружаются сообщения</param>
+        /// <returns></returns>
+        public async Task CleanChatForMe(string chatId)
+        {
+            try
+            {
+                Chat chat= await _ravenSession.LoadAsync<Chat>(chatId);
+                string userId = Context.Items["uid"]?.ToString();
+                ChatMember chatMember = chat.Members.FirstOrDefault(e => e.UserId == userId);
+                chatMember.MessagesHistoryDateBegin = DateTimeOffset.UtcNow;
+                await _ravenSession.StoreAsync(chat);
+                await _ravenSession.SaveChangesAsync();
+            }
+            catch
+            {
+            }
         }
 
         public async Task Login(string token, string operatingSystem, string ipAddress, string nameVersionClient)

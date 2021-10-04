@@ -114,6 +114,7 @@ namespace SkillChat.Client.ViewModel
                     ProfileViewModel.SetChatHub(_hub);
                     AttachmentViewModel.SetChatHub(_hub);
                     SelectMessagesMode.SetChatHub(_hub);
+                    MessageCleaningViewModel.SetChatHub(_hub);
 
                     if (Tokens == null || Tokens.AccessToken.IsNullOrEmpty())
                     {
@@ -677,6 +678,7 @@ namespace SkillChat.Client.ViewModel
         public ICommand MessageCleaningCommand { get; }
 
         public ICommand SelectedMessagesDeleteCommand { get; }
+        public ICommand CloseAllWindows { get; }
 
         public bool windowIsFocused { get; set; }
 
