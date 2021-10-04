@@ -551,6 +551,13 @@ namespace SkillChat.Client.ViewModel
             {
                 SettingsViewModel.CloseContextMenu();
                 SettingsViewModel.IsOpened = false;
+                MessageCleaningViewModel.Init += MessageCleaningViewModel.DataForClean;
+                MessageCleaningViewModel.OpenCommand.Execute(null);
+            });
+
+            SelectedMessagesDeleteCommand = ReactiveCommand.Create(() =>
+            {
+                MessageCleaningViewModel.Init += MessageCleaningViewModel.DataForDelete;
                 MessageCleaningViewModel.OpenCommand.Execute(null);
             });
 
@@ -668,6 +675,8 @@ namespace SkillChat.Client.ViewModel
         public ICommand SignOutCommand { get; }
 
         public ICommand MessageCleaningCommand { get; }
+
+        public ICommand SelectedMessagesDeleteCommand { get; }
 
         public bool windowIsFocused { get; set; }
 

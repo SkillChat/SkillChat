@@ -21,9 +21,6 @@ namespace SkillChat.Server.ServiceModel
         
         [ApiMember(IsRequired = false, Description = "Идентиикатор сообщения после которрого получать")]
         public int? PageSize { get;set; }
-
-        [ApiMember(IsRequired = true, Description = "Идентификатор Пользователя, для которого будут скрываться удалённые им сообщения")]
-        public string UserId { get; set; }
     }
 
     [Api("Chat")]

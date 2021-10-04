@@ -23,7 +23,7 @@
 
         <Button HorizontalAlignment="Left"
                 Margin="25 0 0 0"
-                Command="{Binding SelectMessagesMode.DeleteMessagesCommand}"
+                Command="{Binding SelectedMessagesDeleteCommand}"
                 Classes="SelectMessageBorder CopyToClipboard" ToolTip.Tip="Удалить выбранные сообщения">
             <StackPanel Orientation="Horizontal">
                 <Image

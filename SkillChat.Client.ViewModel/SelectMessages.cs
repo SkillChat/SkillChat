@@ -57,6 +57,7 @@ namespace SkillChat.Client.ViewModel
                 await clipboard.SetTextAsync(text.ToString());
 
                 CheckOff();
+                MainWindowViewModel.MessageCleaningViewModel.Close();
             });
 
             DeleteMessagesCommand = ReactiveCommand.CreateFromTask(async () =>
@@ -65,13 +66,9 @@ namespace SkillChat.Client.ViewModel
                 foreach (var item in SelectedCollection)
                 {
                     idDeleteMessages.Add(item.Id);
-                }
-                await _hub.DeleteForMe(idDeleteMessages);
-
-                foreach (var item in SelectedCollection)
-                {
                     MainWindowViewModel.Messages.Remove(item);
                 }
+                await _hub.DeleteForMe(idDeleteMessages);
 
                 CheckOff();
             });
@@ -129,7 +126,6 @@ namespace SkillChat.Client.ViewModel
         }
 
         public MainWindowViewModel MainWindowViewModel { get; set; }
-
         public void SetChatHub(IChatHub chatHub) => _hub = chatHub;
     }
 }
