@@ -69,7 +69,7 @@ namespace SkillChat.Client.ViewModel
                     MainWindowViewModel.Messages.Remove(item);
                 }
                 await _hub.DeleteForMe(idDeleteMessages);
-
+                MainWindowViewModel.MessageCleaningViewModel.Close();
                 CheckOff();
             });
 
