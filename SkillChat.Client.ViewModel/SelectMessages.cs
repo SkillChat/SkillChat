@@ -60,20 +60,6 @@ namespace SkillChat.Client.ViewModel
                 MainWindowViewModel.MessageCleaningViewModel.Close();
             });
 
-            DeleteMessagesCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                List<string> idDeleteMessages = new List<string>();
-                foreach (var item in SelectedCollection)
-                {
-                    idDeleteMessages.Add(item.Id);
-                    MainWindowViewModel.Messages.Remove(item);
-                }
-                await _hub.DeleteForMe(idDeleteMessages);
-                MainWindowViewModel.MessageCleaningViewModel.Close();
-                CheckOff();
-            });
-
-
             TurnOffSelectModeCommand = ReactiveCommand.CreateFromTask(async () => { await Task.Run(CheckOff); });
         }
 
@@ -110,11 +96,6 @@ namespace SkillChat.Client.ViewModel
         /// Команда для выхода из режима выбора сообщений
         /// </summary>
         public ICommand TurnOffSelectModeCommand { get; }
-
-        /// <summary>
-        /// Команда удаляет выбранные сообщения для текущего пользователя.
-        /// </summary>
-        public ICommand DeleteMessagesCommand { get; }
 
         /// <summary>
         /// Метод включает режим выбора сообщений из контектного меню, вызываемого кнопкой "..." на панели главного окна приложения
