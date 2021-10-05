@@ -67,7 +67,10 @@ namespace SkillChat.Server.ServiceInterface
                 if (user != null)
                 {
                     message.UserNickName = string.IsNullOrWhiteSpace(user.DisplayName) ? user.Login : user.DisplayName;
-
+                }
+                else
+                {
+                    message.UserNickName = "Удалённый аккаунт";
                 }
                 result.Messages.Add(message);
             }
