@@ -308,6 +308,10 @@ namespace SkillChat.Client.ViewModel
                         Messages.Add(newMessage);
                         MessageReceived?.Invoke(new ReceivedMessageArgs(newMessage));
                         messageDictionary[newMessage.Id] = newMessage;
+
+                        //если окно не в фокусе, появляется маленькое окно с текстом входящего сообщения в правом нижнем углу экрана
+                        if (!windowIsFocused || SettingsViewModel.IsOpened)
+                            Notify.NewMessage(newMessage.UserNickname, newMessage.Text.Replace("\r\n", " "));
                     });
 
                     _connection.Closed += connectionOnClosed();
