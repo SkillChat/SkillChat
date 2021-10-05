@@ -12,6 +12,7 @@
   <UserControl.Resources>
     <utils:KeyConverter x:Key="keyConverter"/>
 	<utils:BoolToObjectConverter x:Key="BoolToObjectConverter"/>
+    <utils:UserIdToBrushConverter x:Key="UserIdToBrushConverter"/>
 	<Thickness x:Key="ThicknessMessage">10,10,10,10</Thickness>
 	<Thickness x:Key="ThicknessQuotedMessage">10,0,10,10</Thickness>
 	<Thickness x:Key="ThicknessSixLeft">6,3,0,10</Thickness>
@@ -35,7 +36,9 @@
                   DataContext="{Binding SelectedQuotedMessage}">
           <TextBlock Grid.Row="0" HorizontalAlignment="Left"
                      Classes="UserLogin"
-                     Text="{Binding UserNickname}"/>
+                     Text="{Binding UserNickname}"
+                     Foreground="{Binding UserId,
+					 Converter={StaticResource UserIdToBrushConverter}}"/>
           <Grid Grid.Row="1" MaxHeight="95" >
               <ScrollViewer Padding="{Binding IsAttachmentMessage,
 										   Converter={StaticResource BoolToObjectConverter},
