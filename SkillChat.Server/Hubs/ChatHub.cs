@@ -120,7 +120,7 @@ namespace SkillChat.Server.Hubs
         /// </summary>
         /// <param name="idDeleteMessages"></param>
         /// <returns></returns>
-        public async Task DeleteForMe(List<string> idDeleteMessages)
+        public async Task DeleteMessagesForMe(List<string> idDeleteMessages)
         {
             try
             {

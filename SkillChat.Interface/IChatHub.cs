@@ -11,7 +11,7 @@ namespace SkillChat.Interface
         Task UpdateMessage(HubEditedMessage hubEditedMessage);
         Task UpdateMyDisplayName(string userDispalyName);
         Task Login(string token, string operatingSystem, string ipAddress, string nameVersionClient);
-        Task DeleteForMe(List<string> idMessages);
+        Task DeleteMessagesForMe(List<string> idMessages);
         Task CleanChatForMe(string chatId);
     }
 }

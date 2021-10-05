@@ -21,9 +21,6 @@ namespace SkillChat.Client.ViewModel
             {
                 MainWindowViewModel.Messages.Clear();
                 await _hub.CleanChatForMe(MainWindowViewModel.ChatId);
-                MainWindowViewModel.EndEditCommand.Execute(null);
-                MainWindowViewModel.CancelQuoted();
-                MainWindowViewModel.SelectMessagesMode.TurnOffSelectModeCommand.Execute(null);
                 Close();
             });
 
@@ -35,10 +32,7 @@ namespace SkillChat.Client.ViewModel
                     idDeleteMessages.Add(item.Id);
                     MainWindowViewModel.Messages.Remove(item);
                 }
-                await _hub.DeleteForMe(idDeleteMessages);
-                MainWindowViewModel.EndEditCommand.Execute(null);
-                MainWindowViewModel.CancelQuoted();
-                MainWindowViewModel.SelectMessagesMode.CheckOff();
+                await _hub.DeleteMessagesForMe(idDeleteMessages);
                 Close();
             });
 
@@ -51,6 +45,9 @@ namespace SkillChat.Client.ViewModel
         }
         public void Close()
         {
+            MainWindowViewModel.EndEditCommand.Execute(null);
+            MainWindowViewModel.CancelQuoted();
+            MainWindowViewModel.SelectMessagesMode.CheckOff();
             IsOpened = false;
             Init = null;
         }
