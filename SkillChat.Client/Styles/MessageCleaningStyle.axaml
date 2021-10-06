@@ -3,6 +3,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia">
 
+    <!-- Окно -->
+    <Style Selector="Border.BorderStyle">
+        <Setter Property="Padding" Value="2"/>
+        <Setter Property="Background" Value="{DynamicResource White}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Orange_03}"/>
+    </Style>
+
     <!-- Кнопки отмена/удалить -->
     <Style Selector="Button.MessageCleaningButton">
         <Setter Property="Height" Value="30"/>

@@ -12,12 +12,9 @@
     x:Class="SkillChat.Client.Views.MessageCleaning">
 
     <Border 
+        Classes="BorderStyle"
         VerticalAlignment="Center"
-        HorizontalAlignment="Center"
-        Padding="2"
-        Background="{DynamicResource White}"
-        BorderThickness="1"
-        BorderBrush="{DynamicResource Orange_03}">
+        HorizontalAlignment="Center">
     <Grid 
         Width="370"
         Height="160"

@@ -52,20 +52,17 @@ namespace SkillChat.Server.ServiceInterface
 
                 if (!doc.IdQuotedMessage.IsNullOrEmpty())
                 {
-
                     var mes = await RavenSession.LoadAsync<Message>(doc.IdQuotedMessage);
 
                     message.QuotedMessage = Mapper.Map<MessageMold>(mes);
                     var userQuitedMessage = await RavenSession.LoadAsync<User>(message.QuotedMessage.UserId);
-
 
                     message.QuotedMessage = await GetAttachments(mes, message.QuotedMessage);
 
                     if (userQuitedMessage != null)
                     {
                         message.QuotedMessage.UserNickName = string.IsNullOrWhiteSpace(userQuitedMessage.DisplayName)
-                            ? userQuitedMessage.Login
-                            : userQuitedMessage.DisplayName;
+                            ? userQuitedMessage.Login : userQuitedMessage.DisplayName;
                     }
 
                 }
@@ -73,7 +70,6 @@ namespace SkillChat.Server.ServiceInterface
                 if (user != null)
                 {
                     message.UserNickName = string.IsNullOrWhiteSpace(user.DisplayName) ? user.Login : user.DisplayName;
-
                 }
 
                 if (message.NotDisplayFor != null && message.NotDisplayFor.Contains(userId))
