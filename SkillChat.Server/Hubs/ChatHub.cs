@@ -237,17 +237,35 @@ namespace SkillChat.Server.Hubs
             {
                 var quotedMessage = await _ravenSession.LoadAsync<Message>(IdQuotedMessage);
                 var user = await _ravenSession.LoadAsync<User>(quotedMessage.UserId);
-                quotedReceiveMessage = new ReceiveMessage()
+
+                if (user!=null)
                 {
-                    Id = quotedMessage.Id,
-                    UserLogin = user.Login,
-                    UserNickname = user.DisplayName,
-                    Text = quotedMessage.Text,
-                    PostTime = quotedMessage.PostTime,
-                    ChatId = quotedMessage.ChatId,
-                    UserId = quotedMessage.UserId,
-                    Attachments = await GetAttachments(quotedMessage),
-                };
+                    quotedReceiveMessage = new ReceiveMessage()
+                    {
+                        Id = quotedMessage.Id,
+                        UserLogin = user.Login,
+                        UserNickname = user.DisplayName,
+                        Text = quotedMessage.Text,
+                        PostTime = quotedMessage.PostTime,
+                        ChatId = quotedMessage.ChatId,
+                        UserId = quotedMessage.UserId,
+                        Attachments = await GetAttachments(quotedMessage),
+                    };
+                }
+                else
+                {
+                    quotedReceiveMessage = new ReceiveMessage()
+                    {
+                        Id = quotedMessage.Id,
+                        UserLogin = null,
+                        UserNickname = "Удаленный аккаунт",
+                        Text = quotedMessage.Text,
+                        PostTime = quotedMessage.PostTime,
+                        ChatId = quotedMessage.ChatId,
+                        UserId = quotedMessage.UserId,
+                        Attachments = await GetAttachments(quotedMessage),
+                    };
+                }
             }
             else quotedReceiveMessage = null;
             return quotedReceiveMessage;

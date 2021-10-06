@@ -61,6 +61,10 @@ namespace SkillChat.Server.ServiceInterface
                     {
                         message.QuotedMessage.UserNickName = string.IsNullOrWhiteSpace(userQuitedMessage.DisplayName) ? userQuitedMessage.Login : userQuitedMessage.DisplayName;
                     }
+                    else
+                    {
+                        message.QuotedMessage.UserNickName = "Удаленный аккаунт";
+                    }
 
                 }
 

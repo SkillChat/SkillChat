@@ -160,19 +160,29 @@ namespace SkillChat.Client.ViewModel
             else
             {
                 ResetEditMode();
-                UpdateProfileProps(await _serviceClient.GetAsync(new GetProfile { UserId = userId }));
-
-                IsOpened = true;
-                IsOpenProfileEvent?.Invoke();
+                UpdateProfileProps(await _serviceClient.GetAsync(new GetProfile {UserId = userId}));
+                if (Login!=null)
+                {
+                    IsOpened = true;
+                    IsOpenProfileEvent?.Invoke();
+                }
             }
         }
 
         private void UpdateProfileProps(UserProfileMold profile)
         {
-            ProfileId = profile.Id;
-            Login = profile.Login;
-            DisplayName = profile.DisplayName;
-            AboutMe = profile.AboutMe;
+            if (profile != null)
+            {
+                ProfileId = profile.Id;
+                Login = profile.Login;
+                DisplayName = profile.DisplayName;
+                AboutMe = profile.AboutMe;
+            }
+            else
+            {
+                Login = null;
+            }
+
         }
     }
 }
