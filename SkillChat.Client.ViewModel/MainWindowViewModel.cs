@@ -191,6 +191,7 @@ namespace SkillChat.Client.ViewModel
                                     SettingsViewModel.ChatSettings = await serviceClient.GetAsync(new GetMySettings());
                                     KeySendMessage = SettingsViewModel.ChatSettings.SendingMessageByEnterKey;
                                     IsSignedIn = true;
+                                    Title = IsSignedIn ? $"SkillChat - {User.UserName} [{ChatName}]" : $"SkillChat";
                                     break;
                                 }
                             default:
@@ -215,6 +216,7 @@ namespace SkillChat.Client.ViewModel
                             }
 
                             ProfileViewModel.UpdateUserProfile(user.DisplayName, user.Id);
+                            Title = IsSignedIn ? $"SkillChat - {user.DisplayName} [{ChatName}]" : $"SkillChat";
                         }
                         catch (Exception e)
                         {
@@ -636,7 +638,7 @@ namespace SkillChat.Client.ViewModel
 
         public TokenResult Tokens { get; set; }
 
-        public string Title => IsSignedIn ? $"SkillChat - {User.UserName} [{ChatName}]" : $"SkillChat";
+        public string Title { get; set; }
 
         public string MessageText { get; set; }
 
