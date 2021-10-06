@@ -180,7 +180,7 @@ namespace SkillChat.Client.ViewModel
                                 {
                                     User.Id = data.Id;
                                     User.Login = data.UserLogin;
-                                    User.UserName = data.UserName;
+                                    User.UserName = string.IsNullOrEmpty(data.UserName.Trim()) ? data.UserLogin : data.UserName;
                                     ExpireTime = data.ExpireTime;
                                     var chats = await serviceClient.GetAsync(new GetChatsList());
                                     var chat = chats.Chats.FirstOrDefault();
