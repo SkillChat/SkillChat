@@ -216,6 +216,7 @@ namespace SkillChat.Client.ViewModel
                                 }
                             }
                             ProfileViewModel.UpdateUserProfile(user.DisplayName, user.Id);
+                            if (user.Id == User.Id) User.UserName = user.DisplayName;
                         }
                         catch (Exception e)
                         {
@@ -550,6 +551,10 @@ namespace SkillChat.Client.ViewModel
 
             ProfileViewModel.SignOutCommand = SignOutCommand;
             ProfileViewModel.LoadMessageHistoryCommand = LoadMessageHistoryCommand;
+
+            this.WhenAnyValue(model => model.IsSignedIn,model => model.User.DisplayName,model =>
+                model.ChatName,(signedIn, displayName, chatName) =>
+                IsSignedIn ? $"SkillChat - {User.DisplayName} [{ChatName}]" : $"SkillChat").Subscribe(s => Title = s);
         }
         /// <summary>
         /// Метод выхода из режима редактирования
@@ -637,11 +642,7 @@ namespace SkillChat.Client.ViewModel
 
         public TokenResult Tokens { get; set; }
 
-        public string Title
-        {
-            get => IsSignedIn ? $"SkillChat - {User.DisplayName} [{ChatName}]" : $"SkillChat";
-            set => Title = value;
-        }
+        public string Title { get; set; }
 
         public string MessageText { get; set; }
 
