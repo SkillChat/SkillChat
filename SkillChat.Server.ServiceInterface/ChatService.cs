@@ -72,7 +72,7 @@ namespace SkillChat.Server.ServiceInterface
                     message.UserNickName = string.IsNullOrWhiteSpace(user.DisplayName) ? user.Login : user.DisplayName;
                 }
 
-                if (message.NotDisplayFor != null && message.NotDisplayFor.Contains(userId))
+                if (message.HideFor != null && message.HideFor.Contains(userId))
                 {
                     continue;
                 }

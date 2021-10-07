@@ -233,7 +233,7 @@
       </Setter>
   </Style>
 
-  <Style Selector="Button.CopyToClipboard Image#DeleteSelectedMessages">
+  <Style Selector="Button.DeleteMessage Image#DeleteSelectedMessages">
       <Setter Property="Source">
           <Setter.Value>
               <svg:SvgImage Source="/Assets/bin_pressed_grey.svg" />
@@ -241,7 +241,7 @@
       </Setter>
   </Style>
 
-  <Style Selector="Button.CopyToClipboard:pressed Image#DeleteSelectedMessages">
+  <Style Selector="Button.DeleteMessage:pressed Image#DeleteSelectedMessages">
       <Setter Property="Source">
           <Setter.Value>
                 <svg:SvgImage Source="/Assets/bin-delete.svg"/>

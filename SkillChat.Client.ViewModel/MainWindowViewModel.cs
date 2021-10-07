@@ -113,8 +113,6 @@ namespace SkillChat.Client.ViewModel
                     _hub = _connection.CreateHub<IChatHub>();
                     ProfileViewModel.SetChatHub(_hub);
                     AttachmentViewModel.SetChatHub(_hub);
-                    SelectMessagesMode.SetChatHub(_hub);
-                    MessageCleaningViewModel.SetChatHub(_hub);
 
                     if (Tokens == null || Tokens.AccessToken.IsNullOrEmpty())
                     {
@@ -553,18 +551,59 @@ namespace SkillChat.Client.ViewModel
                 SettingsViewModel.CloseContextMenu();
                 SettingsViewModel.IsOpened = false;
                 MessageCleaningViewModel.Init += MessageCleaningViewModel.DataForClean;
-                MessageCleaningViewModel.OpenCommand.Execute(null);
+                MessageCleaningViewModel.Open(CleaningAllCommand);
             });
 
             SelectedMessagesDeleteCommand = ReactiveCommand.Create(() =>
             {
                 MessageCleaningViewModel.Init += MessageCleaningViewModel.DataForDelete;
-                MessageCleaningViewModel.OpenCommand.Execute(null);
+                MessageCleaningViewModel.Open(DeleteMessagesCommand);
             });
+
+            CleaningAllCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                Messages.Clear();
+                await _hub.CleanChatForMe(ChatId);
+
+                EndEditCommand.Execute(null);
+                CancelQuoted();
+                SelectMessagesMode.CheckOff();
+                MessageCleaningViewModel.Close();
+            });
+
+            DeleteMessagesCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                List<string> idDeleteMessages = new List<string>();
+                foreach (var item in SelectMessagesMode.SelectedCollection)
+                {
+                    idDeleteMessages.Add(item.Id);
+                    Messages.Remove(item);
+                }
+                await _hub.DeleteMessagesForMe(idDeleteMessages);
+
+                EndEditCommand.Execute(null);
+                CancelQuoted();
+                SelectMessagesMode.CheckOff();
+                MessageCleaningViewModel.Close();
+            });
+
+
 
             ProfileViewModel.SignOutCommand = SignOutCommand;
             ProfileViewModel.LoadMessageHistoryCommand = LoadMessageHistoryCommand;
         }
+
+        /// <summary>
+        /// Команда очищает всю историю чата для текущего пользователя.
+        /// </summary>
+        public ICommand CleaningAllCommand { get; }
+
+        /// <summary>
+        /// Команда удаляет выбранные сообщения для текущего пользователя.
+        /// </summary>
+        public ICommand DeleteMessagesCommand { get; }
+
+
         /// <summary>
         /// Метод выхода из режима редактирования
         /// </summary>
@@ -678,6 +717,7 @@ namespace SkillChat.Client.ViewModel
         public ICommand MessageCleaningCommand { get; }
 
         public ICommand SelectedMessagesDeleteCommand { get; }
+
         public ICommand CloseAllWindows { get; }
 
         public bool windowIsFocused { get; set; }
@@ -736,6 +776,15 @@ namespace SkillChat.Client.ViewModel
         /// Словарь состоящий из всех сообщений
         /// </summary>
         private Dictionary<string, MessageViewModel> messageDictionary = new Dictionary<string, MessageViewModel>();
+
+        /// <summary>
+        /// Метод включает режим выбора сообщений из контектного меню, вызываемого кнопкой "..." на панели главного окна приложения
+        /// </summary>
+        public void SelectModeOn()
+        {
+            SelectMessagesMode.IsTurnedSelectMode = true;
+            SettingsViewModel.CloseContextMenu();
+        }
 
         /// <summary>
         /// Выбирает из коллекции сообщение, выбранное пользователем и выводит его текст в MessageText

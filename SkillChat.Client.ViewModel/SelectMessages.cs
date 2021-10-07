@@ -17,7 +17,6 @@ namespace SkillChat.Client.ViewModel
     [AddINotifyPropertyChangedInterface]
     public class SelectMessages
     {
-        private IChatHub _hub;
         /// <summary>
         /// Переменная - флаг для вкл./выкл. режима выбора сообщений
         /// </summary>
@@ -28,6 +27,8 @@ namespace SkillChat.Client.ViewModel
         /// </summary>
         public int CountCheckedMsg { get; set; }
 
+        public string Count => CountCheckedMsg.ToString();
+
         /// <summary>
         /// Коллекция для временного (оперативного) хранения выбранных сообщений
         /// </summary>
@@ -35,8 +36,6 @@ namespace SkillChat.Client.ViewModel
 
         public SelectMessages()
         {
-            MainWindowViewModel = Locator.Current.GetService<MainWindowViewModel>();
-
             SelectedCollection = new ObservableCollection<MessageViewModel>();
 
             // При изменении SelectedCollection - изменяется счётчик CountCheckedMsg
@@ -57,7 +56,6 @@ namespace SkillChat.Client.ViewModel
                 await clipboard.SetTextAsync(text.ToString());
 
                 CheckOff();
-                MainWindowViewModel.MessageCleaningViewModel.Close();
             });
 
             TurnOffSelectModeCommand = ReactiveCommand.CreateFromTask(async () => { await Task.Run(CheckOff); });
@@ -96,17 +94,5 @@ namespace SkillChat.Client.ViewModel
         /// Команда для выхода из режима выбора сообщений
         /// </summary>
         public ICommand TurnOffSelectModeCommand { get; }
-
-        /// <summary>
-        /// Метод включает режим выбора сообщений из контектного меню, вызываемого кнопкой "..." на панели главного окна приложения
-        /// </summary>
-        public void SelectModeOn()
-        {
-            IsTurnedSelectMode = true;
-            MainWindowViewModel.SettingsViewModel.CloseContextMenu();
-        }
-
-        public MainWindowViewModel MainWindowViewModel { get; set; }
-        public void SetChatHub(IChatHub chatHub) => _hub = chatHub;
     }
 }

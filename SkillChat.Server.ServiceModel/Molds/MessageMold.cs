@@ -36,6 +36,6 @@ namespace SkillChat.Server.ServiceModel.Molds
         public MessageMold QuotedMessage { get; set; }
 
         [Description("Скрыто для UserId из списка")]
-        public List<string> NotDisplayFor { get; set; }
+        public List<string> HideFor { get; set; }
     }
 }

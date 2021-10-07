@@ -129,11 +129,11 @@ namespace SkillChat.Server.Hubs
                 foreach (var item in idDeleteMessages)
                 {
                     message = await _ravenSession.LoadAsync<Message>(item);
-                    if (message.NotDisplayFor == null)
+                    if (message.HideFor == null)
                     {
-                        message.NotDisplayFor = new List<string>();
+                        message.HideFor = new List<string>();
                     }
-                    message.NotDisplayFor.Add(Context.Items["uid"]?.ToString());
+                    message.HideFor.Add(Context.Items["uid"]?.ToString());
                     await _ravenSession.SaveChangesAsync();
                 }
             }
