@@ -15,14 +15,14 @@
     <Style Selector="Button.MessageCleaningButton">
         <Setter Property="Height" Value="30"/>
         <Setter Property="Width" Value="120"/>
-        <Setter Property="BorderBrush" Value="#FF9337"/>
-        <Setter Property="Background" Value="#0000"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Orange_03}"/>
+        <Setter Property="Background" Value="{DynamicResource White}"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="BorderThickness" Value="1"/>
     </Style>
 
 	<Style Selector="Button.MessageCleaningButton TextBlock">
-        <Setter Property="Foreground" Value="#FF9337"/>
+        <Setter Property="Foreground" Value="{DynamicResource Orange_03}"/>
         <Setter Property="FontWeight" Value="400"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="FontStyle" Value="Normal"/>
@@ -30,8 +30,8 @@
     </Style>
     <!-- Кнопки отмена/удалить при наведении -->
     <Style Selector="Button.MessageCleaningButton:pointerover">
-        <Setter Property="BorderBrush" Value="#9976FB"/>
-        <Setter Property="Background" Value="#9976FB"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Violet_02}"/>
+        <Setter Property="Background" Value="{DynamicResource Violet_02}"/>
     </Style>
 
     <Style Selector="Button.MessageCleaningButton:pointerover TextBlock">
@@ -51,6 +51,6 @@
     <Style Selector="TextBlock.MessageCleaningEventName">
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="FontWeight" Value="400"/>
-        <Setter Property="Foreground" Value="#000000"/>
+        <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundColor}"/>
     </Style>
 </Styles>

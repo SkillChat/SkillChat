@@ -13,10 +13,7 @@
         </AvaloniaResource>
         <AvaloniaResource Include="Assets\**" />
     </ItemGroup>
-    <ItemGroup>
-      <None Remove="Views\MessageCleaning.xaml" />
-    </ItemGroup>
-    <ItemGroup>
+	<ItemGroup>
         <PackageReference Include="AutoMapper" Version="10.1.1" />
         <PackageReference Include="Avalonia" Version="0.10.7" />
         <PackageReference Include="Avalonia.Desktop" Version="0.10.7" />
@@ -29,13 +26,5 @@
         <ProjectReference Include="..\SkillChat.Client.ViewModel\SkillChat.Client.ViewModel.csproj" />
     </ItemGroup>
     <ItemGroup>
-      <AvaloniaResource Update="Views\MessageCleaning.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </AvaloniaResource>
-    </ItemGroup>
-    <ItemGroup>
-      <Compile Update="Views\MessageCleaning.xaml.cs">
-        <DependentUpon>MessageCleaning.xaml</DependentUpon>
-      </Compile>
     </ItemGroup>
 </Project>

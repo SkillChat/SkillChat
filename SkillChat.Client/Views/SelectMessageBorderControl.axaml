@@ -32,9 +32,8 @@
                     Height="18" Width="18"/>
             </StackPanel>
         </Button>
-        <TextBlock Classes="CopyToClipboard" VerticalAlignment="Center"
-                   Margin="25 0 0 0" Text="Выбрано сообщений:"/>
-        <TextBlock Classes="CopyToClipboard" VerticalAlignment="Center" Margin="10 0 0 0" Text="{Binding SelectMessagesMode.CountCheckedMsg}"/>
+          <TextBlock Classes="CopyToClipboard" VerticalAlignment="Center" Margin="10 0 0 0" 
+                     Text="{Binding SelectMessagesMode.CountCheckedMsg, StringFormat={}Выбрано сообщений: {0}}"/>
       </WrapPanel>
       <WrapPanel Grid.Column="1">
           <Button 
