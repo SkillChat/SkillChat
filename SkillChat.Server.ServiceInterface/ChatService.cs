@@ -28,10 +28,16 @@ namespace SkillChat.Server.ServiceInterface
             ChatMember chatMember = chat.Members.FirstOrDefault(e => e.UserId == userId);
             var messages = RavenSession.Query<Message>().Where(e => e.ChatId == request.ChatId).OrderByDescending(x => x.PostTime);
             var result = new MessagePage();
+
             if (request.BeforePostTime != null)
             {
                 messages = messages.Where(x => x.PostTime.UtcDateTime < request.BeforePostTime.Value.UtcDateTime);
             }
+            if (chatMember.MessagesHistoryDateBegin != null)
+            {
+                messages = messages.Where(x => x.PostTime > chatMember.MessagesHistoryDateBegin);
+            }
+            messages = messages.Where(x => x.HideFor == null || !x.HideFor.Contains(userId));
 
             var pageSize = request.PageSize ?? 50;
             
@@ -72,17 +78,8 @@ namespace SkillChat.Server.ServiceInterface
                     message.UserNickName = string.IsNullOrWhiteSpace(user.DisplayName) ? user.Login : user.DisplayName;
                 }
 
-                if (message.HideFor != null && message.HideFor.Contains(userId))
-                {
-                    continue;
-                }
-                else if (chatMember.MessagesHistoryDateBegin != null &&
-                         message.PostTime > chatMember.MessagesHistoryDateBegin)
-                {
-                    result.Messages.Add(message);
-                }
+                result.Messages.Add(message);
             }
-
             return result;
         }
 

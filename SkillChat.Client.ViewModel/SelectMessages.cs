@@ -27,8 +27,6 @@ namespace SkillChat.Client.ViewModel
         /// </summary>
         public int CountCheckedMsg { get; set; }
 
-        public string Count => CountCheckedMsg.ToString();
-
         /// <summary>
         /// Коллекция для временного (оперативного) хранения выбранных сообщений
         /// </summary>

@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ServiceStack.OrmLite.Dapper;
 using SkillChat.Server.ServiceInterface;
 
 namespace SkillChat.Server.Hubs
@@ -124,16 +125,20 @@ namespace SkillChat.Server.Hubs
         {
             try
             {
-                Message message;
-
-                foreach (var item in idDeleteMessages)
+                var messages = await _ravenSession.LoadAsync<Message>(idDeleteMessages);
+                var listMessages = messages.Values.ToList();
+                foreach (var item in listMessages)
                 {
-                    message = await _ravenSession.LoadAsync<Message>(item);
-                    if (message.HideFor == null)
+                    if (item.HideFor == null)
                     {
-                        message.HideFor = new List<string>();
+                        item.HideFor = new List<string>();
                     }
-                    message.HideFor.Add(Context.Items["uid"]?.ToString());
+
+                    if (Context.Items["uid"] != null && !item.HideFor.Contains(Context.Items["uid"]))
+                    {
+                        item.HideFor.Add(Context.Items["uid"].ToString());
+                    }
+
                     await _ravenSession.SaveChangesAsync();
                 }
             }
