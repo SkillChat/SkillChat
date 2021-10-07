@@ -171,7 +171,7 @@ namespace SkillChat.Client.ViewModel
         {
             ProfileId = profile.Id;
             Login = profile.Login;
-            DisplayName = string.IsNullOrEmpty(profile.DisplayName.Trim()) ? profile.Login : profile.DisplayName;
+            DisplayName = profile.DisplayName;
             AboutMe = profile.AboutMe;
         }
     }

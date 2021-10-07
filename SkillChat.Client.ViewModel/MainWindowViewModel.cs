@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reactive;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -76,6 +77,7 @@ namespace SkillChat.Client.ViewModel
 
             Width(false);
             User.Login = settings.Login;
+            
             Tokens = new TokenResult { AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken };
 
             Messages = new ObservableCollection<MessageViewModel>();
@@ -180,7 +182,7 @@ namespace SkillChat.Client.ViewModel
                                 {
                                     User.Id = data.Id;
                                     User.Login = data.UserLogin;
-                                    User.UserName = string.IsNullOrEmpty(data.UserName.Trim()) ? data.UserLogin : data.UserName;
+                                    User.UserName = data.UserName;
                                     ExpireTime = data.ExpireTime;
                                     var chats = await serviceClient.GetAsync(new GetChatsList());
                                     var chat = chats.Chats.FirstOrDefault();
@@ -191,7 +193,6 @@ namespace SkillChat.Client.ViewModel
                                     SettingsViewModel.ChatSettings = await serviceClient.GetAsync(new GetMySettings());
                                     KeySendMessage = SettingsViewModel.ChatSettings.SendingMessageByEnterKey;
                                     IsSignedIn = true;
-                                    Title = IsSignedIn ? $"SkillChat - {User.UserName} [{ChatName}]" : $"SkillChat";
                                     break;
                                 }
                             default:
@@ -214,9 +215,7 @@ namespace SkillChat.Client.ViewModel
                                     if (item.ShowNickname) item.UserNickname = user.DisplayName;
                                 }
                             }
-
                             ProfileViewModel.UpdateUserProfile(user.DisplayName, user.Id);
-                            Title = IsSignedIn ? $"SkillChat - {user.DisplayName} [{ChatName}]" : $"SkillChat";
                         }
                         catch (Exception e)
                         {
@@ -638,7 +637,11 @@ namespace SkillChat.Client.ViewModel
 
         public TokenResult Tokens { get; set; }
 
-        public string Title { get; set; }
+        public string Title
+        {
+            get => IsSignedIn ? $"SkillChat - {User.DisplayName} [{ChatName}]" : $"SkillChat";
+            set => Title = value;
+        }
 
         public string MessageText { get; set; }
 
