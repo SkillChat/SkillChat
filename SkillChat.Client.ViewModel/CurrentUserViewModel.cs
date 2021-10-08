@@ -17,7 +17,7 @@ namespace SkillChat.Client.ViewModel
 
         public string UserName { get; set; }
 
-        public string DisplayName =>  string.IsNullOrEmpty(UserName?.Trim()) ? Login : UserName;
+        public string DisplayName => Helpers.Helpers.NameOrLogin(UserName, Login);
 
         public string Login { get; set; }
 

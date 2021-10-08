@@ -37,7 +37,8 @@ namespace SkillChat.Server.Hubs
                 await Clients.Group(_loginedGroup).SendAsync(new UpdateUserDisplayName
                 {
                     Id = Context.Items["uid"] as string,
-                    DisplayName = userDispalyName
+                    DisplayName = userDispalyName,
+                    UserLogin = Context.Items["login"] as string
                 });
 
                 Context.Items["nickname"] = userDispalyName;

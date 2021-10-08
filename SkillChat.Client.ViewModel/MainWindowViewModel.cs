@@ -212,7 +212,8 @@ namespace SkillChat.Client.ViewModel
                             {
                                 if (item.UserId == user.Id)
                                 {
-                                    if (item.ShowNickname) item.UserNickname = user.DisplayName;
+                                    if (item.ShowNickname) item.UserNickname = 
+                                        Helpers.Helpers.NameOrLogin(user.DisplayName, user.UserLogin);
                                 }
                             }
                             ProfileViewModel.UpdateUserProfile(user.DisplayName, user.Id);
