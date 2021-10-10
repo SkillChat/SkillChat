@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 using System.Windows.Input;
 using PropertyChanged;
 using ReactiveUI;
-using ServiceStack;
 using Splat;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using SkillChat.Client.ViewModel.Interfaces;
-using SkillChat.Interface;
 
 namespace SkillChat.Client.ViewModel
 {

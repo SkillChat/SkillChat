@@ -8,14 +8,10 @@ using ServiceStack.Host;
 using SignalR.EasyUse.Server;
 using SkillChat.Interface;
 using SkillChat.Server.Domain;
-using SkillChat.Server.ServiceModel.Molds.Attachment;
-using Splat;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ServiceStack.OrmLite.Dapper;
-using SkillChat.Server.ServiceInterface;
 
 namespace SkillChat.Server.Hubs
 {

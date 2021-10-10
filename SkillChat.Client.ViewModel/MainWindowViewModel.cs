@@ -718,8 +718,6 @@ namespace SkillChat.Client.ViewModel
 
         public ICommand SelectedMessagesDeleteCommand { get; }
 
-        public ICommand CloseAllWindows { get; }
-
         public bool windowIsFocused { get; set; }
 
         public static ReactiveCommand<object, Unit> NotifyCommand { get; set; }

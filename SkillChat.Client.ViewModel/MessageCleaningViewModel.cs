@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using PropertyChanged;
-using ReactiveUI;
-using SkillChat.Interface;
-using Splat;
 
 namespace SkillChat.Client.ViewModel
 {
