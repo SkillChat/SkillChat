@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reactive;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -76,6 +77,7 @@ namespace SkillChat.Client.ViewModel
 
             Width(false);
             User.Login = settings.Login;
+            
             Tokens = new TokenResult { AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken };
 
             Messages = new ObservableCollection<MessageViewModel>();
@@ -159,7 +161,6 @@ namespace SkillChat.Client.ViewModel
                                 }
                             case LogOn.LogOnStatus.ErrorExpiredToken: //Срок действия токена истек
                                 {
-                                    IsSignedIn = false;
                                     serviceClient.BearerToken = Tokens.RefreshToken;
                                     try
                                     {
@@ -168,6 +169,7 @@ namespace SkillChat.Client.ViewModel
                                         settings.RefreshToken = Tokens.RefreshToken;
                                         configuration.GetSection("ChatClientSettings").Set(configuration);
                                         await _hub.Login(Tokens.AccessToken, operatingSystem, ipAddress, nameVersionClient);
+                                        IsSignedIn = true;
                                     }
                                     catch (Exception e)
                                     {
@@ -178,9 +180,9 @@ namespace SkillChat.Client.ViewModel
                                 }
                             case LogOn.LogOnStatus.Ok: //Автовход по токену
                                 {
-                                    IsSignedIn = true;
                                     User.Id = data.Id;
                                     User.Login = data.UserLogin;
+                                    User.UserName = data.UserName;
                                     ExpireTime = data.ExpireTime;
                                     var chats = await serviceClient.GetAsync(new GetChatsList());
                                     var chat = chats.Chats.FirstOrDefault();
@@ -190,6 +192,7 @@ namespace SkillChat.Client.ViewModel
                                     //Получаем настройки
                                     SettingsViewModel.ChatSettings = await serviceClient.GetAsync(new GetMySettings());
                                     KeySendMessage = SettingsViewModel.ChatSettings.SendingMessageByEnterKey;
+                                    IsSignedIn = true;
                                     break;
                                 }
                             default:
@@ -209,11 +212,12 @@ namespace SkillChat.Client.ViewModel
                             {
                                 if (item.UserId == user.Id)
                                 {
-                                    if (item.ShowNickname) item.UserNickname = user.DisplayName;
+                                    if (item.ShowNickname) item.UserNickname = 
+                                        Helpers.Helpers.NameOrLogin(user.DisplayName, user.UserLogin);
                                 }
                             }
-
                             ProfileViewModel.UpdateUserProfile(user.DisplayName, user.Id);
+                            if (user.Id == User.Id) User.UserName = user.DisplayName;
                         }
                         catch (Exception e)
                         {
@@ -499,6 +503,7 @@ namespace SkillChat.Client.ViewModel
                 var request = new RegisterNewUser();
                 try
                 {
+                    IsSignedIn = true;
                     RegisterUser.ErrorMessageRegisterPage.ResetDisplayErrorMessage();
                     if (string.IsNullOrWhiteSpace(RegisterUser.Login) || string.IsNullOrWhiteSpace(RegisterUser.Password))
                     {
@@ -547,6 +552,10 @@ namespace SkillChat.Client.ViewModel
 
             ProfileViewModel.SignOutCommand = SignOutCommand;
             ProfileViewModel.LoadMessageHistoryCommand = LoadMessageHistoryCommand;
+
+            this.WhenAnyValue(model => model.IsSignedIn,model => model.User.DisplayName,model =>
+                model.ChatName,(signedIn, displayName, chatName) =>
+                IsSignedIn ? $"SkillChat - {User.DisplayName} [{ChatName}]" : $"SkillChat").Subscribe(s => Title = s);
         }
         /// <summary>
         /// Метод выхода из режима редактирования
@@ -634,7 +643,7 @@ namespace SkillChat.Client.ViewModel
 
         public TokenResult Tokens { get; set; }
 
-        public string Title => IsSignedIn ? $"SkillChat - {User.UserName}[{ChatName}]" : $"SkillChat";
+        public string Title { get; set; }
 
         public string MessageText { get; set; }
 
