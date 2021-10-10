@@ -15,7 +15,7 @@ namespace SkillChat.Server.ServiceModel.Molds
         public string UserId { get; set; }
 
         [Description("Имя пользователя")]
-        public string UserNickName { get; set; }
+        public string UserDisplayName { get; set; }
 
         [Description("Текст сообщения")]
         public string Text { get; set; }

@@ -23,6 +23,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using SkillChat.Client.ViewModel;
+using SkillChat.Client.ViewModel.Helpers;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -122,7 +123,7 @@ namespace SkillChat.Client.ViewModel
 
                         settings.AccessToken = Tokens.AccessToken;
                         settings.RefreshToken = Tokens.RefreshToken;
-                        settings.UserName = User.UserName;
+                        settings.UserNickname = User.Nickname;
                         settings.Login = User.Login;
                         configuration.GetSection("ChatClientSettings").Set(settings);
                     }
@@ -182,7 +183,7 @@ namespace SkillChat.Client.ViewModel
                                 {
                                     User.Id = data.Id;
                                     User.Login = data.UserLogin;
-                                    User.UserName = data.UserName;
+                                    User.Nickname = data.UserName;
                                     ExpireTime = data.ExpireTime;
                                     var chats = await serviceClient.GetAsync(new GetChatsList());
                                     var chat = chats.Chats.FirstOrDefault();
@@ -201,23 +202,23 @@ namespace SkillChat.Client.ViewModel
                                     break;
                                 }
                         }
-
                     });
 
-                    _connection.Subscribe<UpdateUserDisplayName>(async user =>
+                    _connection.Subscribe<UpdateUserNickname>(async user =>
                     {
                         try
                         {
                             foreach (var item in Messages)
                             {
-                                if (item.UserId == user.Id)
+                                if (item.UserId == user.UserId)
                                 {
-                                    if (item.ShowNickname) item.UserNickname = 
-                                        Helpers.Helpers.NameOrLogin(user.DisplayName, user.UserLogin);
+                                    if (item.ShowNickname) item.UserDisplayName =
+                                        user.UserNickname.FallbackIfEmpty(user.UserLogin);
                                 }
                             }
-                            ProfileViewModel.UpdateUserProfile(user.DisplayName, user.Id);
-                            if (user.Id == User.Id) User.UserName = user.DisplayName;
+                            ProfileViewModel.UpdateUserProfile(user.UserNickname, user.UserId);
+                            if (user.UserId == User.Id) 
+                                User.Nickname = user.UserNickname;
                         }
                         catch (Exception e)
                         {
@@ -519,7 +520,7 @@ namespace SkillChat.Client.ViewModel
 
                     settings.AccessToken = Tokens.AccessToken;
                     settings.RefreshToken = Tokens.RefreshToken;
-                    settings.UserName = RegisterUser.UserName;
+                    settings.UserNickname = RegisterUser.UserName;
                     settings.Login = RegisterUser.Login;
                     configuration.GetSection("ChatClientSettings").Set(settings);
 

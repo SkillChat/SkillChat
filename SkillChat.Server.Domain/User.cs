@@ -6,7 +6,7 @@ namespace SkillChat.Server.Domain
     {
         public string Id { get; set; }
         public string Login { get; set; }
-        public string DisplayName { get; set; }
+        public string Nickname { get; set; }
         public string AboutMe { get; set; }
         public DateTimeOffset RegisteredTime { get; set; }
 

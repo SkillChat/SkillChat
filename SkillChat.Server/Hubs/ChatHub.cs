@@ -30,20 +30,20 @@ namespace SkillChat.Server.Hubs
 
         private readonly IAsyncDocumentSession _ravenSession;
 
-        public async Task UpdateMyDisplayName(string userDispalyName)
+        public async Task UpdateMyNickname(string nickname)
         {
-            if (Context.Items["nickname"] as string != userDispalyName)
+            if (Context.Items["nickname"] as string != nickname)
             {
-                await Clients.Group(_loginedGroup).SendAsync(new UpdateUserDisplayName
+                await Clients.Group(_loginedGroup).SendAsync(new UpdateUserNickname
                 {
-                    Id = Context.Items["uid"] as string,
-                    DisplayName = userDispalyName,
+                    UserId = Context.Items["uid"] as string,
+                    UserNickname = nickname,
                     UserLogin = Context.Items["login"] as string
                 });
 
-                Context.Items["nickname"] = userDispalyName;
+                Context.Items["nickname"] = nickname;
                 Log.Information(
-                    $"User Id:{Context.Items["uid"] as string} change display user name to {userDispalyName}");
+                    $"User Id:{Context.Items["uid"] as string} change nickname user name to {nickname}");
             }
         }
 
@@ -138,8 +138,8 @@ namespace SkillChat.Server.Hubs
                 var user = await _ravenSession.LoadAsync<User>(jwtPayload["sub"]);
                 if (user != null)
                 {
-                    logOn.UserName = user.DisplayName;
-                    Context.Items["nickname"] = user.DisplayName;
+                    logOn.UserName = user.Nickname;
+                    Context.Items["nickname"] = user.Nickname;
                 }
                 else
                 {
@@ -243,7 +243,7 @@ namespace SkillChat.Server.Hubs
                 {
                     Id = quotedMessage.Id,
                     UserLogin = user.Login,
-                    UserNickname = user.DisplayName,
+                    UserNickname = user.Nickname,
                     Text = quotedMessage.Text,
                     PostTime = quotedMessage.PostTime,
                     ChatId = quotedMessage.ChatId,

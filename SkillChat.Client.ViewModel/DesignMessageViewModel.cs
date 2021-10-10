@@ -9,7 +9,7 @@ namespace SkillChat.Client.ViewModel
         public DesignMessageViewModel()
         {
 
-            UserNickname = "kibnet";
+            UserDisplayName = "kibnet";
             Text = "Привет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\n";
             PostTime = DateTimeOffset.Now.AddDays(-1);
             Id = "1";

@@ -239,7 +239,7 @@ namespace SkillChat.Server.ServiceInterface
             {
                 Id = uid,
                 Login = login,
-                DisplayName = String.IsNullOrWhiteSpace(userName)? null: userName,
+                Nickname = String.IsNullOrWhiteSpace(userName)? null: userName,
                 RegisteredTime = DateTimeOffset.UtcNow,
             };
             await RavenSession.StoreAsync(user);

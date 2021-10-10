@@ -1,5 +1,6 @@
 ﻿using PropertyChanged;
 using System;
+using SkillChat.Client.ViewModel.Helpers;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -15,9 +16,9 @@ namespace SkillChat.Client.ViewModel
             ErrorMessageLoginPage = new ErrorMessageViewModel();
         }
 
-        public string UserName { get; set; }
+        public string Nickname { get; set; }
 
-        public string DisplayName => Helpers.Helpers.NameOrLogin(UserName, Login);
+        public string DisplayName => Nickname.FallbackIfEmpty(Login);
 
         public string Login { get; set; }
 

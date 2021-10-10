@@ -45,7 +45,7 @@ namespace SkillChat.Client.ViewModel
 
                 foreach (var message in sortByDateMessage)
                 {
-                    string txt = $"{message.UserNickname}\n {message.Text}\n {message.Time}\n";
+                    string txt = $"{message.UserDisplayName}\n {message.Text}\n {message.Time}\n";
                     text.Append(txt);
                 }
 
@@ -83,7 +83,7 @@ namespace SkillChat.Client.ViewModel
         }
 
         /// <summary>
-        /// Команда вызывается из SelectMessageBorderControl. Копирует NickName, Text, Time выбранных сообщений в буфер обмена
+        /// Команда вызывается из SelectMessageBorderControl. Копирует Nickname, Text, Time выбранных сообщений в буфер обмена
         /// </summary>
         public ICommand CopyToClipboardCommand { get; }
 

@@ -8,7 +8,7 @@
 
         public string RefreshToken { get; set; }
 
-        public string UserName { get; set; }
+        public string UserNickname { get; set; }
 
         public string Login { get; set; }
 

@@ -21,7 +21,7 @@ namespace SkillChat.Client.ViewModel
             {
                 new MessageViewModel
                 {
-                    UserNickname = "kibnet",
+                    UserDisplayName = "kibnet",
                     Text =
                         "Привет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\nПривет, как дела?\n",
                     PostTime = DateTimeOffset.Now.AddDays(-1),
@@ -31,7 +31,7 @@ namespace SkillChat.Client.ViewModel
                 },
                 new MessageViewModel
                 {
-                    UserNickname = "kibnet",
+                    UserDisplayName = "kibnet",
                     Text = "Есть кто?",
                     PostTime = DateTimeOffset.Now,
                     Id = "2",
@@ -39,7 +39,7 @@ namespace SkillChat.Client.ViewModel
                 },
                 new MessageViewModel()
                 {
-                    UserNickname = "kibnet",
+                    UserDisplayName = "kibnet",
                     Text = "Есть тут кто-то?",
                     PostTime = DateTimeOffset.Now,
                     LastEditTime = DateTimeOffset.Now,
@@ -48,7 +48,7 @@ namespace SkillChat.Client.ViewModel
                 },
                 new MessageViewModel()
                 {
-                    UserNickname = "alice",
+                    UserDisplayName = "alice",
                     Text =
                         "Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? Привет, как дела? ",
                     PostTime = DateTimeOffset.Now.AddDays(-1),
@@ -58,7 +58,7 @@ namespace SkillChat.Client.ViewModel
                 },
                 new MessageViewModel()
                 {
-                    UserNickname = "alice",
+                    UserDisplayName = "alice",
                     Text = "Есть кто?",
                     PostTime = DateTimeOffset.Now,
                     Id = "2",
@@ -66,7 +66,7 @@ namespace SkillChat.Client.ViewModel
                 },
                 new MessageViewModel
                 {
-                    UserNickname = "kibnet",
+                    UserDisplayName = "kibnet",
                     Text = "Привет, как дела?",
                     PostTime = DateTimeOffset.Now.AddDays(-1),
                     Id = "1",
@@ -75,7 +75,7 @@ namespace SkillChat.Client.ViewModel
                 },
                 new MessageViewModel
                 {
-                    UserNickname = "kibnet",
+                    UserDisplayName = "kibnet",
                     Text = "Есть кто?",
                     PostTime = DateTimeOffset.Now,
                     Id = "2",
@@ -83,7 +83,7 @@ namespace SkillChat.Client.ViewModel
                 },
                 new MessageViewModel()
                 {
-                    UserNickname = "alice",
+                    UserDisplayName = "alice",
                     Text = "Привет, как дела?",
                     PostTime = DateTimeOffset.Now.AddDays(-1),
                     Id = "1",
@@ -92,7 +92,7 @@ namespace SkillChat.Client.ViewModel
                 },
                 new MessageViewModel()
                 {
-                    UserNickname = "alice",
+                    UserDisplayName = "alice",
                     Text = "Есть кто?",
                     PostTime = DateTimeOffset.Now,
                     Id = "2",
@@ -100,7 +100,7 @@ namespace SkillChat.Client.ViewModel
                 },
                 new MessageViewModel()
                 {
-                    UserNickname = "bob",
+                    UserDisplayName = "bob",
                     Text = "Привет, как дела?",
                     PostTime = DateTimeOffset.Now,
                     Id = "1",

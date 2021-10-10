@@ -63,11 +63,11 @@ namespace SkillChat.Client.ViewModel
 
         public string UserId { get; set; }
 
-        public string UserNickname { get; set; }
+        public string UserDisplayName { get; set; }
 
-        public string DisplayNickname => ShowNickname ? UserNickname : null;
+        public string DisplayNickname => ShowNickname ? UserDisplayName : null;
 
-        public string QuotedDisplayNickname=> !IsMyMessage ? UserNickname : "Вы";
+        public string QuotedDisplayNickname=> !IsMyMessage ? UserDisplayName : "Вы";
 
         public bool ShowNickname { get; set; }
 

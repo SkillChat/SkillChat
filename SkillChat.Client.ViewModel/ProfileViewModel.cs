@@ -66,7 +66,7 @@ namespace SkillChat.Client.ViewModel
                 DisplayName = DisplayName
             }));
 
-            await _hub.UpdateMyDisplayName(DisplayName);
+            await _hub.UpdateMyNickname(DisplayName);
 
             ResetEditMode();
         }

@@ -94,16 +94,16 @@
 
         <StackPanel
           Margin="0,7,0,0">
-          <TextBlock Name="NickNameTextBlock"
+          <TextBlock Name="NicknameTextBlock"
                      Classes="UpperWatermark"
                      Classes.Error="{Binding RegisterUser.ErrorMessageRegisterPage.IsError}"
                      Text="Имя" />
           <Border Background="White"
-                  Name="NickNameBorder"
+                  Name="NicknameBorder"
                   Classes="BorderEnterPages Base"
                   Classes.Error="{Binding RegisterUser.ErrorMessageRegisterPage.IsError}">
               <TextBox
-                  Name="NickNameTextBox"
+                  Name="NicknameTextBox"
                   Classes="TextBoxEnterPages Base"
                   Classes.Error="{Binding RegisterUser.ErrorMessageRegisterPage.IsError}"
                   Text="{Binding RegisterUser.UserName}"/>

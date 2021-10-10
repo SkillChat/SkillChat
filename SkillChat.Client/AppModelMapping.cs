@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration;
 using SkillChat.Client.ViewModel;
+using SkillChat.Client.ViewModel.Helpers;
 using SkillChat.Interface;
 using SkillChat.Server.ServiceModel.Molds;
 using SkillChat.Server.ServiceModel.Molds.Attachment;
@@ -50,7 +51,7 @@ namespace SkillChat.Client
                 .ForMember(m => m.IsQuotedMessage, e => e.Ignore())
                 .ForMember(m => m.QuotedMessage, e => e.Ignore())
                 .ForMember(m => m.LastEditTime, e => e.Ignore())
-                .ForMember(m => m.UserNickname, e => e.MapFrom(c => c.UserNickname ?? c.UserLogin));
+                .ForMember(m => m.UserDisplayName, e => e.MapFrom(c => c.UserNickname.FallbackIfEmpty(c.UserLogin)));
             cfg.CreateMap<ReceiveEditedMessage, MessageViewModel>()
                 .ForMember(m => m.ShowNickname, e => e.Ignore())
                 .ForMember(m => m.Selected, e => e.Ignore())
@@ -64,7 +65,7 @@ namespace SkillChat.Client
                 .ForMember(m => m.MenuItems, e => e.Ignore())
                 .ForMember(m => m.IsQuotedMessage, e => e.Ignore())
                 .ForMember(m => m.QuotedMessage, e => e.Ignore())
-                .ForMember(m => m.UserNickname, e => e.MapFrom(c => c.UserNickname ?? c.UserLogin));
+                .ForMember(m => m.UserDisplayName, e => e.MapFrom(c => c.UserNickname.FallbackIfEmpty(c.UserLogin)));
         }
     }
 }
