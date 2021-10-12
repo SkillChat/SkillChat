@@ -67,7 +67,7 @@ namespace SkillChat.Client.ViewModel
             ProfileViewModel.IsOpenProfileEvent += () => WindowStates(WindowState.OpenProfile);
 
             AttachmentViewModel = new SendAttachmentsViewModel(serviceClient);
-            MessageCleaningViewModel = new MessageCleaningViewModel();
+            ConfirmationViewModel = new ConfirmationViewModel();
 
             SettingsViewModel = new SettingsViewModel(serviceClient);
             SettingsViewModel.OpenSettingsActiveEvent += (e) => { WindowStates(WindowState.WindowSettings); };
@@ -546,21 +546,8 @@ namespace SkillChat.Client.ViewModel
                 SettingsViewModel.CloseContextMenu();
             });
 
-            MessageCleaningCommand = ReactiveCommand.CreateFromTask(async () =>
-            {
-                SettingsViewModel.CloseContextMenu();
-                SettingsViewModel.IsOpened = false;
-                MessageCleaningViewModel.Init += MessageCleaningViewModel.DataForClean;
-                MessageCleaningViewModel.Open(CleaningAllCommand);
-            });
-
-            SelectedMessagesDeleteCommand = ReactiveCommand.Create(() =>
-            {
-                MessageCleaningViewModel.Init += MessageCleaningViewModel.DataForDelete;
-                MessageCleaningViewModel.Open(DeleteMessagesCommand);
-            });
-
-            CleaningAllCommand = ReactiveCommand.CreateFromTask(async () =>
+            // Команда очищает всю историю чата для текущего пользователя.
+            ICommand cleaningAllCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 Messages.Clear();
                 await _hub.CleanChatForMe(ChatId);
@@ -568,10 +555,11 @@ namespace SkillChat.Client.ViewModel
                 EndEditCommand.Execute(null);
                 CancelQuoted();
                 SelectMessagesMode.CheckOff();
-                MessageCleaningViewModel.Close();
+                ConfirmationViewModel.Close();
             });
 
-            DeleteMessagesCommand = ReactiveCommand.CreateFromTask(async () =>
+            // Команда удаляет выбранные сообщения для текущего пользователя.
+            ICommand deleteMessagesCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 List<string> idDeleteMessages = new List<string>();
                 foreach (var item in SelectMessagesMode.SelectedCollection)
@@ -584,25 +572,29 @@ namespace SkillChat.Client.ViewModel
                 EndEditCommand.Execute(null);
                 CancelQuoted();
                 SelectMessagesMode.CheckOff();
-                MessageCleaningViewModel.Close();
+                ConfirmationViewModel.Close();
             });
+
+
+            MessageCleaningCommand = ReactiveCommand.Create(() =>
+            {
+                SettingsViewModel.CloseContextMenu();
+                SettingsViewModel.IsOpened = false;
+                ConfirmationViewModel.Open(cleaningAllCommand, "Очистить у себя всю историю чата?", "Очистить");
+            });
+
+            SelectedMessagesDeleteCommand = ReactiveCommand.Create(() =>
+            {
+                ConfirmationViewModel.Open(deleteMessagesCommand, "Удалить у себя выбранные сообщения?", "Удалить");
+            });
+
+
 
 
 
             ProfileViewModel.SignOutCommand = SignOutCommand;
             ProfileViewModel.LoadMessageHistoryCommand = LoadMessageHistoryCommand;
         }
-
-        /// <summary>
-        /// Команда очищает всю историю чата для текущего пользователя.
-        /// </summary>
-        public ICommand CleaningAllCommand { get; }
-
-        /// <summary>
-        /// Команда удаляет выбранные сообщения для текущего пользователя.
-        /// </summary>
-        public ICommand DeleteMessagesCommand { get; }
-
 
         /// <summary>
         /// Метод выхода из режима редактирования
@@ -716,7 +708,7 @@ namespace SkillChat.Client.ViewModel
 
         public ICommand MessageCleaningCommand { get; }
 
-        public ICommand SelectedMessagesDeleteCommand { get; }
+        public ICommand SelectedMessagesDeleteCommand { get; } 
 
         public bool windowIsFocused { get; set; }
 
@@ -726,7 +718,7 @@ namespace SkillChat.Client.ViewModel
 
         public ProfileViewModel ProfileViewModel { get; set; }
         public SendAttachmentsViewModel AttachmentViewModel { get; set; }
-        public MessageCleaningViewModel MessageCleaningViewModel { get; set; }
+        public ConfirmationViewModel ConfirmationViewModel { get; set; }
 
         public bool IsShowingLoginPage { get; set; }
         public bool IsShowingRegisterPage { get; set; }

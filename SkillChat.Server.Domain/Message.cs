@@ -13,6 +13,6 @@ namespace SkillChat.Server.Domain
         public DateTimeOffset? LastEditTime { get; set; }
         public List<string> Attachments { get; set; }
         public string IdQuotedMessage { get; set; }
-        public List<string> HideFor { get; set; }
+        public List<string> HideForUsers { get; set; }
     }
 }

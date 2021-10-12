@@ -18,7 +18,7 @@
         <StyleInclude Source="/Styles/MessageStyle.xaml" />
         <StyleInclude Source="/Styles/LoginAndRegisterPagesStyles.axaml" />
 		<StyleInclude Source="/Styles/MenuStyles.axaml"/>
-        <StyleInclude Source="/Styles/MessageCleaningStyle.axaml"/>
+        <StyleInclude Source="/Styles/ConfirmationControlStyles.axaml"/>
         <Style Selector="TextBlock">
             <Setter Property="FontFamily" Value="Open Sans" />
         </Style>

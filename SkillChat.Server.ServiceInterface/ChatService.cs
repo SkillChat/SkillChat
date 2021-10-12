@@ -33,11 +33,11 @@ namespace SkillChat.Server.ServiceInterface
             {
                 messages = messages.Where(x => x.PostTime.UtcDateTime < request.BeforePostTime.Value.UtcDateTime);
             }
-            if (chatMember.MessagesHistoryDateBegin != null)
+            if (chatMember?.MessagesHistoryDateBegin != null)
             {
                 messages = messages.Where(x => x.PostTime > chatMember.MessagesHistoryDateBegin);
             }
-            messages = messages.Where(x => x.HideFor == null || !x.HideFor.Contains(userId));
+            messages = messages.Where(x => x.HideForUsers == null || !x.HideForUsers.Contains(userId));
 
             var pageSize = request.PageSize ?? 50;
             

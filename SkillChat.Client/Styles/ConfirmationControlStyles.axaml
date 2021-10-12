@@ -12,7 +12,7 @@
     </Style>
 
     <!-- Кнопки отмена/удалить -->
-    <Style Selector="Button.MessageCleaningButton">
+    <Style Selector="Button.ConfirmationButton">
         <Setter Property="Height" Value="30"/>
         <Setter Property="Width" Value="120"/>
         <Setter Property="BorderBrush" Value="{DynamicResource Orange_03}"/>
@@ -21,7 +21,7 @@
         <Setter Property="BorderThickness" Value="1"/>
     </Style>
 
-	<Style Selector="Button.MessageCleaningButton TextBlock">
+	<Style Selector="Button.ConfirmationButton TextBlock">
         <Setter Property="Foreground" Value="{DynamicResource Orange_03}"/>
         <Setter Property="FontWeight" Value="400"/>
         <Setter Property="FontSize" Value="14"/>
@@ -29,17 +29,17 @@
         <Setter Property="HorizontalAlignment" Value="Center"/>
     </Style>
     <!-- Кнопки отмена/удалить при наведении -->
-    <Style Selector="Button.MessageCleaningButton:pointerover">
+    <Style Selector="Button.ConfirmationButton:pointerover">
         <Setter Property="BorderBrush" Value="{DynamicResource Violet_02}"/>
         <Setter Property="Background" Value="{DynamicResource Violet_02}"/>
     </Style>
 
-    <Style Selector="Button.MessageCleaningButton:pointerover TextBlock">
+    <Style Selector="Button.ConfirmationButton:pointerover TextBlock">
         <Setter Property="Foreground" Value="{DynamicResource White}"/>
     </Style>
 
     <!-- Кнопка закрытия окна -->
-    <Style Selector="Button.MessageCleaningClose">
+    <Style Selector="Button.ConfirmationClose">
        <Setter Property="Width" Value="20"/>
        <Setter Property="Height" Value="20"/>
        <Setter Property="BorderThickness" Value="0"/>
@@ -48,7 +48,7 @@
     </Style>
 
     <!-- TextBlock с описанием действия  -->
-    <Style Selector="TextBlock.MessageCleaningEventName">
+    <Style Selector="TextBlock.ConfirmationEventName">
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="FontWeight" Value="400"/>
         <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundColor}"/>

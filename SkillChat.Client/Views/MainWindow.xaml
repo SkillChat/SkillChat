@@ -299,7 +299,7 @@
             </Grid>
         </Grid>
 
-        <views:MessageCleaning IsVisible="{Binding IsOpened, Mode=OneWay}" DataContext="{Binding MessageCleaningViewModel}"/>
+        <views:Confirmation IsVisible="{Binding IsOpened, Mode=OneWay}" DataContext="{Binding ConfirmationViewModel}"/>
         <views:AttachmentView IsVisible="{Binding IsOpen, Mode=OneWay}" DataContext="{Binding AttachmentViewModel}"/>
         <views:LoginPage VerticalAlignment="Stretch" IsVisible="{Binding IsShowingLoginPage, Mode=OneWay}" />
         <views:RegisterPage VerticalAlignment="Stretch" IsVisible="{Binding IsShowingRegisterPage, Mode=OneWay}" />

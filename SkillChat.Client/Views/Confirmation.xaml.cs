@@ -3,9 +3,9 @@ using Avalonia.Markup.Xaml;
 
 namespace SkillChat.Client.Views
 {
-    public class MessageCleaning : UserControl
+    public class Confirmation : UserControl
     {
-        public MessageCleaning()
+        public Confirmation()
         {
             InitializeComponent();
         }

@@ -26,5 +26,8 @@
         <ProjectReference Include="..\SkillChat.Client.ViewModel\SkillChat.Client.ViewModel.csproj" />
     </ItemGroup>
     <ItemGroup>
+      <Compile Update="Views\Confirmation.xaml.cs">
+        <DependentUpon>Confirmation.xaml</DependentUpon>
+      </Compile>
     </ItemGroup>
 </Project>

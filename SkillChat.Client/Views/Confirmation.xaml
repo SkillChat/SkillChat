@@ -9,7 +9,7 @@
     xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
     mc:Ignorable="d"
     Background="#4C000000"
-    x:Class="SkillChat.Client.Views.MessageCleaning">
+    x:Class="SkillChat.Client.Views.Confirmation">
 
     <Border 
         Classes="BorderStyle"
@@ -29,7 +29,7 @@
 		<!-- Кнопка закрытия окна -->
         <Button
             Grid.Row="0"
-            Classes="MessageCleaningClose"
+            Classes="ConfirmationClose"
             VerticalAlignment="Top"
             HorizontalAlignment="Right"
             Margin="0 12 12 0"
@@ -56,7 +56,7 @@
 		<!-- Текст с описанием действия -->
         <TextBlock
             Grid.Row="1"
-            Classes="MessageCleaningEventName"
+            Classes="ConfirmationEventName"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Margin="0 0 0 10"
@@ -70,7 +70,7 @@
             Command="{Binding Close}"
             HorizontalAlignment="Right"
             Margin="0 0 15 22"
-            Classes="MessageCleaningButton">
+            Classes="ConfirmationButton">
             <Button.Content>
                 <TextBlock Text="Отмена" Padding="15 0"/>
             </Button.Content>
@@ -82,7 +82,7 @@
             Command="{Binding ConfirmSelectionCommand}"
             HorizontalAlignment="Left"
             Margin="15 0 0 22"
-            Classes="MessageCleaningButton">
+            Classes="ConfirmationButton">
             <Button.Content>
                 <TextBlock Text="{Binding ButtonName}" Padding="15 0"/>
             </Button.Content>

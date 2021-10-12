@@ -121,22 +121,22 @@ namespace SkillChat.Server.Hubs
         {
             try
             {
+                string uid = Context.Items["uid"].ToString();
                 var messages = await _ravenSession.LoadAsync<Message>(idDeleteMessages);
                 var listMessages = messages.Values.ToList();
                 foreach (var item in listMessages)
                 {
-                    if (item.HideFor == null)
+                    if (item.HideForUsers == null)
                     {
-                        item.HideFor = new List<string>();
+                        item.HideForUsers = new List<string>();
                     }
 
-                    if (Context.Items["uid"] != null && !item.HideFor.Contains(Context.Items["uid"]))
+                    if (uid != null && !item.HideForUsers.Contains(uid))
                     {
-                        item.HideFor.Add(Context.Items["uid"].ToString());
+                        item.HideForUsers.Add(uid);
                     }
-
-                    await _ravenSession.SaveChangesAsync();
                 }
+                await _ravenSession.SaveChangesAsync();
             }
             catch
             {
