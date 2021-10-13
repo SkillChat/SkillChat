@@ -197,9 +197,9 @@
                         </Grid>
                         <!--  Настройки - Panel -->
                         <Grid ZIndex="2" IsHitTestVisible="{Binding SettingsViewModel.IsContextMenu}"
-                              HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Height="62"
+                              HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Height="93"
                               Margin="0 47 47 0" Background="Transparent">
-                            <settings:More DataContext="{Binding SettingsViewModel}" />
+                            <settings:More/>
                         </Grid>
                       </Grid>
 
@@ -207,9 +207,8 @@
 
                     <!--  Окно настроек  -->
                 <Grid Grid.Row="1" IsVisible="{Binding SettingsViewModel.IsOpened}">
-                    <settings:Settings DataContext="{Binding SettingsViewModel}" />
+					<settings:Settings DataContext="{Binding SettingsViewModel}" />
                 </Grid>
-
                 <!--  Фон  -->
                 <Grid Grid.Column="1" ZIndex="-1" Grid.Row="1" ColumnDefinitions="*,Auto">
                     <Grid.Background>
@@ -300,6 +299,7 @@
             </Grid>
         </Grid>
 
+        <views:Confirmation IsVisible="{Binding IsOpened, Mode=OneWay}" DataContext="{Binding ConfirmationViewModel}"/>
         <views:AttachmentView IsVisible="{Binding IsOpen, Mode=OneWay}" DataContext="{Binding AttachmentViewModel}"/>
         <views:LoginPage VerticalAlignment="Stretch" IsVisible="{Binding IsShowingLoginPage, Mode=OneWay}" />
         <views:RegisterPage VerticalAlignment="Stretch" IsVisible="{Binding IsShowingRegisterPage, Mode=OneWay}" />

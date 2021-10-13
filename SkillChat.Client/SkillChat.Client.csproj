@@ -13,7 +13,7 @@
         </AvaloniaResource>
         <AvaloniaResource Include="Assets\**" />
     </ItemGroup>
-    <ItemGroup>
+	<ItemGroup>
         <PackageReference Include="AutoMapper" Version="10.1.1" />
         <PackageReference Include="Avalonia" Version="0.10.7" />
         <PackageReference Include="Avalonia.Desktop" Version="0.10.7" />
@@ -26,8 +26,8 @@
         <ProjectReference Include="..\SkillChat.Client.ViewModel\SkillChat.Client.ViewModel.csproj" />
     </ItemGroup>
     <ItemGroup>
-      <Compile Update="Views\QuotedMessage.axaml.cs">
-        <DependentUpon>QuotedMessage.axaml</DependentUpon>
+      <Compile Update="Views\Confirmation.xaml.cs">
+        <DependentUpon>Confirmation.xaml</DependentUpon>
       </Compile>
     </ItemGroup>
 </Project>

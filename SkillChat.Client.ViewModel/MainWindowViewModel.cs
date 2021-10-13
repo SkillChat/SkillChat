@@ -68,6 +68,7 @@ namespace SkillChat.Client.ViewModel
             ProfileViewModel.IsOpenProfileEvent += () => WindowStates(WindowState.OpenProfile);
 
             AttachmentViewModel = new SendAttachmentsViewModel(serviceClient);
+            ConfirmationViewModel = new ConfirmationViewModel();
 
             SettingsViewModel = new SettingsViewModel(serviceClient);
             SettingsViewModel.OpenSettingsActiveEvent += (e) => { WindowStates(WindowState.WindowSettings); };
@@ -551,6 +552,52 @@ namespace SkillChat.Client.ViewModel
                 SettingsViewModel.CloseContextMenu();
             });
 
+            // Команда очищает всю историю чата для текущего пользователя.
+            ICommand cleaningAllCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                Messages.Clear();
+                await _hub.CleanChatForMe(ChatId);
+
+                EndEditCommand.Execute(null);
+                CancelQuoted();
+                SelectMessagesMode.CheckOff();
+                ConfirmationViewModel.Close();
+            });
+
+            // Команда удаляет выбранные сообщения для текущего пользователя.
+            ICommand deleteMessagesCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                List<string> idDeleteMessages = new List<string>();
+                foreach (var item in SelectMessagesMode.SelectedCollection)
+                {
+                    idDeleteMessages.Add(item.Id);
+                    Messages.Remove(item);
+                }
+                await _hub.DeleteMessagesForMe(idDeleteMessages);
+
+                EndEditCommand.Execute(null);
+                CancelQuoted();
+                SelectMessagesMode.CheckOff();
+                ConfirmationViewModel.Close();
+            });
+
+
+            MessageCleaningCommand = ReactiveCommand.Create(() =>
+            {
+                SettingsViewModel.CloseContextMenu();
+                SettingsViewModel.IsOpened = false;
+                ConfirmationViewModel.Open(cleaningAllCommand, "Очистить у себя всю историю чата?", "Очистить");
+            });
+
+            SelectedMessagesDeleteCommand = ReactiveCommand.Create(() =>
+            {
+                ConfirmationViewModel.Open(deleteMessagesCommand, "Удалить у себя выбранные сообщения?", "Удалить");
+            });
+
+
+
+
+
             ProfileViewModel.SignOutCommand = SignOutCommand;
             ProfileViewModel.LoadMessageHistoryCommand = LoadMessageHistoryCommand;
 
@@ -558,6 +605,7 @@ namespace SkillChat.Client.ViewModel
                 model.ChatName,(signedIn, displayName, chatName) =>
                 IsSignedIn ? $"SkillChat - {User.DisplayName} [{ChatName}]" : $"SkillChat").Subscribe(s => Title = s);
         }
+
         /// <summary>
         /// Метод выхода из режима редактирования
         /// </summary>
@@ -666,14 +714,22 @@ namespace SkillChat.Client.ViewModel
         public bool IsEdited => idEditMessage != null;
 
         public ICommand LoadMessageHistoryCommand { get; }
+
         public ICommand SignOutCommand { get; }
+
+        public ICommand MessageCleaningCommand { get; }
+
+        public ICommand SelectedMessagesDeleteCommand { get; } 
+
         public bool windowIsFocused { get; set; }
+
         public static ReactiveCommand<object, Unit> NotifyCommand { get; set; }
 
         public static ReactiveCommand<object, Unit> PointerPressedCommand { get; set; }
 
         public ProfileViewModel ProfileViewModel { get; set; }
         public SendAttachmentsViewModel AttachmentViewModel { get; set; }
+        public ConfirmationViewModel ConfirmationViewModel { get; set; }
 
         public bool IsShowingLoginPage { get; set; }
         public bool IsShowingRegisterPage { get; set; }
@@ -721,6 +777,15 @@ namespace SkillChat.Client.ViewModel
         /// Словарь состоящий из всех сообщений
         /// </summary>
         private Dictionary<string, MessageViewModel> messageDictionary = new Dictionary<string, MessageViewModel>();
+
+        /// <summary>
+        /// Метод включает режим выбора сообщений из контектного меню, вызываемого кнопкой "..." на панели главного окна приложения
+        /// </summary>
+        public void SelectModeOn()
+        {
+            SelectMessagesMode.IsTurnedSelectMode = true;
+            SettingsViewModel.CloseContextMenu();
+        }
 
         /// <summary>
         /// Выбирает из коллекции сообщение, выбранное пользователем и выводит его текст в MessageText
@@ -843,7 +908,9 @@ namespace SkillChat.Client.ViewModel
         }
     }
 
-    /// <summary>Хранилище аргументов события MessageReceived</summary>
+    /// <summary>
+    /// Хранилище аргументов события MessageReceived
+    /// </summary>
     public class ReceivedMessageArgs
     {
         public ReceivedMessageArgs(MessageViewModel message)

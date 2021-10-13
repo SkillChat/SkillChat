@@ -8,6 +8,7 @@ namespace SkillChat.Server.Domain
     {
         public string UserId { get; set; }
         public ChatMemberRole UserRole { get; set; }
+        public DateTimeOffset MessagesHistoryDateBegin { get; set; }
     }
 
     public enum ChatMemberRole

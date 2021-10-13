@@ -2,10 +2,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="62"
+             xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
+             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="93"
              x:Class="SkillChat.Client.Views.Settings.More"
              Background="Transparent">
-    <Border CornerRadius="2" Name="bord" IsVisible="{Binding IsContextMenu}" Background="White" BorderBrush="#FF9337"
+    <Design.DataContext>
+        <viewModel:DesignMainWindowViewModel/>
+    </Design.DataContext>
+    <Border CornerRadius="2" Name="bord" IsVisible="{Binding SettingsViewModel.IsContextMenu}" Background="White" BorderBrush="#FF9337"
             BorderThickness="1">
         <WrapPanel>
 
@@ -17,7 +21,7 @@
                 Background="#0000"
                 Cursor="Hand"
                 Classes="SelectedMore"
-                Command="{Binding SelectMessage}">
+                Command="{Binding SelectModeOn}">
                 <Button.Content>
                     <TextBlock Text="Выбрать сообщения" FontWeight="400" FontSize="13" Padding="15 0" />
                 </Button.Content>
@@ -29,7 +33,21 @@
                 BorderBrush="Transparent"
                 Background="#0000"
                 Cursor="Hand"
-                Command="{Binding OpenSettingsCommand}"
+                Command="{Binding MessageCleaningCommand}"
+                HorizontalContentAlignment="Left"
+                Classes="SelectedMore">
+                <Button.Content>
+                    <TextBlock Text="Очистить историю" FontWeight="400" FontSize="13" Padding="15 0" />
+                </Button.Content>
+            </Button>
+
+            <Button
+                Width="200"
+                Height="30"
+                BorderBrush="Transparent"
+                Background="#0000"
+                Cursor="Hand"
+                Command="{Binding SettingsViewModel.OpenSettingsCommand}"
                 HorizontalContentAlignment="Left"
                 Classes="SelectedMore">
                 <Button.Content>

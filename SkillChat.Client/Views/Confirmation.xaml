@@ -1,0 +1,95 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+    xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+    xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
+    xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
+    mc:Ignorable="d"
+    Background="#4C000000"
+    x:Class="SkillChat.Client.Views.Confirmation">
+
+    <Border 
+        Classes="BorderStyle"
+        VerticalAlignment="Center"
+        HorizontalAlignment="Center">
+    <Grid 
+        Width="370"
+        Height="160"
+        VerticalAlignment="Stretch" 
+        HorizontalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+		<!-- Кнопка закрытия окна -->
+        <Button
+            Grid.Row="0"
+            Classes="ConfirmationClose"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Right"
+            Margin="0 12 12 0"
+            Command="{Binding Close}">
+            <Image Width="16" Height="16">
+                <Image.Source>
+                    <svg:SvgImage Source="/Assets/close.svg" />
+                </Image.Source>
+            </Image>
+        </Button>
+        <!-- Иконка мусорного бака -->
+        <Image Grid.Row="0"
+               Width="20"
+               Height="20"
+               VerticalAlignment="Top"
+               HorizontalAlignment="Center"
+               Margin="0 20 0 0">
+            <Image.Source>
+                <svg:SvgImage Source="/Assets/bin_pressed.svg" />
+            </Image.Source>
+        </Image>
+
+        <!-- Добавть привязку с названием события -->
+		<!-- Текст с описанием действия -->
+        <TextBlock
+            Grid.Row="1"
+            Classes="ConfirmationEventName"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Margin="0 0 0 10"
+            Text="{Binding ConfirmationQuestion}">
+        </TextBlock>
+
+        <Grid Grid.Row="2" Grid.ColumnDefinitions="*,*">
+        <!--Кнопка Отмена-->
+        <Button
+            Grid.Column="0"
+            Command="{Binding Close}"
+            HorizontalAlignment="Right"
+            Margin="0 0 15 22"
+            Classes="ConfirmationButton">
+            <Button.Content>
+                <TextBlock Text="Отмена" Padding="15 0"/>
+            </Button.Content>
+        </Button>
+        <!--Добавить обработку действия удаления отдельных сообщений-->
+        <!--Кнопка Удалить-->
+        <Button
+            Grid.Column="1"
+            Command="{Binding ConfirmSelectionCommand}"
+            HorizontalAlignment="Left"
+            Margin="15 0 0 22"
+            Classes="ConfirmationButton">
+            <Button.Content>
+                <TextBlock Text="{Binding ButtonName}" Padding="15 0"/>
+            </Button.Content>
+        </Button>
+        </Grid>
+
+    </Grid>
+
+  </Border>
+</UserControl>

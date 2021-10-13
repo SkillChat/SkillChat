@@ -16,10 +16,10 @@ namespace SkillChat.Server.ServiceModel
         [ApiMember(IsRequired = true, Description = "Идентификатор чата, для которого будет выбираться сообщения")]
         public string ChatId { get; set; }
 
-        [ApiMember(IsRequired = false, Description = "Идентиикатор сообщения после которрого получать")]
+        [ApiMember(IsRequired = false, Description = "Идентификатор сообщения до которого получать")]
         public DateTimeOffset? BeforePostTime { get; set; }
         
-        [ApiMember(IsRequired = false, Description = "Идентиикатор сообщения после которрого получать")]
+        [ApiMember(IsRequired = false, Description = "Идентификатор сообщения после которого получать")]
         public int? PageSize { get;set; }
     }
 

@@ -233,7 +233,23 @@
       </Setter>
   </Style>
 
-	<Style Selector="TextBlock.CopyToClipboard">
+  <Style Selector="Button.DeleteMessage Image#DeleteSelectedMessages">
+      <Setter Property="Source">
+          <Setter.Value>
+              <svg:SvgImage Source="/Assets/bin_pressed_grey.svg" />
+          </Setter.Value>
+      </Setter>
+  </Style>
+
+  <Style Selector="Button.DeleteMessage:pressed Image#DeleteSelectedMessages">
+      <Setter Property="Source">
+          <Setter.Value>
+                <svg:SvgImage Source="/Assets/bin-delete.svg"/>
+          </Setter.Value>
+      </Setter>
+  </Style>
+
+    <Style Selector="TextBlock.CopyToClipboard">
 		<Setter Property="FontSize" Value="15"/>
 		<Setter Property="Foreground" Value="#4F4F4F"/>
 	</Style>

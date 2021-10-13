@@ -22,12 +22,22 @@ namespace SkillChat.Server.ServiceInterface
         [Authenticate]
         public async Task<MessagePage> Get(GetMessages request)
         {
+            var session = Request.ThrowIfUnauthorized();
+            var userId = session?.UserAuthId;
+            Chat chat = await RavenSession.LoadAsync<Chat>(request.ChatId);
+            ChatMember chatMember = chat.Members.FirstOrDefault(e => e.UserId == userId);
             var messages = RavenSession.Query<Message>().Where(e => e.ChatId == request.ChatId).OrderByDescending(x => x.PostTime);
             var result = new MessagePage();
+
             if (request.BeforePostTime != null)
             {
                 messages = messages.Where(x => x.PostTime.UtcDateTime < request.BeforePostTime.Value.UtcDateTime);
             }
+            if (chatMember?.MessagesHistoryDateBegin != null)
+            {
+                messages = messages.Where(x => x.PostTime > chatMember.MessagesHistoryDateBegin);
+            }
+            messages = messages.Where(x => x.HideForUsers == null || !x.HideForUsers.Contains(userId));
 
             var pageSize = request.PageSize ?? 50;
             
@@ -43,23 +53,22 @@ namespace SkillChat.Server.ServiceInterface
             {
                 var user = await RavenSession.LoadAsync<User>(doc.UserId);
                 var message = Mapper.Map<MessageMold>(doc);
-            
-                message = await GetAttachments(doc,message);
+
+                message = await GetAttachments(doc, message);
 
                 if (!doc.IdQuotedMessage.IsNullOrEmpty())
                 {
-                   
                     var mes = await RavenSession.LoadAsync<Message>(doc.IdQuotedMessage);
 
                     message.QuotedMessage = Mapper.Map<MessageMold>(mes);
                     var userQuitedMessage = await RavenSession.LoadAsync<User>(message.QuotedMessage.UserId);
 
+                    message.QuotedMessage = await GetAttachments(mes, message.QuotedMessage);
 
-                    message.QuotedMessage = await GetAttachments(mes,message.QuotedMessage);
-
-                    if (userQuitedMessage!=null)
+                    if (userQuitedMessage != null)
                     {
-                        message.QuotedMessage.UserNickName = string.IsNullOrWhiteSpace(userQuitedMessage.DisplayName) ? userQuitedMessage.Login : userQuitedMessage.DisplayName;
+                        message.QuotedMessage.UserNickName = string.IsNullOrWhiteSpace(userQuitedMessage.DisplayName)
+                            ? userQuitedMessage.Login : userQuitedMessage.DisplayName;
                     }
 
                 }
@@ -67,12 +76,13 @@ namespace SkillChat.Server.ServiceInterface
                 if (user != null)
                 {
                     message.UserNickName = string.IsNullOrWhiteSpace(user.DisplayName) ? user.Login : user.DisplayName;
-
                 }
+
                 result.Messages.Add(message);
             }
             return result;
         }
+
         [Authenticate]
         public async Task<ChatPage> Get(GetChatsList request)
         {

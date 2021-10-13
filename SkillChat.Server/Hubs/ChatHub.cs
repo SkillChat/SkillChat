@@ -8,8 +8,6 @@ using ServiceStack.Host;
 using SignalR.EasyUse.Server;
 using SkillChat.Interface;
 using SkillChat.Server.Domain;
-using SkillChat.Server.ServiceModel.Molds.Attachment;
-using Splat;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -113,6 +111,58 @@ namespace SkillChat.Server.Hubs
             {
                 Console.WriteLine(e);
                 throw;
+            }
+        }
+        /// <summary>
+        /// Удаление сообщений (для пользователя)
+        /// </summary>
+        /// <param name="idDeleteMessages"></param>
+        /// <returns></returns>
+        public async Task DeleteMessagesForMe(List<string> idDeleteMessages)
+        {
+            try
+            {
+                string uid = Context.Items["uid"].ToString();
+                var messages = await _ravenSession.LoadAsync<Message>(idDeleteMessages);
+                var listMessages = messages.Values.ToList();
+                foreach (var item in listMessages)
+                {
+                    if (item.HideForUsers == null)
+                    {
+                        item.HideForUsers = new List<string>();
+                    }
+
+                    if (uid != null && !item.HideForUsers.Contains(uid))
+                    {
+                        item.HideForUsers.Add(uid);
+                    }
+                }
+                await _ravenSession.SaveChangesAsync();
+            }
+            catch
+            {
+
+            }
+
+        }
+        /// <summary>
+        /// Очистка чата (для пользователя)
+        /// </summary>
+        /// <param name="messagesHistoryDateBegin">дата/время после которого загружаются сообщения</param>
+        /// <returns></returns>
+        public async Task CleanChatForMe(string chatId)
+        {
+            try
+            {
+                Chat chat= await _ravenSession.LoadAsync<Chat>(chatId);
+                string userId = Context.Items["uid"]?.ToString();
+                ChatMember chatMember = chat.Members.FirstOrDefault(e => e.UserId == userId);
+                chatMember.MessagesHistoryDateBegin = DateTimeOffset.UtcNow;
+                await _ravenSession.StoreAsync(chat);
+                await _ravenSession.SaveChangesAsync();
+            }
+            catch
+            {
             }
         }
 

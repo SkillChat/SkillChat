@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 using System.Windows.Input;
 using PropertyChanged;
 using ReactiveUI;
-using ServiceStack;
 using Splat;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -91,6 +88,5 @@ namespace SkillChat.Client.ViewModel
         /// Команда для выхода из режима выбора сообщений
         /// </summary>
         public ICommand TurnOffSelectModeCommand { get; }
-
     }
 }
