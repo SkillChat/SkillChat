@@ -14,6 +14,7 @@
     </Design.DataContext>
     <UserControl.Resources>
         <utils:BoolToObjectConverter x:Key="BoolToObjectConverter"/>
+        <utils:UserIdToBrushConverter x:Key="UserIdToBrushConverter"/>
         <utils:StackPanelMarginConverter x:Key="StackPanelMarginConverter"/>
         <SolidColorBrush x:Key="GrayColor" Color="#DDD5F4"/>
         <SolidColorBrush x:Key="WhiteColor" Color="#FFFFFF"/>
@@ -54,6 +55,8 @@
 							Classes="UserLogin"
 										IsVisible="{Binding !IsMyMessage}"
 							Text="{Binding DisplayNickname}"
+							Foreground="{Binding UserId,
+							Converter={StaticResource UserIdToBrushConverter}}"
 							x:Name="UserDisplayNickname">
 							<interactivity:Interaction.Behaviors>
 								<core:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #UserDisplayNickname}">

@@ -10,6 +10,7 @@
              x:Class="SkillChat.Client.Views.QuotedMessage">
     <UserControl.Resources>
         <utils:BoolToObjectConverter x:Key="BoolToObjectConverter"/>
+		<utils:UserIdToBrushConverter x:Key="UserIdToBrushConverter"/>
         <SolidColorBrush x:Key="DarkPurpleColor" Color="#5027C7"/>
         <SolidColorBrush x:Key="OrangeColor" Color="#FF9337"/>
 				<SolidColorBrush x:Key="VioletColor" Color="#D1C0FF"/>
@@ -31,7 +32,9 @@
 			<DockPanel Grid.Row="0" VerticalAlignment="Top">
 				<TextBlock DockPanel.Dock="Left"
 					Classes="QuotedUserLogin"
-					Text="{Binding QuotedDisplayNickname}"/>
+					Text="{Binding QuotedDisplayNickname}"
+                    Foreground="{Binding UserId, 
+					Converter={StaticResource UserIdToBrushConverter} }"/>
 				<StackPanel 
                     DockPanel.Dock="Right" 
                     Orientation="Horizontal"
