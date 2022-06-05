@@ -23,13 +23,14 @@ git clone https://github.com/SkillChat/SkillChat
 ![image](https://user-images.githubusercontent.com/61462657/172032136-95d55f65-8451-4fce-b46c-ea0da859006f.png )
 
 ---
-## 📺 Демонстрация работы (придумать аналог слова Showcase, демонстрация/показ/ветрина)
+## 📺 Демонстрация работы
 
 <video src="https://user-images.githubusercontent.com/61462657/172038547-3d019a16-c7a7-4660-bbd5-cf292d5f3f33.mp4" ></video>
 
-2) редактирование сообщений
-3) удаление выбранных сообщений
-4) отправка файлов
+<video src="https://user-images.githubusercontent.com/61462657/172043463-dc75a8e2-df2a-45f4-b866-fe70389f05dd.mp4" ></video>
+
+<video src="https://user-images.githubusercontent.com/61462657/172043473-2e6c4ff4-455d-4ecc-a2c6-3ff61cc7f70c.mp4" ></video>
+
 ---
 ## 🛠️ Инструменты и технологии
 <div>
@@ -64,6 +65,6 @@ git clone https://github.com/SkillChat/SkillChat
  + [Цитирование сообщений](https://github.com/SkillChat/SkillChat/pull/83)  
  + [Удаление выбранных сообщений](https://github.com/SkillChat/SkillChat/pull/95)  
  + [Очистка чата](https://github.com/SkillChat/SkillChat/pull/95)  
- + [Цветные ники для чатов](https://github.com/SkillChat/SkillChat/pull/108)  
+ + [Цветные ники для пользователей](https://github.com/SkillChat/SkillChat/pull/108)  
 
 ---
