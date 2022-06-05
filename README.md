@@ -9,6 +9,21 @@ SkillChat - кроссплатформенный open-source мессендже�
 
 ---
 ## 🚀 Начало работы
+1. Скачайте следующие пакеты и дополнения
+> [.NET 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+
+> [Avalonia](https://marketplace.visualstudio.com/items?itemName=AvaloniaTeam.AvaloniaforVisualStudio)
+
+> [SwitchStartupProject](https://marketplace.visualstudio.com/items?itemName=vs-publisher-141975.SwitchStartupProjectForVS2019)
+
+2. Клонируйте репозиторий
+```sh
+git clone https://github.com/SkillChat/SkillChat
+```
+3. Запустите проект, выбрав в SwitchStartupProject вариант Server + Client
+
+![image](https://user-images.githubusercontent.com/61462657/172032136-95d55f65-8451-4fce-b46c-ea0da859006f.png)
+
 ---
 ## 📺 Демонстрация работы (придумать аналог слова Showcase, демонстрация/показ/ветрина)
 ---
@@ -40,5 +55,3 @@ SkillChat - кроссплатформенный open-source мессендже�
 ---
  ## Реализованные функции
 ---
- ## В процессе
- ---
