@@ -9,10 +9,7 @@ SkillChat - cross-platform open-source messenger.
 ---
 ## 🚀 Getting Started
 ### For users
-1. Download the latest version
-```sh
-git clone https://github.com/SkillChat/SkillChat
-```
+1. [Download](https://github.com/SkillChat/SkillChat/releases/download/v0.2.0/SkillChat.Release.zip) the latest version  
 2. Run the SkillChat.Server.exe file from the Server folder  
 3. Run the SkillChat.Client.exe file from the Client folder  
 (You can run multiple clients)
