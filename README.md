@@ -58,9 +58,6 @@ git clone https://github.com/SkillChat/SkillChat
       <a href="https://automapper.org/" target="_blank">
   <img src="https://user-images.githubusercontent.com/61462657/171980547-0b97aec8-7e04-49e1-b6b5-8905651249b3.png" title="AutoMapper" alt="AutoMapper" width="40" height="40"/>&nbsp;
     </a>
-      <a href="https://git-fork.com/" target="_blank">
-  <img src="https://user-images.githubusercontent.com/61462657/171970531-0db95712-9b69-4b47-8240-f70cd613e0e4.png" title="Fork" alt="Fork" width="40" height="40"/>&nbsp;
-    </a>
 </div>
 
 ---
