@@ -22,10 +22,11 @@ git clone https://github.com/SkillChat/SkillChat
 ```
 3. Запустите проект, выбрав в SwitchStartupProject вариант Server + Client
 
-![image](https://user-images.githubusercontent.com/61462657/172032136-95d55f65-8451-4fce-b46c-ea0da859006f.png)
+![image](https://user-images.githubusercontent.com/61462657/172032136-95d55f65-8451-4fce-b46c-ea0da859006f.png )
 
 ---
 ## 📺 Демонстрация работы (придумать аналог слова Showcase, демонстрация/показ/ветрина)
+
 ---
 ## 🛠️ Инструменты и технологии
 <div>
@@ -54,4 +55,12 @@ git clone https://github.com/SkillChat/SkillChat
 
 ---
  ## Реализованные функции
+ [Отправка файлов](https://github.com/SkillChat/SkillChat/pull/46)  
+ [Редактирование сообщений](https://github.com/SkillChat/SkillChat/pull/61)  
+ [Выбор сообщений](https://github.com/SkillChat/SkillChat/pull/89)  
+ [Цитирование сообщений](https://github.com/SkillChat/SkillChat/pull/83)  
+ [Удаление выбранных сообщений](https://github.com/SkillChat/SkillChat/pull/95)  
+ [Очистка чата](https://github.com/SkillChat/SkillChat/pull/95)  
+ [Цветные ники для чатов](https://github.com/SkillChat/SkillChat/pull/108)  
+ 
 ---
