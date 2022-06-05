@@ -55,12 +55,12 @@ git clone https://github.com/SkillChat/SkillChat
 
 ---
  ## Реализованные функции
- [Отправка файлов](https://github.com/SkillChat/SkillChat/pull/46)  
- [Редактирование сообщений](https://github.com/SkillChat/SkillChat/pull/61)  
- [Выбор сообщений](https://github.com/SkillChat/SkillChat/pull/89)  
- [Цитирование сообщений](https://github.com/SkillChat/SkillChat/pull/83)  
- [Удаление выбранных сообщений](https://github.com/SkillChat/SkillChat/pull/95)  
- [Очистка чата](https://github.com/SkillChat/SkillChat/pull/95)  
- [Цветные ники для чатов](https://github.com/SkillChat/SkillChat/pull/108)  
- 
+ + [Отправка файлов](https://github.com/SkillChat/SkillChat/pull/46)  
+ + [Редактирование сообщений](https://github.com/SkillChat/SkillChat/pull/61)  
+ + [Выбор сообщений](https://github.com/SkillChat/SkillChat/pull/89)  
+ + [Цитирование сообщений](https://github.com/SkillChat/SkillChat/pull/83)  
+ + [Удаление выбранных сообщений](https://github.com/SkillChat/SkillChat/pull/95)  
+ + [Очистка чата](https://github.com/SkillChat/SkillChat/pull/95)  
+ + [Цветные ники для чатов](https://github.com/SkillChat/SkillChat/pull/108)  
+
 ---
