@@ -25,7 +25,7 @@ git clone https://github.com/SkillChat/SkillChat
 ---
 ## 📺 Демонстрация работы
 
-<video src="https://user-images.githubusercontent.com/61462657/172038547-3d019a16-c7a7-4660-bbd5-cf292d5f3f33.mp4" ></video>
+<video src="https://user-images.githubusercontent.com/61462657/172044241-fa4d2d4b-a5cb-4d15-b46c-85a11fb16c96.mp4" ></video>
 
 <video src="https://user-images.githubusercontent.com/61462657/172043463-dc75a8e2-df2a-45f4-b866-fe70389f05dd.mp4" ></video>
 
