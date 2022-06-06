@@ -3,8 +3,7 @@
 
 ![Logo](https://user-images.githubusercontent.com/61462657/171970177-ef4aa4e0-33ae-4a27-a791-c5adb68f53e5.svg)
 
-SkillChat - cross-platform open-source messenger.
-(in process)
+SkillChat is a cross-platform open-source messenger with real-time chat, sending files, receiving notifications, and the ability to deploy on a private server.
 
 ---
 ## 🚀 Getting Started
