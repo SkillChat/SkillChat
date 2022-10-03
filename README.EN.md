@@ -28,6 +28,34 @@ git clone https://github.com/SkillChat/SkillChat
 
 ![image](https://user-images.githubusercontent.com/61462657/172032136-95d55f65-8451-4fce-b46c-ea0da859006f.png )
 
+## 🪤Rules of program development
+### 🧹 Code style
+- Comment new code
+- Use tabs to indent
+- Put classes in separate files
+
+### 🗃 Git
+#### Commit types
+
+| Type     | Description                                          |
+| -------- | -----------------------------------------------------|
+| buil     | Building a project or changing external dependencies |
+| ci       | Setting up CI and working with scripts               |
+| docs     | Update documentation                                 |
+| feat     | Adding new features                                  |
+| fix      | Bug fixes                                            |
+| perf     | Changes to improve performance                       |
+| refactor | Code edits without fixing bugs or adding new features|
+| revert   | Revert to previous commits                           |
+| style    | Code style edits (tabs, indents, dots, commas, etc.) |
+| test     | Adding tests                                         |
+
+- Do not put the task number in the name of commits/threads
+- Writing a description in the imperative mood
+- Don't pump the commit description with punctuation marks  
+##### Example branch: ` fix/fix-typos-in-titles `
+##### Example commit: ` docs: Update README.md `
+
 ---
 ## 📺 Showcase
 
