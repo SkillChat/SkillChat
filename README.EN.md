@@ -37,24 +37,24 @@ git clone https://github.com/SkillChat/SkillChat
 ### 🗃 Git
 #### Commit types
 
-| Тип      | Описание                                                        |
-| -------- | --------------------------------------------------------------- |
-| buil     | Building a project or changing external dependencies               |
-| ci       | Setting up CI and working with scripts                              |
-| docs     | Update documentation                                         |
-| feat     | Adding new features                                   |
-| fix      | Bug fixes                                              |
-| perf     | Changes to improve performance          |
-| refactor | Code edits without fixing bugs or adding new features |
-| revert   | Revert to previous commits                                     |
-| style    | Code style edits (tabs, indents, dots, commas, etc.)      |
-| test     | Adding tests                                               |
+| Type     | Description                                          |
+| -------- | -----------------------------------------------------|
+| buil     | Building a project or changing external dependencies |
+| ci       | Setting up CI and working with scripts               |
+| docs     | Update documentation                                 |
+| feat     | Adding new features                                  |
+| fix      | Bug fixes                                            |
+| perf     | Changes to improve performance                       |
+| refactor | Code edits without fixing bugs or adding new features|
+| revert   | Revert to previous commits                           |
+| style    | Code style edits (tabs, indents, dots, commas, etc.) |
+| test     | Adding tests                                         |
 
 - Do not put the task number in the name of commits/threads
 - Writing a description in the imperative mood
 - Don't pump the commit description with punctuation marks  
 ##### Example branch: ` fix/fix-typos-in-titles `
-##### Example commit: ` docs: Обновил README.md `
+##### Example commit: ` docs: Update README.md `
 
 ---
 ## 📺 Showcase
