@@ -19,19 +19,19 @@ namespace SkillChat.Client.ViewModel
         private readonly string _attachmentPath;
         private readonly IJsonServiceClient _serviceClient;
 
-        public void OpenAttachment(string fileName)
+        public virtual void OpenAttachment(string fileName)
         {
             var path = Path.Combine(_attachmentPath, fileName);
-            Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
+            StartProcess(new ProcessStartInfo(path) { UseShellExecute = true });
         }
 
-        public bool IsExistAttachment(AttachmentMold data) 
+        public virtual bool IsExistAttachment(AttachmentMold data) 
         {        
             var fileInfo = new FileInfo(Path.Combine(_attachmentPath, data.FileName));
             return fileInfo.Exists && fileInfo.Length == data.Size;
         }
 
-        public async Task<bool> DownloadAttachment(AttachmentMold data)
+        public virtual async Task<bool> DownloadAttachment(AttachmentMold data)
         {
             try
             {
@@ -72,6 +72,11 @@ namespace SkillChat.Client.ViewModel
                 //TODO вывести ошибку в будущем
                 return false;
             }
+        }
+
+        protected virtual void StartProcess(ProcessStartInfo startInfo)
+        {
+            Process.Start(startInfo);
         }
     }
 }

@@ -122,11 +122,15 @@ namespace SkillChat.Server.ServiceInterface
             if (user == null)
                 throw new HttpError(HttpStatusCode.NotFound);
 
-            var secret = await GetUserSecret(uid);
+            var secret = await GetUserSecret(uid) ?? new UserSecret
+            {
+                Id = uid + SecretPostfix
+            };
             if (secret.Password != null)
                 throw new HttpError(HttpStatusCode.Conflict);
 
-            secret.Password = request.NewPassword;
+            secret.Salt = Hashing.CreateSalt();
+            secret.Password = Hashing.CreateHashPassword(request.NewPassword, secret.Salt);
 
             await RavenSession.StoreAsync(secret);
             await RavenSession.SaveChangesAsync();
