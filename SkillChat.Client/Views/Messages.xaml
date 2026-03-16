@@ -35,7 +35,7 @@
                             FallbackValue={StaticResource HorizontalAlignmentLeft}}"
         Margin="{Binding ViewType, Converter={StaticResource StackPanelMarginConverter}}">
 			<StackPanel.ContextMenu>
-				<ContextMenu Items="{Binding MenuItems}" IsVisible="{Binding !SelectMsgMode.IsTurnedSelectMode}"/>
+				<ContextMenu ItemsSource="{Binding MenuItems}" IsVisible="{Binding !SelectMsgMode.IsTurnedSelectMode}"/>
 			</StackPanel.ContextMenu>
 			<Border
 				Classes="textMessage"

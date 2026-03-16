@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 
 namespace SkillChat.Client.Utils
 {
@@ -7,7 +8,11 @@ namespace SkillChat.Client.Utils
     {
         public async Task SetTextAsync(string text)
         {
-            await AvaloniaLocator.Current.GetService<Avalonia.Input.Platform.IClipboard>().SetTextAsync(text);
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime &&
+                lifetime.MainWindow?.Clipboard is { } clipboard)
+            {
+                await clipboard.SetTextAsync(text);
+            }
         }
     }
 }

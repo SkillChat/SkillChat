@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
+    xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia"
     xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
     xmlns:views="clr-namespace:SkillChat.Client.Views"
     xmlns:profile="clr-namespace:SkillChat.Client.Views.Profile"
@@ -238,7 +238,7 @@
                                 VerticalAlignment="Bottom"
                                 Background="Transparent"
                                 BorderThickness="0"
-                                Items="{Binding Messages}">
+                                ItemsSource="{Binding Messages}">
                                 <ItemsControl.DataTemplates>
                                     <!--  Messages  -->
                                     <DataTemplate DataType="{x:Type viewModel:MessageViewModel}">

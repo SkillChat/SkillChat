@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using ServiceStack;
 using ServiceStack.Api.OpenApi;
-using ServiceStack.Api.Swagger;
 using ServiceStack.Auth;
 using ServiceStack.Configuration;
 using ServiceStack.Validation;

@@ -4,12 +4,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SkillChat.Client.Views.NotifyWindow"
-        xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
+        xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia"
         Height="70"
         Width="340"
         TransparencyLevelHint="Transparent"
         Background="Transparent"
-        HasSystemDecorations="False"
+        SystemDecorations="None"
         Title="Notify">
     <Border CornerRadius="8,0,0,8"  Background="#F2EEFF"  Width="340" Height="70">
         <Grid Background="Transparent" ColumnDefinitions="60,*,60" >

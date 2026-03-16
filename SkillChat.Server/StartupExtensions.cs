@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -73,13 +72,10 @@ namespace SkillChat.Server
             });
             services.AddSingleton<EmbeddedServer>(serviceProvider =>
             {
-                if (!EmbeddedServer.Instance.IsRunning())
-                {
-                    var serverOptions = serviceProvider.GetRequiredService<ServerOptions>();
-                    EmbeddedServer.Instance.StartServer(serverOptions);
-                }
-
-                return EmbeddedServer.Instance;
+                var serverOptions = serviceProvider.GetRequiredService<ServerOptions>();
+                var embeddedServer = EmbeddedServer.Instance;
+                embeddedServer.StartServer(serverOptions);
+                return embeddedServer;
             });
             services.AddSingleton<IDocumentStore>(serviceProvider =>
             {
@@ -144,15 +140,6 @@ namespace SkillChat.Server
                     PurgeOnDelete = false,
                 }
             }));
-        }
-
-        public static bool IsRunning(this EmbeddedServer instance)
-        {
-            // HACK: check RavenDB running state using private field to avoid multiple starts
-            // https://github.com/ravendb/ravendb/blob/release/v4.2/src/Raven.Embedded/EmbeddedServer.cs#L45-L46
-            const BindingFlags bindingFlags = BindingFlags.NonPublic | BindingFlags.Instance;
-            var result = instance.GetType().GetField("_serverTask", bindingFlags)?.GetValue(instance);
-            return result != null;
         }
     }
 }

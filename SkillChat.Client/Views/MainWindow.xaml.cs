@@ -44,9 +44,9 @@ namespace SkillChat.Client.Views
         {
             if (ViewModel != null)
             {
-                var verticaloffsetvalue = ScrollViewer.VerticalScrollBarValueProperty.Getter(MessagesScroller);
-                var verticaloffsetmax = ScrollViewer.VerticalScrollBarMaximumProperty.Getter(MessagesScroller);
-                ViewModel.SettingsViewModel.AutoScroll = verticaloffsetmax.Equals(verticaloffsetvalue);
+                var verticaloffsetvalue = MessagesScroller.Offset.Y;
+                var verticaloffsetmax = Math.Max(0, MessagesScroller.Extent.Height - MessagesScroller.Viewport.Height);
+                ViewModel.SettingsViewModel.AutoScroll = verticaloffsetvalue >= verticaloffsetmax;
 
                 if (verticaloffsetmax != 0)
                 {
@@ -86,12 +86,12 @@ namespace SkillChat.Client.Views
         /// <summary>Контрол скролла для списка сообщений</summary>
         ScrollViewer MessagesScroller;
 
-        private void MessagesControlOnLayoutUpdated(object? sender, EventArgs e)
+        private void MessagesControlOnLayoutUpdated(object sender, EventArgs e)
         {
             if (ViewModel != null)
             {
                 MessagesScroller.LayoutUpdated -= MessagesControlOnLayoutUpdated;
-                var verticaloffsetmax = ScrollViewer.VerticalScrollBarMaximumProperty.Getter(MessagesScroller);
+                var verticaloffsetmax = Math.Max(0, MessagesScroller.Extent.Height - MessagesScroller.Viewport.Height);
                 MessagesScroller.Offset =
                     new Vector(MessagesScroller.Offset.X,
                         verticaloffsetmax - LastVerticaloffsetmax);
