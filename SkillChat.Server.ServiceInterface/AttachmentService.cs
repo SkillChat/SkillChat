@@ -14,6 +14,9 @@ namespace SkillChat.Server.ServiceInterface
 {
     public class AttachmentService : Service
     {
+        private const long MaxFileSizeBytes = 50 * 1024 * 1024; // 50 MB
+        private const int BufferSize = 4 * 1024 * 1024; // 4 MB
+
         public IAsyncDocumentSession RavenSession { get; set; }
         public IMapper Mapper { get; set; }
         private string pref { get; set; }
@@ -60,6 +63,12 @@ namespace SkillChat.Server.ServiceInterface
             if (file == null) throw HttpError.BadRequest("Error: No file to download");
 
             var stream = file?.InputStream;
+
+            if (stream.Length > MaxFileSizeBytes)
+            {
+                throw HttpError.BadRequest("File size exceeds the maximum allowed size");
+            }
+
             var fileId = $"{pref}{Guid.NewGuid()}";
 
             var fileUpload = new Attachment()
@@ -97,15 +106,14 @@ namespace SkillChat.Server.ServiceInterface
 
             using (var fileStream = File.Create(filePath, (int)stream.Length))
             {
-                const int bufferSize = 4194304;
-                var data = new byte[bufferSize];
+                var data = new byte[BufferSize];
 
                 stream.Seek(0, SeekOrigin.Begin);
                 var hashString = string.Empty;
 
                 while (stream.Position < stream.Length)
                 {
-                    var read = stream.Read(data, 0, bufferSize);
+                    var read = stream.Read(data, 0, BufferSize);
                     fileStream.Write(data, 0, read);
 
                     hashString += data.ToMd5Hash();
