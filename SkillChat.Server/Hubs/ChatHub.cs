@@ -107,9 +107,9 @@ namespace SkillChat.Server.Hubs
                     Log.Information($"User {Context.Items["nickname"]}({Context.Items["login"]}) edited message in main chat");
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e);
+                Log.Error(ex, "Error updating message");
                 throw;
             }
         }
@@ -139,9 +139,9 @@ namespace SkillChat.Server.Hubs
                 }
                 await _ravenSession.SaveChangesAsync();
             }
-            catch
+            catch (Exception ex)
             {
-
+                Log.Error(ex, "Error deleting messages for user");
             }
 
         }
@@ -161,8 +161,9 @@ namespace SkillChat.Server.Hubs
                 await _ravenSession.StoreAsync(chat);
                 await _ravenSession.SaveChangesAsync();
             }
-            catch
+            catch (Exception ex)
             {
+                Log.Error(ex, "Error cleaning chat for user");
             }
         }
 
