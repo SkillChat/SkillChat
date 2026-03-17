@@ -11,6 +11,9 @@
         <Color x:Key="Violet_01">#D1C0FF</Color>
         <Color x:Key="Violet_02">#9976FB</Color>
         <Color x:Key="Violet_03">#6B3FE7</Color>
+        <Color x:Key="Violet_04">#9F81F3</Color>
+        <Color x:Key="Orange_01">#FFC797</Color>
+        <Color x:Key="Orange_02">#FFA85E</Color>
         <Color x:Key="Orange_03">#FF9337</Color>
 
         <Color x:Key="ThemeAccentColor">#9976FB</Color>
@@ -55,6 +58,14 @@
         <SolidColorBrush x:Key="ThemeAccentBrush4" Color="{DynamicResource ThemeAccentColor4}" />
         <SolidColorBrush x:Key="ErrorBrush" Color="{DynamicResource ErrorColor}" />
         <SolidColorBrush x:Key="ErrorLowBrush" Color="{DynamicResource ErrorLowColor}" />
+
+        <SolidColorBrush x:Key="Violet_01Brush" Color="{DynamicResource Violet_01}" />
+        <SolidColorBrush x:Key="Violet_02Brush" Color="{DynamicResource Violet_02}" />
+        <SolidColorBrush x:Key="Violet_03Brush" Color="{DynamicResource Violet_03}" />
+        <SolidColorBrush x:Key="Violet_04Brush" Color="{DynamicResource Violet_04}" />
+        <SolidColorBrush x:Key="Orange_01Brush" Color="{DynamicResource Orange_01}" />
+        <SolidColorBrush x:Key="Orange_02Brush" Color="{DynamicResource Orange_02}" />
+        <SolidColorBrush x:Key="Orange_03Brush" Color="{DynamicResource Orange_03}" />
 
         <SolidColorBrush x:Key="White" Color="#FFFFFF"/>
         <SolidColorBrush x:Key="Orange" Color="#FF9337"/>
