@@ -24,24 +24,24 @@ namespace SkillChat.Server.Hubs
             Mapper = mapper;
         }
         private IMapper Mapper;
-        private string _loginedGroup = "Logined";
+        private const string LoggedInGroup = "LoggedIn";
 
         private readonly IAsyncDocumentSession _ravenSession;
 
-        public async Task UpdateMyDisplayName(string userDispalyName)
+        public async Task UpdateMyDisplayName(string userDisplayName)
         {
-            if (Context.Items["nickname"] as string != userDispalyName)
+            if (Context.Items["nickname"] as string != userDisplayName)
             {
-                await Clients.Group(_loginedGroup).SendAsync(new UpdateUserDisplayName
+                await Clients.Group(LoggedInGroup).SendAsync(new UpdateUserDisplayName
                 {
                     Id = Context.Items["uid"] as string,
-                    DisplayName = userDispalyName,
+                    DisplayName = userDisplayName,
                     UserLogin = Context.Items["login"] as string
                 });
 
-                Context.Items["nickname"] = userDispalyName;
+                Context.Items["nickname"] = userDisplayName;
                 Log.Information(
-                    $"User Id:{Context.Items["uid"] as string} change display user name to {userDispalyName}");
+                    $"User Id:{Context.Items["uid"] as string} change display user name to {userDisplayName}");
             }
         }
 
@@ -62,7 +62,7 @@ namespace SkillChat.Server.Hubs
 
             var quotedReceiveMessage = await GetQuotedReceiveMessage(hubMessage.IdQuotedMessage);
 
-            await Clients.Group(_loginedGroup).SendAsync(new ReceiveMessage
+            await Clients.Group(LoggedInGroup).SendAsync(new ReceiveMessage
             {
                 Id = messageItem.Id,
                 UserLogin = Context.Items["login"] as string,
@@ -97,7 +97,7 @@ namespace SkillChat.Server.Hubs
 
                     var quotedReceiveMessage = await GetQuotedReceiveMessage(hubEditedMessage.IdQuotedMessage);
                    
-                    await Clients.Group(_loginedGroup).SendAsync(new ReceiveEditedMessage()
+                    await Clients.Group(LoggedInGroup).SendAsync(new ReceiveEditedMessage()
                     {
                         Id = hubEditedMessage.Id,
                         Text = mes.Text,
@@ -174,7 +174,7 @@ namespace SkillChat.Server.Hubs
             try
             {
                 var jwtPayload = jwtAuthProviderReader.GetVerifiedJwtPayload(new BasicHttpRequest(), token.Split('.'));
-                await Groups.AddToGroupAsync(this.Context.ConnectionId, _loginedGroup);
+                await Groups.AddToGroupAsync(this.Context.ConnectionId, LoggedInGroup);
                 Context.Items["login"] = jwtPayload["name"];
                 Context.Items["uid"] = jwtPayload["sub"];
                 Context.Items["session"] = jwtPayload["session"];
