@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using ServiceStack;
 
@@ -6,6 +7,8 @@ namespace SkillChat.Server
 {
     public class ServiceStackKey
     {
+        private static readonly HttpClient _httpClient = new HttpClient();
+
         IConfiguration configuration;
         ServiceStackSettings settings;
 
@@ -24,7 +27,7 @@ namespace SkillChat.Server
             catch (LicenseException)
             {
                 var licenseKeyAddress = settings.LicenseKeyAddress;
-                var newTrialKey = GetNewTrialKeyFromHtmlText(licenseKeyAddress);
+                var newTrialKey = GetNewTrialKeyFromHtmlTextAsync(licenseKeyAddress).GetAwaiter().GetResult();
 
                 settings.LicenseKey = newTrialKey;
 
@@ -36,12 +39,11 @@ namespace SkillChat.Server
             }
         }
 
-        private string GetNewTrialKeyFromHtmlText(string url)
+        private async Task<string> GetNewTrialKeyFromHtmlTextAsync(string url)
         {
-            string newTrialKey = string.Empty;
-            string htmlText = new HttpClient().GetStringAsync(url).Result;
+            string htmlText = await _httpClient.GetStringAsync(url);
             int newKeyFirstIndex = htmlText.IndexOf("TRIAL");
-            newTrialKey = htmlText.Substring(newKeyFirstIndex, 383);
+            string newTrialKey = htmlText.Substring(newKeyFirstIndex, 383);
             return newTrialKey;
         }
 
