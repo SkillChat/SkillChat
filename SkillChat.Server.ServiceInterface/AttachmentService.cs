@@ -28,6 +28,7 @@ namespace SkillChat.Server.ServiceInterface
         [Authenticate]
         public async Task<Stream> Get(GetAttachment request)
         {
+            ValidateFileId(request.Id);
             var filePath = Path.Combine(dirPatch, request.Id);
 
             if (!File.Exists(filePath))
@@ -36,6 +37,18 @@ namespace SkillChat.Server.ServiceInterface
             }
            
             return File.OpenRead(filePath);
+        }
+
+        private static void ValidateFileId(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id) || 
+                id.Contains("..") || 
+                id.Contains('/') || 
+                id.Contains('\\') ||
+                Path.GetFileName(id) != id)
+            {
+                throw HttpError.BadRequest("Invalid file identifier");
+            }
         }
 
         [Authenticate]
