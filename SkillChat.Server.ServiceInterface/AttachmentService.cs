@@ -8,6 +8,7 @@ using SkillChat.Server.ServiceModel.Molds.Attachment;
 using System;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace SkillChat.Server.ServiceInterface
@@ -105,22 +106,23 @@ namespace SkillChat.Server.ServiceInterface
             }
 
             using (var fileStream = File.Create(filePath, (int)stream.Length))
+            using (var md5 = MD5.Create())
             {
                 var data = new byte[BufferSize];
 
                 stream.Seek(0, SeekOrigin.Begin);
-                var hashString = string.Empty;
 
                 while (stream.Position < stream.Length)
                 {
                     var read = stream.Read(data, 0, BufferSize);
                     fileStream.Write(data, 0, read);
 
-                    hashString += data.ToMd5Hash();
+                    md5.TransformBlock(data, 0, read, null, 0);
                 }
 
+                md5.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
                 fileStream.Flush();
-                return hashString;
+                return BitConverter.ToString(md5.Hash).Replace("-", "").ToLowerInvariant();
             }
         }
     }
