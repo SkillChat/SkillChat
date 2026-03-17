@@ -13,6 +13,8 @@ namespace SkillChat.Server.ServiceInterface
 {
     public class ProfileService : Service
     {
+        private const int MaxDisplayNameLength = 32;
+
         public IAsyncDocumentSession RavenSession { get; set; }
         public IMapper Mapper { get; set; }
 
@@ -33,7 +35,7 @@ namespace SkillChat.Server.ServiceInterface
             var existedUser = await RavenSession.Query<User>().FirstOrDefaultAsync(x => x.Id == uid);
             if (existedUser != null)
             {
-                request.DisplayName = new string(request.DisplayName.Take(32).ToArray());
+                request.DisplayName = new string(request.DisplayName.Take(MaxDisplayNameLength).ToArray());
 
                 var user = Mapper.Map<SetProfile, User>(request, existedUser);
 

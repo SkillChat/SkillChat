@@ -7,6 +7,8 @@ namespace SkillChat.Client.ViewModel
 {
     public class Notification
     {
+        private const int DefaultNotificationDurationMs = 10000;
+
         private static Notification _manager;
         private List<INotify> _notificationWindows = new List<INotify>();
 
@@ -39,7 +41,7 @@ namespace SkillChat.Client.ViewModel
         }
 
         //Вызов окна
-        public async void Show(string title, string text, int? timeShow = 10000)
+        public async void Show(string title, string text, int? timeShow = DefaultNotificationDurationMs)
         {
             var w = Locator.Current.GetService<INotify>();
             w.ShowInTaskbar = false;
