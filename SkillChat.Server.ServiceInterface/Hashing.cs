@@ -6,10 +6,14 @@ namespace SkillChat.Server.ServiceInterface
 {
     public static class Hashing
     {
+        private const int SaltSizeBytes = 128 / 8;
+        private const int Pbkdf2Iterations = 10000;
+        private const int HashSizeBytes = 256 / 8;
+
         public static byte[] CreateSalt()
         {
             // generate a 128-bit salt using a secure PRNG
-            byte[] salt = new byte[128 / 8];
+            byte[] salt = new byte[SaltSizeBytes];
             using (var rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(salt);
@@ -26,8 +30,8 @@ namespace SkillChat.Server.ServiceInterface
                 password: password,
                 salt: salt,
                 prf: KeyDerivationPrf.HMACSHA1,
-                iterationCount: 10000,
-                numBytesRequested: 256 / 8));
+                iterationCount: Pbkdf2Iterations,
+                numBytesRequested: HashSizeBytes));
 
             return hashedPassword;
         }

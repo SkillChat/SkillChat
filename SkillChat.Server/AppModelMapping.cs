@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration;
+using Microsoft.Extensions.Logging.Abstractions;
 using SkillChat.Interface;
 using SkillChat.Server.Domain;
 using SkillChat.Server.ServiceModel;
@@ -16,7 +17,7 @@ namespace SkillChat.Server
         {
             var cfg = new MapperConfigurationExpression();
             ConfigureModelMapping(cfg);
-            var mapperConfiguration = new MapperConfiguration(cfg);
+            var mapperConfiguration = new MapperConfiguration(cfg, NullLoggerFactory.Instance);
             mapperConfiguration.AssertConfigurationIsValid();
             mapperConfiguration.CompileMappings();
             var mapper = new Mapper(mapperConfiguration);

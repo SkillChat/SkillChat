@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
     xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
-    xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
+    xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia"
     xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
     mc:Ignorable="d"
     MinWidth="360" 
@@ -30,7 +30,7 @@
         </Grid.RowDefinitions>
 
       <ListBox 
-          Items="{Binding Path=Attachments}" 
+          ItemsSource="{Binding Path=Attachments}" 
           MaxHeight="700"
           MaxWidth="300"
           ScrollViewer.HorizontalScrollBarVisibility="Hidden"   

@@ -92,7 +92,7 @@
                 <ItemsControl
                     Margin="15,0"
                     BorderThickness="0"
-                    Items="{Binding LoginAuditCollection}">
+                    ItemsSource="{Binding LoginAuditCollection}">
                         <ItemsControl.DataTemplates>
                             <DataTemplate DataType="{x:Type viewModel:LoginAuditViewModel}">
                                 <Grid ColumnDefinitions="*,Auto">

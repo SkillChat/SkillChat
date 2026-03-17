@@ -41,28 +41,73 @@ namespace SkillChat.Server.ServiceInterface
 
             var pageSize = request.PageSize ?? 50;
             
+            // Include() pre-loads related documents into the RavenDB session cache.
+            // Subsequent LoadAsync calls for these documents will hit the cache, not the database.
             var docs = 
                 await messages.Take(pageSize)
-                    .Include(x => x.UserId)
-                    .Include(s => s.Attachments)
-                    .Include(i=>i.IdQuotedMessage)
+                    .Include(x => x.UserId)          // Pre-loads User documents for message authors
+                    .Include(s => s.Attachments)     // Pre-loads Attachment documents for messages
+                    .Include(i => i.IdQuotedMessage) // Pre-loads quoted Message documents
                     .ToListAsync();
+
+            // Batch pre-load quoted message users and their attachments to avoid N+1 queries.
+            // The Include() above only loads the quoted Message documents, not their related User/Attachment documents.
+            var quotedMessageIds = docs
+                .Where(d => !d.IdQuotedMessage.IsNullOrEmpty())
+                .Select(d => d.IdQuotedMessage)
+                .Distinct()
+                .ToList();
+            
+            if (quotedMessageIds.Any())
+            {
+                // Load all quoted messages (will hit session cache due to Include above)
+                var quotedMessages = await RavenSession.LoadAsync<Message>(quotedMessageIds);
+                
+                // Collect user IDs from quoted messages and batch pre-load into session cache
+                var quotedUserIds = quotedMessages.Values
+                    .Where(m => m != null && !string.IsNullOrEmpty(m.UserId))
+                    .Select(m => m.UserId)
+                    .Distinct()
+                    .ToList();
+                
+                if (quotedUserIds.Any())
+                {
+                    await RavenSession.LoadAsync<User>(quotedUserIds);
+                }
+                
+                // Collect attachment IDs from quoted messages and batch pre-load into session cache
+                var quotedAttachmentIds = quotedMessages.Values
+                    .Where(m => m?.Attachments != null)
+                    .SelectMany(m => m.Attachments)
+                    .Distinct()
+                    .ToList();
+                
+                if (quotedAttachmentIds.Any())
+                {
+                    await RavenSession.LoadAsync<Attachment>(quotedAttachmentIds);
+                }
+            }
 
             result.Messages = new List<MessageMold>();
             foreach (var doc in docs)
             {
+                // User is already in session cache due to Include(x => x.UserId)
                 var user = await RavenSession.LoadAsync<User>(doc.UserId);
                 var message = Mapper.Map<MessageMold>(doc);
 
+                // Attachments are already in session cache due to Include(s => s.Attachments)
                 message = await GetAttachments(doc, message);
 
                 if (!doc.IdQuotedMessage.IsNullOrEmpty())
                 {
+                    // Quoted message is already in session cache due to Include(i => i.IdQuotedMessage)
                     var mes = await RavenSession.LoadAsync<Message>(doc.IdQuotedMessage);
 
                     message.QuotedMessage = Mapper.Map<MessageMold>(mes);
+                    // Quoted message's user is pre-loaded in batch above into session cache
                     var userQuitedMessage = await RavenSession.LoadAsync<User>(message.QuotedMessage.UserId);
 
+                    // Quoted message's attachments are pre-loaded in batch above into session cache
                     message.QuotedMessage = await GetAttachments(mes, message.QuotedMessage);
 
                     if (userQuitedMessage != null)
@@ -98,6 +143,7 @@ namespace SkillChat.Server.ServiceInterface
         }
         /// <summary>
         /// Получает все вложения сообщения, если они есть.
+        /// Attachments are expected to be pre-loaded into the session cache via Include() or batch LoadAsync.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="messageMold"></param>
@@ -106,6 +152,7 @@ namespace SkillChat.Server.ServiceInterface
         {
             if (message.Attachments != null)
             {
+                // LoadAsync will hit the session cache if attachments were pre-loaded via Include() or batch load
                 var attach = await RavenSession.LoadAsync<Attachment>(message.Attachments);
                 messageMold.Attachments = new List<AttachmentMold>();
 

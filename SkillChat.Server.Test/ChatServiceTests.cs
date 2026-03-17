@@ -1,0 +1,70 @@
+#nullable enable
+using ServiceStack;
+using SkillChat.Server.Domain;
+using SkillChat.Server.ServiceModel;
+using SkillChat.Server.Test.TestInfrastructure;
+
+namespace SkillChat.Server.Test;
+
+public class ChatServiceTests
+{
+    private static ServerTestHost Host => TestEnvironment.Host;
+
+    [Test]
+    public async Task GetChatsList_ReturnsOnlyUserChats()
+    {
+        var user = await Host.CreateUserAsync();
+        var anotherUser = await Host.CreateUserAsync();
+        var myChat = await Host.CreateChatAsync(chatName: "Mine", memberIds: [user.Id, anotherUser.Id]);
+        await Host.CreateChatAsync(chatName: "Hidden", memberIds: [anotherUser.Id]);
+
+        var client = Host.CreateClient(Host.CreateAccessToken(user));
+        var result = await client.GetAsync(new GetChatsList());
+
+        using var _ = Assert.Multiple();
+        await Assert.That(result.Chats.Count(chat => chat.Id == myChat.Id)).IsEqualTo(1);
+        await Assert.That(result.Chats.Any(chat => chat.ChatName == "Hidden")).IsFalse();
+    }
+
+    [Test]
+    public async Task GetMessages_ReturnsVisibleMessagesWithAttachmentsAndQuotedMessage()
+    {
+        var user = await Host.CreateUserAsync(displayName: "Sender");
+        var quotedAuthor = await Host.CreateUserAsync(displayName: "Quoted");
+        var chat = await Host.CreateChatAsync(memberIds: [user.Id, quotedAuthor.Id]);
+        var attachment = await Host.CreateAttachmentAsync(user.Id, fileName: "quote.txt");
+        var quoted = await Host.CreateMessageAsync(
+            chat.Id,
+            quotedAuthor.Id,
+            "quoted",
+            postTime: DateTimeOffset.UtcNow.AddMinutes(-3),
+            attachmentIds: new[] { attachment.Id });
+        await Host.CreateMessageAsync(
+            chat.Id,
+            user.Id,
+            "hidden",
+            postTime: DateTimeOffset.UtcNow.AddMinutes(-2),
+            hiddenForUsers: new[] { user.Id });
+        var visible = await Host.CreateMessageAsync(
+            chat.Id,
+            user.Id,
+            "visible",
+            postTime: DateTimeOffset.UtcNow.AddMinutes(-1),
+            quotedMessageId: quoted.Id);
+
+        var client = Host.CreateClient(Host.CreateAccessToken(user));
+        var result = await client.GetAsync(new GetMessages
+        {
+            ChatId = chat.Id,
+        });
+
+        var loadedMessage = result.Messages.Single(message => message.Id == visible.Id);
+
+        using var _ = Assert.Multiple();
+        await Assert.That(result.Messages.Any(message => message.Text == "hidden")).IsFalse();
+        await Assert.That(loadedMessage.QuotedMessage).IsNotNull();
+        await Assert.That(loadedMessage.QuotedMessage!.UserNickName).IsEqualTo("Quoted");
+        await Assert.That(loadedMessage.QuotedMessage.Attachments.Count).IsEqualTo(1);
+        await Assert.That(loadedMessage.QuotedMessage.Attachments[0].FileName).IsEqualTo("quote.txt");
+    }
+}

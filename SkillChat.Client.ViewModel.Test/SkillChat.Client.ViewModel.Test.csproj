@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NSubstitute" Version="5.3.0" />
+    <PackageReference Include="TUnit" Version="1.19.22" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SkillChat.Client.ViewModel\SkillChat.Client.ViewModel.csproj" />
+  </ItemGroup>
+
+</Project>

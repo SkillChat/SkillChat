@@ -1,23 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
-    <PackageReference Include="NUnit" Version="3.13.2" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.1.0" />
-    <PackageReference Include="coverlet.collector" Version="3.1.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.0" />
+    <PackageReference Include="NSubstitute" Version="5.3.0" />
+    <PackageReference Include="SignalR.EasyUse.Client" Version="0.3.0" />
+    <PackageReference Include="TUnit" Version="1.19.22" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SkillChat.Interface\SkillChat.Interface.csproj" />
     <ProjectReference Include="..\SkillChat.Server\SkillChat.Server.csproj" />
+    <ProjectReference Include="..\SkillChat.Server.ServiceInterface\SkillChat.Server.ServiceInterface.csproj" />
   </ItemGroup>
 
 </Project>

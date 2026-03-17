@@ -94,7 +94,8 @@ namespace SkillChat.Client.ViewModel
 
             foreach (var attachment in AttachmentsPath)
             {
-                var reqestResult = _serviceClient.PostFileWithRequest<AttachmentMold>(File.OpenRead(attachment), new FileInfo(attachment).Name, response);
+                using var fileStream = File.OpenRead(attachment);
+                var reqestResult = _serviceClient.PostFileWithRequest<AttachmentMold>(fileStream, new FileInfo(attachment).Name, response);
                 result.Add(reqestResult);
             }
 

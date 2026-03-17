@@ -15,6 +15,8 @@ namespace SkillChat.Client.ViewModel
     [AddINotifyPropertyChangedInterface]
     public class SettingsViewModel
     {
+        private const int MaxLoginHistoryItems = 100;
+
         public SettingsViewModel(IJsonServiceClient serviceClient)
         {
             ChatSettings = new UserChatSettings();
@@ -61,7 +63,7 @@ namespace SkillChat.Client.ViewModel
                 SetSelectedMenuItem(SelectedMenuItem.Audit);
                 LoginAuditCollection.Clear();
                 LoginHistoryCollection = await serviceClient.GetAsync(new GetLoginAudit());
-                foreach (var item in LoginHistoryCollection.History.Take(100))
+                foreach (var item in LoginHistoryCollection.History.Take(MaxLoginHistoryItems))
                 {
                     LoginAuditView = new LoginAuditViewModel
                     {

@@ -17,7 +17,7 @@ namespace SkillChat.Client.Views
 
         public int ScreenBottomRightY => Screens.Primary.WorkingArea.BottomRight.Y;
 
-        public double PrimaryPixelDensity => Screens.Primary.PixelDensity;
+        public double PrimaryPixelDensity => Screens.Primary.Scaling;
 
         public void SetPosition(int x, int y)
         {

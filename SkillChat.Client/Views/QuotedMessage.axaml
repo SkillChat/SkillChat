@@ -5,6 +5,7 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:interactivity="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+             xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
              xmlns:utils="clr-namespace:SkillChat.Client.Utils"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SkillChat.Client.Views.QuotedMessage">
@@ -46,10 +47,10 @@
 			</DockPanel>
 			<ItemsControl
           Grid.Row="1"
-          Items="{Binding Attachments}"
+          ItemsSource="{Binding Attachments}"
           IsVisible="{Binding IsAttachmentMessage}">
 				<ItemsControl.DataTemplates>
-					<DataTemplate>
+					<DataTemplate DataType="viewModel:AttachmentMessageViewModel">
 						<Border
 							MaxWidth="280">
 							<Grid ColumnDefinitions="Auto, Auto, Auto">

@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:interactivity="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
-             xmlns:svg="clr-namespace:Svg.Skia.Avalonia;assembly=Svg.Skia.Avalonia"
+             xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia"
+             xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
              xmlns:utils="clr-namespace:SkillChat.Client.Utils"
              x:Class="SkillChat.Client.Views.Message">
     <UserControl.Resources>
@@ -17,10 +18,10 @@
     <ItemsControl
       Grid.Row="0"
       Padding="7,0,7,0"
-      Items="{Binding Attachments}"
+      ItemsSource="{Binding Attachments}"
       IsVisible="{Binding IsAttachmentMessage}">
       <ItemsControl.DataTemplates>
-        <DataTemplate>
+        <DataTemplate DataType="viewModel:AttachmentMessageViewModel">
           <Border
             MaxWidth="280">
             <Grid ColumnDefinitions="Auto, Auto, Auto" Margin="0,0,0,10">

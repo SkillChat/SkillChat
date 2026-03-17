@@ -9,7 +9,7 @@ namespace SkillChat.Interface
     {
         Task SendMessage(HubMessage hubMessage);
         Task UpdateMessage(HubEditedMessage hubEditedMessage);
-        Task UpdateMyDisplayName(string userDispalyName);
+        Task UpdateMyDisplayName(string userDisplayName);
         Task Login(string token, string operatingSystem, string ipAddress, string nameVersionClient);
         Task DeleteMessagesForMe(List<string> idMessages);
         Task CleanChatForMe(string chatId);

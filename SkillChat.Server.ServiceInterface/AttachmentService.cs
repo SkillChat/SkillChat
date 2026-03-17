@@ -8,12 +8,16 @@ using SkillChat.Server.ServiceModel.Molds.Attachment;
 using System;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace SkillChat.Server.ServiceInterface
 {
     public class AttachmentService : Service
     {
+        private const long MaxFileSizeBytes = 50 * 1024 * 1024; // 50 MB
+        private const int BufferSize = 4 * 1024 * 1024; // 4 MB
+
         public IAsyncDocumentSession RavenSession { get; set; }
         public IMapper Mapper { get; set; }
         private string pref { get; set; }
@@ -28,6 +32,7 @@ namespace SkillChat.Server.ServiceInterface
         [Authenticate]
         public async Task<Stream> Get(GetAttachment request)
         {
+            ValidateFileId(request.Id);
             var filePath = Path.Combine(dirPatch, request.Id);
 
             if (!File.Exists(filePath))
@@ -36,6 +41,18 @@ namespace SkillChat.Server.ServiceInterface
             }
            
             return File.OpenRead(filePath);
+        }
+
+        private static void ValidateFileId(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id) || 
+                id.Contains("..") || 
+                id.Contains('/') || 
+                id.Contains('\\') ||
+                Path.GetFileName(id) != id)
+            {
+                throw HttpError.BadRequest("Invalid file identifier");
+            }
         }
 
         [Authenticate]
@@ -47,6 +64,12 @@ namespace SkillChat.Server.ServiceInterface
             if (file == null) throw HttpError.BadRequest("Error: No file to download");
 
             var stream = file?.InputStream;
+
+            if (stream.Length > MaxFileSizeBytes)
+            {
+                throw HttpError.BadRequest("File size exceeds the maximum allowed size");
+            }
+
             var fileId = $"{pref}{Guid.NewGuid()}";
 
             var fileUpload = new Attachment()
@@ -83,23 +106,23 @@ namespace SkillChat.Server.ServiceInterface
             }
 
             using (var fileStream = File.Create(filePath, (int)stream.Length))
+            using (var md5 = MD5.Create())
             {
-                const int bufferSize = 4194304;
-                var data = new byte[bufferSize];
+                var data = new byte[BufferSize];
 
                 stream.Seek(0, SeekOrigin.Begin);
-                var hashString = string.Empty;
 
                 while (stream.Position < stream.Length)
                 {
-                    var read = stream.Read(data, 0, bufferSize);
+                    var read = stream.Read(data, 0, BufferSize);
                     fileStream.Write(data, 0, read);
 
-                    hashString += data.ToMd5Hash();
+                    md5.TransformBlock(data, 0, read, null, 0);
                 }
 
+                md5.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
                 fileStream.Flush();
-                return hashString;
+                return BitConverter.ToString(md5.Hash).Replace("-", "").ToLowerInvariant();
             }
         }
     }

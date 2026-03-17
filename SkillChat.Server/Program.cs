@@ -1,7 +1,7 @@
 ﻿using System;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Raven.Client.Documents.Session;
 using Serilog;
 using WritableJsonConfiguration;
@@ -14,8 +14,8 @@ namespace SkillChat.Server
         {
             try
             {
-                Log.Information("Building web host");
-                var host = CreateWebHostBuilder(args).Build();
+                Log.Information("Building host");
+                var host = CreateHostBuilder(args).Build();
 
                 Log.Information("Start RavenDB");
                 host.Services.GetRequiredService<IAsyncDocumentSession>();
@@ -36,12 +36,15 @@ namespace SkillChat.Server
             }
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(builder =>
                 {
                     builder.Add(new WritableJsonConfigurationSource { Path = "appsettings.json" });
+                })
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
                 })
                 .UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration
                     .ReadFrom.Configuration(hostingContext.Configuration));
