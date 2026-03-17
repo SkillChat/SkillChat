@@ -41,6 +41,14 @@
         <Setter Property="Foreground" Value="#FFC797" />
     </Style>
 
+    <Style Selector="TextBox.TextBoxEnterPages:focus /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <Style Selector="TextBox.TextBoxEnterPages:pointerover /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
     <!--Border-->
     <Style Selector="Border.BorderEnterPages">
         <Setter Property="CornerRadius" Value="2" />
