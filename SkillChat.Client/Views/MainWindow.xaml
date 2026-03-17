@@ -217,7 +217,7 @@
                             Stretch="None"
                             SourceRect="0,0,152,152"
                             DestinationRect="0,0,152,152"
-                            TileMode="Tile" />
+                            TileMode="None" />
                     </Grid.Background>
                     <Grid.RowDefinitions>
                         <RowDefinition />
