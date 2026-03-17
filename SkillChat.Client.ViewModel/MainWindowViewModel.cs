@@ -57,7 +57,7 @@ namespace SkillChat.Client.ViewModel
 
             if (settings.AttachmentDefaultPath.IsNullOrEmpty())
             {
-                settings.AttachmentDefaultPath = "\\Download";
+                settings.AttachmentDefaultPath = Path.DirectorySeparatorChar + "Download";
             }
 
             serviceClient = new JsonServiceClient(settings.HostUrl);
