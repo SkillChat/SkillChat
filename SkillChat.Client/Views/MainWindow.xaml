@@ -76,14 +76,14 @@
             </Setter>
         </Style>
         <Style Selector="ScrollBar:vertical /template/ Thumb Border">
-            <Setter Property="Background" Value="#BDBDBD" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseMediumBrush}" />
             <Setter Property="CornerRadius" Value="2" />
             <Setter Property="Width" Value="6" />
         </Style>
     </Window.Styles>
     <Grid>
         <Grid ColumnDefinitions="100,*">
-            <StackPanel Background="#7F57F0">
+            <StackPanel Background="{DynamicResource Violet_02Brush}">
                 <!--  Кнопка профиля (на левой панеле)  -->
                 <Image Width="60" Margin="20">
                     <Image.Source>
@@ -137,7 +137,7 @@
             <Grid Grid.Column="1" RowDefinitions="80,*">
 
                 <!--  Header  -->
-                <Grid ZIndex="1" Background="#F2F2F2">
+                <Grid ZIndex="1" Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition
@@ -164,7 +164,7 @@
                         <TextBlock
                             FontSize="14"
                             FontWeight="Regular"
-                            Foreground="#828282"
+                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                             Text="{Binding MembersCaption}"
                             TextTrimming="WordEllipsis" />
                     </StackPanel>
@@ -172,7 +172,7 @@
                     <Grid ZIndex="1" Grid.Column="2">
                         <!--  Выбранные настройки  -->
                         <StackPanel Orientation="Horizontal" Grid.Column="0" HorizontalAlignment="Left">
-                            <TextBlock Foreground="#4F4F4F"
+                            <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                        FontWeight="600"
                                        IsVisible="{Binding SettingsActive}"
                                        VerticalAlignment="Center" 
@@ -292,7 +292,7 @@
 					          <views:SelectMessageBorderControl Grid.Column="0" Grid.Row="2" IsVisible="{Binding SelectMessagesMode.IsTurnedSelectMode}"/>	
                     <views:SendMessageControl Grid.Column="0" Grid.Row="2" ZIndex="-1" IsVisible="{Binding !SelectMessagesMode.IsTurnedSelectMode}"/>                 
                     <!--Profile - panel -->
-                    <Grid Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Right" Background="#ffffff">
+                    <Grid Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Right" Background="{DynamicResource SystemRegionBrush}">
                         <profile:Settings DataContext="{Binding ProfileViewModel}" />
                     </Grid>
                 </Grid>
