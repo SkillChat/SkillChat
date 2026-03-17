@@ -9,7 +9,7 @@
     <Design.DataContext>
         <viewModel:DesignMainWindowViewModel/>
     </Design.DataContext>
-    <Border CornerRadius="2" Name="bord" IsVisible="{Binding SettingsViewModel.IsContextMenu}" Background="White" BorderBrush="#FF9337"
+    <Border CornerRadius="2" Name="bord" IsVisible="{Binding SettingsViewModel.IsContextMenu}" Background="{DynamicResource SystemRegionBrush}" BorderBrush="{DynamicResource Orange_03Brush}"
             BorderThickness="1">
         <WrapPanel>
 
@@ -18,7 +18,7 @@
                 Height="30"
                 BorderBrush="Transparent"
                 HorizontalContentAlignment="Left"
-                Background="#0000"
+                Background="Transparent"
                 Cursor="Hand"
                 Classes="SelectedMore"
                 Command="{Binding SelectModeOn}">
@@ -31,7 +31,7 @@
                 Width="200"
                 Height="30"
                 BorderBrush="Transparent"
-                Background="#0000"
+                Background="Transparent"
                 Cursor="Hand"
                 Command="{Binding MessageCleaningCommand}"
                 HorizontalContentAlignment="Left"
@@ -45,7 +45,7 @@
                 Width="200"
                 Height="30"
                 BorderBrush="Transparent"
-                Background="#0000"
+                Background="Transparent"
                 Cursor="Hand"
                 Command="{Binding SettingsViewModel.OpenSettingsCommand}"
                 HorizontalContentAlignment="Left"

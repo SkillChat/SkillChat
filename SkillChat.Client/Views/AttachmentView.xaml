@@ -10,7 +10,7 @@
     mc:Ignorable="d"
     MinWidth="360" 
     MinHeight="530"
-    Background="#4C000000"
+    Background="#4C000000" <!-- Semi-transparent overlay, theme-independent -->
     x:Class="SkillChat.Client.Views.AttachmentView">
 
     <Border 
@@ -75,7 +75,7 @@
                                   Grid.Row="0"
                                   Grid.Column="0"
                                   FontSize="12"
-                                  Foreground="#828282"
+                                  Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                   Margin="0 0 2 0"
                                   TextWrapping="Wrap"
                                   Text="{Binding Extensions}"/>
@@ -83,14 +83,14 @@
                                   Grid.Row="0"
                                   Grid.Column="1"
                                   FontSize="12"
-                                  Foreground="#828282"
+                                  Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                   Text="/"/>
                               <TextBlock
                                   Grid.Row="0"
                                   Grid.Column="2"
                                   Margin="0 0 2 0"
                                   FontSize="12"
-                                  Foreground="#828282"
+                                  Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                   Width="150"
                                   Text="{Binding SizeName}"/>
                           </Grid>

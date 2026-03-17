@@ -6,7 +6,7 @@
              x:Class="SkillChat.Client.Views.Profile.Exit">
 
 
-    <Border IsVisible="{Binding IsActiveContextMenu}" ZIndex="10" CornerRadius="2" Background="White" BorderBrush="#FF9337"
+    <Border IsVisible="{Binding IsActiveContextMenu}" ZIndex="10" CornerRadius="2" Background="{DynamicResource SystemRegionBrush}" BorderBrush="{DynamicResource Orange_03Brush}"
             BorderThickness="1">
         <Button
             FontSize="15"
