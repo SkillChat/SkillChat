@@ -89,6 +89,13 @@
     <Style Selector="Button.ButtonEnterPages">
         <Setter Property="FontSize" Value="18" />
         <Setter Property="Foreground" Value="#FFFFFF" />
+        <Setter Property="Background" Value="#9976FB" />
+        <Setter Property="BorderBrush" Value="#9976FB" />
+    </Style>
+
+    <Style Selector="Button.ButtonEnterPages:pointerover">
+        <Setter Property="Background" Value="#B09CFC" />
+        <Setter Property="BorderBrush" Value="#B09CFC" />
     </Style>
 
     <Style Selector="Button.ButtonEnterPages:disabled">
