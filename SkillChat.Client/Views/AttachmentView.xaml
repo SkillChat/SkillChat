@@ -10,7 +10,7 @@
     mc:Ignorable="d"
     MinWidth="360" 
     MinHeight="530"
-    Background="#4C000000" <!-- Semi-transparent overlay, theme-independent -->
+    Background="#4C000000"
     x:Class="SkillChat.Client.Views.AttachmentView">
 
     <Border 
