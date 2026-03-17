@@ -75,6 +75,13 @@
         </Setter>
     </Style>
 
+    <!--CheckBox content styling for registration page-->
+    <Style Selector="CheckBox /template/ ContentPresenter#ContentPresenter">
+        <Setter Property="TextBlock.Foreground" Value="#9F81F3"/>
+        <Setter Property="TextBlock.FontSize" Value="12"/>
+        <Setter Property="TextBlock.FontStyle" Value="Italic"/>
+    </Style>
+
     <!--Button-->
     <Style Selector="Button.ButtonEnterPages /template/ ContentPresenter">
         <Setter Property="CornerRadius" Value="2" />
