@@ -34,7 +34,7 @@
         <Setter Property="Padding" Value="0,0,10,5" />
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="FontStyle" Value="Italic"/>
-		<Setter Property="Foreground" Value="#4F4F4F"/>
+		<Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
         <Setter Property="AcceptsReturn" Value="True" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
@@ -103,7 +103,7 @@
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="TextAlignment" Value="Left"/>
-        <Setter Property="Foreground" Value="#FF9337"/>
+        <Setter Property="Foreground" Value="{DynamicResource Orange_03Brush}"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="TextDecorations" Value="Underline"/>
     </Style>
@@ -116,7 +116,7 @@
 
     <Style Selector="TextBlock.extensions">
         <Setter Property="FontSize" Value="12"/>
-        <Setter Property="Foreground" Value="#828282"/>
+        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
         <Setter Property="Margin" Value="0 0 2 0"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
     </Style>
@@ -141,13 +141,13 @@
     <Style Selector="TextBlock.time">
         <Setter Property="FontSize" Value="12" />        
         <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Foreground" Value="#828282" />
+        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
     </Style>
 
     <Style Selector="TextBlock.QuotedTime">
         <Setter Property="FontSize" Value="12" />
         <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Foreground" Value="#828282" />
+        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
     </Style>
 
     <Style Selector="TextBlock.itemTextBlock">

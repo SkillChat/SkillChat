@@ -9,7 +9,7 @@
     xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia"
     xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
     xmlns:sys="clr-namespace:System;assembly=netstandard"
-    Background="White"  
+    Background="{DynamicResource SystemRegionBrush}"  
     mc:Ignorable="d">
   <UserControl.Styles>
     <Style Selector="ToggleButton.passwordBoxRevealButtonSkillChat">
@@ -85,7 +85,7 @@
                      Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}"
                      x:Name="LoginTB"
                      Text="Логин"  />
-          <Border Background="White"
+          <Border Background="{DynamicResource SystemRegionBrush}"
                   Name="LoginBr"
                   Classes="BorderEnterPages Base"
                   Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}">
@@ -114,7 +114,7 @@
                      Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}"
                      x:Name="PasswordTBL"
                      Text="Пароль" />
-          <Border Background="White"
+          <Border Background="{DynamicResource SystemRegionBrush}"
                   x:Name="PasswordBr"
                   Classes="BorderEnterPages Base"
                   Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}">
@@ -153,12 +153,12 @@
               HorizontalAlignment="Center"
               Name="ErrorTbx"
               Height="30"
-              Background="#0000"
+              Background="Transparent"
               Classes="ClearContainer"
               FontStyle="Italic"
               FontSize="13"
               FontWeight="400"
-              Foreground="#FF9337"
+              Foreground="{DynamicResource Orange_03Brush}"
               Text="{Binding User.ErrorMessageLoginPage.ErrorMsg}">
           </TextBlock>
         </StackPanel>
@@ -178,12 +178,12 @@
                 x:Name="registerLinkTB"
                 Margin="0,0,0,32"
                 HorizontalAlignment="Center"
-                Background="#0000"
+                Background="Transparent"
                 Classes="ClearContainer"
                 Cursor="Hand"
                 FontSize="16"
                 FontWeight="600"
-                Foreground="#FFA85E"
+                Foreground="{DynamicResource Orange_02Brush}"
                 Text="Зарегистрироваться">
                 <i:Interaction.Behaviors>
                     <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #registerLinkTB}">

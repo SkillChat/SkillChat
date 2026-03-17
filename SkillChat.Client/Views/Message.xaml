@@ -10,9 +10,9 @@
              x:Class="SkillChat.Client.Views.Message">
     <UserControl.Resources>
         <utils:BoolToObjectConverter x:Key="BoolToObjectConverter"/>
-        <SolidColorBrush x:Key="PurpleColor" Color="#9976FB"/>
-        <SolidColorBrush x:Key="DarkPurpleColor" Color="#5027C7"/>
-        <SolidColorBrush x:Key="OrangeColor" Color="#FF9337"/>
+        <SolidColorBrush x:Key="PurpleColor" Color="{DynamicResource Violet_02}"/>
+        <SolidColorBrush x:Key="DarkPurpleColor" Color="{DynamicResource Violet_03}"/>
+        <SolidColorBrush x:Key="OrangeColor" Color="{DynamicResource Orange_03}"/>
     </UserControl.Resources>
   <Grid RowDefinitions="Auto,*">
     <ItemsControl

@@ -7,7 +7,7 @@
     xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
     xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia"
   mc:Ignorable="d"
-  Background="White"
+  Background="{DynamicResource SystemRegionBrush}"
   x:Class="SkillChat.Client.Views.RegisterPage">
 
   <Grid>
@@ -49,7 +49,7 @@
                      Classes.Error="{Binding RegisterUser.ErrorMessageRegisterPage.IsError}"
                      Text="Логин" />
 
-          <Border Background="White"
+          <Border Background="{DynamicResource SystemRegionBrush}"
                   Name="LoginBorder"
                   Classes="BorderEnterPages Base"
                   Classes.Error="{Binding RegisterUser.ErrorMessageRegisterPage.IsError}">
@@ -73,7 +73,7 @@
                      Classes="UpperWatermark"
                      Classes.Error="{Binding RegisterUser.ErrorMessageRegisterPage.IsError}"
                      Text="Пароль" />
-          <Border Background="White"
+          <Border Background="{DynamicResource SystemRegionBrush}"
                   Name="PasswordBorder"
                   Classes="BorderEnterPages Base"
                   Classes.Error="{Binding RegisterUser.ErrorMessageRegisterPage.IsError}">
@@ -98,7 +98,7 @@
                      Classes="UpperWatermark"
                      Classes.Error="{Binding RegisterUser.ErrorMessageRegisterPage.IsError}"
                      Text="Имя" />
-          <Border Background="White"
+          <Border Background="{DynamicResource SystemRegionBrush}"
                   Name="NickNameBorder"
                   Classes="BorderEnterPages Base"
                   Classes.Error="{Binding RegisterUser.ErrorMessageRegisterPage.IsError}">
@@ -116,10 +116,10 @@
           Margin="0,19,0,5">
           <CheckBox
             FontSize="12"
-            Foreground="#9F81F3"
+            Foreground="{DynamicResource Violet_04Brush}"
             FontWeight="400"
             FontStyle="Italic"
-            BorderBrush="#9976FB"
+            BorderBrush="{DynamicResource Violet_02Brush}"
             BorderThickness="1"
             IsChecked="{Binding RegisterUser.Consent}"
             Padding="3,0,0,0"
@@ -132,7 +132,7 @@
               FontStyle="Italic"
               FontSize="13"
               FontWeight="400"
-              Foreground="#FF9337"
+              Foreground="{DynamicResource Orange_03Brush}"
               Text="{Binding RegisterUser.ErrorMessageRegisterPage.ErrorMsg}"/>
         </StackPanel>
       </StackPanel>
@@ -151,12 +151,12 @@
                 x:Name="registerLinkTB"
                 Margin="0,0,0,32"
                 HorizontalAlignment="Center"
-                Background="#0000"
+                Background="Transparent"
                 Classes="ClearContainer"
                 Cursor="Hand"
                 FontSize="16"
                 FontWeight="600"
-                Foreground="#FFA85E"
+                Foreground="{DynamicResource Orange_02Brush}"
                 Text="Войти">
                 <i:Interaction.Behaviors>
                     <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #registerLinkTB}">
