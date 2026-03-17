@@ -5,40 +5,40 @@
     <!--TextBlock-->
     <Style Selector="TextBlock.UpperWatermark">
         <Setter Property="FontSize" Value="12" />
-        <Setter Property="Foreground" Value="#9F81F3" />
+        <Setter Property="Foreground" Value="{DynamicResource Violet_04Brush}" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="FontStyle" Value="Italic" />
     </Style>
     <Style Selector="TextBlock.Error">
-        <Setter Property="Foreground" Value="#FFA85E" />
+        <Setter Property="Foreground" Value="{DynamicResource Orange_02Brush}" />
     </Style>
     <Style Selector="TextBlock:ClearContainer">
         <Setter Property="FontSize" Value="16" />
-        <Setter Property="Background" Value="#ffffff00" />
-        <Setter Property="Foreground" Value="#FFA85E" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource Orange_02Brush}" />
         <Setter Property="Margin" Value="0,0,0,40" />
     </Style>
 
     <!--TextBox-->
     <Style Selector="TextBox.TextBoxEnterPages">
         <Setter Property="FontSize" Value="18" />
-        <Setter Property="BorderBrush" Value="#FFFFFF"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource SystemRegionBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Margin" Value="0,2" />
         <Setter Property="Height" Value="42" />
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Width" Value="220"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
-        <Setter Property="Background" Value="#FFFFFF"/>
+        <Setter Property="Background" Value="{DynamicResource SystemRegionBrush}"/>
         <Setter Property="TextAlignment" Value="Center"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
     </Style>
     <Style Selector="TextBox.Base">
-        <Setter Property="Foreground" Value="#7F57F0" />
+        <Setter Property="Foreground" Value="{DynamicResource Violet_02Brush}" />
     </Style>
     <Style Selector="TextBox.Error">
-        <Setter Property="Foreground" Value="#FFC797" />
+        <Setter Property="Foreground" Value="{DynamicResource Orange_01Brush}" />
     </Style>
 
     <Style Selector="TextBox.TextBoxEnterPages:focus /template/ Border#PART_BorderElement">
@@ -57,10 +57,10 @@
         <Setter Property="Height" Value="50" />
     </Style>
     <Style Selector="Border.Base">
-        <Setter Property="BorderBrush" Value="#9976FB"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Violet_02Brush}"/>
     </Style>
     <Style Selector="Border.Error">
-        <Setter Property="BorderBrush" Value="#FFA85E"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Orange_02Brush}"/>
     </Style>
 
     <!--Image-->
@@ -77,7 +77,7 @@
 
     <!--CheckBox content styling for registration page-->
     <Style Selector="CheckBox /template/ ContentPresenter#ContentPresenter">
-        <Setter Property="TextBlock.Foreground" Value="#9F81F3"/>
+        <Setter Property="TextBlock.Foreground" Value="{DynamicResource Violet_04Brush}"/>
         <Setter Property="TextBlock.FontSize" Value="12"/>
         <Setter Property="TextBlock.FontStyle" Value="Italic"/>
     </Style>
@@ -88,20 +88,20 @@
     </Style>
     <Style Selector="Button.ButtonEnterPages">
         <Setter Property="FontSize" Value="18" />
-        <Setter Property="Foreground" Value="#FFFFFF" />
-        <Setter Property="Background" Value="#9976FB" />
-        <Setter Property="BorderBrush" Value="#9976FB" />
+        <Setter Property="Foreground" Value="{DynamicResource SystemRegionBrush}" />
+        <Setter Property="Background" Value="{DynamicResource Violet_02Brush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Violet_02Brush}" />
     </Style>
 
     <Style Selector="Button.ButtonEnterPages:pointerover">
-        <Setter Property="Background" Value="#B09CFC" />
-        <Setter Property="BorderBrush" Value="#B09CFC" />
+        <Setter Property="Background" Value="{DynamicResource Violet_01Brush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Violet_01Brush}" />
     </Style>
 
     <Style Selector="Button.ButtonEnterPages:disabled">
         <Setter Property="Opacity" Value="1" />
-        <Setter Property="Background" Value="#D1C0FF" />
-        <Setter Property="BorderBrush" Value="#D1C0FF" />
+        <Setter Property="Background" Value="{DynamicResource Violet_01Brush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Violet_01Brush}" />
     </Style>
 
 
