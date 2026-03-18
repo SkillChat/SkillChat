@@ -14,9 +14,9 @@
     xmlns:utils="clr-namespace:SkillChat.Client.Utils"
     Title="{Binding Title}"
     Name="WindowChat"
-    Width="800"
+    Width="900"
     Height="600"
-    MinWidth="375"
+    MinWidth="500"
     MinHeight="600"
     Icon="/Assets/skillchat-logo.ico"
     mc:Ignorable="d">
@@ -48,9 +48,10 @@
     </Window.Resources>
 
     <Window.Styles>
+        <!-- Telegram-style thin scrollbar -->
         <Style Selector="ScrollBar:vertical">
-            <Setter Property="Width" Value="12" />
-            <Setter Property="Margin" Value="-12,0,0,0" />
+            <Setter Property="Width" Value="6" />
+            <Setter Property="Margin" Value="-6,0,0,0" />
             <Setter Property="Template">
                 <ControlTemplate>
                     <Border Background="Transparent" UseLayoutRounding="False">
@@ -76,149 +77,234 @@
             </Setter>
         </Style>
         <Style Selector="ScrollBar:vertical /template/ Thumb Border">
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseMediumBrush}" />
-            <Setter Property="CornerRadius" Value="2" />
+            <Setter Property="Background" Value="{DynamicResource ScrollbarThumbBrush}" />
+            <Setter Property="CornerRadius" Value="3" />
             <Setter Property="Width" Value="6" />
         </Style>
+        <Style Selector="ScrollBar:vertical:pointerover /template/ Thumb Border">
+            <Setter Property="Background" Value="{DynamicResource ScrollbarThumbHoverBrush}" />
+        </Style>
+        
+        <!-- Sidebar button styles -->
+        <Style Selector="Button.sidebar-btn">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="16,10" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="CornerRadius" Value="4" />
+        </Style>
+        <Style Selector="Button.sidebar-btn:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SidebarHoverBrush}" />
+        </Style>
+        <Style Selector="Button.sidebar-btn:pressed">
+            <Setter Property="Background" Value="{DynamicResource SidebarActiveBrush}" />
+        </Style>
+        <Style Selector="Button.sidebar-btn.active">
+            <Setter Property="Background" Value="{DynamicResource SidebarActiveBrush}" />
+        </Style>
     </Window.Styles>
+    
     <Grid>
-        <Grid ColumnDefinitions="100,*">
-            <StackPanel Background="{DynamicResource Violet_02Brush}">
-                <!--  Кнопка профиля (на левой панеле)  -->
-                <Image Width="60" Margin="20">
-                    <Image.Source>
-                        <svg:SvgImage Source="/Assets/SkillChat_small.svg" />
-                    </Image.Source>
-                </Image>
-                <Button Background="Transparent"
-                        IsVisible="{Binding !ProfileViewModel.IsOpened}"
-                        BorderBrush="Transparent"
-                        BorderThickness="0"
-                        Cursor="Hand"
-                        Classes="profile"
-                        Command="{Binding ProfileViewModel.OpenProfilePanelCommand }">
-                    <Image Width="13.33" Height="18.65" Margin="20" Name="profile_white_icon" />
-                </Button>
-                <Button
-                    IsVisible="{Binding ProfileViewModel.IsOpened}"
-                    Background="Transparent"
-                    BorderBrush="Transparent"
-                    BorderThickness="0"
-                    Cursor="Hand"
-                    Classes="profile_dd"
-                    Command="{Binding ProfileViewModel.OpenProfilePanelCommand}">
-                    <Image Name="profile_orange_icon" Margin="20" Width="13.33" Height="18.65" />
-                </Button>
-            </StackPanel>
-            <!--  Кнопка открытия настроек  -->
-            <Button Background="Transparent"
-                    VerticalAlignment="Bottom"
-                    Margin="0 0 0 30"
-                    BorderBrush="Transparent"
-                    BorderThickness="0"
-                    IsVisible="{Binding !SettingsViewModel.IsOpened}"
-                    Command="{Binding SettingsViewModel.OpenSettingsCommand}"
-                    Classes="settings"
-                    Cursor="Hand">
-                <Image Width="18.67" Height="18.65" Margin="20" Name="settings" />
-            </Button>
-            <Button Background="Transparent"
-                    VerticalAlignment="Bottom"
-                    Margin="0 0 0 30"
-                    BorderBrush="Transparent"
-                    BorderThickness="0"
-                    IsVisible="{Binding SettingsViewModel.IsOpened}"
-                    Command="{Binding SettingsViewModel.OpenSettingsCommand}"
-                    Classes="settings_active"
-                    Cursor="Hand">
-                <Image Width="18.67" Height="18.65" Margin="20" Name="settings_active" />
-            </Button>
-
-            <Grid Grid.Column="1" RowDefinitions="80,*">
-
-                <!--  Header  -->
-                <Grid ZIndex="1" Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition
-                            Width="{Binding ColumndefinitionWidth,Converter={StaticResource GridLengthValueConverter}}" />
-                        <ColumnDefinition Width="2"/>
-                        <ColumnDefinition
-                            Width="{Binding ColumndefinitionWidth2,Converter={StaticResource GridLengthValueConverter}}" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <!--  Информация о чате  -->
-                    <StackPanel
-                        Grid.Column="0"
-                        Margin="20,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center">
-                        <!--  Название чата/настройки  -->
-                        <TextBlock
-                            FontSize="16"
-                            FontWeight="SemiBold"
-                            Text="{Binding TextHeaderMain}" />
-                        <!--  Участники чата  -->
-                        <TextBlock
-                            FontSize="14"
-                            FontWeight="Regular"
-                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                            Text="{Binding MembersCaption}"
-                            TextTrimming="WordEllipsis" />
-                    </StackPanel>
-
-                    <Grid ZIndex="1" Grid.Column="2">
-                        <!--  Выбранные настройки  -->
-                        <StackPanel Orientation="Horizontal" Grid.Column="0" HorizontalAlignment="Left">
-                            <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                       FontWeight="600"
-                                       IsVisible="{Binding SettingsActive}"
-                                       VerticalAlignment="Center" 
-                                       Margin="20 0 0 0"
-                                       FontSize="15" 
-                                       Text="{Binding TextHeaderMenuInSettings}"/>
+        <Grid ColumnDefinitions="200,*">
+            <!-- Left Sidebar - Telegram style -->
+            <Border Background="{DynamicResource SidebarBackgroundBrush}"
+                    BorderBrush="{DynamicResource DividerBrush}"
+                    BorderThickness="0,0,1,0">
+                <Grid RowDefinitions="Auto,*,Auto">
+                    <!-- Sidebar Header with logo and hamburger menu area -->
+                    <Border Grid.Row="0" 
+                            Background="{DynamicResource SidebarBackgroundBrush}"
+                            Padding="12,12,12,8">
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <!-- Logo -->
+                            <Image Width="32" Height="32"
+                                   VerticalAlignment="Center">
+                                <Image.Source>
+                                    <svg:SvgImage Source="/Assets/SkillChat_small.svg" />
+                                </Image.Source>
+                            </Image>
+                            
+                            <!-- App title -->
+                            <TextBlock Grid.Column="1" 
+                                       Text="SkillChat"
+                                       FontSize="16"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                       VerticalAlignment="Center"
+                                       Margin="12,0,0,0"/>
+                        </Grid>
+                    </Border>
+                    
+                    <!-- Sidebar Content - Chat list area (placeholder for future chat list) -->
+                    <Border Grid.Row="1" Background="Transparent">
+                        <StackPanel Margin="8,4">
+                            <!-- Profile button -->
+                            <Button Classes="sidebar-btn"
+                                    IsVisible="{Binding !ProfileViewModel.IsOpened}"
+                                    Command="{Binding ProfileViewModel.OpenProfilePanelCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <Image Width="20" Height="20" Name="profile_white_icon" />
+                                    <TextBlock Text="Профиль" 
+                                               FontSize="14"
+                                               Foreground="{DynamicResource PrimaryTextBrush}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Classes="sidebar-btn active"
+                                    IsVisible="{Binding ProfileViewModel.IsOpened}"
+                                    Command="{Binding ProfileViewModel.OpenProfilePanelCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <Image Width="20" Height="20" Name="profile_orange_icon" />
+                                    <TextBlock Text="Профиль" 
+                                               FontSize="14"
+                                               Foreground="{DynamicResource AccentBrush}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            
+                            <!-- Settings button -->
+                            <Button Classes="sidebar-btn"
+                                    IsVisible="{Binding !SettingsViewModel.IsOpened}"
+                                    Command="{Binding SettingsViewModel.OpenSettingsCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <Image Width="20" Height="20" Name="settings" />
+                                    <TextBlock Text="Настройки" 
+                                               FontSize="14"
+                                               Foreground="{DynamicResource PrimaryTextBrush}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Classes="sidebar-btn active"
+                                    IsVisible="{Binding SettingsViewModel.IsOpened}"
+                                    Command="{Binding SettingsViewModel.OpenSettingsCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <Image Width="20" Height="20" Name="settings_active" />
+                                    <TextBlock Text="Настройки" 
+                                               FontSize="14"
+                                               Foreground="{DynamicResource AccentBrush}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
                         </StackPanel>
-                    </Grid>
-                      <Grid ZIndex="1" Grid.Column="4">
-                          <!--  Информация о профиле -->
-                        <Grid ZIndex="1" Width="300" Height="300" HorizontalAlignment="Right">
-                           <profile:Header DataContext="{Binding ProfileViewModel}" />
-                        </Grid>
-                        <!--  Профиль - выход -->
-                         <Grid ZIndex="2" Width="140" Height="30" HorizontalAlignment="Right">
-                            <profile:Exit DataContext="{Binding ProfileViewModel}" />
-                        </Grid>
-                        <!--  Настройки - Header -->
-                        <Grid ZIndex="1" HorizontalAlignment="Right" VerticalAlignment="Top"
-                              Margin="0 20 28 0" Width="40" Height="40" Background="Transparent">
-                            <settings:Header DataContext="{Binding SettingsViewModel}" />
-                        </Grid>
-                        <!--  Настройки - Panel -->
-                        <Grid ZIndex="2" IsHitTestVisible="{Binding SettingsViewModel.IsContextMenu}"
-                              HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Height="93"
-                              Margin="0 47 47 0" Background="Transparent">
-                            <settings:More/>
-                        </Grid>
-                      </Grid>
-
-                    </Grid>
-
-                    <!--  Окно настроек  -->
-                <Grid Grid.Row="1" IsVisible="{Binding SettingsViewModel.IsOpened}">
-					<settings:Settings DataContext="{Binding SettingsViewModel}" />
+                    </Border>
+                    
+                    <!-- Bottom area with Night Mode toggle -->
+                    <Border Grid.Row="2" 
+                            Background="{DynamicResource SidebarBackgroundBrush}"
+                            BorderBrush="{DynamicResource DividerBrush}"
+                            BorderThickness="0,1,0,0"
+                            Padding="12,12">
+                        <StackPanel Spacing="8">
+                            <!-- Night Mode toggle -->
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <TextBlock Text="🌙" FontSize="16" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Ночной режим" 
+                                               FontSize="14"
+                                               Foreground="{DynamicResource PrimaryTextBrush}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <ToggleSwitch Grid.Column="1"
+                                              IsChecked="{Binding SettingsViewModel.IsDarkTheme, Mode=TwoWay}"
+                                              OffContent=""
+                                              OnContent=""
+                                              Margin="0"
+                                              Padding="0"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
                 </Grid>
-                <!--  Фон  -->
-                <Grid Grid.Column="1" ZIndex="-1" Grid.Row="1" ColumnDefinitions="*,Auto">
-                    <Grid.Background>
-                        <ImageBrush
-                            Source="/Assets/background.png"
-                            Stretch="None"
-                            SourceRect="0,0,152,152"
-                            DestinationRect="0,0,152,152"
-                            TileMode="None" />
-                    </Grid.Background>
+            </Border>
+
+            <!-- Main Content Area -->
+            <Grid Grid.Column="1" RowDefinitions="Auto,*">
+
+                <!-- Header - Telegram style thin header -->
+                <Border Grid.Row="0" 
+                        ZIndex="1" 
+                        Background="{DynamicResource HeaderBackgroundBrush}"
+                        BorderBrush="{DynamicResource HeaderBorderBrush}"
+                        BorderThickness="0,0,0,1"
+                        Padding="0">
+                    <Grid Height="48">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition
+                                Width="{Binding ColumndefinitionWidth,Converter={StaticResource GridLengthValueConverter}}" />
+                            <ColumnDefinition Width="2"/>
+                            <ColumnDefinition
+                                Width="{Binding ColumndefinitionWidth2,Converter={StaticResource GridLengthValueConverter}}" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!--  Информация о чате  -->
+                        <StackPanel
+                            Grid.Column="0"
+                            Margin="16,8"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center">
+                            <!--  Название чата/настройки  -->
+                            <TextBlock
+                                FontSize="15"
+                                FontWeight="SemiBold"
+                                Foreground="{DynamicResource HeaderTextBrush}"
+                                Text="{Binding TextHeaderMain}" />
+                            <!--  Участники чата  -->
+                            <TextBlock
+                                FontSize="13"
+                                FontWeight="Regular"
+                                Foreground="{DynamicResource HeaderSubtextBrush}"
+                                Text="{Binding MembersCaption}"
+                                TextTrimming="WordEllipsis" />
+                        </StackPanel>
+
+                        <Grid ZIndex="1" Grid.Column="2">
+                            <!--  Выбранные настройки  -->
+                            <StackPanel Orientation="Horizontal" Grid.Column="0" HorizontalAlignment="Left">
+                                <TextBlock Foreground="{DynamicResource HeaderTextBrush}"
+                                           FontWeight="600"
+                                           IsVisible="{Binding SettingsActive}"
+                                           VerticalAlignment="Center" 
+                                           Margin="16,0,0,0"
+                                           FontSize="15" 
+                                           Text="{Binding TextHeaderMenuInSettings}"/>
+                            </StackPanel>
+                        </Grid>
+                          <Grid ZIndex="1" Grid.Column="4">
+                              <!--  Информация о профиле -->
+                            <Grid ZIndex="1" Width="300" Height="300" HorizontalAlignment="Right">
+                               <profile:Header DataContext="{Binding ProfileViewModel}" />
+                            </Grid>
+                            <!--  Профиль - выход -->
+                             <Grid ZIndex="2" Width="140" Height="30" HorizontalAlignment="Right">
+                                <profile:Exit DataContext="{Binding ProfileViewModel}" />
+                            </Grid>
+                            <!--  Настройки - Header -->
+                            <Grid ZIndex="1" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                  Margin="0,6,16,0" Width="40" Height="40" Background="Transparent">
+                                <settings:Header DataContext="{Binding SettingsViewModel}" />
+                            </Grid>
+                            <!--  Настройки - Panel -->
+                            <Grid ZIndex="2" IsHitTestVisible="{Binding SettingsViewModel.IsContextMenu}"
+                                  HorizontalAlignment="Right" VerticalAlignment="Top" Width="200" Height="93"
+                                  Margin="0,47,47,0" Background="Transparent">
+                                <settings:More/>
+                            </Grid>
+                          </Grid>
+
+                    </Grid>
+                </Border>
+
+                <!--  Окно настроек  -->
+                <Grid Grid.Row="1" IsVisible="{Binding SettingsViewModel.IsOpened}">
+                    <settings:Settings DataContext="{Binding SettingsViewModel}" />
+                </Grid>
+                
+                <!--  Message Area - Solid themed background  -->
+                <Grid Grid.Row="1" ZIndex="-1" ColumnDefinitions="*,Auto"
+                      Background="{DynamicResource MessageAreaBackgroundBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition Height="Auto" />
@@ -234,7 +320,7 @@
                                 Grid.Row="3"
                                 Grid.Column="0"
                                 Grid.ColumnSpan="3"
-                                Margin="20,0"
+                                Margin="16,0"
                                 VerticalAlignment="Bottom"
                                 Background="Transparent"
                                 BorderThickness="0"
@@ -248,51 +334,60 @@
                             </ItemsControl>
                         </ScrollViewer>
                     </Grid>
-                  <Border 
-                      HorizontalAlignment="Left"
-                      VerticalAlignment="Bottom"
-                      Margin="10 0 0 0"
-                      MaxWidth="152"
-                      ZIndex="10"
-                      BorderThickness="1"
-                      BorderBrush="{DynamicResource Orange_03}"
-                      Grid.Row="0" 
-                      x:Name="AttachButtons" 
-                      IsVisible="{Binding AttachMenuVisible}">
-                    <StackPanel 
-                        Orientation="Vertical" 
-                        x:Name="AttachMenuList" >
-                      <Button 
-                          Cursor="Hand"
-                          Background="{DynamicResource Orange_03}"
-                          HorizontalContentAlignment="Left"
-                          BorderThickness="0"
-                          Width="148"
-                          x:Name="AttachFile" 
-                          Command="{Binding AttachFileClick}" >
-                        <StackPanel Orientation="Horizontal">
-                          <Button
-                              Cursor="Hand"
-                              Background="{DynamicResource Orange_03}"
-                              HorizontalContentAlignment="Left"
-                              BorderThickness="0"
-                              Classes="AttachMenu" 
-                              x:Name="OpenFileBrowserMenu" 
-                              Command="{Binding OpenFileBrowserMenu}">
-                              <StackPanel Orientation="Horizontal">
-                                  <Image Name="FileImage" Width="16" Height="18.5" Classes="FileImage"/>
-                                  <TextBlock  Text="Файл"  Classes="MenuText" />
-                              </StackPanel>
-                          </Button>
+                    
+                    <!-- Attachment menu popup -->
+                    <Border 
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        Margin="10,0,0,0"
+                        MaxWidth="160"
+                        ZIndex="10"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        BorderBrush="{DynamicResource MenuBorderBrush}"
+                        Background="{DynamicResource MenuBackgroundBrush}"
+                        Grid.Row="0" 
+                        x:Name="AttachButtons" 
+                        IsVisible="{Binding AttachMenuVisible}">
+                        <StackPanel 
+                            Orientation="Vertical" 
+                            x:Name="AttachMenuList">
+                            <Button 
+                                Cursor="Hand"
+                                Background="{DynamicResource MenuBackgroundBrush}"
+                                HorizontalContentAlignment="Left"
+                                BorderThickness="0"
+                                Padding="12,10"
+                                x:Name="AttachFile" 
+                                Command="{Binding AttachFileClick}">
+                                <StackPanel Orientation="Horizontal">
+                                    <Button
+                                        Cursor="Hand"
+                                        Background="Transparent"
+                                        HorizontalContentAlignment="Left"
+                                        BorderThickness="0"
+                                        Classes="AttachMenu" 
+                                        x:Name="OpenFileBrowserMenu" 
+                                        Command="{Binding OpenFileBrowserMenu}">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <Image Name="FileImage" Width="16" Height="18.5" Classes="FileImage"/>
+                                            <TextBlock Text="Файл" 
+                                                       FontSize="14"
+                                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </Button>
                         </StackPanel>
-                      </Button>
-                    </StackPanel>
-                  </Border>
+                    </Border>
+                    
                     <!--  Блок отправки сообщения  -->
-					          <views:SelectMessageBorderControl Grid.Column="0" Grid.Row="2" IsVisible="{Binding SelectMessagesMode.IsTurnedSelectMode}"/>	
+                    <views:SelectMessageBorderControl Grid.Column="0" Grid.Row="2" IsVisible="{Binding SelectMessagesMode.IsTurnedSelectMode}"/>	
                     <views:SendMessageControl Grid.Column="0" Grid.Row="2" ZIndex="-1" IsVisible="{Binding !SelectMessagesMode.IsTurnedSelectMode}"/>                 
+                    
                     <!--Profile - panel -->
-                    <Grid Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Right" Background="{DynamicResource SystemRegionBrush}">
+                    <Grid Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Right" Background="{DynamicResource SidebarBackgroundBrush}">
                         <profile:Settings DataContext="{Binding ProfileViewModel}" />
                     </Grid>
                 </Grid>

@@ -10,10 +10,19 @@ namespace SkillChat.Client.Utils
     {
         private static object o = new();
         private static int colorIndex = 0;
+        // Telegram-style vibrant avatar colors that work well on both dark (#0E1621) and light (#FFFFFF) backgrounds
         private static string[] colorHexes =
         {
-            "#4169E1", "#008080", "#6A5ACD", "#228B22", "#9400D3", "#708090", "#E9967A", "#DAA520", "#CD5C5C",
-            "#9370DB", "#8B0000", "#EE82EE", "#FF4500", "#D2691E", "#006400", "#00008B"
+            "#E17076", // Red
+            "#7BC862", // Green
+            "#E5CA77", // Yellow/Gold
+            "#65AADD", // Blue
+            "#A695E7", // Purple
+            "#EE7AE6", // Pink
+            "#6EC9CB", // Teal
+            "#FAA774", // Orange
+            "#E17076", "#7BC862", "#E5CA77", "#65AADD",
+            "#A695E7", "#EE7AE6", "#6EC9CB", "#FAA774"
         };
 
         private static ConcurrentDictionary<string, SolidColorBrush> users = new();

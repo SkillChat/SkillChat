@@ -9,7 +9,7 @@
     xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia"
     xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
     xmlns:sys="clr-namespace:System;assembly=netstandard"
-    Background="{DynamicResource SystemRegionBrush}"  
+    Background="{DynamicResource PageBackgroundBrush}"  
     mc:Ignorable="d">
   <UserControl.Styles>
     <Style Selector="ToggleButton.passwordBoxRevealButtonSkillChat">
@@ -50,15 +50,7 @@
     </Style>
   </UserControl.Styles>
 
-  <Grid>
-    <Grid.Background>
-      <ImageBrush
-          Source="/Assets/background.png"
-          Stretch="None"
-          SourceRect="0,0,152,152"
-          DestinationRect="0,0,152,152"
-          TileMode="None" />
-    </Grid.Background>
+  <Grid Background="{DynamicResource PageBackgroundBrush}">
     <Grid ShowGridLines="False"
           MaxWidth="380"
           MaxHeight="600"
@@ -85,7 +77,7 @@
                      Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}"
                      x:Name="LoginTB"
                      Text="Логин"  />
-          <Border Background="{DynamicResource SystemRegionBrush}"
+          <Border Background="{DynamicResource PageBackgroundBrush}"
                   Name="LoginBr"
                   Classes="BorderEnterPages Base"
                   Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}">
@@ -114,7 +106,7 @@
                      Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}"
                      x:Name="PasswordTBL"
                      Text="Пароль" />
-          <Border Background="{DynamicResource SystemRegionBrush}"
+          <Border Background="{DynamicResource PageBackgroundBrush}"
                   x:Name="PasswordBr"
                   Classes="BorderEnterPages Base"
                   Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}">
@@ -158,7 +150,7 @@
               FontStyle="Italic"
               FontSize="13"
               FontWeight="400"
-              Foreground="{DynamicResource Orange_03Brush}"
+              Foreground="{DynamicResource ErrorBrush}"
               Text="{Binding User.ErrorMessageLoginPage.ErrorMsg}">
           </TextBlock>
         </StackPanel>
@@ -183,7 +175,7 @@
                 Cursor="Hand"
                 FontSize="16"
                 FontWeight="600"
-                Foreground="{DynamicResource Orange_02Brush}"
+                Foreground="{DynamicResource AccentBrush}"
                 Text="Зарегистрироваться">
                 <i:Interaction.Behaviors>
                     <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #registerLinkTB}">

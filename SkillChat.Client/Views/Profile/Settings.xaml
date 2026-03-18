@@ -8,8 +8,8 @@
              x:Class="SkillChat.Client.Views.Profile.Settings">
 
     <!--Profile - panel -->
-    <Grid IsVisible="{Binding IsOpened}" Background="{DynamicResource SystemRegionBrush}" HorizontalAlignment="Right" MaxWidth="390">
-        <Grid Width="2" Background="{DynamicResource SystemControlBackgroundBaseMediumLowBrush}" HorizontalAlignment="Left" />
+    <Grid IsVisible="{Binding IsOpened}" Background="{DynamicResource CardBackgroundBrush}" HorizontalAlignment="Right" MaxWidth="390">
+        <Grid Width="2" Background="{DynamicResource DividerBrush}" HorizontalAlignment="Left" />
 
         <Grid>
             <Grid.RowDefinitions>
@@ -21,7 +21,7 @@
                 <Grid Grid.Row="0">
 
                     <TextBlock Margin="50 5 0 0" FontStyle="Italic"
-                               Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
                                FontWeight="400" FontSize="14" Text="Имя" />
 
                     <TextBlock Margin="50 43 50 0" FontStyle="Normal" IsVisible="{Binding !IsEditNameProfile}"
@@ -30,7 +30,7 @@
                                MinHeight="50"
                                MaxHeight="100"
                                TextWrapping="Wrap"
-                               Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" FontWeight="600" FontSize="16" Text="{Binding DisplayName}" />
+                               Foreground="{DynamicResource PrimaryTextBrush}" FontWeight="600" FontSize="16" Text="{Binding DisplayName}" />
 
                     <TextBox HorizontalAlignment="Stretch" IsVisible="{Binding IsEditNameProfile}"
                              Text="{Binding DisplayName}"
@@ -38,8 +38,8 @@
                              MinHeight="50"
                              MaxHeight="100"
                              TextWrapping="Wrap"
-                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontWeight="600" FontSize="16" VerticalContentAlignment="Center"
-                             MaxLength="32" BorderBrush="{DynamicResource SystemControlBackgroundBaseMediumBrush}" Margin="50 29 50 0"
+                             Foreground="{DynamicResource SecondaryTextBrush}" FontWeight="600" FontSize="16" VerticalContentAlignment="Center"
+                             MaxLength="32" BorderBrush="{DynamicResource DividerBrush}" Margin="50 29 50 0"
                              VerticalAlignment="Top" />
                     <Grid IsVisible="{Binding IsMyProfile}">
                         <Button
@@ -78,7 +78,7 @@
 
                 <Grid Grid.Row="1">
                     <TextBlock Margin="50 20 0 0" FontStyle="Italic"
-                               Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
                                FontWeight="400" FontSize="14" Text="О себе" />
 
                     <TextBlock Margin="50 44 50 0" FontStyle="Normal" IsVisible="{Binding !IsEditAboutMeProfile}"
@@ -87,17 +87,17 @@
                                MinHeight="50"
                                MaxHeight="250"
                                TextWrapping="Wrap"
-                               Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" FontWeight="600" FontSize="16" Text="{Binding AboutMe}" />
+                               Foreground="{DynamicResource PrimaryTextBrush}" FontWeight="600" FontSize="16" Text="{Binding AboutMe}" />
 
 
                     <TextBox HorizontalAlignment="Stretch" IsVisible="{Binding IsEditAboutMeProfile}"
                              Text="{Binding AboutMe}"
                              AcceptsReturn="True"
-                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontWeight="600" FontSize="16"
+                             Foreground="{DynamicResource SecondaryTextBrush}" FontWeight="600" FontSize="16"
                              TextWrapping="Wrap"
                              MinHeight="50"
                              MaxHeight="250"
-                             BorderBrush="{DynamicResource SystemControlBackgroundBaseMediumBrush}" Margin="50 44 50 0"
+                             BorderBrush="{DynamicResource DividerBrush}" Margin="50 44 50 0"
                              VerticalAlignment="Top" />
                     <Grid IsVisible="{Binding IsMyProfile}">
                         <Button
@@ -135,7 +135,7 @@
                 <Grid Grid.Row="2" Width="390">
                     <TextBlock Margin="0 20 0 0" Padding="0 0 1 0" 
                                HorizontalAlignment="Center" FontStyle="Italic"
-                               Foreground="{DynamicResource SystemControlBackgroundBaseMediumBrush}"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
                                FontWeight="400" FontSize="16" Text="{Binding Login}" />
                     <Button
                         VerticalAlignment="Top"

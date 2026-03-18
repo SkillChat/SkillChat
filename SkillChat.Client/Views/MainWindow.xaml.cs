@@ -106,6 +106,11 @@ namespace SkillChat.Client.Views
             if (ViewModel != null)
             {
                 ViewModel.MessageReceived += x => MessagesScroller.PropertyChanged += ScrollMethod;
+                
+                // Wire up theme toggle callback
+                ViewModel.SettingsViewModel.OnThemeChanged = (isDark) => App.SetThemeVariant(isDark);
+                // Initialize theme from current setting
+                App.SetThemeVariant(ViewModel.SettingsViewModel.IsDarkTheme);
             }
         }
 

@@ -22,16 +22,16 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <Grid Background="{DynamicResource SystemControlBackgroundBaseMediumLowBrush}" Grid.Row="0" />
+        <Grid Background="{DynamicResource DividerBrush}" Grid.Row="0" />
 
-        <Grid Background="{DynamicResource SystemControlBackgroundBaseMediumLowBrush}" Grid.Row="2" Grid.Column="0">
+        <Grid Background="{DynamicResource DividerBrush}" Grid.Row="2" Grid.Column="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="310" />
                 <ColumnDefinition Width="2" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Grid Background="{DynamicResource SystemControlBackgroundAltHighBrush}" Grid.Column="0">
+            <Grid Background="{DynamicResource SidebarBackgroundBrush}" Grid.Column="0">
                 <StackPanel>
                     <Button Height="35"
                             Content="Сообщения и чаты"
@@ -41,7 +41,7 @@
                             FontSize="15"
                             Classes="SettingItems"
                             FontWeight="600"
-                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                            Foreground="{DynamicResource PrimaryTextBrush}"
                             BorderBrush="Transparent"
                             BorderThickness="0"
                             Command="{Binding GetSettingsCommand}"
@@ -55,7 +55,7 @@
                             FontSize="15"
                             Classes="SettingItems"
                             FontWeight="600"
-                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                            Foreground="{DynamicResource PrimaryTextBrush}"
                             BorderBrush="Transparent"
                             BorderThickness="0"
                             Padding="20 0 0 0"
@@ -67,7 +67,7 @@
 
             </Grid>
 
-            <Grid Background="{DynamicResource SystemRegionBrush}" Grid.Column="3" IsVisible="{Binding SettingsMenuActiveMain}" ZIndex="10">
+            <Grid Background="{DynamicResource CardBackgroundBrush}" Grid.Column="3" IsVisible="{Binding SettingsMenuActiveMain}" ZIndex="10">
                 <WrapPanel>
                     <TextBlock
                         Margin="20 10 0 0"
@@ -75,7 +75,7 @@
                         Cursor="Hand"
                         FontSize="15"
                         FontWeight="600"
-                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                        Foreground="{DynamicResource PrimaryTextBrush}"
                         Text="Отправлять сообщения клавишей" />
                     <RadioButton Margin="25 6 0 0" Cursor="Hand" Command="{Binding SaveSettingsCommand}" Content="Enter"
                                  GroupName="TypeMessages" IsChecked="{Binding TypeEnter}" FontWeight="600"
@@ -87,7 +87,7 @@
                 </WrapPanel>
             </Grid>
 
-            <Grid Background="{DynamicResource SystemRegionBrush}" Grid.Column="3" IsVisible="{Binding AuditMenuActiveMain}" ZIndex="10">
+            <Grid Background="{DynamicResource CardBackgroundBrush}" Grid.Column="3" IsVisible="{Binding AuditMenuActiveMain}" ZIndex="10">
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled">
                 <ItemsControl
                     Margin="15,0"
@@ -103,20 +103,20 @@
                                                 Background="Transparent"
                                                 FontSize="14"
                                                 FontWeight="600"
-                                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                                Foreground="{DynamicResource PrimaryTextBrush}"
                                                 Text="{Binding NameVersionClient}" />
                                             <TextBlock
                                                 Margin="0 3 0 0"
                                                 Background="Transparent"
                                                 FontSize="14"
                                                 FontWeight="600"
-                                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                                Foreground="{DynamicResource PrimaryTextBrush}"
                                                 Text="{Binding OperatingSystem}" />
                                             <TextBlock
                                                 Margin="0 3 0 0"
                                                 FontSize="14"
                                                 FontWeight="600"
-                                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                Foreground="{DynamicResource SecondaryTextBrush}"
                                                 Text="{Binding IpAddress}" />
                                         </StackPanel>
                                     </Grid>
@@ -124,7 +124,7 @@
                                         <WrapPanel>
                                             <TextBlock
                                                 Margin="0 10 10 0"
-                                                Foreground="{DynamicResource Violet_03Brush}"
+                                                Foreground="{DynamicResource AccentBrush}"
                                                 FontWeight="400"
                                                 FontSize="13"
                                                 Text="{Binding IsActive}"/>
@@ -135,7 +135,7 @@
                                                 FontWeight="400"
                                                 FontSize="13"
                                                 Text="{Binding DateOfEntry}"
-                                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                                                Foreground="{DynamicResource SecondaryTextBrush}" />
                                         </WrapPanel>
                                     </Grid>
                                 </Grid>

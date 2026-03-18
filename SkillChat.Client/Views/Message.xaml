@@ -10,9 +10,10 @@
              x:Class="SkillChat.Client.Views.Message">
     <UserControl.Resources>
         <utils:BoolToObjectConverter x:Key="BoolToObjectConverter"/>
-        <SolidColorBrush x:Key="PurpleColor" Color="{DynamicResource Violet_02}"/>
-        <SolidColorBrush x:Key="DarkPurpleColor" Color="{DynamicResource Violet_03}"/>
-        <SolidColorBrush x:Key="OrangeColor" Color="{DynamicResource Orange_03}"/>
+        <!-- Use theme-aware accent colors for message styling -->
+        <SolidColorBrush x:Key="PurpleColor" Color="{DynamicResource AccentColor}"/>
+        <SolidColorBrush x:Key="DarkPurpleColor" Color="{DynamicResource AccentColorPressed}"/>
+        <SolidColorBrush x:Key="OrangeColor" Color="{DynamicResource AccentColor}"/>
     </UserControl.Resources>
   <Grid RowDefinitions="Auto,*">
     <ItemsControl
@@ -23,8 +24,12 @@
       <ItemsControl.DataTemplates>
         <DataTemplate DataType="viewModel:AttachmentMessageViewModel">
           <Border
-            MaxWidth="280">
-            <Grid ColumnDefinitions="Auto, Auto, Auto" Margin="0,0,0,10">
+            MaxWidth="280"
+            Background="{DynamicResource CardBackgroundBrush}"
+            CornerRadius="10"
+            Padding="8,6"
+            Margin="0,0,0,4">
+            <Grid ColumnDefinitions="Auto, Auto, Auto">
               <Image
                 Grid.Column="0"
                 Classes="file">

@@ -3,7 +3,8 @@
 		xmlns:sys="clr-namespace:System;assembly=netstandard">
 
 	<Style Selector="ContextMenu">
-		<Setter Property="BorderBrush" Value="{DynamicResource Orange_03Brush}"/>
+		<Setter Property="Background" Value="{DynamicResource MenuBackgroundBrush}"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource MenuBorderBrush}"/>
 		<Setter Property="BorderThickness" Value="1"/>
 		<Setter Property="Padding" Value="0"/>
 	</Style>
@@ -14,7 +15,7 @@
 	<Style Selector="MenuItem">
 		<Setter Property="Background" Value="Transparent"/>
 		<Setter Property="Padding" Value="20,7,20,7"/>
-		<Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+		<Setter Property="Foreground" Value="{DynamicResource MenuItemTextBrush}"/>
 		<Setter Property="FontSize" Value="15"/>
 		<Setter Property="Command" Value="{Binding Command}"/>
 		<Setter Property="Header" Value="{Binding Content}"/>
@@ -50,6 +51,6 @@
 	</Style>
 	
 	<Style Selector="MenuItem:selected /template/ Border#root">
-		<Setter Property="Background" Value="{DynamicResource Orange_03Brush}"/>
+		<Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
 	</Style>
 </Styles>
