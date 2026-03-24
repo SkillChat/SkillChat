@@ -41,12 +41,26 @@
         <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
     </Style>
 
-    <Style Selector="TextBox.TextBoxEnterPages:focus /template/ Border#PART_BorderElement">
-        <Setter Property="Background" Value="Transparent"/>
+    <!-- Suppress Fluent inner border on focus for login page textboxes -->
+    <Style Selector="TextBox.TextBoxEnterPages /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
     </Style>
-
+    <Style Selector="TextBox.TextBoxEnterPages:focus /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
     <Style Selector="TextBox.TextBoxEnterPages:pointerover /template/ Border#PART_BorderElement">
-        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style Selector="TextBox.TextBoxEnterPages:focus-within /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
     </Style>
 
     <!--Border-->
@@ -83,25 +97,38 @@
     </Style>
 
     <!--Button-->
+    <Style Selector="Button.ButtonEnterPages /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryButtonTextBrush}" />
+    </Style>
     <Style Selector="Button.ButtonEnterPages /template/ ContentPresenter">
-        <Setter Property="CornerRadius" Value="2" />
+        <Setter Property="CornerRadius" Value="6" />
     </Style>
     <Style Selector="Button.ButtonEnterPages">
         <Setter Property="FontSize" Value="18" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryButtonTextBrush}" />
         <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="CornerRadius" Value="6" />
     </Style>
 
     <Style Selector="Button.ButtonEnterPages:pointerover">
         <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource AccentHoverBrush}" />
     </Style>
+    <Style Selector="Button.ButtonEnterPages:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />
+    </Style>
 
     <Style Selector="Button.ButtonEnterPages:disabled">
         <Setter Property="Opacity" Value="1" />
         <Setter Property="Background" Value="{DynamicResource AccentPressedBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource AccentPressedBrush}" />
+    </Style>
+    <Style Selector="Button.ButtonEnterPages:disabled /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource AccentPressedBrush}" />
     </Style>
 
 

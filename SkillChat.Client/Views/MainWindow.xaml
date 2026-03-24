@@ -107,42 +107,81 @@
     </Window.Styles>
     
     <Grid>
-        <Grid ColumnDefinitions="200,*">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{Binding SidebarWidth}" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
             <!-- Left Sidebar - Telegram style -->
             <Border Background="{DynamicResource SidebarBackgroundBrush}"
                     BorderBrush="{DynamicResource DividerBrush}"
                     BorderThickness="0,0,1,0">
                 <Grid RowDefinitions="Auto,*,Auto">
-                    <!-- Sidebar Header with logo and hamburger menu area -->
-                    <Border Grid.Row="0" 
-                            Background="{DynamicResource SidebarBackgroundBrush}"
-                            Padding="12,12,12,8">
+                    <!-- Sidebar Header with logo and hamburger menu area - clickable to toggle sidebar -->
+                    <Button Grid.Row="0"
+                            Command="{Binding ToggleSidebarCommand}"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="12,12,12,8"
+                            Cursor="Hand"
+                            HorizontalContentAlignment="Stretch">
                         <Grid ColumnDefinitions="Auto,*,Auto">
-                            <!-- Logo -->
+                            <!-- Hamburger icon / Logo -->
+                            <TextBlock Text="☰"
+                                       FontSize="20"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                       VerticalAlignment="Center"
+                                       IsVisible="{Binding !IsSidebarExpanded}"/>
                             <Image Width="32" Height="32"
-                                   VerticalAlignment="Center">
+                                   VerticalAlignment="Center"
+                                   IsVisible="{Binding IsSidebarExpanded}">
                                 <Image.Source>
                                     <svg:SvgImage Source="/Assets/SkillChat_small.svg" />
                                 </Image.Source>
                             </Image>
-                            
-                            <!-- App title -->
+
+                            <!-- App title - only visible when expanded -->
                             <TextBlock Grid.Column="1" 
                                        Text="SkillChat"
                                        FontSize="16"
                                        FontWeight="SemiBold"
                                        Foreground="{DynamicResource PrimaryTextBrush}"
                                        VerticalAlignment="Center"
-                                       Margin="12,0,0,0"/>
+                                       Margin="12,0,0,0"
+                                       IsVisible="{Binding IsSidebarExpanded}"/>
                         </Grid>
-                    </Border>
+                    </Button>
                     
                     <!-- Sidebar Content - Chat list area (placeholder for future chat list) -->
-                    <Border Grid.Row="1" Background="Transparent">
+                    <Border Grid.Row="1" Background="Transparent" IsVisible="{Binding IsSidebarExpanded}">
                         <StackPanel Margin="8,4">
+                            <!-- Chats button - primary navigation -->
+                            <Button Classes="sidebar-btn"
+                                    IsVisible="{Binding !IsChatsSelected}"
+                                    Command="{Binding ShowChatsCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <TextBlock Text="💬" FontSize="18" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Чаты"
+                                               FontSize="14"
+                                               Foreground="{DynamicResource PrimaryTextBrush}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Classes="sidebar-btn active"
+                                    IsVisible="{Binding IsChatsSelected}"
+                                    Command="{Binding ShowChatsCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <TextBlock Text="💬" FontSize="18" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Чаты"
+                                               FontSize="14"
+                                               Foreground="{DynamicResource AccentBrush}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+
                             <!-- Profile button -->
                             <Button Classes="sidebar-btn"
-                                    IsVisible="{Binding !ProfileViewModel.IsOpened}"
+                                    IsVisible="{Binding !IsProfileSelected}"
                                     Command="{Binding ProfileViewModel.OpenProfilePanelCommand}">
                                 <StackPanel Orientation="Horizontal" Spacing="12">
                                     <Image Width="20" Height="20" Name="profile_white_icon" />
@@ -153,7 +192,7 @@
                                 </StackPanel>
                             </Button>
                             <Button Classes="sidebar-btn active"
-                                    IsVisible="{Binding ProfileViewModel.IsOpened}"
+                                    IsVisible="{Binding IsProfileSelected}"
                                     Command="{Binding ProfileViewModel.OpenProfilePanelCommand}">
                                 <StackPanel Orientation="Horizontal" Spacing="12">
                                     <Image Width="20" Height="20" Name="profile_orange_icon" />
@@ -166,7 +205,7 @@
                             
                             <!-- Settings button -->
                             <Button Classes="sidebar-btn"
-                                    IsVisible="{Binding !SettingsViewModel.IsOpened}"
+                                    IsVisible="{Binding !IsSettingsSelected}"
                                     Command="{Binding SettingsViewModel.OpenSettingsCommand}">
                                 <StackPanel Orientation="Horizontal" Spacing="12">
                                     <Image Width="20" Height="20" Name="settings" />
@@ -177,7 +216,7 @@
                                 </StackPanel>
                             </Button>
                             <Button Classes="sidebar-btn active"
-                                    IsVisible="{Binding SettingsViewModel.IsOpened}"
+                                    IsVisible="{Binding IsSettingsSelected}"
                                     Command="{Binding SettingsViewModel.OpenSettingsCommand}">
                                 <StackPanel Orientation="Horizontal" Spacing="12">
                                     <Image Width="20" Height="20" Name="settings_active" />
@@ -195,7 +234,8 @@
                             Background="{DynamicResource SidebarBackgroundBrush}"
                             BorderBrush="{DynamicResource DividerBrush}"
                             BorderThickness="0,1,0,0"
-                            Padding="12,12">
+                            Padding="12,12"
+                            IsVisible="{Binding IsSidebarExpanded}">
                         <StackPanel Spacing="8">
                             <!-- Night Mode toggle -->
                             <Grid ColumnDefinitions="*,Auto">

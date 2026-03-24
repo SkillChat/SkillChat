@@ -34,6 +34,9 @@ namespace SkillChat.Client.ViewModel
                 await Open(user?.Id);
             });
 
+            //Закрыть панель профиля
+            CloseProfilePanelCommand = ReactiveCommand.Create(() => Close());
+
             //Сохранить изменения Name профиля
             ApplyProfileNameCommand = ReactiveCommand.CreateFromTask(SetProfile);
 
@@ -45,8 +48,7 @@ namespace SkillChat.Client.ViewModel
             {
                 if (obj is IHaveWidth window)
                 {
-                    ProfileViewModel.WindowWidth = window.Width;
-                    IsShowChat = !IsOpened || window.Width > 650;
+                    UpdateChatVisibility(window.Width);
                 }
             });
 
@@ -112,6 +114,7 @@ namespace SkillChat.Client.ViewModel
         public ICommand ApplyProfileNameCommand { get; }
         public ICommand ApplyProfileAboutMeCommand { get; }
         public ICommand OpenProfilePanelCommand { get; }
+        public ICommand CloseProfilePanelCommand { get; }
         public ICommand SetEditNameProfileCommand { get; }
         public ICommand SignOutCommand { get; set; }
         public ICommand LoadMessageHistoryCommand { get; set; }
@@ -130,6 +133,9 @@ namespace SkillChat.Client.ViewModel
         public void Close()
         {
             IsOpened = false;
+            ResetEditMode();
+            ContextMenuClose();
+            UpdateChatVisibility();
 
             ProfileId = string.Empty;
             Login = string.Empty;
@@ -163,8 +169,19 @@ namespace SkillChat.Client.ViewModel
                 UpdateProfileProps(await _serviceClient.GetAsync(new GetProfile { UserId = userId }));
 
                 IsOpened = true;
+                UpdateChatVisibility();
                 IsOpenProfileEvent?.Invoke();
             }
+        }
+
+        public void UpdateChatVisibility(double? windowWidth = null)
+        {
+            if (windowWidth.HasValue)
+            {
+                WindowWidth = windowWidth.Value;
+            }
+
+            IsShowChat = !IsOpened || WindowWidth > 650;
         }
 
         private void UpdateProfileProps(UserProfileMold profile)

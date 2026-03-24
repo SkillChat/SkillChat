@@ -11,6 +11,24 @@
     <Grid IsVisible="{Binding IsOpened}" Background="{DynamicResource CardBackgroundBrush}" HorizontalAlignment="Right" MaxWidth="390">
         <Grid Width="2" Background="{DynamicResource DividerBrush}" HorizontalAlignment="Left" />
 
+        <!-- Close button at top-right -->
+        <Button VerticalAlignment="Top"
+                HorizontalAlignment="Right"
+                Margin="0,8,12,0"
+                Width="28"
+                Height="28"
+                Background="Transparent"
+                BorderThickness="0"
+                Cursor="Hand"
+                Command="{Binding CloseProfilePanelCommand}"
+                ToolTip.Tip="Закрыть">
+            <TextBlock Text="✕"
+                       FontSize="16"
+                       Foreground="{DynamicResource SecondaryTextBrush}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+        </Button>
+
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition />

@@ -132,6 +132,8 @@
         <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="TextDecorations" Value="Underline"/>
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        <Setter Property="MaxWidth" Value="180"/>
     </Style>
 
     <Style Selector="TextBlock.fileName">
@@ -139,6 +141,8 @@
         <Setter Property="VerticalAlignment" Value="Bottom"/>
         <Setter Property="TextAlignment" Value="Left"/>
         <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        <Setter Property="MaxWidth" Value="180"/>
     </Style>
 
     <Style Selector="TextBlock.extensions">

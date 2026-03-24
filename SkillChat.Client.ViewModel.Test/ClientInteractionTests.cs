@@ -99,6 +99,8 @@ public class ClientInteractionTests
         viewModel.SetChatHub(hub);
 
         await viewModel.Open("user-1");
+        viewModel.LayoutUpdatedWindow.Execute(new TestWindowWidth(600)).Subscribe();
+        await TestHelpers.EventuallyAsync(() => !viewModel.IsShowChat);
         viewModel.UpdateUserProfile("Updated", "user-1");
         ((System.Windows.Input.ICommand)viewModel.SetEditNameProfileCommand).Execute(null);
         ((System.Windows.Input.ICommand)viewModel.SetEditAboutMeProfileCommand).Execute(null);
@@ -109,12 +111,13 @@ public class ClientInteractionTests
         await TestHelpers.EventuallyAsync(() => viewModel.DisplayName == "Saved" && viewModel.AboutMe == "Saved about");
         await hub.Received(1).UpdateMyDisplayName("Saved");
 
-        viewModel.ContextMenuClose();
-        viewModel.Close();
+        ((System.Windows.Input.ICommand)viewModel.CloseProfilePanelCommand).Execute(null);
+        await TestHelpers.EventuallyAsync(() => !viewModel.IsOpened && viewModel.IsShowChat);
 
         using var _ = Assert.Multiple();
         await Assert.That(viewModel.IsMyProfile).IsFalse();
         await Assert.That(viewModel.IsOpened).IsFalse();
+        await Assert.That(viewModel.IsShowChat).IsTrue();
         await Assert.That(viewModel.DisplayName).IsEqualTo(string.Empty);
         await Assert.That(viewModel.IsActiveContextMenu).IsFalse();
     }
@@ -224,6 +227,14 @@ public class ClientInteractionTests
         ResetClientState();
         var fileDialog = Substitute.For<ICanOpenFileDialog>();
         var serviceClient = Substitute.For<ServiceStack.IJsonServiceClient>();
+        serviceClient.GetAsync(Arg.Any<GetProfile>())
+            .Returns(Task.FromResult(new UserProfileMold
+            {
+                Id = "user-1",
+                Login = "login",
+                DisplayName = "Display",
+                AboutMe = "About",
+            }));
         var tempFile = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.txt");
         await File.WriteAllTextAsync(tempFile, "payload");
         fileDialog.Open().Returns(Task.FromResult(new[] { tempFile }));
@@ -255,6 +266,14 @@ public class ClientInteractionTests
             mainWindow.WindowStates(MainWindowViewModel.WindowState.SignOut);
             mainWindow.Width(true);
             await mainWindow.OpenFileBrowserMenu();
+            await mainWindow.ProfileViewModel.Open("user-1");
+            mainWindow.SyncSidebarSelection();
+            await Assert.That(mainWindow.IsProfileSelected).IsTrue();
+            mainWindow.SettingsViewModel.IsOpened = true;
+            mainWindow.SyncSidebarSelection();
+            await Assert.That(mainWindow.IsSettingsSelected).IsTrue();
+            await Assert.That(mainWindow.IsChatsSelected).IsFalse();
+            mainWindow.ShowChats();
 
             using var _ = Assert.Multiple();
             await Assert.That(mainWindow.AttachMenuVisible).IsFalse();
@@ -262,8 +281,13 @@ public class ClientInteractionTests
             await Assert.That(mainWindow.IsEdited).IsTrue();
             await Assert.That(mainWindow.IsSelectQuotedMessage).IsFalse();
             await Assert.That(mainWindow.User.ErrorMessageLoginPage.IsError).IsFalse();
-            await Assert.That(mainWindow.ColumndefinitionWidth).IsEqualTo("310");
+            await Assert.That(mainWindow.ColumndefinitionWidth).IsEqualTo("*");
             await Assert.That(mainWindow.AttachmentViewModel.IsOpen).IsTrue();
+            await Assert.That(mainWindow.IsChatsSelected).IsTrue();
+            await Assert.That(mainWindow.IsProfileSelected).IsFalse();
+            await Assert.That(mainWindow.IsSettingsSelected).IsFalse();
+            await Assert.That(mainWindow.ProfileViewModel.IsOpened).IsFalse();
+            await Assert.That(mainWindow.SettingsViewModel.IsOpened).IsFalse();
         }
         finally
         {
@@ -275,5 +299,15 @@ public class ClientInteractionTests
     {
         TestHelpers.ResetLocator();
         TestHelpers.ResetNotificationManager();
+    }
+
+    private sealed class TestWindowWidth : IHaveWidth
+    {
+        public TestWindowWidth(double width)
+        {
+            Width = width;
+        }
+
+        public double Width { get; }
     }
 }

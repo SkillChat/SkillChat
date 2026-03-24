@@ -111,14 +111,8 @@
                   Classes="BorderEnterPages Base"
                   Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}">
             <StackPanel  Orientation="Horizontal">
-              <Panel Margin="16,16,5 ,16"
-                     Width="18">
-                <ToggleButton
-                     IsVisible="{Binding User.IsPassword}"
-                     Classes="passwordBoxRevealButtonSkillChat"
-                     Background="Transparent" 
-                     Cursor="Hand"
-                     IsChecked="{Binding #PasswordTB.RevealPassword, Mode=TwoWay}"/>
+              <Panel Margin="16,16,5,16"
+                     Width="20">
               </Panel>
               <TextBox
               x:Name="PasswordTB"
@@ -135,6 +129,17 @@
                   </ia:EventTriggerBehavior>
                 </i:Interaction.Behaviors>
               </TextBox>
+              <Panel Margin="5,16,5,16"
+                     Width="18">
+                <ToggleButton
+                     IsVisible="{Binding User.IsPassword}"
+                     Classes="passwordBoxRevealButtonSkillChat"
+                     Background="Transparent"
+                     Cursor="Hand"
+                     Width="18"
+                     Height="18"
+                     IsChecked="{Binding #PasswordTB.RevealPassword, Mode=TwoWay}"/>
+              </Panel>
               <Panel Margin="5,15,16,15">
                 <Image
                   Classes="ImageTbx"/>
