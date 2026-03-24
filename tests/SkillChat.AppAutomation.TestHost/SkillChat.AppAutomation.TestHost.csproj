@@ -10,4 +10,8 @@
     <PackageReference Include="AppAutomation.Session.Contracts" Version="1.2.0" />
     <PackageReference Include="AppAutomation.TestHost.Avalonia" Version="1.2.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\SkillChat.Client\SkillChat.Client.csproj" />
+  </ItemGroup>
 </Project>

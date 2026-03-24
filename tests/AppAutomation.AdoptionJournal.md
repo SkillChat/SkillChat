@@ -105,3 +105,24 @@
 - Suggestions:
   - Clarify in docs that `doctor` accepts valid repo-level or nested NuGet configuration and does not strictly require the file to live at repo root.
   - Add a short note explaining that the generated topology is only a compile-time scaffold until `TestHost` placeholders and AUT selectors are replaced.
+
+## Entry 7. Deterministic bootstrap integration
+- Step:
+  - Extracted shared client bootstrap from `Program`/`App`.
+  - Added `SKILLCHAT_SETTINGS_PATH`-based settings resolution.
+  - Wired `SkillChat.AppAutomation.TestHost` to:
+    - real solution/project paths;
+    - isolated temp `Settings.json`;
+    - headless window factory via the shared bootstrap.
+  - Built `SkillChat.Client`, `SkillChat.AppAutomation.TestHost`, `SkillChat.UiTests.Headless`, `SkillChat.UiTests.FlaUI`.
+- What worked:
+  - The AUT can now be initialized through one shared bootstrap seam instead of duplicating setup code inside tests.
+  - `TestHost` can launch the real `MainWindow` with test-specific settings.
+  - Moving IP/runtime environment discovery from constructor-time into `ConnectCommand` removes an unnecessary startup side effect for smoke tests.
+- Friction:
+  - A normal `dotnet build` initially failed because `Avalonia.Designer.HostApp` from the IDE was locking `SkillChat.Client\bin\Debug\net10.0`.
+  - From a consumer perspective this means the desktop launch/build path is sensitive to design-time tooling that keeps the AUT output directory open.
+  - There is no obvious `AppAutomation` hook in `AvaloniaDesktopLaunchHost` to redirect build output into an isolated temp directory before launch.
+- Suggestions:
+  - Document the "close Avalonia designer / design host before desktop runtime validation" edge case for Avalonia consumers.
+  - Consider allowing custom MSBuild properties or isolated output paths in desktop launch options, so desktop automation is less coupled to the AUT's default `bin` directory.

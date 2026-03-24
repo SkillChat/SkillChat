@@ -1,14 +1,5 @@
-﻿using AutoMapper;
 using Avalonia;
 using Avalonia.ReactiveUI;
-using Microsoft.Extensions.Configuration;
-using SkillChat.Client.Utils;
-using SkillChat.Client.ViewModel;
-using SkillChat.Client.ViewModel.Interfaces;
-using SkillChat.Client.Views;
-using SkillChat.Interface;
-using Splat;
-using WritableJsonConfiguration;
 
 namespace SkillChat.Client
 {
@@ -19,20 +10,7 @@ namespace SkillChat.Client
         // yet and stuff might break.
         public static void Main(string[] args)
         {
-            //Регистрация подсистемы конфигурации
-            IConfigurationRoot configuration = WritableJsonConfigurationFabric.Create("Settings.json", false);
-            var section = configuration.GetSection("ChatClientSettings");
-            if (section == null)
-            {
-                configuration.Set(new { ChatClientSettings = new ChatClientSettings()});
-            }
-            Locator.CurrentMutable.RegisterConstant(configuration, typeof(IConfiguration));
-            Locator.CurrentMutable.Register<INotify>(() => new NotifyWindow());
-            Locator.CurrentMutable.Register<ICanOpenFileDialog>(() => new CanOpenFileDialog());
-            Locator.CurrentMutable.Register<IClipboard>(() => new AvaloniaClipboard());
-
-            var mapper = AppModelMapping.ConfigureMapping();
-            Locator.CurrentMutable.Register<IMapper>(() => mapper);
+            SkillChatClientBootstrap.InitializeServices();
 
             //Запуск авалонии
             BuildAvaloniaApp()

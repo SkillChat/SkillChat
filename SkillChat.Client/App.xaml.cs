@@ -1,9 +1,7 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
-using SkillChat.Client.ViewModel;
-using SkillChat.Client.Views;
 
 namespace SkillChat.Client
 {
@@ -18,10 +16,7 @@ namespace SkillChat.Client
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow
-                {
-                    DataContext = new MainWindowViewModel(),
-                };
+                desktop.MainWindow = SkillChatClientBootstrap.CreateMainWindow();
             }
 
             base.OnFrameworkInitializationCompleted();
@@ -35,8 +30,8 @@ namespace SkillChat.Client
         {
             if (Application.Current != null)
             {
-                Application.Current.RequestedThemeVariant = isDark 
-                    ? ThemeVariant.Dark 
+                Application.Current.RequestedThemeVariant = isDark
+                    ? ThemeVariant.Dark
                     : ThemeVariant.Light;
             }
         }

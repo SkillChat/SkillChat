@@ -100,30 +100,11 @@ namespace SkillChat.Client.ViewModel
             Tokens = new TokenResult { AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken };
 
             Messages = new ObservableCollection<MessageViewModel>();
-            var bits = Environment.Is64BitOperatingSystem ? "PC 64bit, " : "PC 32bit, ";
-            var operatingSystem = bits + RuntimeInformation.OSDescription;
-
-            string ipAddress = "";
-            try
-            {
-                ipAddress = new WebClient().DownloadString("https://api.ipify.org");
-            }
-            catch (Exception e)
-            {
-                try
-                {
-                    IPHostEntry ipHost = Dns.GetHostEntry("localhost");
-                    if (ipHost.AddressList.Length > 0)
-                    {
-                        ipAddress = ipHost.AddressList.Last().ToString();
-                    }
-                }
-                catch (Exception exception) { }
-            }
-            var nameVersionClient = "SkillChat Avalonia Client 1.0";
 
             ConnectCommand = ReactiveCommand.CreateFromTask(async () =>
             {
+                var clientContext = ResolveClientContext();
+
                 try
                 {
                     _connection = new HubConnectionBuilder()
@@ -187,7 +168,11 @@ namespace SkillChat.Client.ViewModel
                                         settings.AccessToken = Tokens.AccessToken;
                                         settings.RefreshToken = Tokens.RefreshToken;
                                         configuration.GetSection("ChatClientSettings").Set(configuration);
-                                        await _hub.Login(Tokens.AccessToken, operatingSystem, ipAddress, nameVersionClient);
+                                        await _hub.Login(
+                                            Tokens.AccessToken,
+                                            clientContext.OperatingSystem,
+                                            clientContext.IpAddress,
+                                            clientContext.ClientName);
                                         IsSignedIn = true;
                                     }
                                     catch (Exception e)
@@ -336,7 +321,11 @@ namespace SkillChat.Client.ViewModel
 
                     _connection.Closed += connectionOnClosed();
                     await _connection.StartAsync();
-                    await _hub.Login(Tokens.AccessToken, operatingSystem, ipAddress, nameVersionClient);
+                    await _hub.Login(
+                        Tokens.AccessToken,
+                        clientContext.OperatingSystem,
+                        clientContext.IpAddress,
+                        clientContext.ClientName);
                     IsShowingLoginPage = false;
                     IsShowingRegisterPage = false;
                     User.ErrorMessageLoginPage.ResetDisplayErrorMessage();
@@ -918,6 +907,37 @@ namespace SkillChat.Client.ViewModel
         }
 
         public bool IsFirstRun { get; set; } = true;
+
+        private static ClientContext ResolveClientContext()
+        {
+            var bits = Environment.Is64BitOperatingSystem ? "PC 64bit, " : "PC 32bit, ";
+            var operatingSystem = bits + RuntimeInformation.OSDescription;
+
+            string ipAddress = string.Empty;
+            try
+            {
+                using var webClient = new WebClient();
+                ipAddress = webClient.DownloadString("https://api.ipify.org");
+            }
+            catch
+            {
+                try
+                {
+                    IPHostEntry ipHost = Dns.GetHostEntry("localhost");
+                    if (ipHost.AddressList.Length > 0)
+                    {
+                        ipAddress = ipHost.AddressList.Last().ToString();
+                    }
+                }
+                catch
+                {
+                }
+            }
+
+            return new ClientContext(operatingSystem, ipAddress, "SkillChat Avalonia Client 1.0");
+        }
+
+        private sealed record ClientContext(string OperatingSystem, string IpAddress, string ClientName);
 
         public void WindowStates(WindowState state)
         {
