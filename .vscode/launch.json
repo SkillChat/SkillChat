@@ -1,0 +1,45 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "SkillChat Client",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build SkillChat Client",
+      "program": "${workspaceFolder}/SkillChat.Client/bin/Debug/net10.0/SkillChat.Client.dll",
+      "cwd": "${workspaceFolder}/SkillChat.Client",
+      "console": "internalConsole",
+      "stopAtEntry": false,
+      "justMyCode": true
+    },
+    {
+      "name": "SkillChat Server",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build SkillChat Server",
+      "program": "${workspaceFolder}/SkillChat.Server/bin/Debug/net10.0/SkillChat.Server.dll",
+      "cwd": "${workspaceFolder}/SkillChat.Server",
+      "console": "internalConsole",
+      "stopAtEntry": false,
+      "justMyCode": true,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "https://localhost:5001;http://localhost:5000"
+      },
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/metadata"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "SkillChat Client + Server",
+      "configurations": [
+        "SkillChat Server",
+        "SkillChat Client"
+      ]
+    }
+  ]
+}
