@@ -71,7 +71,7 @@
 				  <Grid ColumnDefinitions="Auto,*">
 					  <Image Grid.Column="0" Classes="EditedMessageImage"/>
             <Grid Grid.Column="1" MaxHeight="100">
-              <ScrollViewer Padding="0,5,0,5">
+              <ScrollViewer Padding="0,5,0,5" >
                   <TextBox
                       Name="InputMessageTB"
                       Classes="SendMessageText"
