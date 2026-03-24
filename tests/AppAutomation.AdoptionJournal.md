@@ -185,3 +185,25 @@
     - headless first;
     - desktop runtime second;
     - shared page objects/scenarios for both.
+
+## Entry 10. Final repo-level verification
+- Step:
+  - Ran:
+    - `dotnet tool run appautomation doctor --repo-root .`
+    - `dotnet build SkillChat.sln`
+    - `dotnet test --solution SkillChat.sln`
+- What worked:
+  - `doctor` still reports `0 error(s), 0 warning(s)` after the full integration.
+  - Solution build is green.
+  - Solution test run is green, including both new UI automation runtimes:
+    - `SkillChat.UiTests.Headless`: passed
+    - `SkillChat.UiTests.FlaUI`: passed
+    - aggregate solution result: `55` tests passed.
+- Friction:
+  - On this SDK/test-runner stack, `dotnet test SkillChat.sln` is rejected and the consumer must use `dotnet test --solution SkillChat.sln`.
+  - Full repo verification produces a very large amount of pre-existing nullable/build warnings, which makes it harder to visually spot the actual UI automation outcome during adoption.
+- Suggestions:
+  - Update quickstart/runbook examples to show the CLI forms that actually work on the current SDK/test platform combination:
+    - `dotnet test --project ...`
+    - `dotnet test --solution ...`
+  - Consider adding a small docs note about expected warning noise in consumer repos and recommend a validation order where `doctor`, targeted UI projects, and only then full-solution verification are run.
