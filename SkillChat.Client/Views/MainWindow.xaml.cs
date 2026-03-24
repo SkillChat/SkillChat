@@ -2,6 +2,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using ReactiveUI;
 using SkillChat.Client.ViewModel;
 
@@ -16,7 +17,7 @@ namespace SkillChat.Client.Views
             MessagesScroller.ScrollChanged += MessagesScroller_ScrollChanged;
             this.DataContextChanged += SetDataContextMethod;
             MessagesScroller.ObservableForProperty(m => m.Viewport.Height)
-                .Subscribe(change => ViewportHeightEvent(change.Value));
+                .Subscribe(change => Dispatcher.UIThread.Post(() => ViewportHeightEvent(change.Value)));
 #if DEBUG
             this.AttachDevTools();
 #endif

@@ -126,3 +126,42 @@
 - Suggestions:
   - Document the "close Avalonia designer / design host before desktop runtime validation" edge case for Avalonia consumers.
   - Consider allowing custom MSBuild properties or isolated output paths in desktop launch options, so desktop automation is less coupled to the AUT's default `bin` directory.
+
+## Entry 8. Headless smoke authoring on a real Avalonia screen flow
+- Step:
+  - Added minimal `AutomationProperties.AutomationId` anchors for the real `login/register` flow.
+  - Replaced tap-only text links with semantic `Button` controls while preserving the same visual role.
+  - Implemented `HeadlessSessionHooks` with:
+    - `HeadlessUnitTestSession.StartNew(SkillChatAppLaunchHost.AvaloniaAppType)`
+    - `HeadlessRuntime.SetSession(...)`
+  - Authored a deterministic smoke path that covers:
+    - launch on login page;
+    - navigation to register page;
+    - consent toggle enabling the submit button;
+    - filling register fields;
+    - navigation back to login page.
+  - Ran:
+    - `dotnet test --project tests\\SkillChat.UiTests.Headless\\SkillChat.UiTests.Headless.csproj -c Debug`
+- What worked:
+  - Once the global headless session was registered in hooks, `DesktopAppSession.Launch(...)` and `HeadlessControlResolver` worked against the real `MainWindow`.
+  - The canonical `Authoring -> Headless` split maps well to a consumer-owned smoke scenario.
+  - UI automation surfaced a genuine AUT threading bug in `MainWindow` (`ScrollViewer.Offset` touched off the UI thread), so the framework is valuable as an early integration detector rather than only as a selector runner.
+- Friction:
+  - The generated `HeadlessSessionHooks.cs` is only a TODO placeholder. A consumer still has to discover the exact required API pair (`HeadlessUnitTestSession.StartNew` + `HeadlessRuntime.SetSession`) by trial, source reading, or runtime failure.
+  - First failing runtime message was actionable (`Headless session is not initialized...`), but it arrived only after executing the test. This setup requirement could have been documented or scaffolded directly.
+  - `Button.Content` / `TextBlock.Text` were not reliably consumable through `WaitUntilNameEquals` / `WaitUntilNameContains` in this Avalonia headless path until explicit `AutomationProperties.Name` values were assigned.
+  - Dynamic label text (`RegisterErrorLabel`) was not a stable assertion surface for this smoke path via automation `Name`, so the consumer had to narrow the test to navigation/state changes instead of validating the inline error message.
+  - The generated TUnit/Microsoft Testing Platform runner does not accept the classic `dotnet test --filter ...` workflow; it expects runner-specific filtering semantics (`--treenode-filter` / `--filter-uid`). This is surprising during debugging if the docs only show generic `dotnet test`.
+  - During authoring, source-generated page members were effectively a black box from the consumer perspective unless they inspected build outputs manually; that slowed down iterative discovery of the supported page-object contract.
+- Suggestions:
+  - Replace the placeholder headless hooks with a compilable default for Avalonia templates, or at minimum include the exact namespaces/types in the scaffold comment.
+  - Add a short troubleshooting block near headless quickstart:
+    - "If you see `Headless session is not initialized`, wire `HeadlessUnitTestSession.StartNew(...)` into `HeadlessRuntime.SetSession(...)`."
+  - Document explicitly that consumers should set `AutomationProperties.Name` for interactive elements if they plan to use `WaitUntilName*` helpers, instead of assuming `Content`/`Text` will be projected consistently.
+  - Add guidance on which assertions are robust for Avalonia headless:
+    - prefer `AutomationId`, `IsEnabled`, `IsChecked`, and direct control properties;
+    - treat dynamic accessible names as optional unless explicitly assigned.
+  - Document the TUnit/MTP command-line differences in consumer docs:
+    - `dotnet test --project ...`
+    - filtering/debugging via the runner-specific options rather than classic `--filter`.
+  - Consider exposing an easier way to inspect generated page-object members, or emit the generated `.g.cs` into a predictable, documented location for consumers.

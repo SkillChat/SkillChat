@@ -14,13 +14,27 @@ public sealed class MainWindowHeadlessTests
 {
     protected override HeadlessRuntimeSession LaunchSession()
     {
-        return new HeadlessRuntimeSession(
-            DesktopAppSession.Launch(SkillChatAppLaunchHost.CreateHeadlessLaunchOptions()));
+        try
+        {
+            return new HeadlessRuntimeSession(
+                DesktopAppSession.Launch(SkillChatAppLaunchHost.CreateHeadlessLaunchOptions()));
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Headless AppAutomation launch failed.", ex);
+        }
     }
 
     protected override MainWindowPage CreatePage(HeadlessRuntimeSession session)
     {
-        return new MainWindowPage(new HeadlessControlResolver(session.Inner.MainWindow));
+        try
+        {
+            return new MainWindowPage(new HeadlessControlResolver(session.Inner.MainWindow));
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Headless AppAutomation page creation failed.", ex);
+        }
     }
 
     public sealed class HeadlessRuntimeSession : IUiTestSession
