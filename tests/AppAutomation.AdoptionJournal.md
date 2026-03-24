@@ -165,3 +165,23 @@
     - `dotnet test --project ...`
     - filtering/debugging via the runner-specific options rather than classic `--filter`.
   - Consider exposing an easier way to inspect generated page-object members, or emit the generated `.g.cs` into a predictable, documented location for consumers.
+
+## Entry 9. FlaUI desktop smoke runtime
+- Step:
+  - Reused the same `Authoring` smoke path against the desktop runtime.
+  - Ran:
+    - `dotnet test --project tests\\SkillChat.UiTests.FlaUI\\SkillChat.UiTests.FlaUI.csproj -c Debug`
+  - Added defensive exception wrapping in `MainWindowFlaUiTests` for launch/page creation, matching the headless runtime.
+- What worked:
+  - The same selector contract (`AutomationId` + explicit `AutomationProperties.Name`) carried over from headless to FlaUI without extra AUT changes.
+  - Desktop launch through `SkillChatAppLaunchHost.CreateDesktopLaunchOptions()` worked against the isolated test settings created in `TestHost`.
+  - The smoke path passed end-to-end on Windows desktop runtime.
+- Friction:
+  - No new framework-specific blockers appeared in this milestone beyond the selector/accessibility requirements already captured in Entry 8.
+  - The main consumer challenge at this point is signal-to-noise: large build warning output from the AUT can bury the actual automation result during `dotnet test`, even when the UI runtime itself is healthy.
+- Suggestions:
+  - Keep FlaUI docs aligned with the headless guidance around `AutomationProperties.Name` / `AutomationId`, so consumers know the same selector contract should work across both runtimes.
+  - Consider documenting a concise "green path" validation order for consumers:
+    - headless first;
+    - desktop runtime second;
+    - shared page objects/scenarios for both.

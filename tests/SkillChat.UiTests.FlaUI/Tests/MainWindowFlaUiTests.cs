@@ -14,14 +14,28 @@ public sealed class MainWindowFlaUiTests
 {
     protected override FlaUiRuntimeSession LaunchSession()
     {
-        return new FlaUiRuntimeSession(
-            DesktopAppSession.Launch(SkillChatAppLaunchHost.CreateDesktopLaunchOptions()));
+        try
+        {
+            return new FlaUiRuntimeSession(
+                DesktopAppSession.Launch(SkillChatAppLaunchHost.CreateDesktopLaunchOptions()));
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("FlaUI AppAutomation launch failed.", ex);
+        }
     }
 
     protected override MainWindowPage CreatePage(FlaUiRuntimeSession session)
     {
-        return new MainWindowPage(
-            new FlaUiControlResolver(session.Inner.MainWindow, session.Inner.ConditionFactory));
+        try
+        {
+            return new MainWindowPage(
+                new FlaUiControlResolver(session.Inner.MainWindow, session.Inner.ConditionFactory));
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("FlaUI AppAutomation page creation failed.", ex);
+        }
     }
 
     public sealed class FlaUiRuntimeSession : IUiTestSession
