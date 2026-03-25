@@ -9,6 +9,7 @@ using System;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using SkillChat.Client.ViewModel.Services;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -20,10 +21,10 @@ namespace SkillChat.Client.ViewModel
     [AddINotifyPropertyChangedInterface]
     public class ProfileViewModel : IProfile
     {
-        private readonly IJsonServiceClient _serviceClient;
+        private readonly ISkillChatApiClient _serviceClient;
         private IChatHub _hub;
 
-        public ProfileViewModel(IJsonServiceClient serviceClient)
+        public ProfileViewModel(ISkillChatApiClient serviceClient)
         {
             _serviceClient = serviceClient;
 
@@ -62,7 +63,7 @@ namespace SkillChat.Client.ViewModel
 
         private async Task SetProfile()
         {
-            UpdateProfileProps(await _serviceClient.PostAsync(new SetProfile
+            UpdateProfileProps(await _serviceClient.SaveProfileAsync(new SetProfile
             {
                 AboutMe = AboutMe,
                 DisplayName = DisplayName
@@ -166,7 +167,7 @@ namespace SkillChat.Client.ViewModel
             else
             {
                 ResetEditMode();
-                UpdateProfileProps(await _serviceClient.GetAsync(new GetProfile { UserId = userId }));
+                UpdateProfileProps(await _serviceClient.GetProfileAsync(new GetProfile { UserId = userId }));
 
                 IsOpened = true;
                 UpdateChatVisibility();

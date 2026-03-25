@@ -2,22 +2,22 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using ServiceStack;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds.Attachment;
+using SkillChat.Client.ViewModel.Services;
 
 namespace SkillChat.Client.ViewModel
 {
     public class AttachmentManager
     {
-        public AttachmentManager(string attachmentPath, IJsonServiceClient serviceClient)
+        public AttachmentManager(string attachmentPath, ISkillChatApiClient serviceClient)
         {
             _attachmentPath = attachmentPath;
             _serviceClient = serviceClient;
         }
 
         private readonly string _attachmentPath;
-        private readonly IJsonServiceClient _serviceClient;
+        private readonly ISkillChatApiClient _serviceClient;
 
         public virtual void OpenAttachment(string fileName)
         {
@@ -37,7 +37,7 @@ namespace SkillChat.Client.ViewModel
             {
                 //Тут надо убрать префикс получаемого файла
                 var pref = "attachment/";
-                var attachment = await _serviceClient.GetAsync(new GetAttachment { Id = data.Id.Replace(pref, string.Empty) });
+                var attachment = await _serviceClient.GetAttachmentAsync(new GetAttachment { Id = data.Id.Replace(pref, string.Empty) });
                 if (attachment == null) return false;
 
                 var savePath = Path.Combine(_attachmentPath, data.FileName);

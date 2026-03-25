@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using SkillChat.Client.ViewModel.Services;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -21,11 +22,11 @@ namespace SkillChat.Client.ViewModel
 
         private List<string> AttachmentsPath { get; set; }
         private string MessageText { get; set; }
-        private readonly IJsonServiceClient _serviceClient;
+        private readonly ISkillChatApiClient _serviceClient;
         private IChatHub _hub;
         private IMapper _mapper;
 
-        public SendAttachmentsViewModel(IJsonServiceClient serviceClient)
+        public SendAttachmentsViewModel(ISkillChatApiClient serviceClient)
         {
             IsOpen = false;
             MessageText = string.Empty;
@@ -95,7 +96,7 @@ namespace SkillChat.Client.ViewModel
             foreach (var attachment in AttachmentsPath)
             {
                 using var fileStream = File.OpenRead(attachment);
-                var reqestResult = _serviceClient.PostFileWithRequest<AttachmentMold>(fileStream, new FileInfo(attachment).Name, response);
+                var reqestResult = _serviceClient.UploadAttachment(fileStream, new FileInfo(attachment).Name, response);
                 result.Add(reqestResult);
             }
 

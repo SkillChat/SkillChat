@@ -207,3 +207,27 @@
     - `dotnet test --project ...`
     - `dotnet test --solution ...`
   - Рассмотреть добавление короткой заметки в документацию про ожидаемый шум предупреждений в потребительских репозиториях и рекомендовать порядок проверки, в котором сначала запускаются `doctor`, целевые UI-проекты, и только потом полная проверка решения.
+
+## Запись 11. Signed-in smoke bootstrap без живого сервера
+- Шаг:
+  - Добавлен явный automation-сценарий `SignedInSmoke` рядом с `Anonymous`.
+  - Введён тонкий backend-адаптер над ServiceStack-клиентом, чтобы в smoke-режиме можно было подменять только реально используемые запросы.
+  - `TestHost` начал записывать `automation-state.json` и передавать в клиент сценарий запуска через переменные среды.
+  - В клиенте добавлены deterministic fake services для backend, file picker, clipboard и notify-окна.
+  - Проверены сборка `SkillChat.Client`, `SkillChat.AppAutomation.TestHost`, `Headless`, `FlaUI` и прогон существующего anonymous smoke в обоих рантаймах.
+- Что сработало:
+  - Текущий стек `AppAutomation` допускает передачу переменных среды и временных файлов как общий канал между `Headless` и отдельным desktop-процессом.
+  - Один и тот же `TestHost` можно использовать и для простого anonymous старта, и для более богатого deterministic signed-in state.
+  - После введения launch-сценария существующий anonymous smoke продолжил проходить и в `Headless`, и в `FlaUI`.
+- Шероховатости:
+  - Для rich signed-in smoke у consumer нет готовой first-class модели "launch scenario with seeded app state" в самом `AppAutomation`; это пришлось проектировать вручную через env vars + JSON-файл состояния.
+  - Для `FlaUI` и `Headless` один и тот же сценарий приходится передавать разными техническими путями:
+    - в desktop runtime через `EnvironmentVariables` в launch options;
+    - в headless runtime через явную инициализацию текущего процесса перед созданием окна.
+  - Из-за этого потребителю приходится самостоятельно продумывать протокол между `TestHost` и AUT вместо использования готовой typed abstraction уровня framework.
+  - Даже точечные сборки desktop-проектов на Avalonia здесь заметно медленные, поэтому итерация по bootstrap и `TestHost` ощущается тяжелее, чем по чисто authoring-слою.
+- Предложения:
+  - Добавить в `AppAutomation.TestHost.Avalonia` first-class поддержку launch profiles или typed scenario payload, который одинаково доступен и в headless, и в desktop runtime.
+  - Дать consumer-friendly API для передачи deterministic app state без самодельного env-var протокола и ручной сериализации JSON.
+  - Явно показать в документации паттерн "serverless signed-in shell smoke" для desktop-клиентов, а не только старт с пустого состояния.
+  - Добавить рекомендации по организации seeded workspace для desktop UI automation, включая временные файлы, attachment fixtures и runtime-specific initialization order.

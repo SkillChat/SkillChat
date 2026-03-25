@@ -9,6 +9,7 @@ using SkillChat.Interface;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
 using SkillChat.Server.ServiceModel.Molds.Attachment;
+using SkillChat.Client.ViewModel.Services;
 using Splat;
 using System;
 using System.Collections.Generic;
@@ -63,7 +64,8 @@ namespace SkillChat.Client.ViewModel
                     "Download");
             }
 
-            serviceClient = new JsonServiceClient(settings.HostUrl);
+            serviceClient = Locator.Current.GetService<ISkillChatApiClient>()
+                ?? new ServiceStackSkillChatApiClient(settings.HostUrl);
             Locator.CurrentMutable.RegisterConstant(new AttachmentManager(settings.AttachmentDefaultPath, serviceClient));
 
             ProfileViewModel = new ProfileViewModel(serviceClient);
@@ -117,7 +119,7 @@ namespace SkillChat.Client.ViewModel
 
                     if (Tokens == null || Tokens.AccessToken.IsNullOrEmpty())
                     {
-                        Tokens = await serviceClient.PostAsync(new AuthViaPassword
+                        Tokens = await serviceClient.AuthenticateAsync(new AuthViaPassword
                         { Login = User.Login, Password = User.Password });
 
                         settings.AccessToken = Tokens.AccessToken;
@@ -164,7 +166,7 @@ namespace SkillChat.Client.ViewModel
                                     serviceClient.BearerToken = Tokens.RefreshToken;
                                     try
                                     {
-                                        Tokens = await serviceClient.PostAsync(new PostRefreshToken());
+                                        Tokens = await serviceClient.RefreshTokenAsync(new PostRefreshToken());
                                         settings.AccessToken = Tokens.AccessToken;
                                         settings.RefreshToken = Tokens.RefreshToken;
                                         configuration.GetSection("ChatClientSettings").Set(configuration);
@@ -188,13 +190,13 @@ namespace SkillChat.Client.ViewModel
                                     User.Login = data.UserLogin;
                                     User.UserName = data.UserName;
                                     ExpireTime = data.ExpireTime;
-                                    var chats = await serviceClient.GetAsync(new GetChatsList());
+                                    var chats = await serviceClient.GetChatsAsync(new GetChatsList());
                                     var chat = chats.Chats.FirstOrDefault();
                                     ChatId = chat?.Id;
                                     ChatName = chat?.ChatName;
                                     LoadMessageHistoryCommand.Execute(null);
                                     //Получаем настройки
-                                    SettingsViewModel.ChatSettings = await serviceClient.GetAsync(new GetMySettings());
+                                    SettingsViewModel.ChatSettings = await serviceClient.GetMySettingsAsync(new GetMySettings());
                                     KeySendMessage = SettingsViewModel.ChatSettings.SendingMessageByEnterKey;
                                     IsSignedIn = true;
                                     break;
@@ -394,7 +396,7 @@ namespace SkillChat.Client.ViewModel
                     var request = new GetMessages { ChatId = ChatId, BeforePostTime = first?.PostTime };
 
                     // Логика выбора сообщений по id чата
-                    var result = await serviceClient.GetAsync(request);
+                    var result = await serviceClient.GetMessagesAsync(request);
 
                     foreach (var item in result.Messages)
                     {
@@ -524,7 +526,7 @@ namespace SkillChat.Client.ViewModel
                     request.Password = RegisterUser.Password;
                     request.UserName = RegisterUser.UserName;
 
-                    Tokens = await serviceClient.PostAsync(request);
+                    Tokens = await serviceClient.RegisterAsync(request);
 
                     settings.AccessToken = Tokens.AccessToken;
                     settings.RefreshToken = Tokens.RefreshToken;
@@ -677,7 +679,7 @@ namespace SkillChat.Client.ViewModel
 
         private HubConnection _connection;
 
-        private readonly IJsonServiceClient serviceClient;
+        private readonly ISkillChatApiClient serviceClient;
         private IChatHub _hub;
 
         public bool IsConnected { get; set; }

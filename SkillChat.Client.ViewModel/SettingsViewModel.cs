@@ -5,10 +5,10 @@ using System.Reactive;
 using System.Windows.Input;
 using PropertyChanged;
 using ReactiveUI;
-using ServiceStack;
 using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
 using Splat;
+using SkillChat.Client.ViewModel.Services;
 
 namespace SkillChat.Client.ViewModel
 {
@@ -17,7 +17,7 @@ namespace SkillChat.Client.ViewModel
     {
         private const int MaxLoginHistoryItems = 100;
 
-        public SettingsViewModel(IJsonServiceClient serviceClient)
+        public SettingsViewModel(ISkillChatApiClient serviceClient)
         {
             ChatSettings = new UserChatSettings();
 
@@ -43,7 +43,7 @@ namespace SkillChat.Client.ViewModel
             GetSettingsCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 SetSelectedMenuItem(SelectedMenuItem.Settings);
-                var settingsUser = await serviceClient.GetAsync(new GetMySettings());
+                var settingsUser = await serviceClient.GetMySettingsAsync(new GetMySettings());
                 if (settingsUser.SendingMessageByEnterKey)
                 {
                     TypeEnter = settingsUser.SendingMessageByEnterKey;
@@ -53,7 +53,7 @@ namespace SkillChat.Client.ViewModel
 
             SaveSettingsCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                var settingsUser = await serviceClient.PostAsync(new SetSettings {SendingMessageByEnterKey = TypeEnter});
+                var settingsUser = await serviceClient.SaveSettingsAsync(new SetSettings {SendingMessageByEnterKey = TypeEnter});
                 ChatSettings = settingsUser;
             });
 
@@ -63,7 +63,7 @@ namespace SkillChat.Client.ViewModel
             {
                 SetSelectedMenuItem(SelectedMenuItem.Audit);
                 LoginAuditCollection.Clear();
-                LoginHistoryCollection = await serviceClient.GetAsync(new GetLoginAudit());
+                LoginHistoryCollection = await serviceClient.GetLoginAuditAsync(new GetLoginAudit());
                 foreach (var item in LoginHistoryCollection.History.Take(MaxLoginHistoryItems))
                 {
                     LoginAuditView = new LoginAuditViewModel
