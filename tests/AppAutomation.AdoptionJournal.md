@@ -231,3 +231,22 @@
   - Дать consumer-friendly API для передачи deterministic app state без самодельного env-var протокола и ручной сериализации JSON.
   - Явно показать в документации паттерн "serverless signed-in shell smoke" для desktop-клиентов, а не только старт с пустого состояния.
   - Добавить рекомендации по организации seeded workspace для desktop UI automation, включая временные файлы, attachment fixtures и runtime-specific initialization order.
+
+## Запись 12. Расширение selector contract для авторизованной оболочки
+- Шаг:
+  - Добавлены `AutomationId` для shell, профиля, настроек, composer-а сообщений, selection-toolbar, confirmation-dialog и attachment overlay.
+  - В `MainWindowPage` расширен page object для signed-in областей и добавлено ручное разрешение динамических селекторов сообщений по `AutomationId`.
+  - Проверены сборки `SkillChat.UiTests.Authoring` и `SkillChat.Client`.
+- Что сработало:
+  - `AppAutomation` хорошо ложится на сценарий, где consumer заранее проектирует стабильный контракт селекторов, а потом использует один page object для обоих рантаймов.
+  - Прямые `AutomationId` для корневых панелей и action-button'ов дают предсказуемую основу для следующих smoke-сценариев.
+  - Ручной `IUiControlResolver` позволяет дотянуться до динамических элементов коллекции, не разрывая общую authoring-модель.
+- Шероховатости:
+  - Для коллекционных элементов вроде сообщений у consumer нет first-class паттерна уровня page object, аналогичного `[UiControl]`, но с параметром; динамические селекторы пришлось поднимать вручную через `UiControlDefinition` и `IUiControlResolver`.
+  - В реальном desktop UI часто есть парные элементы "active/inactive" с разной видимостью, и framework никак не подсказывает стратегию именования для таких случаев; это приходится придумывать вручную, чтобы селекторы не конфликтовали.
+  - Для consumer-а неочевидно, какие типы `UiControlType` лучше использовать для нестандартных Avalonia-контролов вроде `ToggleSwitch`, `ItemsControl`, `ScrollViewer` и composite overlays; эту матрицу пришлось выводить эмпирически.
+- Предложения:
+  - Добавить в документацию раздел про динамические селекторы: как оформлять элементы коллекций, как именовать их и как лучше сочетать `AutomationId` с ручным `UiControlDefinition`.
+  - Показать в шаблонах пример page object с параметризованным resolver helper для повторяющихся сущностей вроде `MessageItem_{id}` или `Row_{key}`.
+  - Опубликовать компактную таблицу соответствия `Avalonia control -> рекомендуемый UiControlType` для нестандартных и составных контролов.
+  - Добавить рекомендации по контракту селекторов для парных visible/invisible кнопок и panel-host/root элементов, чтобы потребители меньше гадали над схемой именования.

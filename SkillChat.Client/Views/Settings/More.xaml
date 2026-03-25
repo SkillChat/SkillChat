@@ -1,4 +1,5 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:automation="clr-namespace:Avalonia.Automation;assembly=Avalonia.Controls"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -9,11 +10,17 @@
     <Design.DataContext>
         <viewModel:DesignMainWindowViewModel/>
     </Design.DataContext>
-    <Border CornerRadius="2" Name="bord" IsVisible="{Binding SettingsViewModel.IsContextMenu}" Background="{DynamicResource SystemRegionBrush}" BorderBrush="{DynamicResource Orange_03Brush}"
+    <Border CornerRadius="2"
+            Name="bord"
+            automation:AutomationProperties.AutomationId="HeaderContextMenuRoot"
+            IsVisible="{Binding SettingsViewModel.IsContextMenu}"
+            Background="{DynamicResource SystemRegionBrush}"
+            BorderBrush="{DynamicResource Orange_03Brush}"
             BorderThickness="1">
         <WrapPanel>
 
             <Button
+                automation:AutomationProperties.AutomationId="HeaderSelectMessagesButton"
                 Width="200"
                 Height="30"
                 BorderBrush="Transparent"
@@ -28,6 +35,7 @@
             </Button>
 
             <Button
+                automation:AutomationProperties.AutomationId="HeaderClearHistoryButton"
                 Width="200"
                 Height="30"
                 BorderBrush="Transparent"
@@ -42,6 +50,7 @@
             </Button>
 
             <Button
+                automation:AutomationProperties.AutomationId="HeaderOpenSettingsButton"
                 Width="200"
                 Height="30"
                 BorderBrush="Transparent"

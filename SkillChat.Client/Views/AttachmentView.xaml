@@ -1,5 +1,6 @@
 <UserControl
     xmlns="https://github.com/avaloniaui"
+    xmlns:automation="clr-namespace:Avalonia.Automation;assembly=Avalonia.Controls"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -8,53 +9,55 @@
     xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia"
     xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
     mc:Ignorable="d"
-    MinWidth="360" 
+    MinWidth="360"
     MinHeight="530"
     Background="#4C000000"
+    automation:AutomationProperties.AutomationId="AttachmentOverlayRoot"
     x:Class="SkillChat.Client.Views.AttachmentView">
 
-    <Border 
+    <Border
         VerticalAlignment="Center"
         HorizontalAlignment="Center"
         Padding="10"
         Background="{DynamicResource CardBackgroundBrush}"
         BorderThickness="1"
         BorderBrush="{DynamicResource DividerBrush}">
-    <Grid 
-        Width="300" 
-        VerticalAlignment="Stretch" 
+    <Grid
+        Width="300"
+        VerticalAlignment="Stretch"
         HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-      <ListBox 
-          ItemsSource="{Binding Path=Attachments}" 
+      <ListBox
+          automation:AutomationProperties.AutomationId="AttachmentOverlayList"
+          ItemsSource="{Binding Path=Attachments}"
           MaxHeight="700"
           MaxWidth="300"
-          ScrollViewer.HorizontalScrollBarVisibility="Hidden"   
-          Grid.Row="0" 
+          ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+          Grid.Row="0"
           BorderThickness="0">
 
           <ListBox.ItemTemplate>
               <DataTemplate DataType="viewModel:PrepareAttachmentViewModel">
-                <Border 
+                <Border
                     Background="{DynamicResource CardBackgroundBrush}"
                     MaxWidth="280">
                   <Grid ColumnDefinitions="Auto, Auto, Auto">
-                    <Image 
-                        Grid.Column="0" 
-                        Name="AttachImageView" 
-                        Margin="5" 
-                        Width="60" 
+                    <Image
+                        Grid.Column="0"
+                        Name="AttachImageView"
+                        Margin="5"
+                        Width="60"
                         Height="70">
                         <Image.Source>
                             <svg:SvgImage Source="/Assets/file.svg" />
                         </Image.Source>
                     </Image>
-                    <Grid 
-                        Grid.Column="1" 
+                    <Grid
+                        Grid.Column="1"
                         RowDefinitions="*, Auto"
                         ColumnDefinitions="*, Auto"
                         Margin="5">
@@ -63,12 +66,12 @@
                             VerticalAlignment="Center"
                             TextAlignment="Left"
                             Foreground="{DynamicResource PrimaryTextBrush}"
-                            Grid.Row="0" 
+                            Grid.Row="0"
                             Text="{Binding FileName}"
                             TextWrapping="Wrap"
                             MaxWidth="180"/>
-                      <StackPanel 
-                            Orientation="Horizontal" 
+                      <StackPanel
+                            Orientation="Horizontal"
                             Grid.Row="1"
                             Grid.Column="0">
                           <Grid
@@ -127,6 +130,7 @@
         </ListBox.ItemTemplate>
       </ListBox>
       <Button
+          automation:AutomationProperties.AutomationId="AttachmentOverlayCloseButton"
           x:Name="CloseAttachList"
           Grid.Row="0"
           Width="20"
@@ -146,7 +150,7 @@
           </Image.Source>
         </Image>
       </Button>
-        <Border 
+        <Border
             Grid.Row="1"
             BorderThickness="0 1 0 0"
             BorderBrush="{DynamicResource DividerBrush}"
@@ -157,6 +161,7 @@
                 <ColumnDefinition Width="Auto"/>
               </Grid.ColumnDefinitions>
               <TextBox
+                  automation:AutomationProperties.AutomationId="AttachmentOverlayMessageInput"
                   BorderThickness="0"
                   Padding="7 10"
                   FontSize="14"
@@ -173,6 +178,7 @@
           </TextBox>
           <!--  Кнопка отправки сообщения  -->
           <Button
+              automation:AutomationProperties.AutomationId="AttachmentOverlaySendButton"
               x:Name="sendAttachButton"
               Grid.Column="1"
               Background="Transparent"
