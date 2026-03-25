@@ -2,17 +2,17 @@
 
 ## 0. Метаданные
 - Тип (профиль): `delivery-task`
-- Instruction stack: `quest-governance` + `collaboration-baseline` + `testing-baseline` + `testing-dotnet` + `dotnet-desktop-client` + `ui-automation-testing` + `commit-message-policy`
+- Стек инструкций: `quest-governance` + `collaboration-baseline` + `testing-baseline` + `testing-dotnet` + `dotnet-desktop-client` + `ui-automation-testing` + `commit-message-policy`
 - Владелец: Codex
-- Масштаб: large
+- Масштаб: крупный
 - Целевой релиз / ветка: текущая рабочая ветка репозитория
 - Ограничения:
-  - следовать документации `AppAutomation` и использовать canonical topology `Authoring + Headless + FlaUI + TestHost`;
-  - не переходить на source dependency `AppAutomation`;
+  - следовать документации `AppAutomation` и использовать каноническую топологию `Authoring + Headless + FlaUI + TestHost`;
+  - не переходить на подключение `AppAutomation` через исходники;
   - разбить реализацию на мейлстоуны и фиксировать каждый мейлстоун отдельным коммитом в формате Conventional Commits;
   - на каждом шаге внедрения и написания кода дополнять отдельный журнал обратной связи по фреймворку;
-  - первая итерация smoke-тестов должна быть deterministic и не требовать поднятого backend;
-  - не выходить за пределы минимально-нужного UI-контракта для smoke path;
+  - первая итерация smoke-тестов должна быть детерминированной и не требовать поднятого бэкенда;
+  - не выходить за пределы минимально-нужного UI-контракта для смоук-пути;
   - не менять публичный API приложения без отдельного согласования.
 - Связанные ссылки:
   - `https://github.com/Kibnet/AppAutomation`
@@ -21,11 +21,11 @@
   - `https://raw.githubusercontent.com/Kibnet/AppAutomation/master/docs/appautomation/project-topology.md`
   - `https://raw.githubusercontent.com/Kibnet/AppAutomation/master/docs/appautomation/advanced-integration.md`
 
-## 1. Overview / Цель
-Подключить `AppAutomation` к Avalonia-клиенту `SkillChat.Client`, создать canonical topology UI-тестов, настроить deterministic bootstrap для `Headless` и `FlaUI`, написать первый набор smoke-сценариев и вести отдельный журнал внедрения с проблемами процесса и предложениями по улучшению фреймворка.
+## 1. Цель
+Подключить `AppAutomation` к Avalonia-клиенту `SkillChat.Client`, создать каноническую топологию UI-тестов, настроить детерминированный bootstrap для `Headless` и `FlaUI`, написать первый набор смоук-сценариев и вести отдельный журнал внедрения с проблемами процесса и предложениями по улучшению фреймворка.
 
-## 2. Текущее состояние (AS-IS)
-- В репозитории нет UI automation проектов и нет canonical topology `tests/*`.
+## 2. Текущее состояние
+- В репозитории нет UI automation-проектов и нет канонической топологии `tests/*`.
 - В `SkillChat.Client` отсутствуют `AutomationId`, на которые может опираться `AppAutomation`.
 - `SkillChat.Client` запускается через `Program.Main()` + `App.OnFrameworkInitializationCompleted()`, где `MainWindow` получает `new MainWindowViewModel()`.
 - `MainWindowViewModel` в конструкторе:
@@ -34,116 +34,116 @@
   - создаёт `ProfileViewModel` и `SettingsViewModel`;
   - пытается получить внешний IP адрес;
   - автологинится при наличии токена, вызывая `ConnectCommand.Execute(null)`.
-- В `SettingsViewModel` открытие настроек инициирует сетевой запрос (`GetSettingsCommand`), поэтому это плохой первый smoke path.
-- В репозитории есть `global.json` c SDK `10.0.104` и уже используется `TUnit`, то есть новый test runner не конфликтует с текущим стеком.
+- В `SettingsViewModel` открытие настроек инициирует сетевой запрос (`GetSettingsCommand`), поэтому это плохой первый смоук-путь.
+- В репозитории есть `global.json` c SDK `10.0.104` и уже используется `TUnit`, то есть новый тестовый раннер не конфликтует с текущим стеком.
 - Корневого `NuGet.Config` нет; существует только `SkillChat.Client/nuget.config`, а `AppAutomation doctor` ожидает явный `NuGet.Config` на уровне repo-root.
 
 ## 3. Проблема
-Проект не имеет deterministic seam для UI automation: отсутствуют canonical test topology и стабильные селекторы, а текущий startup path содержит runtime side effects и network-dependent поведение, из-за чего первый smoke-suite нельзя надёжно запустить ни в `Headless`, ни в `FlaUI`.
+Проект не имеет детерминированной точки встраивания для UI automation: отсутствуют каноническая тестовая топология и стабильные селекторы, а текущий путь запуска содержит runtime-side-effects и зависящее от сети поведение, из-за чего первый смоук-сьют нельзя надёжно запустить ни в `Headless`, ни в `FlaUI`.
 
 ## 4. Цели дизайна
-- Сохранить существующий UX и структуру приложения, добавив только минимально-нужные seams для автоматизации.
-- Сделать первый smoke path полностью deterministic без обязательного поднятия backend.
-- Использовать ровно ту responsibility split, которую требует `AppAutomation`.
+- Сохранить существующий UX и структуру приложения, добавив только минимально-нужные точки встраивания для автоматизации.
+- Сделать первый смоук-путь полностью детерминированным без обязательного поднятия бэкенда.
+- Использовать ровно то разделение ответственности, которое требует `AppAutomation`.
 - Обеспечить повторное использование одних и тех же сценариев между `Headless` и `FlaUI`.
 - Собирать инженерную обратную связь по внедрению в отдельный journal-файл, пригодный для отправки разработчикам `AppAutomation`.
 - Сохранить обратную совместимость текущего desktop startup path для обычного пользователя.
 
-## 5. Non-Goals (чего НЕ делаем)
-- Не автоматизируем реальный chat flow с живым сервером в первой итерации.
+## 5. Что НЕ делаем
+- Не автоматизируем реальный сценарий чата с живым сервером в первой итерации.
 - Не покрываем весь UI клиента и не размечаем всё приложение `AutomationId`.
-- Не переписываем архитектуру `MainWindowViewModel` шире, чем нужно для deterministic startup/tests.
-- Не переносим в consumer repo исходники `AppAutomation`.
+- Не переписываем архитектуру `MainWindowViewModel` шире, чем нужно для детерминированного запуска и тестов.
+- Не переносим в consumer-репозиторий исходники `AppAutomation`.
 - Не делаем полноценный CI/CD pipeline для UI automation в рамках этой задачи.
 
-## 6. Предлагаемое решение (TO-BE)
+## 6. Предлагаемое решение
 ### 6.1 Распределение ответственности
 - `tests/SkillChat.UiTests.Authoring`
-  - page objects;
+  - объекты страниц;
   - `[UiControl(...)]`;
-  - shared smoke scenarios;
-  - никаких runtime-specific bootstrap деталей.
+  - общие смоук-сценарии;
+  - никаких деталей bootstrap, зависящих от конкретного runtime.
 - `tests/SkillChat.UiTests.Headless`
-  - headless session hooks;
-  - headless resolver;
-  - thin runtime wrappers с `[InheritsTests]`.
+  - хуки headless-сессии;
+  - headless-resolver;
+  - тонкие runtime-обёртки с `[InheritsTests]`.
 - `tests/SkillChat.UiTests.FlaUI`
-  - desktop session wiring;
+  - wiring desktop-сессии;
   - `FlaUI` resolver;
-  - thin runtime wrappers с `[InheritsTests]`.
+  - тонкие runtime-обёртки с `[InheritsTests]`.
 - `tests/SkillChat.AppAutomation.TestHost`
-  - repo-specific bootstrap;
+  - bootstrap, специфичный для репозитория;
   - пути до `.sln` и desktop `.csproj`;
   - временные settings/directories;
   - фабрика `MainWindow` для headless runtime.
 - `SkillChat.Client`
-  - минимальный deterministic startup seam;
-  - минимальный `AutomationId` contract для выбранного smoke path.
+  - минимальная детерминированная точка встраивания в startup;
+  - минимальный контракт `AutomationId` для выбранного смоук-пути.
 - `tests/AppAutomation.AdoptionJournal.md`
   - лог всех шероховатостей интеграции;
-  - предложения по улучшению документации/tooling/framework API;
+  - предложения по улучшению документации, tooling и framework API;
   - фиксируется на каждом мейлстоуне перед коммитом.
 
 ### 6.2 Детальный дизайн
-1. Будет создан canonical test topology в корне репозитория:
+1. В корне репозитория будет создана каноническая тестовая топология:
    - `tests/SkillChat.UiTests.Authoring`
    - `tests/SkillChat.UiTests.Headless`
    - `tests/SkillChat.UiTests.FlaUI`
    - `tests/SkillChat.AppAutomation.TestHost`
 
-2. Будет добавлен root-level `NuGet.Config`, достаточный для `appautomation doctor` и обычного restore.
+2. Будет добавлен `NuGet.Config` на уровне корня, достаточный для `appautomation doctor` и обычного `restore`.
 
-3. Startup/bootstrap клиента будет вынесен в переиспользуемый helper внутри `SkillChat.Client`, чтобы:
+3. Startup/bootstrap клиента будет вынесен в переиспользуемый вспомогательный компонент внутри `SkillChat.Client`, чтобы:
    - `Program.Main()` продолжал использовать ту же инициализацию;
    - `TestHost` мог поднять тот же `MainWindow`, но на временном `Settings.json`;
-   - path к settings можно было подменять на isolated файл в temp-directory;
+   - путь к settings можно было подменять на изолированный файл во временной директории;
    - сервисы (`IConfiguration`, `IMapper`, `IClipboard`, `INotify`, `ICanOpenFileDialog`) регистрировались из общего места, а не дублировались.
 
-4. В `MainWindowViewModel` будет устранён startup side effect, который не нужен для рендера окна:
+4. В `MainWindowViewModel` будет устранён startup-side-effect, который не нужен для рендера окна:
    - сбор runtime environment (`ipAddress`, сведения об ОС, client name) будет выполняться лениво перед реальным `ConnectCommand`, а не в конструкторе;
-   - автологин сохранится только для обычного runtime path при непустом токене;
-   - для тестового bootstrap будет использоваться temporary settings-файл с пустыми токенами, чтобы приложение стабильно стартовало на login screen.
+   - автологин сохранится только для обычного runtime-path при непустом токене;
+   - для тестового bootstrap будет использоваться временный settings-файл с пустыми токенами, чтобы приложение стабильно стартовало на экране логина.
 
-5. В Avalonia XAML будет добавлен минимальный `AutomationId` contract только для critical smoke path:
-   - root window;
-   - контейнер login page;
-   - login input;
-   - password input;
-   - login button;
-   - register link;
-   - контейнер register page;
-   - register login/password/name inputs;
-   - consent checkbox;
-   - register button;
-   - back-to-login link;
+5. В Avalonia XAML будет добавлен минимальный контракт `AutomationId` только для критического смоук-пути:
+   - корневое окно;
+   - контейнер страницы логина;
+   - поле логина;
+   - поле пароля;
+   - кнопка входа;
+   - ссылка на регистрацию;
+   - контейнер страницы регистрации;
+   - поля логина/пароля/имени на регистрации;
+   - чекбокс согласия;
+   - кнопка регистрации;
+   - ссылка возврата ко входу;
    - validation/error text blocks, которые проверяются тестами.
 
-6. Первый shared smoke suite будет опираться только на deterministic pre-auth flow:
-   - приложение открывается на login screen;
+6. Первый общий смоук-сьют будет опираться только на детерминированный доавторизационный сценарий:
+   - приложение открывается на экране логина;
    - переход `Login -> Register -> Login` работает;
-   - register form локально валидирует обязательные поля до любого network call;
-   - enablement/visibility ключевых controls соответствует ожидаемому состоянию.
+   - форма регистрации локально валидирует обязательные поля до любого сетевого вызова;
+   - доступность и видимость ключевых контролов соответствует ожидаемому состоянию.
 
-7. `Authoring` проект будет содержать один page object для `MainWindow`/pre-auth shell и общий base class со smoke tests.
+7. Проект `Authoring` будет содержать один объект страницы для `MainWindow`/доавторизационной оболочки и общий базовый класс со смоук-тестами.
 
-8. `Headless` и `FlaUI` будут запускать один и тот же shared suite без копирования сценариев.
+8. `Headless` и `FlaUI` будут запускать один и тот же общий набор сценариев без копирования тестовой логики.
 
 9. Внедрение будет идти по мейлстоунам, каждый мейлстоун завершится отдельным коммитом и соответствующим обновлением adoption journal.
 
 ## 7. Бизнес-правила / Алгоритмы (если есть)
 - Первая итерация UI automation не должна требовать запущенного `SkillChat.Server`.
-- Любой сценарий, который уходит в сеть до локальной валидации, не входит в initial smoke path.
+- Любой сценарий, который уходит в сеть до локальной валидации, не входит в начальный смоук-путь.
 - `Headless` считается основным стабилизационным runtime; `FlaUI` подключается после него.
 - Shared scenarios живут только в `Authoring`; runtime projects не дублируют тестовую логику.
 - Любая обнаруженная шероховатость документации/шаблона/CLI должна быть занесена в adoption journal до следующего milestone-коммита.
 
 ## 8. Точки интеграции и триггеры
 - `SkillChat.Client/Program.cs`
-  - должен использовать новый общий bootstrap helper.
+  - должен использовать новый общий bootstrap-хелпер.
 - `SkillChat.Client/App.xaml.cs`
-  - должен создавать `MainWindow` через общий deterministic startup path либо совместимый factory path.
+  - должен создавать `MainWindow` через общий детерминированный путь запуска либо совместимый factory-path.
 - `SkillChat.Client.ViewModel/MainWindowViewModel.cs`
-  - должен перестать выполнять лишние network-dependent действия в конструкторе.
+  - должен перестать выполнять лишние зависящие от сети действия в конструкторе.
 - `SkillChat.Client/Views/MainWindow.xaml`
   - root `AutomationId` и, при необходимости, якоря pre-auth shell.
 - `SkillChat.Client/Views/LoginPage.xaml`
@@ -156,17 +156,17 @@
 ## 9. Изменения модели данных / состояния
 - В production-модели данных изменений не планируется.
 - Появится test-only isolated settings файл, создаваемый во временной директории из `TestHost`.
-- В runtime state появится возможность создавать `MainWindow` на произвольном settings path для целей тестового bootstrap.
+- В runtime-state появится возможность создавать `MainWindow` на произвольном settings-path для целей тестового bootstrap.
 
-## 10. Миграция / Rollout / Rollback
-- Rollout:
-  - добавить topology и package references;
-  - добавить общий bootstrap helper;
+## 10. Миграция / Развёртывание / Откат
+- Развёртывание:
+  - добавить топологию и package references;
+  - добавить общий bootstrap-хелпер;
   - добавить `AutomationId`;
   - стабилизировать `Headless`;
   - включить `FlaUI`;
   - зафиксировать usage/journal.
-- Rollback:
+- Откат:
   - изменения аддитивны и откатываются удалением test projects, test host и новых селекторов;
   - bootstrap extraction может быть откатен возвратом инициализации в `Program`/`App`.
 - Обратная совместимость:
@@ -176,16 +176,16 @@
 ## 11. Тестирование и критерии приёмки
 - Acceptance Criteria:
   - в репозитории создан canonical layout `tests/SkillChat.*`.
-  - `AppAutomation` подключён через `PackageReference`, а не через source dependency.
+  - `AppAutomation` подключён через `PackageReference`, а не через dependency на исходники.
   - `appautomation doctor --repo-root .` проходит без ошибок.
-  - есть минимум один page object и один shared smoke suite в `Authoring`.
-  - smoke suite проходит в `Headless`.
-  - тот же suite проходит в `FlaUI`.
+  - есть минимум один объект страницы и один общий смоук-сьют в `Authoring`.
+  - смоук-сьют проходит в `Headless`.
+  - тот же набор сценариев проходит в `FlaUI`.
   - в проекте есть отдельный adoption journal с логом проблем и предложений по улучшению framework/docs.
   - каждый мейлстоун оформлен отдельным коммитом.
 - Какие тесты добавить/изменить:
   - новые UI automation проекты;
-  - shared smoke tests для pre-auth flow;
+  - общие смоук-тесты для доавторизационного сценария;
   - при необходимости корректировка существующих тестов не ожидается.
 - Команды для проверки:
   - `dotnet build SkillChat.sln`
@@ -194,18 +194,18 @@
   - `dotnet test SkillChat.sln`
   - `.\.tools\appautomation doctor --repo-root .`
 
-## 12. Риски и edge cases
+## 12. Риски и пограничные случаи
 - Документация `AppAutomation` противоречива по версии пакетов:
-  - README Fast Path ссылается на `1.1.0`;
-  - GitHub releases показывает latest release `1.2.0` от `2026-03-18`;
+  - README в блоке Fast Path ссылается на `1.1.0`;
+  - GitHub Releases показывает последнюю версию `1.2.0` от `2026-03-18`;
   - `quickstart.md` в `master` уже использует `2.1.0`.
-  - Смягчение: во время EXEC сначала использовать `2.1.0` из quickstart; если restore/install опровергнет это, выбрать latest resolvable version и обязательно занести расхождение в journal.
+  - Смягчение: во время EXEC сначала использовать `2.1.0` из quickstart; если restore/install опровергнет это, выбрать последнюю разрешаемую версию и обязательно занести расхождение в journal.
 - Шаблон consumer topology генерирует `net8.0`/старые версии `TUnit`, тогда как репозиторий работает на `net10.0`.
   - Смягчение: после генерации нормализовать TFM и test package versions под репозиторий, сохранив совместимость `AppAutomation`.
-- `MainWindowViewModel` содержит startup side effects и авто-connect по токену.
-  - Смягчение: isolated settings file + перенос side effects из конструктора в connect path.
-- `SettingsViewModel.OpenSettingsCommand` делает network call и не подходит для deterministic smoke.
-  - Смягчение: первый smoke suite ограничить pre-auth flow.
+- `MainWindowViewModel` содержит startup-side-effects и auto-connect по токену.
+  - Смягчение: изолированный settings-файл + перенос side effects из конструктора в connect-path.
+- `SettingsViewModel.OpenSettingsCommand` делает сетевой вызов и не подходит для детерминированного smoke.
+  - Смягчение: первый смоук-сьют ограничить доавторизационным сценарием.
 - `FlaUI` может быть чувствителен к focus/window timing.
   - Смягчение: сначала стабилизировать `Headless`, затем применить те же selectors в `FlaUI`.
 
@@ -225,16 +225,16 @@
    - коммит: `refactor(client): extract deterministic ui automation bootstrap`
 
 3. Мейлстоун 3: selectors + authoring + headless
-   - добавить минимальные `AutomationId`;
-   - описать page object;
-   - написать shared smoke scenarios;
+  - добавить минимальные `AutomationId`;
+  - описать объект страницы;
+  - написать общие smoke-сценарии;
    - подключить headless session hooks и runtime wrapper;
    - стабилизировать `Headless`;
    - коммит: `test(ui): add headless smoke scenarios`
 
 4. Мейлстоун 4: FlaUI runtime
-   - подключить thin `FlaUI` runtime project;
-   - прогнать те же shared scenarios через desktop runtime;
+  - подключить thin `FlaUI` runtime project;
+  - прогнать те же общие сценарии через desktop runtime;
    - собрать диагностические артефакты при необходимости;
    - коммит: `test(ui): enable flaui smoke runtime`
 
@@ -269,7 +269,7 @@
 | `SkillChat.Client/Views/LoginPage.xaml` | `AutomationId` для login path | smoke selectors |
 | `SkillChat.Client/Views/RegisterPage.xaml` | `AutomationId` для register path | smoke selectors |
 | `tests/SkillChat.AppAutomation.TestHost/*` | launch/bootstrap + temp settings | repo-specific `AppAutomation` integration |
-| `tests/SkillChat.UiTests.Authoring/*` | page objects + shared tests | общая логика smoke suite |
+| `tests/SkillChat.UiTests.Authoring/*` | объекты страниц + общие тесты | общая логика смоук-сьюта |
 | `tests/SkillChat.UiTests.Headless/*` | headless hooks + thin runtime wrappers | smoke runtime №1 |
 | `tests/SkillChat.UiTests.FlaUI/*` | `FlaUI` thin wrappers | smoke runtime №2 |
 | `tests/AppAutomation.AdoptionJournal.md` | журнал шероховатостей и предложений | обратная связь разработчикам framework |
@@ -278,19 +278,19 @@
 ## 17. Таблица соответствий (было -> стало)
 | Область | Было | Стало |
 | --- | --- | --- |
-| UI automation topology | отсутствует | canonical `tests/SkillChat.*` |
+| Топология UI automation | отсутствует | каноническая `tests/SkillChat.*` |
 | Startup для тестов | нет test-friendly bootstrap | общий bootstrap + `TestHost` |
-| UI selectors | `AutomationId` отсутствуют | минимальный stable selector contract |
-| Smoke tests | отсутствуют | shared smoke suite в `Authoring` |
-| Runtime coverage | только ручная проверка | `Headless` + `FlaUI` |
-| Feedback loop по framework | не фиксируется | отдельный adoption journal |
+| UI-селекторы | `AutomationId` отсутствуют | минимальный стабильный контракт селекторов |
+| Смоук-тесты | отсутствуют | общий смоук-сьют в `Authoring` |
+| Покрытие runtime | только ручная проверка | `Headless` + `FlaUI` |
+| Цикл обратной связи по framework | не фиксируется | отдельный adoption journal |
 
 ## 18. Альтернативы и компромиссы
-- Вариант: автоматизировать real login/chat flow с живым `SkillChat.Server`.
+- Вариант: автоматизировать реальный сценарий входа/чата с живым `SkillChat.Server`.
   - Плюсы: ближе к реальному пользовательскому сценарию.
-  - Минусы: нестабильность, зависимость от backend, auth/data preparation, большая стоимость первого внедрения.
+  - Минусы: нестабильность, зависимость от бэкенда, подготовка auth/data, высокая стоимость первого внедрения.
   - Почему выбранное решение лучше в контексте этой задачи:
-    - документация `AppAutomation` рекомендует начинать с одной deterministic smoke-flow;
+    - документация `AppAutomation` рекомендует начинать с одного детерминированного smoke-flow;
     - текущий код клиента не даёт дешёвого и стабильного полного e2e-path без дополнительной инфраструктуры.
 
 - Вариант: сделать только `Headless` и не добавлять `FlaUI`.
@@ -307,20 +307,20 @@
     - package-based integration соответствует consumer flow и проще для команды.
 
 ## 19. Результат прогона линтера
-### SPEC Linter Result
+### Результат прогона линтера спеки
 
 | Блок | Пункты | Статус | Комментарий |
 |---|---|---|---|
-| A. Полнота спеки | 1-5 | PASS | Цель, AS-IS, проблема, цели и границы заданы явно. |
-| B. Качество дизайна | 6-10 | PASS | Responsibility split, bootstrap, selectors, rollout и rollback описаны проверяемо. |
-| C. Безопасность изменений | 11-13 | PASS | Есть acceptance criteria, риски, изолированный startup path и milestone-план. |
-| D. Проверяемость | 14-16 | PASS | Команды проверки, файловый объём и профиль зафиксированы. |
-| E. Готовность к автономной реализации | 17-19 | PASS | План последовательный, блокирующих вопросов нет, компромиссы зафиксированы. |
-| F. Соответствие профилю | 20 | PASS | Требования `dotnet-desktop-client` и `ui-automation-testing` покрыты. |
+| A. Полнота спеки | 1-5 | ПРОЙДЕНО | Цель, текущее состояние, проблема, цели и границы заданы явно. |
+| B. Качество дизайна | 6-10 | ПРОЙДЕНО | Разделение ответственности, bootstrap, selectors, rollout и rollback описаны проверяемо. |
+| C. Безопасность изменений | 11-13 | ПРОЙДЕНО | Есть критерии приёмки, риски, изолированный startup-path и milestone-план. |
+| D. Проверяемость | 14-16 | ПРОЙДЕНО | Команды проверки, файловый объём и профиль зафиксированы. |
+| E. Готовность к автономной реализации | 17-19 | ПРОЙДЕНО | План последовательный, блокирующих вопросов нет, компромиссы зафиксированы. |
+| F. Соответствие профилю | 20 | ПРОЙДЕНО | Требования `dotnet-desktop-client` и `ui-automation-testing` покрыты. |
 
 Итог: ГОТОВО
 
-### SPEC Rubric Result
+### Результат оценки спеки по рубрике
 
 | Критерий | Балл (0/2/5) | Обоснование |
 |---|---|---|
