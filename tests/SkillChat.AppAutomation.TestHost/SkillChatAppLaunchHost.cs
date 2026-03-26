@@ -35,6 +35,7 @@ public static class SkillChatAppLaunchHost
         string? buildConfiguration = null)
     {
         var workspace = Workspace.Value;
+        workspace.SetCurrentProcessEnvironment(scenario);
 
         return AvaloniaDesktopLaunchHost.CreateLaunchOptions(
             DesktopApp,
@@ -249,14 +250,22 @@ public static class SkillChatAppLaunchHost
         public string SettingsFilePath { get; }
         public string AutomationStateFilePath { get; }
 
-        public void InitializeCurrentProcess(SkillChatAutomationScenario scenario)
+        public void SetCurrentProcessEnvironment(SkillChatAutomationScenario scenario)
         {
+            Environment.SetEnvironmentVariable(
+                SkillChatClientBootstrap.SettingsPathEnvironmentVariable,
+                SettingsFilePath);
             Environment.SetEnvironmentVariable(
                 SkillChatClientBootstrap.AutomationScenarioEnvironmentVariable,
                 scenario.ToString());
             Environment.SetEnvironmentVariable(
                 SkillChatClientBootstrap.AutomationStatePathEnvironmentVariable,
                 AutomationStateFilePath);
+        }
+
+        public void InitializeCurrentProcess(SkillChatAutomationScenario scenario)
+        {
+            SetCurrentProcessEnvironment(scenario);
             SkillChatClientBootstrap.InitializeServices(SettingsFilePath);
         }
     }

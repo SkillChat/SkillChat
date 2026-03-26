@@ -9,6 +9,7 @@
     xmlns:utils="clr-namespace:SkillChat.Client.Utils"
     d:DesignHeight="80"
     d:DesignWidth="800"
+    automation:AutomationProperties.AutomationId="MessageComposerRoot"
     mc:Ignorable="d">
   <UserControl.Resources>
     <utils:KeyConverter x:Key="keyConverter"/>
@@ -21,7 +22,6 @@
   </UserControl.Resources>
   
   <Border
-      automation:AutomationProperties.AutomationId="MessageComposerRoot"
 	  Classes="sendMessage"
 	  IsVisible="{Binding ProfileViewModel.IsShowChat}"
 	  BorderThickness="{Binding IsSelectQuotedMessage,
