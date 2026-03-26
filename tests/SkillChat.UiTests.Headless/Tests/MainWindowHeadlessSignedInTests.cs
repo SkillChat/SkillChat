@@ -2,6 +2,7 @@ using AppAutomation.Avalonia.Headless.Automation;
 using AppAutomation.Avalonia.Headless.Session;
 using AppAutomation.TUnit;
 using SkillChat.AppAutomation.TestHost;
+using SkillChat.Client.Automation;
 using SkillChat.UiTests.Authoring.Pages;
 using SkillChat.UiTests.Authoring.Tests;
 using TUnit.Core;
@@ -9,19 +10,20 @@ using TUnit.Core;
 namespace SkillChat.UiTests.Headless.Tests;
 
 [InheritsTests]
-public sealed class MainWindowHeadlessTests
-    : MainWindowScenariosBase<MainWindowHeadlessTests.HeadlessRuntimeSession>
+public sealed class MainWindowHeadlessSignedInTests
+    : MainWindowSignedInScenariosBase<MainWindowHeadlessSignedInTests.HeadlessRuntimeSession>
 {
     protected override HeadlessRuntimeSession LaunchSession()
     {
         try
         {
             return new HeadlessRuntimeSession(
-                DesktopAppSession.Launch(SkillChatAppLaunchHost.CreateHeadlessLaunchOptions()));
+                DesktopAppSession.Launch(
+                    SkillChatAppLaunchHost.CreateHeadlessLaunchOptions(SkillChatAutomationScenario.SignedInSmoke)));
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException("Headless AppAutomation launch failed.", ex);
+            throw new InvalidOperationException("Headless signed-in AppAutomation launch failed.", ex);
         }
     }
 
@@ -33,7 +35,7 @@ public sealed class MainWindowHeadlessTests
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException("Headless AppAutomation page creation failed.", ex);
+            throw new InvalidOperationException("Headless signed-in AppAutomation page creation failed.", ex);
         }
     }
 
