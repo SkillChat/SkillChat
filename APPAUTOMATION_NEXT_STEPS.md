@@ -12,14 +12,23 @@
 - `tests/AppAutomation.AdoptionJournal.md`
   Integration friction log and feedback for framework developers.
 
-## Stable smoke path
-- Screen flow: `Login -> Register -> Login`
-- Shared page object: `tests/SkillChat.UiTests.Authoring/Pages/MainWindowPage.cs`
-- Shared smoke scenario: `tests/SkillChat.UiTests.Authoring/Tests/MainWindowScenariosBase.cs`
-- Critical selectors live in:
+## Stable smoke paths
+- `Anonymous`:
+  - flow: `Login -> Register -> Login`
+  - shared scenario: `tests/SkillChat.UiTests.Authoring/Tests/MainWindowScenariosBase.cs`
+- `SignedInSmoke`:
+  - flow: shell/sidebar/profile/settings/header menu/selection/confirmation/attachments
+  - shared scenario: `tests/SkillChat.UiTests.Authoring/Tests/MainWindowSignedInScenariosBase.cs`
+- Shared page object:
+  - `tests/SkillChat.UiTests.Authoring/Pages/MainWindowPage.cs`
+- Critical selector files:
   - `SkillChat.Client/Views/MainWindow.xaml`
-  - `SkillChat.Client/Views/LoginPage.xaml`
-  - `SkillChat.Client/Views/RegisterPage.xaml`
+  - `SkillChat.Client/Views/SendMessageControl.xaml`
+  - `SkillChat.Client/Views/Profile/Settings.xaml`
+  - `SkillChat.Client/Views/Settings/Settings.xaml`
+  - `SkillChat.Client/Views/Settings/More.xaml`
+  - `SkillChat.Client/Views/Confirmation.xaml`
+  - `SkillChat.Client/Views/AttachmentView.xaml`
 
 ## Commands
 ```powershell
@@ -31,13 +40,14 @@ dotnet test --solution SkillChat.sln
 ```
 
 ## Working rules for this repo
-1. Start with `Headless`. Only move to `FlaUI` after the same shared scenario passes there.
-2. Add `AutomationProperties.AutomationId` for selector stability.
-3. Add `AutomationProperties.Name` explicitly for interactive elements if the test relies on `WaitUntilName*`.
-4. Keep shared test logic in `Authoring`; runtime projects should stay thin.
-5. Record every real integration friction and suggested framework/doc improvement in `tests/AppAutomation.AdoptionJournal.md` before the next milestone commit.
+1. Start with `Headless` signed-in smoke, then validate full parity in `FlaUI`.
+2. Keep selectors on interactive/content controls (`Button`, `TextBox`, `ToggleSwitch`, root `UserControl`) rather than on pure layout nodes.
+3. Keep shared test logic in `Authoring`; runtime projects should stay thin wrappers.
+4. For desktop signed-in launch, ensure automation env/state is set via `SkillChatAppLaunchHost.CreateDesktopLaunchOptions(...)`.
+5. Record every real integration friction and suggested framework/doc improvement in `tests/AppAutomation.AdoptionJournal.md`.
 
 ## Troubleshooting
 - If `Headless` fails with `Headless session is not initialized`, verify `tests/SkillChat.UiTests.Headless/Infrastructure/HeadlessSessionHooks.cs`.
+- If `Headless` mixed-scenario run hangs, keep scenarios isolated by runtime project boundaries (current setup: signed-in in `Headless`, anonymous + signed-in in `FlaUI`).
 - If desktop build/launch fails with file locks in `SkillChat.Client\bin\Debug\net10.0`, close the Avalonia designer host in the IDE and retry.
 - On this TUnit/Microsoft Testing Platform stack, prefer `dotnet test --project ...`; classic `--filter` is not the primary debugging path here.

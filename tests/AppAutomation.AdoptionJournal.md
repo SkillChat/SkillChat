@@ -250,3 +250,41 @@
   - Показать в шаблонах пример page object с параметризованным resolver helper для повторяющихся сущностей вроде `MessageItem_{id}` или `Row_{key}`.
   - Опубликовать компактную таблицу соответствия `Avalonia control -> рекомендуемый UiControlType` для нестандартных и составных контролов.
   - Добавить рекомендации по контракту селекторов для парных visible/invisible кнопок и panel-host/root элементов, чтобы потребители меньше гадали над схемой именования.
+
+## Запись 13. Headless full smoke и зависание mixed-scenario запуска
+- Шаг:
+  - Добавлен общий signed-in smoke-сценарий `Signed_in_full_smoke_path_is_reachable` в `Authoring`.
+  - Добавлен рантайм-класс `MainWindowHeadlessSignedInTests`.
+  - Выполнены прогоны `Headless` c фильтрами и без фильтра.
+- Что сработало:
+  - Каждый сценарий по отдельности (anonymous и signed-in) стабильно проходит в `Headless`.
+  - Подход с единым authoring-сценарием для signed-in shell остаётся рабочим.
+- Шероховатости:
+  - При запуске двух headless-сценариев в одном test session (`SignedInSmoke` + `Anonymous`) тест-раннер регулярно зависал после завершения первого теста и перехода ко второму.
+  - Диагностический `.diag` лог обрывается на состоянии `InProgress` второго теста без финального update, что осложняет локализацию причины в consumer-репозитории.
+  - Попытка изолировать headless-сессию через `[Before(Test)]`/`[After(Test)]` выявила дополнительное ограничение TUnit:
+    - хуки уровня `Test` не допускают `static` методы;
+    - при неверной форме хука генератор выдаёт ошибку только на этапе сборки.
+  - Практический workaround в consumer-коде:
+    - оставить в `Headless` только signed-in full smoke;
+    - anonymous smoke оставить в `FlaUI`.
+- Предложения:
+  - Добавить в документацию AppAutomation/TUnit явный раздел про lifecycle headless-сессий при нескольких launch-сценариях в одном проекте.
+  - Дать готовый паттерн для scenario isolation (`per-test session` vs `per-test-run session`) с корректными примерами хуков.
+  - Улучшить диагностику зависания: отдельное сообщение о том, что второй launch не стартовал/не завершил teardown после предыдущего сценария.
+
+## Запись 14. FlaUI parity для signed-in full smoke
+- Шаг:
+  - Добавлен `MainWindowFlaUiSignedInTests`.
+  - Проведены итерации стабилизации селекторов и ожиданий до зелёного полного прогона `FlaUI` проекта.
+- Что сработало:
+  - После адаптации точек ожидания под реально доступные элементы `FlaUI` signed-in smoke проходит.
+  - Полный `FlaUI` прогон с anonymous + signed-in сценариями проходит стабильно.
+- Шероховатости:
+  - Существенная часть `AutomationId`, назначенных на layout-элементы (`Grid`, `Border`), в `Headless` резолвится, а в `FlaUI` недоступна как automation peer.
+  - В результате consumer вынужден либо переносить `AutomationId` на интерактивные контролы, либо переписывать ожидания на более «видимые» элементы (`Button`, `TextBox`, `ToggleSwitch`).
+  - Для десктопного signed-in запуска пришлось продублировать выставление env-переменных в текущий процесс (`SetCurrentProcessEnvironment`) в дополнение к `DesktopLaunchOptions.EnvironmentVariables`, чтобы избежать нестабильности сценария в desktop runtime.
+- Предложения:
+  - Добавить в документацию матрицу «какие типы Avalonia-контролов гарантированно видны в `FlaUI` как automation peer».
+  - Ввести правило best-practice: ключевые smoke-якоря размещать на интерактивных/контентных контролах, а не на чисто layout-узлах.
+  - Рассмотреть unified helper в AppAutomation.TestHost для надёжного проброса env/state в desktop runtime без дублирования в consumer-коде.
