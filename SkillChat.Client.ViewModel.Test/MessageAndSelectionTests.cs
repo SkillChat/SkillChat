@@ -2,6 +2,7 @@
 using NSubstitute;
 using SkillChat.Client.ViewModel;
 using SkillChat.Client.ViewModel.Interfaces;
+using SkillChat.Client.ViewModel.Services;
 using SkillChat.Client.ViewModel.Test.TestInfrastructure;
 using Splat;
 
@@ -137,7 +138,7 @@ public class MessageAndSelectionTests
     public async Task AttachmentMessageViewModel_DownloadCommand_DownloadsThenOpensAttachment()
     {
         ResetClientState();
-        var serviceClient = Substitute.For<ServiceStack.IJsonServiceClient>();
+        var serviceClient = Substitute.For<ISkillChatApiClient>();
         var attachmentPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(attachmentPath);
         var attachmentManager = new TrackingAttachmentManager(attachmentPath, serviceClient);
