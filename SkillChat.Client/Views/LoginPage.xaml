@@ -9,7 +9,7 @@
     xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia"
     xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
     xmlns:sys="clr-namespace:System;assembly=netstandard"
-    Background="White"  
+    Background="{DynamicResource PageBackgroundBrush}"  
     mc:Ignorable="d">
   <UserControl.Styles>
     <Style Selector="ToggleButton.passwordBoxRevealButtonSkillChat">
@@ -50,15 +50,7 @@
     </Style>
   </UserControl.Styles>
 
-  <Grid>
-    <Grid.Background>
-      <ImageBrush
-          Source="/Assets/background.png"
-          Stretch="None"
-          SourceRect="0,0,152,152"
-          DestinationRect="0,0,152,152"
-          TileMode="Tile" />
-    </Grid.Background>
+  <Grid Background="{DynamicResource PageBackgroundBrush}">
     <Grid ShowGridLines="False"
           MaxWidth="380"
           MaxHeight="600"
@@ -85,7 +77,7 @@
                      Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}"
                      x:Name="LoginTB"
                      Text="Логин"  />
-          <Border Background="White"
+          <Border Background="{DynamicResource PageBackgroundBrush}"
                   Name="LoginBr"
                   Classes="BorderEnterPages Base"
                   Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}">
@@ -114,19 +106,13 @@
                      Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}"
                      x:Name="PasswordTBL"
                      Text="Пароль" />
-          <Border Background="White"
+          <Border Background="{DynamicResource PageBackgroundBrush}"
                   x:Name="PasswordBr"
                   Classes="BorderEnterPages Base"
                   Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}">
             <StackPanel  Orientation="Horizontal">
-              <Panel Margin="16,16,5 ,16"
-                     Width="18">
-                <ToggleButton
-                     IsVisible="{Binding User.IsPassword}"
-                     Classes="passwordBoxRevealButtonSkillChat"
-                     Background="Transparent" 
-                     Cursor="Hand"
-                     IsChecked="{Binding #PasswordTB.RevealPassword, Mode=TwoWay}"/>
+              <Panel Margin="16,16,5,16"
+                     Width="20">
               </Panel>
               <TextBox
               x:Name="PasswordTB"
@@ -143,6 +129,17 @@
                   </ia:EventTriggerBehavior>
                 </i:Interaction.Behaviors>
               </TextBox>
+              <Panel Margin="5,16,5,16"
+                     Width="18">
+                <ToggleButton
+                     IsVisible="{Binding User.IsPassword}"
+                     Classes="passwordBoxRevealButtonSkillChat"
+                     Background="Transparent"
+                     Cursor="Hand"
+                     Width="18"
+                     Height="18"
+                     IsChecked="{Binding #PasswordTB.RevealPassword, Mode=TwoWay}"/>
+              </Panel>
               <Panel Margin="5,15,16,15">
                 <Image
                   Classes="ImageTbx"/>
@@ -153,12 +150,12 @@
               HorizontalAlignment="Center"
               Name="ErrorTbx"
               Height="30"
-              Background="#0000"
+              Background="Transparent"
               Classes="ClearContainer"
               FontStyle="Italic"
               FontSize="13"
               FontWeight="400"
-              Foreground="#FF9337"
+              Foreground="{DynamicResource ErrorBrush}"
               Text="{Binding User.ErrorMessageLoginPage.ErrorMsg}">
           </TextBlock>
         </StackPanel>
@@ -178,12 +175,12 @@
                 x:Name="registerLinkTB"
                 Margin="0,0,0,32"
                 HorizontalAlignment="Center"
-                Background="#0000"
+                Background="Transparent"
                 Classes="ClearContainer"
                 Cursor="Hand"
                 FontSize="16"
                 FontWeight="600"
-                Foreground="#FFA85E"
+                Foreground="{DynamicResource AccentBrush}"
                 Text="Зарегистрироваться">
                 <i:Interaction.Behaviors>
                     <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #registerLinkTB}">

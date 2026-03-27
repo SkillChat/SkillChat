@@ -7,9 +7,9 @@
     <Border
 		Classes="sendMessage"
 		IsVisible="{Binding SelectMessagesMode.IsTurnedSelectMode}"
-		BorderThickness="10,10,10,10">
+		BorderThickness="0">
 		<Grid ColumnDefinitions="*,Auto">
-      <WrapPanel Grid.Column="0">
+      <WrapPanel Grid.Column="0" VerticalAlignment="Center">
         <Button HorizontalAlignment="Left"
                 Command="{Binding SelectMessagesMode.CopyToClipboardCommand}"
                 Classes="SelectMessageBorder CopyToClipboard" ToolTip.Tip="Скопировать в буфер обмена">
@@ -22,7 +22,7 @@
         </Button>
 
         <Button HorizontalAlignment="Left"
-                Margin="25 0 0 0"
+                Margin="0"
                 Command="{Binding SelectedMessagesDeleteCommand}"
                 Classes="SelectMessageBorder DeleteMessage" ToolTip.Tip="Удалить выбранные сообщения">
             <StackPanel Orientation="Horizontal">
@@ -32,10 +32,10 @@
                     Height="18" Width="18"/>
             </StackPanel>
         </Button>
-          <TextBlock Classes="CopyToClipboard" VerticalAlignment="Center" Margin="10 0 0 0" 
+          <TextBlock Classes="CopyToClipboard" VerticalAlignment="Center" 
                      Text="{Binding SelectMessagesMode.CountCheckedMsg, StringFormat={}Выбрано сообщений: {0}}"/>
       </WrapPanel>
-      <WrapPanel Grid.Column="1">
+      <WrapPanel Grid.Column="1" VerticalAlignment="Center">
           <Button 
                   HorizontalAlignment="Right"
                   Classes="SelectMessageBorder"

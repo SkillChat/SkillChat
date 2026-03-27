@@ -56,12 +56,12 @@
 
 	<!--Кнопка выбора Selected More-->
 	<Style Selector="Button.SelectedMore:pointerover /template/ ContentPresenter">
-		<Setter Property="BorderBrush" Value="{DynamicResource Orange}"/>
-		<Setter Property="Background" Value="{DynamicResource Orange}"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+		<Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
 	</Style>
 	
 	<Style Selector="Button.SelectedMore:pointerover TextBlock">
-		<Setter Property="Foreground" Value="{DynamicResource White}"/>
+		<Setter Property="Foreground" Value="{DynamicResource CardBackgroundBrush}"/>
 	</Style>
 
 
@@ -72,7 +72,7 @@
 	</Style>
 
 	<Style Selector="Button.SettingItems:focus  TextBlock">
-		<Setter Property="Foreground" Value="{DynamicResource Violet}"/>
+		<Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
 	</Style>
 
 </Styles>

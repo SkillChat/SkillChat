@@ -12,10 +12,10 @@
     <UserControl.Resources>
         <utils:BoolToObjectConverter x:Key="BoolToObjectConverter"/>
 		<utils:UserIdToBrushConverter x:Key="UserIdToBrushConverter"/>
-        <SolidColorBrush x:Key="DarkPurpleColor" Color="#5027C7"/>
-        <SolidColorBrush x:Key="OrangeColor" Color="#FF9337"/>
-				<SolidColorBrush x:Key="VioletColor" Color="#D1C0FF"/>
-				<SolidColorBrush x:Key="GrayColor" Color="#F2F2F2"/>
+        <SolidColorBrush x:Key="DarkPurpleColor" Color="{DynamicResource Violet_03}"/>
+        <SolidColorBrush x:Key="OrangeColor" Color="{DynamicResource Orange_03}"/>
+				<SolidColorBrush x:Key="VioletColor" Color="{DynamicResource Violet_01}"/>
+				<SolidColorBrush x:Key="GrayColor" Color="{DynamicResource SystemControlBackgroundAltHighColor}"/>
         <sys:Double x:Key="MinWidth250">250</sys:Double>
         <sys:Double x:Key="MinWidth0">0</sys:Double>
     </UserControl.Resources>

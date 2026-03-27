@@ -3,15 +3,16 @@
         xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia">
     <!--Border-->
     <Style Selector="Border.textMessage">
-        <Setter Property="Padding" Value="4,0,4,6"/>
+        <Setter Property="Padding" Value="10,6,10,8"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Background" Value="{DynamicResource OtherMessageBubbleBrush}"/>
     </Style>
 
 	  <Style Selector="Border.QuotedMessage">
 	  	  <Setter Property="Padding" Value="11,5,11,0"/>
 	  	  <Setter Property="BorderThickness" Value="0"/>
-	  	  <Setter Property="CornerRadius" Value="4"/>
+	  	  <Setter Property="CornerRadius" Value="10"/>
 	  </Style>
 
     <Style Selector="Border.line">
@@ -24,17 +25,40 @@
         <Setter Property="FontSize" Value="14" />
         <Setter Property="AcceptsReturn" Value="True" />
         <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="TextWrapping" Value="Wrap" />
         <Setter Property="ContextMenu" Value="{x:Null}"/>
         <Setter Property="ContextFlyout" Value="{x:Null}"/>
+    </Style>
+    
+    <!-- Override Fluent theme's PART_BorderElement for message TextBox to keep it invisible -->
+    <Style Selector="TextBox.message /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style Selector="TextBox.message:focus /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style Selector="TextBox.message:pointerover /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style Selector="TextBox.message:focus:pointerover /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
     </Style>
 
     <Style Selector="TextBox.QuotedMessage">
         <Setter Property="Padding" Value="0,0,10,5" />
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="FontStyle" Value="Italic"/>
-		<Setter Property="Foreground" Value="#4F4F4F"/>
+		<Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
         <Setter Property="AcceptsReturn" Value="True" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
@@ -91,32 +115,39 @@
         <Setter Property="Padding" Value="6,5,0,0"/>
 		<Setter Property="FontSize" Value="14"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{DynamicResource MessageSenderNameBrush}"/>
         <Setter Property="Cursor" Value="Hand"/>
     </Style>
 
     <Style Selector="TextBlock.QuotedUserLogin">
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{DynamicResource MessageSenderNameBrush}"/>
     </Style>
 
     <Style Selector="TextBlock.UserDownload">
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="TextAlignment" Value="Left"/>
-        <Setter Property="Foreground" Value="#FF9337"/>
+        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="TextDecorations" Value="Underline"/>
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        <Setter Property="MaxWidth" Value="180"/>
     </Style>
 
     <Style Selector="TextBlock.fileName">
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="VerticalAlignment" Value="Bottom"/>
         <Setter Property="TextAlignment" Value="Left"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        <Setter Property="MaxWidth" Value="180"/>
     </Style>
 
     <Style Selector="TextBlock.extensions">
         <Setter Property="FontSize" Value="12"/>
-        <Setter Property="Foreground" Value="#828282"/>
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
         <Setter Property="Margin" Value="0 0 2 0"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
     </Style>
@@ -139,15 +170,15 @@
     </Style>
 
     <Style Selector="TextBlock.time">
-        <Setter Property="FontSize" Value="12" />        
-        <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Foreground" Value="#828282" />
+        <Setter Property="FontSize" Value="11" />        
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Foreground" Value="{DynamicResource MessageTimeTextBrush}" />
     </Style>
 
     <Style Selector="TextBlock.QuotedTime">
-        <Setter Property="FontSize" Value="12" />
-        <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Foreground" Value="#828282" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Foreground" Value="{DynamicResource MessageTimeTextBrush}" />
     </Style>
 
     <Style Selector="TextBlock.itemTextBlock">

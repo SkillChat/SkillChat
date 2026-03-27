@@ -6,8 +6,8 @@
 	<Style Selector="Border.sendMessage">
 		<Setter Property="MinHeight" Value="50"/>
 		<Setter Property="MaxHeight" Value="270"/>
-		<Setter Property="Background" Value="#E0E0E0"/>
-		<Setter Property="BorderBrush" Value="#E0E0E0"/>
+		<Setter Property="Background" Value="{DynamicResource InputAreaBackgroundBrush}"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource InputAreaBorderBrush}"/>
 	</Style>
 	
     <!--Начало: Стили кнопки отправки сообщений-->
@@ -22,13 +22,43 @@
         <Setter Property="Padding" Value="10,0,12,0"/>
         <Setter Property="AcceptsReturn" Value="True"/>
         <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Background" Value="Transparent"/>
         <Setter Property="FontSize" Value="{DynamicResource H4}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="Watermark" Value="Сообщение"/>
+        <Setter Property="CaretBrush" Value="{DynamicResource PrimaryTextBrush}"/>
+    </Style>
+    
+    <!-- Suppress Fluent theme focus styles for message input TextBox -->
+    <!-- Normal state -->
+    <Style Selector="TextBox.SendMessageText /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    <!-- Focus state - suppress the bright focus ring -->
+    <Style Selector="TextBox.SendMessageText:focus /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    <!-- Pointer-over state -->
+    <Style Selector="TextBox.SendMessageText:pointerover /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    <!-- Focus+Pointer-over state -->
+    <Style Selector="TextBox.SendMessageText:focus-within /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
     </Style>
 
     <Style Selector="Grid.SendMessageGrid">
-        <Setter Property="Background" Value="White"/>
+        <Setter Property="Background" Value="{DynamicResource InputAreaBackgroundBrush}"/>
     </Style>
 
     <Style Selector="Image.EditedMessageImage">
@@ -46,31 +76,31 @@
 	<Style Selector="Border.editMessageText">
 		<Setter Property="BorderThickness" Value="1"/>
 		<Setter Property="CornerRadius" Value="1"/>
-		<Setter Property="BorderBrush" Value="#FF9337"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
 	</Style>
 
     <!--Кнопка отправки сообщений-->
     <Style Selector="Button.sendMsg /template/ ContentPresenter">
-        <Setter Property="Background" Value="#C4C4C4"/>
+        <Setter Property="Background" Value="{DynamicResource SecondaryButtonBgBrush}"/>
     </Style>
 
 	<Style Selector="Button.sendEditMsg /template/ ContentPresenter">
-		<Setter Property="Background" Value="#FF9337"/>
+		<Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
 	</Style>
 
     <Style Selector="Button.sendAttach /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource White}"/>
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
     </Style>
 
     <Style Selector="Button:pointerover.sendMsg /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource White}" />
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="BorderBrush" Value="{DynamicResource Orange-03}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
     </Style>
 
     <Style Selector="Button:pressed.sendMsg /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource Orange-03}"/>
+        <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
     </Style>
 
     <Style Selector="Button.sendMsg Image#buttonImage">
@@ -128,32 +158,32 @@
 
     <!--Выпадающее меню-->
     <Style Selector="Button.AttachMenu">
-        <Setter Property="Background" Value="{DynamicResource White}"/>
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Width" Value="148"/>
     </Style>
 
     <Style Selector="Button:pointerover.AttachMenu /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource Orange-03}"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource Orange-03}"/>
+        <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
     </Style>
 
     <Style Selector="TextBlock.MenuText">
         <Setter Property="FontSize" Value="15"/>
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Foreground" Value="#000"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
         <Setter Property="Margin" Value="10 0 0 0"/>
         <Setter Property="Padding" Value="0"/>
     </Style>
 
     <Style Selector="Button:pointerover.AttachMenu TextBlock">
-        <Setter Property="Foreground" Value="{DynamicResource White}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryButtonTextBrush}"/>
     </Style>
 
     <Style Selector="Button:pressed.AttachMenu /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource Orange-02}"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource Orange-02}"/>
+        <Setter Property="Background" Value="{DynamicResource AccentPressedBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentPressedBrush}"/>
     </Style>
 
     <Style Selector="Button.AttachMenu Image#FileImage">
@@ -180,25 +210,26 @@
         <Setter Property="MaxWidth" Value="152"/>
         <Setter Property="ZIndex" Value="10"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource Orange-03}"/>
-        <Setter Property="CornerRadius" Value="2"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
     </Style>
 
     <!--Конец: Стили кнопки отпрвки сообщений-->
 
     <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Background" Value="{DynamicResource White}"/>
+        <Setter Property="Background" Value="{DynamicResource MenuItemHoverBrush}"/>
     </Style>
 
     <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Background" Value="{DynamicResource White}"/>
+        <Setter Property="Background" Value="{DynamicResource ChatListItemSelectedBrush}"/>
     </Style>
 
     <Style Selector="ListBoxItem:selected:focus /template/ ContentPresenter">
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Background" Value="{DynamicResource White}"/>
+        <Setter Property="Background" Value="{DynamicResource ChatListItemSelectedBrush}"/>
     </Style>
 
     <!--Ответ на сообщение-->
@@ -251,7 +282,7 @@
 
     <Style Selector="TextBlock.CopyToClipboard">
 		<Setter Property="FontSize" Value="15"/>
-		<Setter Property="Foreground" Value="#4F4F4F"/>
+		<Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
 	</Style>
 
 	<Style Selector="Button.SelectMessageBorder">
@@ -266,11 +297,11 @@
 
   <Style Selector="ToolTip">
     <Setter Property="BorderThickness" Value="0"/>
-    <Setter Property="CornerRadius" Value="2"/>
-    <Setter Property="Background" Value="#BDBDBD"/>
+    <Setter Property="CornerRadius" Value="6"/>
+    <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
     <Setter Property="Padding" Value="17,6,11,6"></Setter>
     <Setter Property="FontSize" Value="15"/>
-    <Setter Property="Foreground" Value="Black"/>
+    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
     <Setter Property="Placement" Value="Top"/>
   </Style>
 </Styles>

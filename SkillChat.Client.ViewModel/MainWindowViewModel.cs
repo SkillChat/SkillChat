@@ -13,6 +13,7 @@ using Splat;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -68,6 +69,13 @@ namespace SkillChat.Client.ViewModel
             ProfileViewModel = new ProfileViewModel(serviceClient);
             Locator.CurrentMutable.RegisterConstant<IProfile>(ProfileViewModel);
             ProfileViewModel.IsOpenProfileEvent += () => WindowStates(WindowState.OpenProfile);
+            ((INotifyPropertyChanged)ProfileViewModel).PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName == nameof(ProfileViewModel.IsOpened))
+                {
+                    SyncSidebarSelection();
+                }
+            };
 
             AttachmentViewModel = new SendAttachmentsViewModel(serviceClient);
             ConfirmationViewModel = new ConfirmationViewModel();
@@ -77,8 +85,16 @@ namespace SkillChat.Client.ViewModel
             SettingsViewModel.TypeEnterEvent += (e) => { KeySendMessage = e; };
             SettingsViewModel.ContextMenuSettingsActiveEvent += (e) => { WindowStates(WindowState.HeaderMenuPopup); };
             SettingsViewModel.SetSelectedOnSettingsItemEvent += e => { TextHeaderMenuInSettings = SettingsViewModel.SettingsMenuActiveMain ? "Сообщения и чаты" : "Аудит входа"; };
+            ((INotifyPropertyChanged)SettingsViewModel).PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName == nameof(SettingsViewModel.IsOpened))
+                {
+                    SyncSidebarSelection();
+                }
+            };
 
             Width(false);
+            SyncSidebarSelection();
             User.Login = settings.Login;
             
             Tokens = new TokenResult { AccessToken = settings.AccessToken, RefreshToken = settings.RefreshToken };
@@ -603,6 +619,9 @@ namespace SkillChat.Client.ViewModel
             ProfileViewModel.SignOutCommand = SignOutCommand;
             ProfileViewModel.LoadMessageHistoryCommand = LoadMessageHistoryCommand;
 
+            ToggleSidebarCommand = ReactiveCommand.Create(ToggleSidebar);
+            ShowChatsCommand = ReactiveCommand.Create(ShowChats);
+
             this.WhenAnyValue(model => model.IsSignedIn,model => model.User.DisplayName,model =>
                 model.ChatName,(signedIn, displayName, chatName) =>
                 IsSignedIn ? $"SkillChat - {User.DisplayName} [{ChatName}]" : $"SkillChat").Subscribe(s => Title = s);
@@ -675,6 +694,61 @@ namespace SkillChat.Client.ViewModel
         public bool IsConnected { get; set; }
 
         public bool IsSignedIn { get; set; }
+
+        public enum SidebarSection
+        {
+            Chats,
+            Profile,
+            Settings
+        }
+
+        [AlsoNotifyFor(nameof(SidebarWidth))]
+        public bool IsSidebarExpanded { get; set; } = true;
+
+        public double SidebarWidth => IsSidebarExpanded ? 200 : 48;
+
+        public SidebarSection ActiveSidebarSection { get; set; } = SidebarSection.Chats;
+
+        public bool IsChatsSelected { get; set; } = true;
+        public bool IsProfileSelected { get; set; }
+        public bool IsSettingsSelected { get; set; }
+
+        public void ToggleSidebar()
+        {
+            IsSidebarExpanded = !IsSidebarExpanded;
+        }
+
+        public ICommand ToggleSidebarCommand { get; }
+
+        public void ShowChats()
+        {
+            ProfileViewModel.Close();
+            SettingsViewModel.Close();
+            Width(false);
+            SyncSidebarSelection();
+        }
+
+        public ICommand ShowChatsCommand { get; }
+
+        public void SyncSidebarSelection()
+        {
+            if (SettingsViewModel?.IsOpened == true)
+            {
+                ActiveSidebarSection = SidebarSection.Settings;
+            }
+            else if (ProfileViewModel?.IsOpened == true)
+            {
+                ActiveSidebarSection = SidebarSection.Profile;
+            }
+            else
+            {
+                ActiveSidebarSection = SidebarSection.Chats;
+            }
+
+            IsChatsSelected = ActiveSidebarSection == SidebarSection.Chats;
+            IsProfileSelected = ActiveSidebarSection == SidebarSection.Profile;
+            IsSettingsSelected = ActiveSidebarSection == SidebarSection.Settings;
+        }
 
 
         public bool AttachMenuVisible { get; set; }
@@ -854,15 +928,18 @@ namespace SkillChat.Client.ViewModel
                     ProfileViewModel.ContextMenuClose();
                     ProfileViewModel.Close();
                     IsFirstRun = true;
+                    SyncSidebarSelection();
                     break;
                 case WindowState.OpenProfile:
                     SettingsViewModel.Close();
                     SettingsViewModel.CloseContextMenu();
                     Width(SettingsViewModel.IsOpened);
+                    SyncSidebarSelection();
                     break;
                 case WindowState.WindowSettings:
                     ProfileViewModel.Close();
                     Width(SettingsViewModel.IsOpened);
+                    SyncSidebarSelection();
                     break;
                 case WindowState.HeaderMenuPopup:
                     ProfileViewModel.ContextMenuClose();

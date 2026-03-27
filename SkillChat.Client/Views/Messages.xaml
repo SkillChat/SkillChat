@@ -16,8 +16,8 @@
         <utils:BoolToObjectConverter x:Key="BoolToObjectConverter"/>
         <utils:UserIdToBrushConverter x:Key="UserIdToBrushConverter"/>
         <utils:StackPanelMarginConverter x:Key="StackPanelMarginConverter"/>
-        <SolidColorBrush x:Key="GrayColor" Color="#DDD5F4"/>
-        <SolidColorBrush x:Key="WhiteColor" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="GrayColor" Color="{DynamicResource OwnMessageBubble}"/>
+        <SolidColorBrush x:Key="WhiteColor" Color="{DynamicResource OtherMessageBubble}"/>
         <HorizontalAlignment x:Key="HorizontalAlignmentRight">Right</HorizontalAlignment>
         <HorizontalAlignment x:Key="HorizontalAlignmentLeft">Left</HorizontalAlignment>
         <sys:Double x:Key="MinWidth250">250</sys:Double>

@@ -11,7 +11,7 @@
         Background="Transparent"
         SystemDecorations="None"
         Title="Notify">
-    <Border CornerRadius="8,0,0,8"  Background="#F2EEFF"  Width="340" Height="70">
+    <Border CornerRadius="8,0,0,8"  Background="{DynamicResource Violet_01Brush}"  Width="340" Height="70">
         <Grid Background="Transparent" ColumnDefinitions="60,*,60" >
 
 

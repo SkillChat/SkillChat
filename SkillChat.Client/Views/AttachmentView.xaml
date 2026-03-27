@@ -17,9 +17,9 @@
         VerticalAlignment="Center"
         HorizontalAlignment="Center"
         Padding="10"
-        Background="{DynamicResource White}"
+        Background="{DynamicResource CardBackgroundBrush}"
         BorderThickness="1"
-        BorderBrush="{DynamicResource Orange_03}">
+        BorderBrush="{DynamicResource DividerBrush}">
     <Grid 
         Width="300" 
         VerticalAlignment="Stretch" 
@@ -40,7 +40,7 @@
           <ListBox.ItemTemplate>
               <DataTemplate DataType="viewModel:PrepareAttachmentViewModel">
                 <Border 
-                    Background="White"
+                    Background="{DynamicResource CardBackgroundBrush}"
                     MaxWidth="280">
                   <Grid ColumnDefinitions="Auto, Auto, Auto">
                     <Image 
@@ -62,8 +62,11 @@
                             FontSize="15"
                             VerticalAlignment="Center"
                             TextAlignment="Left"
+                            Foreground="{DynamicResource PrimaryTextBrush}"
                             Grid.Row="0" 
-                            Text="{Binding FileName}"/>
+                            Text="{Binding FileName}"
+                            TextWrapping="Wrap"
+                            MaxWidth="180"/>
                       <StackPanel 
                             Orientation="Horizontal" 
                             Grid.Row="1"
@@ -75,7 +78,7 @@
                                   Grid.Row="0"
                                   Grid.Column="0"
                                   FontSize="12"
-                                  Foreground="#828282"
+                                  Foreground="{DynamicResource SecondaryTextBrush}"
                                   Margin="0 0 2 0"
                                   TextWrapping="Wrap"
                                   Text="{Binding Extensions}"/>
@@ -83,14 +86,14 @@
                                   Grid.Row="0"
                                   Grid.Column="1"
                                   FontSize="12"
-                                  Foreground="#828282"
+                                  Foreground="{DynamicResource SecondaryTextBrush}"
                                   Text="/"/>
                               <TextBlock
                                   Grid.Row="0"
                                   Grid.Column="2"
                                   Margin="0 0 2 0"
                                   FontSize="12"
-                                  Foreground="#828282"
+                                  Foreground="{DynamicResource SecondaryTextBrush}"
                                   Width="150"
                                   Text="{Binding SizeName}"/>
                           </Grid>
@@ -146,7 +149,8 @@
         <Border 
             Grid.Row="1"
             BorderThickness="0 1 0 0"
-            BorderBrush="{DynamicResource Orange_03}">
+            BorderBrush="{DynamicResource DividerBrush}"
+            Background="{DynamicResource InputAreaBackgroundBrush}">
             <Grid>
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -156,6 +160,8 @@
                   BorderThickness="0"
                   Padding="7 10"
                   FontSize="14"
+                  Background="Transparent"
+                  Foreground="{DynamicResource PrimaryTextBrush}"
                   x:Name="message"
                   AcceptsReturn="True"
                   Grid.Column="0"
@@ -169,7 +175,7 @@
           <Button
               x:Name="sendAttachButton"
               Grid.Column="1"
-              Background="{DynamicResource White}"
+              Background="Transparent"
               BorderThickness="0"
               Width="30"
               Height="30"

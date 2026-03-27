@@ -22,6 +22,7 @@ namespace SkillChat.Client.ViewModel
             ChatSettings = new UserChatSettings();
 
             this.ObservableForProperty(m => m.TypeEnter).Subscribe(change => TypeEnterEvent?.Invoke(change.Value));
+            this.ObservableForProperty(m => m.IsDarkTheme).Subscribe(change => OnThemeChanged?.Invoke(change.Value));
 
             LoginAuditCollection = new ObservableCollection<LoginAuditViewModel>();
 
@@ -100,6 +101,7 @@ namespace SkillChat.Client.ViewModel
         public bool IsContextMenu { get; set; }
         public bool TypeEnter { get; set; }
         public bool IsOpened { get; set; }
+        public bool IsDarkTheme { get; set; } = true;
 
         public SelectedMenuItem SelectedItem { get; protected set; }
 
@@ -122,6 +124,8 @@ namespace SkillChat.Client.ViewModel
         public event Action<bool> TypeEnterEvent;
         public event Action<bool> ContextMenuSettingsActiveEvent;
         public event Action<Enum> SetSelectedOnSettingsItemEvent;
+        
+        public Action<bool>? OnThemeChanged { get; set; }
         
         public UserChatSettings ChatSettings { get; set; }
         public static ReactiveCommand<object, Unit> MorePointerPressedCommand { get; set; }
