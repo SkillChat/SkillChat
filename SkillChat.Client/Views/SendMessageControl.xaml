@@ -1,6 +1,7 @@
-﻿<UserControl
+<UserControl
     x:Class="SkillChat.Client.Views.SendMessageControl"
     xmlns="https://github.com/avaloniaui"
+    xmlns:automation="clr-namespace:Avalonia.Automation;assembly=Avalonia.Controls"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -8,6 +9,7 @@
     xmlns:utils="clr-namespace:SkillChat.Client.Utils"
     d:DesignHeight="80"
     d:DesignWidth="800"
+    automation:AutomationProperties.AutomationId="MessageComposerRoot"
     mc:Ignorable="d">
   <UserControl.Resources>
     <utils:KeyConverter x:Key="keyConverter"/>
@@ -19,7 +21,7 @@
 	<Thickness x:Key="ThicknessZero">0,3,0,10</Thickness>
   </UserControl.Resources>
   
-  <Border 
+  <Border
 	  Classes="sendMessage"
 	  IsVisible="{Binding ProfileViewModel.IsShowChat}"
 	  BorderThickness="{Binding IsSelectQuotedMessage,
@@ -59,6 +61,7 @@
 		  <Grid Grid.Row="1"
 				ColumnDefinitions="Auto,*,Auto">
 			  <Button Grid.Column="0"
+                      automation:AutomationProperties.AutomationId="AttachMenuButton"
 					  x:Name="attachButton"
 					  Margin="0 0 5 0"
 					  Command="{Binding AttachMenuCommand}" Classes="attachBtn Send-Btn">
@@ -73,6 +76,7 @@
             <Grid Grid.Column="1" MaxHeight="100">
               <ScrollViewer Padding="0,5,0,5" >
                   <TextBox
+                      automation:AutomationProperties.AutomationId="MessageInput"
                       Name="InputMessageTB"
                       Classes="SendMessageText"
                       Text="{Binding MessageText}">
@@ -89,6 +93,7 @@
 			  
 			  <!--  Кнопка отправки сообщения  -->
 			  <Button
+                  automation:AutomationProperties.AutomationId="MessageSendButton"
 				  x:Name="sendButton"
 				  Grid.Column="2"
 				  Classes="Send-Btn sendMsg"

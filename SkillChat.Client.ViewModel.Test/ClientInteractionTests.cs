@@ -4,6 +4,7 @@ using NSubstitute;
 using SkillChat.Client.Notification.ViewModels;
 using SkillChat.Client.ViewModel;
 using SkillChat.Client.ViewModel.Interfaces;
+using SkillChat.Client.ViewModel.Services;
 using SkillChat.Client.ViewModel.Test.TestInfrastructure;
 using SkillChat.Interface;
 using SkillChat.Server.ServiceModel;
@@ -18,15 +19,15 @@ public class ClientInteractionTests
     public async Task SettingsViewModel_Commands_LoadSaveAndCloseSettings()
     {
         ResetClientState();
-        var serviceClient = Substitute.For<ServiceStack.IJsonServiceClient>();
-        serviceClient.GetAsync(Arg.Any<GetMySettings>())
+        var serviceClient = Substitute.For<ISkillChatApiClient>();
+        serviceClient.GetMySettingsAsync(Arg.Any<GetMySettings>())
             .Returns(Task.FromResult(new UserChatSettings { SendingMessageByEnterKey = true }));
-        serviceClient.PostAsync(Arg.Any<SetSettings>())
+        serviceClient.SaveSettingsAsync(Arg.Any<SetSettings>())
             .Returns(call => Task.FromResult(new UserChatSettings
             {
                 SendingMessageByEnterKey = call.Arg<SetSettings>().SendingMessageByEnterKey
             }));
-        serviceClient.GetAsync(Arg.Any<GetLoginAudit>())
+        serviceClient.GetLoginAuditAsync(Arg.Any<GetLoginAudit>())
             .Returns(Task.FromResult(new LoginHistory
             {
                 UniqueSessionUser = "session-1",
@@ -73,8 +74,8 @@ public class ClientInteractionTests
     public async Task ProfileViewModel_MethodsAndCommands_LoadAndSaveProfile()
     {
         ResetClientState();
-        var serviceClient = Substitute.For<ServiceStack.IJsonServiceClient>();
-        serviceClient.GetAsync(Arg.Any<GetProfile>())
+        var serviceClient = Substitute.For<ISkillChatApiClient>();
+        serviceClient.GetProfileAsync(Arg.Any<GetProfile>())
             .Returns(Task.FromResult(new UserProfileMold
             {
                 Id = "user-1",
@@ -82,7 +83,7 @@ public class ClientInteractionTests
                 DisplayName = "Display",
                 AboutMe = "About",
             }));
-        serviceClient.PostAsync(Arg.Any<SetProfile>())
+        serviceClient.SaveProfileAsync(Arg.Any<SetProfile>())
             .Returns(call => Task.FromResult(new UserProfileMold
             {
                 Id = "user-1",
@@ -126,8 +127,8 @@ public class ClientInteractionTests
     public async Task SendAttachmentsViewModel_OpenCloseAndSendMessage_Work()
     {
         ResetClientState();
-        var serviceClient = Substitute.For<ServiceStack.IJsonServiceClient>();
-        serviceClient.PostFileWithRequest<SkillChat.Server.ServiceModel.Molds.Attachment.AttachmentMold>(
+        var serviceClient = Substitute.For<ISkillChatApiClient>();
+        serviceClient.UploadAttachment(
                 Arg.Any<Stream>(),
                 Arg.Any<string>(),
                 Arg.Any<SetAttachment>())
@@ -176,8 +177,8 @@ public class ClientInteractionTests
         var attachmentPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(attachmentPath);
 
-        var serviceClient = Substitute.For<ServiceStack.IJsonServiceClient>();
-        serviceClient.GetAsync(Arg.Any<GetAttachment>())
+        var serviceClient = Substitute.For<ISkillChatApiClient>();
+        serviceClient.GetAttachmentAsync(Arg.Any<GetAttachment>())
             .Returns(Task.FromResult<Stream>(new MemoryStream("payload"u8.ToArray())));
 
         var manager = new TrackingAttachmentManager(attachmentPath, serviceClient);
@@ -226,8 +227,8 @@ public class ClientInteractionTests
     {
         ResetClientState();
         var fileDialog = Substitute.For<ICanOpenFileDialog>();
-        var serviceClient = Substitute.For<ServiceStack.IJsonServiceClient>();
-        serviceClient.GetAsync(Arg.Any<GetProfile>())
+        var serviceClient = Substitute.For<ISkillChatApiClient>();
+        serviceClient.GetProfileAsync(Arg.Any<GetProfile>())
             .Returns(Task.FromResult(new UserProfileMold
             {
                 Id = "user-1",

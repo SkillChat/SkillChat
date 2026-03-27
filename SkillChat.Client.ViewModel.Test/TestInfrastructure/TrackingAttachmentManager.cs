@@ -1,14 +1,14 @@
 #nullable enable
 using System.Diagnostics;
-using ServiceStack;
 using SkillChat.Client.ViewModel;
+using SkillChat.Client.ViewModel.Services;
 using SkillChat.Server.ServiceModel.Molds.Attachment;
 
 namespace SkillChat.Client.ViewModel.Test.TestInfrastructure;
 
 internal sealed class TrackingAttachmentManager : AttachmentManager
 {
-    public TrackingAttachmentManager(string attachmentPath, IJsonServiceClient serviceClient)
+    public TrackingAttachmentManager(string attachmentPath, ISkillChatApiClient serviceClient)
         : base(attachmentPath, serviceClient)
     {
     }

@@ -1,5 +1,6 @@
 <UserControl
     xmlns="https://github.com/avaloniaui"
+    xmlns:automation="clr-namespace:Avalonia.Automation;assembly=Avalonia.Controls"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -9,16 +10,17 @@
     xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
     mc:Ignorable="d"
     Background="#4C000000"
+    automation:AutomationProperties.AutomationId="ConfirmationDialogRoot"
     x:Class="SkillChat.Client.Views.Confirmation">
 
-    <Border 
+    <Border
         Classes="BorderStyle"
         VerticalAlignment="Center"
         HorizontalAlignment="Center">
-    <Grid 
+    <Grid
         Width="370"
         Height="160"
-        VerticalAlignment="Stretch" 
+        VerticalAlignment="Stretch"
         HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -28,6 +30,7 @@
 
 		<!-- Кнопка закрытия окна -->
         <Button
+            automation:AutomationProperties.AutomationId="ConfirmationCloseButton"
             Grid.Row="0"
             Classes="ConfirmationClose"
             VerticalAlignment="Top"
@@ -66,6 +69,7 @@
         <Grid Grid.Row="2" Grid.ColumnDefinitions="*,*">
         <!--Кнопка Отмена-->
         <Button
+            automation:AutomationProperties.AutomationId="ConfirmationCancelButton"
             Grid.Column="0"
             Command="{Binding Close}"
             HorizontalAlignment="Right"
@@ -78,6 +82,7 @@
         <!--Добавить обработку действия удаления отдельных сообщений-->
         <!--Кнопка Удалить-->
         <Button
+            automation:AutomationProperties.AutomationId="ConfirmationConfirmButton"
             Grid.Column="1"
             Command="{Binding ConfirmSelectionCommand}"
             HorizontalAlignment="Left"

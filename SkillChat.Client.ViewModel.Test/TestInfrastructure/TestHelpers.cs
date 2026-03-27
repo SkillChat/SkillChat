@@ -6,6 +6,7 @@ using AutoMapper.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using SkillChat.Client.ViewModel;
+using SkillChat.Client.ViewModel.Services;
 using SkillChat.Interface;
 using SkillChat.Server.ServiceModel.Molds;
 using SkillChat.Server.ServiceModel.Molds.Attachment;
@@ -57,12 +58,12 @@ internal static class TestHelpers
         var mainWindow = (MainWindowViewModel)FormatterServices.GetUninitializedObject(typeof(MainWindowViewModel));
 #pragma warning restore SYSLIB0050
         mainWindow.SelectMessagesMode = new SelectMessages();
-        mainWindow.SettingsViewModel = new SettingsViewModel(Substitute.For<ServiceStack.IJsonServiceClient>());
-        mainWindow.ProfileViewModel = new ProfileViewModel(Substitute.For<ServiceStack.IJsonServiceClient>());
+        mainWindow.SettingsViewModel = new SettingsViewModel(Substitute.For<ISkillChatApiClient>());
+        mainWindow.ProfileViewModel = new ProfileViewModel(Substitute.For<ISkillChatApiClient>());
         mainWindow.User = new CurrentUserViewModel();
         mainWindow.RegisterUser = new RegisterUserViewModel();
         mainWindow.ConfirmationViewModel = new ConfirmationViewModel();
-        mainWindow.AttachmentViewModel = new SendAttachmentsViewModel(Substitute.For<ServiceStack.IJsonServiceClient>());
+        mainWindow.AttachmentViewModel = new SendAttachmentsViewModel(Substitute.For<ISkillChatApiClient>());
         return mainWindow;
     }
 

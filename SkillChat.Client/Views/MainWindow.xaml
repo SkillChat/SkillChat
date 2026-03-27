@@ -1,6 +1,7 @@
 <Window
     x:Class="SkillChat.Client.Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
+    xmlns:automation="clr-namespace:Avalonia.Automation;assembly=Avalonia.Controls"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -19,6 +20,7 @@
     MinWidth="500"
     MinHeight="600"
     Icon="/Assets/skillchat-logo.ico"
+    automation:AutomationProperties.AutomationId="MainWindow"
     mc:Ignorable="d">
     <Design.DataContext>
         <viewModel:DesignMainWindowViewModel/>
@@ -107,18 +109,20 @@
     </Window.Styles>
     
     <Grid>
-        <Grid>
+        <Grid automation:AutomationProperties.AutomationId="SignedInShellRoot">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding SidebarWidth}" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <!-- Left Sidebar - Telegram style -->
             <Border Background="{DynamicResource SidebarBackgroundBrush}"
+                    automation:AutomationProperties.AutomationId="SidebarRoot"
                     BorderBrush="{DynamicResource DividerBrush}"
                     BorderThickness="0,0,1,0">
                 <Grid RowDefinitions="Auto,*,Auto">
                     <!-- Sidebar Header with logo and hamburger menu area - clickable to toggle sidebar -->
                     <Button Grid.Row="0"
+                            automation:AutomationProperties.AutomationId="SidebarToggleButton"
                             Command="{Binding ToggleSidebarCommand}"
                             Background="Transparent"
                             BorderThickness="0"
@@ -157,6 +161,7 @@
                         <StackPanel Margin="8,4">
                             <!-- Chats button - primary navigation -->
                             <Button Classes="sidebar-btn"
+                                    automation:AutomationProperties.AutomationId="ChatsNavButton"
                                     IsVisible="{Binding !IsChatsSelected}"
                                     Command="{Binding ShowChatsCommand}">
                                 <StackPanel Orientation="Horizontal" Spacing="12">
@@ -168,6 +173,7 @@
                                 </StackPanel>
                             </Button>
                             <Button Classes="sidebar-btn active"
+                                    automation:AutomationProperties.AutomationId="ChatsNavButtonActive"
                                     IsVisible="{Binding IsChatsSelected}"
                                     Command="{Binding ShowChatsCommand}">
                                 <StackPanel Orientation="Horizontal" Spacing="12">
@@ -181,6 +187,7 @@
 
                             <!-- Profile button -->
                             <Button Classes="sidebar-btn"
+                                    automation:AutomationProperties.AutomationId="ProfileNavButton"
                                     IsVisible="{Binding !IsProfileSelected}"
                                     Command="{Binding ProfileViewModel.OpenProfilePanelCommand}">
                                 <StackPanel Orientation="Horizontal" Spacing="12">
@@ -192,6 +199,7 @@
                                 </StackPanel>
                             </Button>
                             <Button Classes="sidebar-btn active"
+                                    automation:AutomationProperties.AutomationId="ProfileNavButtonActive"
                                     IsVisible="{Binding IsProfileSelected}"
                                     Command="{Binding ProfileViewModel.OpenProfilePanelCommand}">
                                 <StackPanel Orientation="Horizontal" Spacing="12">
@@ -205,6 +213,7 @@
                             
                             <!-- Settings button -->
                             <Button Classes="sidebar-btn"
+                                    automation:AutomationProperties.AutomationId="SettingsNavButton"
                                     IsVisible="{Binding !IsSettingsSelected}"
                                     Command="{Binding SettingsViewModel.OpenSettingsCommand}">
                                 <StackPanel Orientation="Horizontal" Spacing="12">
@@ -216,6 +225,7 @@
                                 </StackPanel>
                             </Button>
                             <Button Classes="sidebar-btn active"
+                                    automation:AutomationProperties.AutomationId="SettingsNavButtonActive"
                                     IsVisible="{Binding IsSettingsSelected}"
                                     Command="{Binding SettingsViewModel.OpenSettingsCommand}">
                                 <StackPanel Orientation="Horizontal" Spacing="12">
@@ -247,6 +257,7 @@
                                                VerticalAlignment="Center"/>
                                 </StackPanel>
                                 <ToggleSwitch Grid.Column="1"
+                                              automation:AutomationProperties.AutomationId="ThemeToggleSwitch"
                                               IsChecked="{Binding SettingsViewModel.IsDarkTheme, Mode=TwoWay}"
                                               OffContent=""
                                               OnContent=""
@@ -334,12 +345,15 @@
                 </Border>
 
                 <!--  Окно настроек  -->
-                <Grid Grid.Row="1" IsVisible="{Binding SettingsViewModel.IsOpened}">
+                <Grid Grid.Row="1"
+                      automation:AutomationProperties.AutomationId="SettingsPanelHost"
+                      IsVisible="{Binding SettingsViewModel.IsOpened}">
                     <settings:Settings DataContext="{Binding SettingsViewModel}" />
                 </Grid>
                 
                 <!--  Message Area - Solid themed background  -->
                 <Grid Grid.Row="1" ZIndex="-1" ColumnDefinitions="*,Auto"
+                      automation:AutomationProperties.AutomationId="ChatAreaRoot"
                       Background="{DynamicResource MessageAreaBackgroundBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition />
@@ -350,8 +364,11 @@
                     <Grid
                         Grid.Row="0"
                         Grid.Column="0"
+                        automation:AutomationProperties.AutomationId="MessagesRegion"
                         IsVisible="{Binding ProfileViewModel.IsShowChat}" ZIndex="-1">
-                        <ScrollViewer Name="MessagesSV" HorizontalScrollBarVisibility="Disabled">
+                        <ScrollViewer Name="MessagesSV"
+                                      automation:AutomationProperties.AutomationId="MessagesScrollViewer"
+                                      HorizontalScrollBarVisibility="Disabled">
                             <ItemsControl
                                 Grid.Row="3"
                                 Grid.Column="0"
@@ -360,6 +377,7 @@
                                 VerticalAlignment="Bottom"
                                 Background="Transparent"
                                 BorderThickness="0"
+                                automation:AutomationProperties.AutomationId="MessagesListRoot"
                                 ItemsSource="{Binding Messages}">
                                 <ItemsControl.DataTemplates>
                                     <!--  Messages  -->
@@ -373,6 +391,7 @@
                     
                     <!-- Attachment menu popup -->
                     <Border 
+                        automation:AutomationProperties.AutomationId="AttachMenuRoot"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
                         Margin="10,0,0,0"
@@ -389,6 +408,7 @@
                             Orientation="Vertical" 
                             x:Name="AttachMenuList">
                             <Button 
+                                automation:AutomationProperties.AutomationId="AttachFileMenuButton"
                                 Cursor="Hand"
                                 Background="{DynamicResource MenuBackgroundBrush}"
                                 HorizontalContentAlignment="Left"
@@ -398,6 +418,7 @@
                                 Command="{Binding AttachFileClick}">
                                 <StackPanel Orientation="Horizontal">
                                     <Button
+                                        automation:AutomationProperties.AutomationId="OpenFileBrowserButton"
                                         Cursor="Hand"
                                         Background="Transparent"
                                         HorizontalContentAlignment="Left"
@@ -423,7 +444,11 @@
                     <views:SendMessageControl Grid.Column="0" Grid.Row="2" ZIndex="-1" IsVisible="{Binding !SelectMessagesMode.IsTurnedSelectMode}"/>                 
                     
                     <!--Profile - panel -->
-                    <Grid Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Right" Background="{DynamicResource SidebarBackgroundBrush}">
+                    <Grid Grid.Row="0"
+                          Grid.RowSpan="2"
+                          automation:AutomationProperties.AutomationId="ProfilePanelHost"
+                          HorizontalAlignment="Right"
+                          Background="{DynamicResource SidebarBackgroundBrush}">
                         <profile:Settings DataContext="{Binding ProfileViewModel}" />
                     </Grid>
                 </Grid>

@@ -1,6 +1,7 @@
 ﻿<UserControl
     x:Class="SkillChat.Client.Views.LoginPage"
     xmlns="https://github.com/avaloniaui"
+    xmlns:automation="clr-namespace:Avalonia.Automation;assembly=Avalonia.Controls"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
@@ -9,7 +10,8 @@
     xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia"
     xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
     xmlns:sys="clr-namespace:System;assembly=netstandard"
-    Background="{DynamicResource PageBackgroundBrush}"  
+    Background="{DynamicResource PageBackgroundBrush}"
+    automation:AutomationProperties.AutomationId="LoginPage"
     mc:Ignorable="d">
   <UserControl.Styles>
     <Style Selector="ToggleButton.passwordBoxRevealButtonSkillChat">
@@ -86,6 +88,7 @@
                            Width="20">
                     </Panel>
                     <TextBox x:Name="LoginTbx"
+                             automation:AutomationProperties.AutomationId="LoginInput"
                              Classes="TextBoxEnterPages Base"
                              Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}"
                              Text="{Binding User.Login}">
@@ -116,6 +119,7 @@
               </Panel>
               <TextBox
               x:Name="PasswordTB"
+              automation:AutomationProperties.AutomationId="LoginPasswordInput"
               Classes="TextBoxEnterPages Base" 
               Classes.Error="{Binding User.ErrorMessageLoginPage.IsError}"
               Text="{Binding User.Password}"
@@ -164,6 +168,8 @@
             <Button
                 Classes="ButtonEnterPages"
                 x:Name="connectButton"
+                automation:AutomationProperties.AutomationId="LoginSubmitButton"
+                automation:AutomationProperties.Name="Войти"
                 MinWidth="300"
                 Margin="0,10,0,20"
                 Padding="0 10 0 10"
@@ -171,23 +177,15 @@
                 Command="{Binding ConnectCommand}"
                 Content="Войти"
                 IsEnabled="{Binding User.IsPassword}"/>
-            <TextBlock
-                x:Name="registerLinkTB"
+            <Button
+                x:Name="registerLinkButton"
+                automation:AutomationProperties.AutomationId="GoToRegisterButton"
+                automation:AutomationProperties.Name="Зарегистрироваться"
                 Margin="0,0,0,32"
                 HorizontalAlignment="Center"
-                Background="Transparent"
                 Classes="ClearContainer"
-                Cursor="Hand"
-                FontSize="16"
-                FontWeight="600"
-                Foreground="{DynamicResource AccentBrush}"
-                Text="Зарегистрироваться">
-                <i:Interaction.Behaviors>
-                    <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #registerLinkTB}">
-                        <ia:InvokeCommandAction Command="{Binding GoToRegisterCommand}" CommandParameter="{x:Null}" />
-                    </ia:EventTriggerBehavior>
-                </i:Interaction.Behaviors>
-            </TextBlock>
+                Command="{Binding GoToRegisterCommand}"
+                Content="Зарегистрироваться"/>
         </StackPanel>
     </Grid>
   </Grid>

@@ -1,4 +1,5 @@
 <UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:automation="clr-namespace:Avalonia.Automation;assembly=Avalonia.Controls"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -8,6 +9,7 @@
              xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
              xmlns:interactivity="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+             automation:AutomationProperties.AutomationId="{Binding Id, StringFormat=MessageItem_{0}}"
              x:Class="SkillChat.Client.Views.Messages">
     <Design.DataContext>
         <viewModel:DesignMessageViewModel IsMyMessage="false" ShowNickname="false"/>
@@ -25,6 +27,7 @@
     </UserControl.Resources>
 	<DockPanel>
 		<CheckBox DockPanel.Dock="Left"
+                  automation:AutomationProperties.AutomationId="{Binding Id, StringFormat=MessageCheckbox_{0}}"
                   IsVisible="{Binding SelectMsgMode.IsTurnedSelectMode}"
                   IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
 		<StackPanel

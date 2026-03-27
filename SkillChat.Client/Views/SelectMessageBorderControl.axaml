@@ -1,27 +1,32 @@
 <UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:automation="clr-namespace:Avalonia.Automation;assembly=Avalonia.Controls"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="40"
              x:Class="SkillChat.Client.Views.SelectMessageBorderControl">
     <Border
+        automation:AutomationProperties.AutomationId="SelectionToolbarRoot"
 		Classes="sendMessage"
 		IsVisible="{Binding SelectMessagesMode.IsTurnedSelectMode}"
 		BorderThickness="0">
 		<Grid ColumnDefinitions="*,Auto">
       <WrapPanel Grid.Column="0" VerticalAlignment="Center">
         <Button HorizontalAlignment="Left"
+                automation:AutomationProperties.AutomationId="SelectionCopyButton"
                 Command="{Binding SelectMessagesMode.CopyToClipboardCommand}"
                 Classes="SelectMessageBorder CopyToClipboard" ToolTip.Tip="Скопировать в буфер обмена">
           <StackPanel Orientation="Horizontal">
             <Image 
               Classes="CopyToClipboard"
               Name="CopyToClipboard" 
-                   Height="18" Width="18"/>
+              Height="18"
+              Width="18"/>
           </StackPanel>
         </Button>
 
         <Button HorizontalAlignment="Left"
+                automation:AutomationProperties.AutomationId="SelectionDeleteButton"
                 Margin="0"
                 Command="{Binding SelectedMessagesDeleteCommand}"
                 Classes="SelectMessageBorder DeleteMessage" ToolTip.Tip="Удалить выбранные сообщения">
@@ -29,18 +34,22 @@
                 <Image
                     Classes="DeleteMessage"
                     Name="DeleteSelectedMessages"
-                    Height="18" Width="18"/>
+                    Height="18"
+                    Width="18"/>
             </StackPanel>
         </Button>
-          <TextBlock Classes="CopyToClipboard" VerticalAlignment="Center" 
+          <TextBlock Classes="CopyToClipboard"
+                     automation:AutomationProperties.AutomationId="SelectionCountLabel"
+                     VerticalAlignment="Center"
                      Text="{Binding SelectMessagesMode.CountCheckedMsg, StringFormat={}Выбрано сообщений: {0}}"/>
       </WrapPanel>
       <WrapPanel Grid.Column="1" VerticalAlignment="Center">
-          <Button 
+          <Button
+                  automation:AutomationProperties.AutomationId="SelectionCancelButton"
                   HorizontalAlignment="Right"
                   Classes="SelectMessageBorder"
                   Command="{Binding SelectMessagesMode.TurnOffSelectModeCommand}">
-              <TextBlock Classes="CopyToClipboard"  Text="Отмена"/>
+              <TextBlock Classes="CopyToClipboard" Text="Отмена"/>
           </Button>
       </WrapPanel>
     </Grid>

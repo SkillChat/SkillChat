@@ -1,4 +1,5 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:automation="clr-namespace:Avalonia.Automation;assembly=Avalonia.Controls"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -7,6 +8,7 @@
              xmlns:viewModel="clr-namespace:SkillChat.Client.ViewModel;assembly=SkillChat.Client.ViewModel"
              xmlns:core="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              x:Class="SkillChat.Client.Views.Settings.Settings"
+             automation:AutomationProperties.AutomationId="SettingsPanelRoot"
              Name="Settings">
 
     <interactivity:Interaction.Behaviors>
@@ -34,6 +36,7 @@
             <Grid Background="{DynamicResource SidebarBackgroundBrush}" Grid.Column="0">
                 <StackPanel>
                     <Button Height="35"
+                            automation:AutomationProperties.AutomationId="SettingsMainTabButton"
                             Content="Сообщения и чаты"
                             HorizontalContentAlignment="Left"
                             Background="Transparent"
@@ -48,6 +51,7 @@
                             Padding="20 0 0 0"/>
 
                     <Button Height="35"
+                            automation:AutomationProperties.AutomationId="SettingsAuditTabButton"
                             Content="Аудит входа"
                             HorizontalContentAlignment="Left"
                             Background="Transparent"
@@ -61,13 +65,13 @@
                             Padding="20 0 0 0"
                             Command="{Binding GetHistoryLoginAuditCommand}"/>
                 </StackPanel>
-
-
-
-
             </Grid>
 
-            <Grid Background="{DynamicResource CardBackgroundBrush}" Grid.Column="3" IsVisible="{Binding SettingsMenuActiveMain}" ZIndex="10">
+            <Grid Background="{DynamicResource CardBackgroundBrush}"
+                  Grid.Column="3"
+                  IsVisible="{Binding SettingsMenuActiveMain}"
+                  ZIndex="10"
+                  automation:AutomationProperties.AutomationId="SettingsMainContent">
                 <WrapPanel>
                     <TextBlock
                         Margin="20 10 0 0"
@@ -87,12 +91,17 @@
                 </WrapPanel>
             </Grid>
 
-            <Grid Background="{DynamicResource CardBackgroundBrush}" Grid.Column="3" IsVisible="{Binding AuditMenuActiveMain}" ZIndex="10">
+            <Grid Background="{DynamicResource CardBackgroundBrush}"
+                  Grid.Column="3"
+                  IsVisible="{Binding AuditMenuActiveMain}"
+                  ZIndex="10"
+                  automation:AutomationProperties.AutomationId="SettingsAuditContent">
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-                <ItemsControl
-                    Margin="15,0"
-                    BorderThickness="0"
-                    ItemsSource="{Binding LoginAuditCollection}">
+                    <ItemsControl
+                        automation:AutomationProperties.AutomationId="SettingsAuditListRoot"
+                        Margin="15,0"
+                        BorderThickness="0"
+                        ItemsSource="{Binding LoginAuditCollection}">
                         <ItemsControl.DataTemplates>
                             <DataTemplate DataType="{x:Type viewModel:LoginAuditViewModel}">
                                 <Grid ColumnDefinitions="*,Auto">

@@ -13,11 +13,24 @@
     <Style Selector="TextBlock.Error">
         <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
     </Style>
-    <Style Selector="TextBlock:ClearContainer">
+    <Style Selector="TextBlock.ClearContainer">
         <Setter Property="FontSize" Value="16" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
         <Setter Property="Margin" Value="0,0,0,40" />
+    </Style>
+    <Style Selector="Button.ClearContainer">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontWeight" Value="600" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0,0,0,40" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Cursor" Value="Hand" />
     </Style>
 
     <!--TextBox-->
