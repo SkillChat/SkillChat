@@ -184,6 +184,15 @@ namespace SkillChat.Client
             viewModel.ChatName = state.ActiveChat.ChatName;
             viewModel.MembersCaption = state.MembersCaption;
             viewModel.Messages = new ObservableCollection<MessageViewModel>(mappedMessages);
+            if (!string.IsNullOrWhiteSpace(state.FirstUnreadMessageId))
+            {
+                var unreadMessage = viewModel.Messages.FirstOrDefault(message => message.Id == state.FirstUnreadMessageId);
+                if (unreadMessage != null)
+                {
+                    unreadMessage.IsUnreadBoundary = true;
+                    viewModel.InitialUnreadBoundaryMessageId = unreadMessage.Id;
+                }
+            }
             viewModel.SettingsViewModel.ChatSettings = Clone(state.Settings);
             viewModel.SettingsViewModel.TypeEnter = state.Settings.SendingMessageByEnterKey;
             viewModel.SettingsViewModel.IsDarkTheme = state.IsDarkTheme;

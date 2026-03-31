@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
+using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
 using Serilog;
 using ServiceStack;
@@ -165,6 +166,59 @@ namespace SkillChat.Server.Hubs
             {
                 Log.Error(ex, "Error cleaning chat for user");
             }
+        }
+
+        public async Task MarkChatRead(string chatId, DateTimeOffset lastReadMessagePostTime)
+        {
+            try
+            {
+                var chat = await _ravenSession.LoadAsync<Chat>(chatId);
+                var userId = Context.Items["uid"]?.ToString();
+                var chatMember = chat?.Members.FirstOrDefault(member => member.UserId == userId);
+
+                if (chatMember == null)
+                {
+                    return;
+                }
+
+                var lastVisibleMessage = await GetLastVisibleMessageAsync(chatId, userId ?? string.Empty, chatMember, lastReadMessagePostTime);
+
+                if (lastVisibleMessage == null)
+                {
+                    return;
+                }
+
+                if (chatMember.LastReadMessagePostTime is DateTimeOffset currentReadMarker &&
+                    currentReadMarker >= lastVisibleMessage.PostTime)
+                {
+                    return;
+                }
+
+                chatMember.LastReadMessagePostTime = lastVisibleMessage.PostTime;
+                await _ravenSession.StoreAsync(chat);
+                await _ravenSession.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error marking chat as read");
+            }
+        }
+
+        private Task<Message> GetLastVisibleMessageAsync(
+            string chatId,
+            string userId,
+            ChatMember chatMember,
+            DateTimeOffset requestedReadTime)
+        {
+            var messages = _ravenSession.Query<Message>()
+                .Customize(query => query.WaitForNonStaleResults())
+                .Where(message => message.ChatId == chatId)
+                .Where(message => message.PostTime <= requestedReadTime)
+                .Where(message => message.PostTime > chatMember.MessagesHistoryDateBegin)
+                .Where(message => message.HideForUsers == null || !message.HideForUsers.Contains(userId))
+                .OrderByDescending(message => message.PostTime);
+
+            return messages.FirstOrDefaultAsync();
         }
 
         public async Task Login(string token, string operatingSystem, string ipAddress, string nameVersionClient)

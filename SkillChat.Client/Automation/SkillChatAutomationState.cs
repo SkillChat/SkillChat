@@ -16,6 +16,7 @@ public sealed class SkillChatAutomationState
     public ChatMold ActiveChat { get; set; } = new();
     public string MembersCaption { get; set; } = string.Empty;
     public List<MessageMold> Messages { get; set; } = new();
+    public string FirstUnreadMessageId { get; set; } = string.Empty;
     public bool IsDarkTheme { get; set; } = true;
     public bool IsSidebarExpanded { get; set; } = true;
     public double WindowWidth { get; set; } = 900;

@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Linq;
 using Avalonia;
+using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using ReactiveUI;
 using SkillChat.Client.ViewModel;
 
@@ -48,14 +51,25 @@ namespace SkillChat.Client.Views
                 var verticaloffsetvalue = MessagesScroller.Offset.Y;
                 var verticaloffsetmax = Math.Max(0, MessagesScroller.Extent.Height - MessagesScroller.Viewport.Height);
                 ViewModel.SettingsViewModel.AutoScroll = verticaloffsetvalue >= verticaloffsetmax;
+                if (!_suppressNextReadMarkerUpdate && ViewModel.SettingsViewModel.AutoScroll)
+                {
+                    _ = ViewModel.TryMarkChatReadAsync();
+                }
+                _suppressNextReadMarkerUpdate = false;
 
                 if (verticaloffsetmax != 0)
                 {
                     if (ViewModel.IsFirstRun)
                     {
-                        // можно задать нужную позицию
-                        MessagesScroller.ScrollToEnd();
                         CurrentHeight = MessagesScroller.Viewport.Height;
+                        if (ViewModel.HasPendingInitialUnreadBoundaryPositioning)
+                        {
+                            MessagesScroller.LayoutUpdated += PositionUnreadDividerOnLayoutUpdated;
+                        }
+                        else
+                        {
+                            MessagesScroller.ScrollToEnd();
+                        }
                         ViewModel.IsFirstRun = false;
                     }
                     else if (verticaloffsetvalue.Equals(0))
@@ -75,6 +89,7 @@ namespace SkillChat.Client.Views
         private double CurrentHeight { get; set; }
         private double LastVerticaloffsetmax { get; set; }
         private bool isLoaded = true;
+        private bool _suppressNextReadMarkerUpdate;
 
         public void LayoutUpdated_window(object sender, EventArgs e)
         {
@@ -99,6 +114,46 @@ namespace SkillChat.Client.Views
 
                 isLoaded = true;
             }
+        }
+
+        private void PositionUnreadDividerOnLayoutUpdated(object sender, EventArgs e)
+        {
+            if (ViewModel == null)
+            {
+                return;
+            }
+
+            var targetMessageId = ViewModel.InitialUnreadBoundaryMessageId;
+            if (string.IsNullOrWhiteSpace(targetMessageId))
+            {
+                MessagesScroller.LayoutUpdated -= PositionUnreadDividerOnLayoutUpdated;
+                return;
+            }
+
+            var targetMessageControl = this
+                .GetVisualDescendants()
+                .OfType<Messages>()
+                .FirstOrDefault(control =>
+                    control.DataContext is MessageViewModel message &&
+                    string.Equals(message.Id, targetMessageId, StringComparison.Ordinal));
+
+            if (targetMessageControl == null)
+            {
+                return;
+            }
+
+            MessagesScroller.LayoutUpdated -= PositionUnreadDividerOnLayoutUpdated;
+
+            var messagePosition = targetMessageControl.TranslatePoint(new Point(0, 0), MessagesScroller);
+            if (messagePosition is Point point)
+            {
+                var maxOffset = Math.Max(0, MessagesScroller.Extent.Height - MessagesScroller.Viewport.Height);
+                var targetOffset = Math.Clamp(MessagesScroller.Offset.Y + point.Y - 16, 0, maxOffset);
+                _suppressNextReadMarkerUpdate = true;
+                MessagesScroller.Offset = new Vector(MessagesScroller.Offset.X, targetOffset);
+            }
+
+            ViewModel.CompleteInitialUnreadBoundaryPositioning();
         }
 
         /// <summary>Устанавливаем текущий датаконтекст</summary>

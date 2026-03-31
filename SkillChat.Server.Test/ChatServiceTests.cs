@@ -67,4 +67,63 @@ public class ChatServiceTests
         await Assert.That(loadedMessage.QuotedMessage.Attachments.Count).IsEqualTo(1);
         await Assert.That(loadedMessage.QuotedMessage.Attachments[0].FileName).IsEqualTo("quote.txt");
     }
+
+    [Test]
+    public async Task GetMessages_ReturnsGlobalFirstUnreadMessageId_AndHasMoreBefore_WhenUnreadRangeExceedsCurrentPage()
+    {
+        var currentUser = await Host.CreateUserAsync(displayName: "Current");
+        var peer = await Host.CreateUserAsync(displayName: "Peer");
+        var chat = await Host.CreateChatAsync(memberIds: [currentUser.Id, peer.Id]);
+
+        var readMessage = await Host.CreateMessageAsync(
+            chat.Id,
+            peer.Id,
+            "read",
+            postTime: DateTimeOffset.UtcNow.AddMinutes(-10));
+        var firstUnread = await Host.CreateMessageAsync(
+            chat.Id,
+            peer.Id,
+            "first unread",
+            postTime: DateTimeOffset.UtcNow.AddMinutes(-9));
+        await Host.CreateMessageAsync(
+            chat.Id,
+            peer.Id,
+            "unread 2",
+            postTime: DateTimeOffset.UtcNow.AddMinutes(-8));
+        await Host.CreateMessageAsync(
+            chat.Id,
+            peer.Id,
+            "unread 3",
+            postTime: DateTimeOffset.UtcNow.AddMinutes(-7));
+        await Host.CreateMessageAsync(
+            chat.Id,
+            peer.Id,
+            "unread 4",
+            postTime: DateTimeOffset.UtcNow.AddMinutes(-6));
+        await Host.CreateMessageAsync(
+            chat.Id,
+            peer.Id,
+            "unread 5",
+            postTime: DateTimeOffset.UtcNow.AddMinutes(-2));
+
+        chat.Members.Single(member => member.UserId == currentUser.Id).LastReadMessagePostTime =
+            readMessage.PostTime;
+        using (var session = Host.DocumentStore.OpenAsyncSession())
+        {
+            await session.StoreAsync(chat);
+            await session.SaveChangesAsync();
+        }
+
+        var client = Host.CreateClient(Host.CreateAccessToken(currentUser));
+        var result = await client.GetAsync(new GetMessages
+        {
+            ChatId = chat.Id,
+            PageSize = 2,
+        });
+
+        using var _ = Assert.Multiple();
+        await Assert.That(result.FirstUnreadMessageId).IsEqualTo(firstUnread.Id);
+        await Assert.That(result.HasMoreBefore).IsTrue();
+        await Assert.That(result.Messages.Any(message => message.Id == firstUnread.Id)).IsFalse();
+    }
 }

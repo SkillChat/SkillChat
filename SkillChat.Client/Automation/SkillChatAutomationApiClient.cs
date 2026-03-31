@@ -84,7 +84,8 @@ internal sealed class SkillChatAutomationApiClient : ISkillChatApiClient
 
         return Task.FromResult(new MessagePage
         {
-            Messages = Clone(messages.ToList())
+            Messages = Clone(messages.ToList()),
+            FirstUnreadMessageId = request.BeforePostTime.HasValue ? null : _state.FirstUnreadMessageId
         });
     }
 

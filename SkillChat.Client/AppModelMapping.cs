@@ -34,6 +34,7 @@ namespace SkillChat.Client
                 .ForMember(m => m.Time, e => e.Ignore())
                 .ForMember(m => m.UserProfileInfoCommand, e => e.Ignore())
                 .ForMember(m => m.IsChecked, e => e.Ignore())
+                .ForMember(m => m.IsUnreadBoundary, e => e.Ignore())
                 .ForMember(m => m.SelectMsgMode, e => e.Ignore())
                 .ForMember(m => m.MenuItems, e => e.Ignore())
                 .ForMember(m => m.IsQuotedMessage, e => e.Ignore());
@@ -46,6 +47,7 @@ namespace SkillChat.Client
                 .ForMember(m => m.Time, e => e.Ignore())
                 .ForMember(m => m.UserProfileInfoCommand, e => e.Ignore())
                 .ForMember(m => m.IsChecked, e => e.Ignore())
+                .ForMember(m => m.IsUnreadBoundary, e => e.Ignore())
                 .ForMember(m => m.SelectMsgMode, e => e.Ignore())
                 .ForMember(m => m.MenuItems, e => e.Ignore())
                 .ForMember(m => m.IsQuotedMessage, e => e.Ignore())
@@ -61,6 +63,7 @@ namespace SkillChat.Client
                 .ForMember(m => m.Time, e => e.Ignore())
                 .ForMember(m => m.UserProfileInfoCommand, e => e.Ignore())
                 .ForMember(m => m.IsChecked, e => e.Ignore())
+                .ForMember(m => m.IsUnreadBoundary, e => e.Ignore())
                 .ForMember(m => m.SelectMsgMode, e => e.Ignore())
                 .ForMember(m => m.MenuItems, e => e.Ignore())
                 .ForMember(m => m.IsQuotedMessage, e => e.Ignore())
