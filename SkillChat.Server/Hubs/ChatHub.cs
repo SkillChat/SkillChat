@@ -182,19 +182,15 @@ namespace SkillChat.Server.Hubs
                 }
 
                 var lastVisibleMessage = await GetLastVisibleMessageAsync(chatId, userId ?? string.Empty, chatMember, lastReadMessagePostTime);
-
-                if (lastVisibleMessage == null)
-                {
-                    return;
-                }
+                var resolvedReadTime = lastVisibleMessage?.PostTime ?? ResolveBootstrapReadTime(lastReadMessagePostTime, chatMember);
 
                 if (chatMember.LastReadMessagePostTime is DateTimeOffset currentReadMarker &&
-                    currentReadMarker >= lastVisibleMessage.PostTime)
+                    currentReadMarker >= resolvedReadTime)
                 {
                     return;
                 }
 
-                chatMember.LastReadMessagePostTime = lastVisibleMessage.PostTime;
+                chatMember.LastReadMessagePostTime = resolvedReadTime;
                 await _ravenSession.StoreAsync(chat);
                 await _ravenSession.SaveChangesAsync();
             }
@@ -202,6 +198,17 @@ namespace SkillChat.Server.Hubs
             {
                 Log.Error(ex, "Error marking chat as read");
             }
+        }
+
+        private static DateTimeOffset ResolveBootstrapReadTime(DateTimeOffset requestedReadTime, ChatMember chatMember)
+        {
+            var safeUpperBound = requestedReadTime <= DateTimeOffset.UtcNow
+                ? requestedReadTime
+                : DateTimeOffset.UtcNow;
+
+            return safeUpperBound >= chatMember.MessagesHistoryDateBegin
+                ? safeUpperBound
+                : chatMember.MessagesHistoryDateBegin;
         }
 
         private Task<Message> GetLastVisibleMessageAsync(

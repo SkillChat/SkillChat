@@ -1009,22 +1009,37 @@ namespace SkillChat.Client.ViewModel
             }
 
             var newestMessage = Messages.LastOrDefault();
+            DateTimeOffset requestedReadMarkerTime;
+
             if (newestMessage == null)
             {
-                return;
-            }
+                if (HasPendingInitialUnreadBoundaryPositioning || lastRequestedReadMarkerTime.HasValue)
+                {
+                    return;
+                }
 
-            if (lastRequestedReadMarkerTime is DateTimeOffset lastRequested &&
-                lastRequested >= newestMessage.PostTime)
+                requestedReadMarkerTime = DateTimeOffset.UtcNow;
+            }
+            else
             {
-                return;
+                if (lastRequestedReadMarkerTime is DateTimeOffset lastRequested &&
+                    lastRequested >= newestMessage.PostTime)
+                {
+                    return;
+                }
+
+                requestedReadMarkerTime = newestMessage.PostTime;
             }
 
             try
             {
-                await _hub.MarkChatRead(ChatId, newestMessage.PostTime);
-                lastRequestedReadMarkerTime = newestMessage.PostTime;
-                ClearUnreadBoundary();
+                await _hub.MarkChatRead(ChatId, requestedReadMarkerTime);
+                lastRequestedReadMarkerTime = requestedReadMarkerTime;
+
+                if (newestMessage != null)
+                {
+                    ClearUnreadBoundary();
+                }
             }
             catch
             {

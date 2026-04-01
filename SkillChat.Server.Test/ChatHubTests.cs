@@ -216,6 +216,26 @@ public class ChatHubTests
         await Assert.That(member.LastReadMessagePostTime).IsEqualTo(latestVisible.PostTime);
     }
 
+    [Test]
+    public async Task MarkChatRead_BootstrapsReadTime_WhenChatHasNoVisibleMessages()
+    {
+        var user = await Host.CreateUserAsync();
+        var chat = await Host.CreateChatAsync(memberIds: [user.Id]);
+        await using var connection = await Host.ConnectHubAsync(user);
+
+        var beforeRequest = DateTimeOffset.UtcNow;
+        await connection.Hub.MarkChatRead(chat.Id, beforeRequest.AddMinutes(1));
+        var afterRequest = DateTimeOffset.UtcNow;
+
+        var storedChat = await Host.LoadAsync<Chat>(chat.Id);
+        var member = storedChat!.Members.Single(m => m.UserId == user.Id);
+
+        using var _ = Assert.Multiple();
+        await Assert.That(member.LastReadMessagePostTime).IsNotNull();
+        await Assert.That(member.LastReadMessagePostTime!.Value).IsGreaterThanOrEqualTo(beforeRequest.AddSeconds(-1));
+        await Assert.That(member.LastReadMessagePostTime!.Value).IsLessThanOrEqualTo(afterRequest);
+    }
+
     private static async Task<LoginResult> LoginAsync(string token)
     {
         var connection = new HubConnectionBuilder()

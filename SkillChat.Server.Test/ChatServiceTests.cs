@@ -2,6 +2,7 @@
 using ServiceStack;
 using SkillChat.Server.Domain;
 using SkillChat.Server.ServiceModel;
+using SkillChat.Server.ServiceModel.Molds;
 using SkillChat.Server.Test.TestInfrastructure;
 
 namespace SkillChat.Server.Test;
@@ -125,5 +126,49 @@ public class ChatServiceTests
         await Assert.That(result.FirstUnreadMessageId).IsEqualTo(firstUnread.Id);
         await Assert.That(result.HasMoreBefore).IsTrue();
         await Assert.That(result.Messages.Any(message => message.Id == firstUnread.Id)).IsFalse();
+    }
+
+    [Test]
+    public async Task GetMessages_ReturnsFirstUnreadMessageId_AfterReadMarkerBootstrapOnEmptyChat()
+    {
+        var currentUser = await Host.CreateUserAsync(displayName: "Current");
+        var peer = await Host.CreateUserAsync(displayName: "Peer");
+        var chat = await Host.CreateChatAsync(memberIds: [currentUser.Id, peer.Id]);
+
+        await using (var connection = await Host.ConnectHubAsync(currentUser))
+        {
+            await connection.Hub.MarkChatRead(chat.Id, DateTimeOffset.UtcNow);
+        }
+
+        var storedChat = await Host.LoadAsync<Chat>(chat.Id);
+        var storedMember = storedChat!.Members.Single(member => member.UserId == currentUser.Id);
+        var peerMessage = await Host.CreateMessageAsync(
+            chat.Id,
+            peer.Id,
+            "first unread after bootstrap",
+            postTime: storedMember.LastReadMessagePostTime!.Value.AddSeconds(1));
+
+        var client = Host.CreateClient(Host.CreateAccessToken(currentUser));
+        MessagePage? result = null;
+        var deadline = DateTime.UtcNow.AddSeconds(10);
+
+        while (DateTime.UtcNow < deadline)
+        {
+            result = await client.GetAsync(new GetMessages
+            {
+                ChatId = chat.Id,
+            });
+
+            if (result.Messages.Any(message => message.Id == peerMessage.Id))
+            {
+                break;
+            }
+
+            await Task.Delay(200);
+        }
+
+        await Assert.That(result).IsNotNull();
+        await Assert.That(result!.Messages.Any(message => message.Id == peerMessage.Id)).IsTrue();
+        await Assert.That(result.FirstUnreadMessageId).IsEqualTo(peerMessage.Id);
     }
 }

@@ -264,6 +264,32 @@ public class ClientInteractionTests
     }
 
     [Test]
+    public async Task MainWindowViewModel_TryMarkChatReadAsync_BootstrapsReadMarkerForEmptyChat()
+    {
+        ResetClientState();
+        var hub = Substitute.For<IChatHub>();
+        var mainWindow = TestHelpers.CreateUninitializedMainWindow();
+
+        typeof(MainWindowViewModel)
+            .GetField("_hub", BindingFlags.Instance | BindingFlags.NonPublic)!
+            .SetValue(mainWindow, hub);
+
+        mainWindow.ChatId = "chat-empty";
+        mainWindow.SettingsViewModel.AutoScroll = true;
+        mainWindow.Messages = new System.Collections.ObjectModel.ObservableCollection<MessageViewModel>();
+
+        var beforeRequest = DateTimeOffset.UtcNow;
+        await mainWindow.TryMarkChatReadAsync();
+        var afterRequest = DateTimeOffset.UtcNow;
+
+        await hub.Received(1).MarkChatRead(
+            "chat-empty",
+            Arg.Is<DateTimeOffset>(timestamp =>
+                timestamp >= beforeRequest &&
+                timestamp <= afterRequest));
+    }
+
+    [Test]
     public async Task MainWindowViewModel_LoadMessageHistoryCommand_BackfillsOlderPagesUntilUnreadBoundaryIsLoaded()
     {
         ResetClientState();
