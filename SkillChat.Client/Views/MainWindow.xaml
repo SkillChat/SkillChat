@@ -111,11 +111,13 @@
     <Grid>
         <Grid automation:AutomationProperties.AutomationId="SignedInShellRoot">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{Binding SidebarWidth}" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <!-- Left Sidebar - Telegram style -->
-            <Border Background="{DynamicResource SidebarBackgroundBrush}"
+            <Border Name="SidebarRootBorder"
+                    Width="{Binding SidebarWidth}"
+                    Background="{DynamicResource SidebarBackgroundBrush}"
                     automation:AutomationProperties.AutomationId="SidebarRoot"
                     BorderBrush="{DynamicResource DividerBrush}"
                     BorderThickness="0,0,1,0">
@@ -352,7 +354,8 @@
                 </Grid>
                 
                 <!--  Message Area - Solid themed background  -->
-                <Grid Grid.Row="1" ZIndex="-1" ColumnDefinitions="*,Auto"
+                <Grid Name="ChatAreaRootGrid"
+                      Grid.Row="1" ZIndex="-1" ColumnDefinitions="*,Auto"
                       automation:AutomationProperties.AutomationId="ChatAreaRoot"
                       Background="{DynamicResource MessageAreaBackgroundBrush}">
                     <Grid.RowDefinitions>
