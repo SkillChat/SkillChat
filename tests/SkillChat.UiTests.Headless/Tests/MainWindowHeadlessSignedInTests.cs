@@ -95,7 +95,32 @@ public sealed class MainWindowHeadlessSignedInTests
 
         public void Dispose()
         {
-            Inner.Dispose();
+            try
+            {
+                ReleaseMainWindow();
+            }
+            finally
+            {
+                Inner.Dispose();
+            }
+        }
+
+        private void ReleaseMainWindow()
+        {
+            if (Dispatcher.UIThread.CheckAccess())
+            {
+                ReleaseMainWindowCore();
+                return;
+            }
+
+            Dispatcher.UIThread.Invoke(ReleaseMainWindowCore);
+        }
+
+        private void ReleaseMainWindowCore()
+        {
+            Inner.MainWindow.DataContext = null;
+            Inner.MainWindow.Content = null;
+            Dispatcher.UIThread.RunJobs();
         }
     }
 
