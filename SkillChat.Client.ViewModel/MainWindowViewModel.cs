@@ -1055,7 +1055,10 @@ namespace SkillChat.Client.ViewModel
             AttachMenuVisible = false;
         }
 
-        private async Task<MessagePage> LoadMessageHistoryPageAsync(IMapper mapper, DateTimeOffset? beforePostTime)
+        private async Task<MessagePage> LoadMessageHistoryPageAsync(
+            IMapper mapper,
+            DateTimeOffset? beforePostTime,
+            string? unreadBoundaryMessageId = null)
         {
             var request = new GetMessages
             {
@@ -1064,10 +1067,16 @@ namespace SkillChat.Client.ViewModel
             };
 
             var result = await serviceClient.GetMessagesAsync(request);
+            var boundaryMessageId = unreadBoundaryMessageId ?? result.FirstUnreadMessageId;
 
             foreach (var item in result.Messages)
             {
                 var newMessage = ToMessageViewModel(mapper, item);
+                if (!boundaryMessageId.IsNullOrEmpty() &&
+                    string.Equals(item.Id, boundaryMessageId, StringComparison.Ordinal))
+                {
+                    newMessage.IsUnreadBoundary = true;
+                }
 
                 if (item.QuotedMessage != null)
                 {
@@ -1105,7 +1114,10 @@ namespace SkillChat.Client.ViewModel
                 }
 
                 var previousOldestMessageId = oldestLoadedMessage.Id;
-                var result = await LoadMessageHistoryPageAsync(mapper, oldestLoadedMessage.PostTime);
+                var result = await LoadMessageHistoryPageAsync(
+                    mapper,
+                    oldestLoadedMessage.PostTime,
+                    unreadBoundaryMessageId);
                 hasMoreBefore = result.HasMoreBefore;
 
                 var newOldestMessage = Messages.FirstOrDefault();

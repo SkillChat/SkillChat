@@ -26,7 +26,7 @@
         <sys:Double x:Key="MinWidth0">0</sys:Double>
     </UserControl.Resources>
 	<StackPanel>
-        <views:UnreadDivider />
+        <views:UnreadDivider IsVisible="{Binding IsUnreadBoundary}" />
 	    <DockPanel>
 		    <CheckBox DockPanel.Dock="Left"
                       automation:AutomationProperties.AutomationId="{Binding Id, StringFormat=MessageCheckbox_{0}}"

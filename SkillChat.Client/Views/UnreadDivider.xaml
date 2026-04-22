@@ -1,8 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:automation="clr-namespace:Avalonia.Automation;assembly=Avalonia.Controls"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             automation:AutomationProperties.AutomationId="{Binding Id, StringFormat=UnreadDivider_{0}}"
-             IsVisible="{Binding IsUnreadBoundary}"
              x:Class="SkillChat.Client.Views.UnreadDivider">
     <Grid Margin="0,12,0,12"
           ColumnDefinitions="*,Auto,*">
@@ -11,6 +9,7 @@
                 VerticalAlignment="Center"
                 Background="#C4C4C4" />
         <TextBlock Grid.Column="1"
+                   automation:AutomationProperties.AutomationId="{Binding Id, StringFormat=UnreadDivider_{0}}"
                    Margin="12,0"
                    FontSize="12"
                    Foreground="#7A7A7A"

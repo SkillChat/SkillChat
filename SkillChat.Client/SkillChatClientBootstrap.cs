@@ -169,6 +169,15 @@ namespace SkillChat.Client
             var apiClient = Locator.Current.GetService<ISkillChatApiClient>();
             var orderedMessages = state.Messages.OrderBy(message => message.PostTime).ToList();
             var mappedMessages = MapMessages(orderedMessages, state.CurrentUser.Id, mapper);
+            MessageViewModel? unreadMessage = null;
+            if (!string.IsNullOrWhiteSpace(state.FirstUnreadMessageId))
+            {
+                unreadMessage = mappedMessages.FirstOrDefault(message => message.Id == state.FirstUnreadMessageId);
+                if (unreadMessage != null)
+                {
+                    unreadMessage.IsUnreadBoundary = true;
+                }
+            }
 
             viewModel.Tokens = Clone(state.Tokens);
             viewModel.User.Id = state.CurrentUser.Id;
@@ -184,14 +193,9 @@ namespace SkillChat.Client
             viewModel.ChatName = state.ActiveChat.ChatName;
             viewModel.MembersCaption = state.MembersCaption;
             viewModel.Messages = new ObservableCollection<MessageViewModel>(mappedMessages);
-            if (!string.IsNullOrWhiteSpace(state.FirstUnreadMessageId))
+            if (unreadMessage != null)
             {
-                var unreadMessage = viewModel.Messages.FirstOrDefault(message => message.Id == state.FirstUnreadMessageId);
-                if (unreadMessage != null)
-                {
-                    unreadMessage.IsUnreadBoundary = true;
-                    viewModel.InitialUnreadBoundaryMessageId = unreadMessage.Id;
-                }
+                viewModel.InitialUnreadBoundaryMessageId = unreadMessage.Id;
             }
             viewModel.SettingsViewModel.ChatSettings = Clone(state.Settings);
             viewModel.SettingsViewModel.TypeEnter = state.Settings.SendingMessageByEnterKey;

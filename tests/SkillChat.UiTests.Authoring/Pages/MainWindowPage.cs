@@ -88,6 +88,12 @@ public sealed partial class MainWindowPage : UiPage
             UiControlType.AutomationElement,
             $"{nameof(ResolveMessageItem)}_{messageId}");
 
+    public IUiControl ResolveUnreadDivider(string messageId) =>
+        Resolve<IUiControl>(
+            $"UnreadDivider_{messageId}",
+            UiControlType.Label,
+            $"{nameof(ResolveUnreadDivider)}_{messageId}");
+
     public ICheckBoxControl ResolveMessageCheckbox(string messageId) =>
         Resolve<ICheckBoxControl>(
             $"MessageCheckbox_{messageId}",

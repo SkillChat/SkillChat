@@ -64,6 +64,8 @@ namespace SkillChat.Client.Views
                         CurrentHeight = MessagesScroller.Viewport.Height;
                         if (ViewModel.HasPendingInitialUnreadBoundaryPositioning)
                         {
+                            _suppressNextReadMarkerUpdate = true;
+                            MessagesScroller.Offset = new Vector(MessagesScroller.Offset.X, 0);
                             MessagesScroller.LayoutUpdated += PositionUnreadDividerOnLayoutUpdated;
                         }
                         else
