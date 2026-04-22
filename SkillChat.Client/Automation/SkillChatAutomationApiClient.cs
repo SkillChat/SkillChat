@@ -74,17 +74,19 @@ internal sealed class SkillChatAutomationApiClient : ISkillChatApiClient
             messages = messages.Where(message => message.PostTime < request.BeforePostTime.Value);
         }
 
-        if (request.PageSize is > 0)
-        {
-            messages = messages
-                .OrderByDescending(message => message.PostTime)
-                .Take(request.PageSize.Value)
-                .OrderBy(message => message.PostTime);
-        }
+        var pageSize = request.PageSize ?? 50;
+        var page = messages
+            .OrderByDescending(message => message.PostTime)
+            .Take(pageSize + 1)
+            .ToList();
+        var hasMoreBefore = page.Count > pageSize;
+        page = page.Take(pageSize).ToList();
 
         return Task.FromResult(new MessagePage
         {
-            Messages = Clone(messages.ToList())
+            Messages = Clone(page),
+            FirstUnreadMessageId = request.BeforePostTime.HasValue ? null : _state.FirstUnreadMessageId,
+            HasMoreBefore = hasMoreBefore
         });
     }
 

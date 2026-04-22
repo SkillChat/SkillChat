@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AppAutomation.Abstractions" Version="1.2.0" />
-    <PackageReference Include="AppAutomation.Authoring" Version="1.2.0" />
-    <PackageReference Include="AppAutomation.TUnit" Version="1.2.0" />
-    <PackageReference Include="TUnit.Assertions" Version="1.12.111" />
-    <PackageReference Include="TUnit.Core" Version="1.12.111" />
+    <PackageReference Include="AppAutomation.Abstractions" Version="1.4.6" />
+    <PackageReference Include="AppAutomation.Authoring" Version="1.4.6" />
+    <PackageReference Include="AppAutomation.TUnit" Version="1.4.6" />
+    <PackageReference Include="TUnit.Assertions" Version="1.37.10" />
+    <PackageReference Include="TUnit.Core" Version="1.37.10" />
   </ItemGroup>
 </Project>

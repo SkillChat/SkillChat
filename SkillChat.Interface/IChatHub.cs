@@ -13,5 +13,6 @@ namespace SkillChat.Interface
         Task Login(string token, string operatingSystem, string ipAddress, string nameVersionClient);
         Task DeleteMessagesForMe(List<string> idMessages);
         Task CleanChatForMe(string chatId);
+        Task MarkChatRead(string chatId, DateTimeOffset lastReadMessagePostTime);
     }
 }

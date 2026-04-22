@@ -70,6 +70,7 @@ namespace SkillChat.Client.ViewModel
         public string QuotedDisplayNickname=> !IsMyMessage ? UserNickname : "Вы";
 
         public bool ShowNickname { get; set; }
+        public bool IsUnreadBoundary { get; set; }
 
         public string Text { get; set; }
 

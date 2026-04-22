@@ -1,6 +1,7 @@
 #nullable enable
 using Microsoft.Extensions.Configuration;
 using NSubstitute;
+using System.Reflection;
 using SkillChat.Client.Notification.ViewModels;
 using SkillChat.Client.ViewModel;
 using SkillChat.Client.ViewModel.Interfaces;
@@ -223,6 +224,166 @@ public class ClientInteractionTests
     }
 
     [Test]
+    public async Task MainWindowViewModel_TryMarkChatReadAsync_ClearsUnreadDividerAndDeduplicatesMarker()
+    {
+        ResetClientState();
+        var hub = Substitute.For<IChatHub>();
+        var mainWindow = TestHelpers.CreateUninitializedMainWindow();
+        var firstMessage = new MessageViewModel
+        {
+            Id = "message-1",
+            PostTime = DateTimeOffset.UtcNow.AddMinutes(-2),
+            IsUnreadBoundary = true
+        };
+        var newestMessage = new MessageViewModel
+        {
+            Id = "message-2",
+            PostTime = DateTimeOffset.UtcNow.AddMinutes(-1)
+        };
+
+        typeof(MainWindowViewModel)
+            .GetField("_hub", BindingFlags.Instance | BindingFlags.NonPublic)!
+            .SetValue(mainWindow, hub);
+
+        mainWindow.ChatId = "chat-1";
+        mainWindow.SettingsViewModel.AutoScroll = true;
+        mainWindow.InitialUnreadBoundaryMessageId = firstMessage.Id;
+        mainWindow.Messages = new System.Collections.ObjectModel.ObservableCollection<MessageViewModel>
+        {
+            firstMessage,
+            newestMessage
+        };
+
+        await mainWindow.TryMarkChatReadAsync();
+        await mainWindow.TryMarkChatReadAsync();
+
+        await hub.Received(1).MarkChatRead("chat-1", newestMessage.PostTime);
+        using var _ = Assert.Multiple();
+        await Assert.That(firstMessage.IsUnreadBoundary).IsFalse();
+        await Assert.That(mainWindow.HasPendingInitialUnreadBoundaryPositioning).IsFalse();
+    }
+
+    [Test]
+    public async Task MainWindowViewModel_TryMarkChatReadAsync_BootstrapsReadMarkerForEmptyChat()
+    {
+        ResetClientState();
+        var hub = Substitute.For<IChatHub>();
+        var mainWindow = TestHelpers.CreateUninitializedMainWindow();
+
+        typeof(MainWindowViewModel)
+            .GetField("_hub", BindingFlags.Instance | BindingFlags.NonPublic)!
+            .SetValue(mainWindow, hub);
+
+        mainWindow.ChatId = "chat-empty";
+        mainWindow.SettingsViewModel.AutoScroll = true;
+        mainWindow.Messages = new System.Collections.ObjectModel.ObservableCollection<MessageViewModel>();
+
+        var beforeRequest = DateTimeOffset.UtcNow;
+        await mainWindow.TryMarkChatReadAsync();
+        var afterRequest = DateTimeOffset.UtcNow;
+
+        await hub.Received(1).MarkChatRead(
+            "chat-empty",
+            Arg.Is<DateTimeOffset>(timestamp =>
+                timestamp >= beforeRequest &&
+                timestamp <= afterRequest));
+    }
+
+    [Test]
+    public async Task MainWindowViewModel_LoadMessageHistoryCommand_BackfillsOlderPagesUntilUnreadBoundaryIsLoaded()
+    {
+        ResetClientState();
+        var serviceClient = Substitute.For<ISkillChatApiClient>();
+        var firstUnreadMessageId = "message-2";
+        var newestMessage = CreateMessageMold("message-5", DateTimeOffset.UtcNow.AddMinutes(-1));
+        var newestLoadedOldestMessage = CreateMessageMold("message-4", DateTimeOffset.UtcNow.AddMinutes(-2));
+        var olderUnreadMessage = CreateMessageMold("message-3", DateTimeOffset.UtcNow.AddMinutes(-3));
+        var firstUnreadMessage = CreateMessageMold(firstUnreadMessageId, DateTimeOffset.UtcNow.AddMinutes(-4));
+
+        serviceClient.GetMessagesAsync(Arg.Any<GetMessages>())
+            .Returns(
+                Task.FromResult(new MessagePage
+                {
+                    Messages = [newestMessage, newestLoadedOldestMessage],
+                    FirstUnreadMessageId = firstUnreadMessageId,
+                    HasMoreBefore = true
+                }),
+                Task.FromResult(new MessagePage
+                {
+                    Messages = [olderUnreadMessage, firstUnreadMessage],
+                    FirstUnreadMessageId = firstUnreadMessageId,
+                    HasMoreBefore = false
+                }));
+
+        var mainWindow = CreateConfiguredMainWindow(serviceClient);
+        mainWindow.ChatId = "chat-1";
+
+        mainWindow.LoadMessageHistoryCommand.Execute(null);
+
+        await TestHelpers.EventuallyAsync(() =>
+            mainWindow.Messages.Count == 4 &&
+            mainWindow.InitialUnreadBoundaryMessageId == firstUnreadMessageId);
+
+        var unreadMessage = mainWindow.Messages.First(message => message.Id == firstUnreadMessageId);
+
+        using var _ = Assert.Multiple();
+        await serviceClient.Received(1).GetMessagesAsync(Arg.Is<GetMessages>(request =>
+            request.ChatId == "chat-1" &&
+            request.BeforePostTime == null));
+        await serviceClient.Received(1).GetMessagesAsync(Arg.Is<GetMessages>(request =>
+            request.ChatId == "chat-1" &&
+            request.BeforePostTime == newestLoadedOldestMessage.PostTime));
+        await Assert.That(mainWindow.Messages.First().Id).IsEqualTo(firstUnreadMessageId);
+        await Assert.That(mainWindow.Messages.Last().Id).IsEqualTo(newestMessage.Id);
+        await Assert.That(unreadMessage.IsUnreadBoundary).IsTrue();
+    }
+
+    [Test]
+    public async Task MainWindowViewModel_MessageCleaningCommand_ResetsUnreadBoundaryStateAndClearsLoadedMessages()
+    {
+        ResetClientState();
+        var mainWindow = CreateConfiguredMainWindow(Substitute.For<ISkillChatApiClient>());
+        var hub = Substitute.For<IChatHub>();
+        var unreadMessage = new MessageViewModel
+        {
+            Id = "message-1",
+            IsUnreadBoundary = true
+        };
+
+        typeof(MainWindowViewModel)
+            .GetField("_hub", BindingFlags.Instance | BindingFlags.NonPublic)!
+            .SetValue(mainWindow, hub);
+        typeof(MainWindowViewModel)
+            .GetField("lastRequestedReadMarkerTime", BindingFlags.Instance | BindingFlags.NonPublic)!
+            .SetValue(mainWindow, DateTimeOffset.UtcNow.AddMinutes(-1));
+
+        mainWindow.ChatId = "chat-1";
+        mainWindow.Messages.Add(unreadMessage);
+        mainWindow.InitialUnreadBoundaryMessageId = unreadMessage.Id;
+
+        var messageDictionary = (Dictionary<string, MessageViewModel>)typeof(MainWindowViewModel)
+            .GetField("messageDictionary", BindingFlags.Instance | BindingFlags.NonPublic)!
+            .GetValue(mainWindow)!;
+        messageDictionary[unreadMessage.Id] = unreadMessage;
+
+        mainWindow.MessageCleaningCommand.Execute(null);
+        mainWindow.ConfirmationViewModel.ConfirmSelectionCommand.Execute(null);
+
+        await TestHelpers.EventuallyAsync(() => mainWindow.Messages.Count == 0);
+
+        var lastRequestedReadMarkerTime = (DateTimeOffset?)typeof(MainWindowViewModel)
+            .GetField("lastRequestedReadMarkerTime", BindingFlags.Instance | BindingFlags.NonPublic)!
+            .GetValue(mainWindow);
+
+        await hub.Received(1).CleanChatForMe("chat-1");
+        using var _ = Assert.Multiple();
+        await Assert.That(unreadMessage.IsUnreadBoundary).IsFalse();
+        await Assert.That(mainWindow.HasPendingInitialUnreadBoundaryPositioning).IsFalse();
+        await Assert.That(messageDictionary.Count).IsEqualTo(0);
+        await Assert.That(lastRequestedReadMarkerTime).IsNull();
+    }
+
+    [Test]
     public async Task MainWindowViewModel_PublicMethods_UpdateState()
     {
         ResetClientState();
@@ -300,6 +461,32 @@ public class ClientInteractionTests
     {
         TestHelpers.ResetLocator();
         TestHelpers.ResetNotificationManager();
+    }
+
+    private static MainWindowViewModel CreateConfiguredMainWindow(ISkillChatApiClient serviceClient)
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>())
+            .Build();
+
+        Locator.CurrentMutable.RegisterConstant<IConfiguration>(configuration);
+        Locator.CurrentMutable.RegisterConstant(serviceClient);
+        Locator.CurrentMutable.RegisterConstant(TestHelpers.CreateClientMapper());
+
+        return new MainWindowViewModel();
+    }
+
+    private static MessageMold CreateMessageMold(string id, DateTimeOffset postTime)
+    {
+        return new MessageMold
+        {
+            Id = id,
+            ChatId = "chat-1",
+            UserId = "user-1",
+            UserNickName = "Peer",
+            Text = id,
+            PostTime = postTime,
+        };
     }
 
     private sealed class TestWindowWidth : IHaveWidth

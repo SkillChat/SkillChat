@@ -8,6 +8,7 @@ using SkillChat.Server.ServiceModel;
 using SkillChat.Server.ServiceModel.Molds;
 using SkillChat.Server.ServiceModel.Molds.Attachment;
 using SkillChat.Server.ServiceModel.Molds.Chats;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,29 +27,28 @@ namespace SkillChat.Server.ServiceInterface
             var userId = session?.UserAuthId;
             Chat chat = await RavenSession.LoadAsync<Chat>(request.ChatId);
             ChatMember chatMember = chat.Members.FirstOrDefault(e => e.UserId == userId);
-            var messages = RavenSession.Query<Message>().Where(e => e.ChatId == request.ChatId).OrderByDescending(x => x.PostTime);
+            var visibleMessages = GetVisibleMessagesQuery(request.ChatId, userId, chatMember);
+            var messages = visibleMessages.OrderByDescending(x => x.PostTime);
             var result = new MessagePage();
 
             if (request.BeforePostTime != null)
             {
                 messages = messages.Where(x => x.PostTime.UtcDateTime < request.BeforePostTime.Value.UtcDateTime);
             }
-            if (chatMember?.MessagesHistoryDateBegin != null)
-            {
-                messages = messages.Where(x => x.PostTime > chatMember.MessagesHistoryDateBegin);
-            }
-            messages = messages.Where(x => x.HideForUsers == null || !x.HideForUsers.Contains(userId));
 
             var pageSize = request.PageSize ?? 50;
             
             // Include() pre-loads related documents into the RavenDB session cache.
             // Subsequent LoadAsync calls for these documents will hit the cache, not the database.
             var docs = 
-                await messages.Take(pageSize)
+                await messages.Take(pageSize + 1)
                     .Include(x => x.UserId)          // Pre-loads User documents for message authors
                     .Include(s => s.Attachments)     // Pre-loads Attachment documents for messages
                     .Include(i => i.IdQuotedMessage) // Pre-loads quoted Message documents
                     .ToListAsync();
+
+            result.HasMoreBefore = docs.Count > pageSize;
+            docs = docs.Take(pageSize).ToList();
 
             // Batch pre-load quoted message users and their attachments to avoid N+1 queries.
             // The Include() above only loads the quoted Message documents, not their related User/Attachment documents.
@@ -86,6 +86,15 @@ namespace SkillChat.Server.ServiceInterface
                 {
                     await RavenSession.LoadAsync<Attachment>(quotedAttachmentIds);
                 }
+            }
+
+            if (chatMember?.LastReadMessagePostTime is DateTimeOffset lastReadMessagePostTime)
+            {
+                result.FirstUnreadMessageId = (await visibleMessages
+                    .Where(message => message.UserId != userId && message.PostTime > lastReadMessagePostTime)
+                    .OrderBy(message => message.PostTime)
+                    .FirstOrDefaultAsync())
+                    ?.Id;
             }
 
             result.Messages = new List<MessageMold>();
@@ -126,6 +135,19 @@ namespace SkillChat.Server.ServiceInterface
                 result.Messages.Add(message);
             }
             return result;
+        }
+
+        private IRavenQueryable<Message> GetVisibleMessagesQuery(string chatId, string userId, ChatMember chatMember)
+        {
+            var messages = RavenSession.Query<Message>()
+                .Where(message => message.ChatId == chatId);
+
+            if (chatMember != null)
+            {
+                messages = messages.Where(message => message.PostTime > chatMember.MessagesHistoryDateBegin);
+            }
+
+            return messages.Where(message => message.HideForUsers == null || !message.HideForUsers.Contains(userId));
         }
 
         [Authenticate]

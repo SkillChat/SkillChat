@@ -2,11 +2,14 @@ using AppAutomation.Avalonia.Headless.Automation;
 using AppAutomation.Avalonia.Headless.Session;
 using AppAutomation.Abstractions;
 using AppAutomation.TUnit;
+using Avalonia.Automation;
 using Avalonia.Controls;
+using Avalonia.LogicalTree;
 using Avalonia.Threading;
 using SkillChat.AppAutomation.TestHost;
 using SkillChat.Client.Automation;
 using SkillChat.Client.ViewModel;
+using SkillChat.Client.Views;
 using SkillChat.UiTests.Authoring.Pages;
 using SkillChat.UiTests.Authoring.Tests;
 using TUnit.Core;
@@ -84,6 +87,17 @@ public sealed class MainWindowHeadlessSignedInTests
         await Assert.That(Math.Abs(collapsedLayout.SidebarWidth - CollapsedSidebarWidth) <= 1).IsTrue();
     }
 
+    [Test]
+    [NotInParallel(DesktopUiConstraint)]
+    public async Task Unread_divider_view_binds_visibility_and_automation_id()
+    {
+        var snapshot = await CaptureUnreadDividerViewSnapshotAsync();
+
+        using var _ = Assert.Multiple();
+        await Assert.That(snapshot.IsVisible).IsTrue();
+        await Assert.That(snapshot.AutomationId).IsEqualTo("UnreadDivider_message-unread-1");
+    }
+
     public sealed class HeadlessRuntimeSession : IUiTestSession
     {
         public HeadlessRuntimeSession(DesktopAppSession inner)
@@ -95,7 +109,32 @@ public sealed class MainWindowHeadlessSignedInTests
 
         public void Dispose()
         {
-            Inner.Dispose();
+            try
+            {
+                ReleaseMainWindow();
+            }
+            finally
+            {
+                Inner.Dispose();
+            }
+        }
+
+        private void ReleaseMainWindow()
+        {
+            if (Dispatcher.UIThread.CheckAccess())
+            {
+                ReleaseMainWindowCore();
+                return;
+            }
+
+            Dispatcher.UIThread.Invoke(ReleaseMainWindowCore);
+        }
+
+        private void ReleaseMainWindowCore()
+        {
+            Inner.MainWindow.DataContext = null;
+            Inner.MainWindow.Content = null;
+            Dispatcher.UIThread.RunJobs();
         }
     }
 
@@ -145,6 +184,44 @@ public sealed class MainWindowHeadlessSignedInTests
         }
 
         return await Dispatcher.UIThread.InvokeAsync(CaptureLayoutSnapshotCore);
+    }
+
+    private async Task<UnreadDividerViewSnapshot> CaptureUnreadDividerViewSnapshotAsync()
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            return CaptureUnreadDividerViewSnapshotCore();
+        }
+
+        return await Dispatcher.UIThread.InvokeAsync(CaptureUnreadDividerViewSnapshotCore);
+    }
+
+    private static UnreadDividerViewSnapshot CaptureUnreadDividerViewSnapshotCore()
+    {
+        var message = new MessageViewModel
+        {
+            Id = "message-unread-1",
+            UserId = "user-smoke-peer",
+            UserNickname = "Alice",
+            Text = "Unread message",
+            PostTime = DateTimeOffset.UtcNow,
+            IsUnreadBoundary = true
+        };
+        var view = new Messages
+        {
+            DataContext = message
+        };
+
+        Dispatcher.UIThread.RunJobs();
+
+        var divider = view.GetLogicalDescendants().OfType<UnreadDivider>().Single();
+        var automationId = divider
+            .GetLogicalDescendants()
+            .OfType<Control>()
+            .Select(AutomationProperties.GetAutomationId)
+            .FirstOrDefault(id => !string.IsNullOrWhiteSpace(id));
+
+        return new UnreadDividerViewSnapshot(divider.IsVisible, automationId ?? string.Empty);
     }
 
     private async Task ToggleSidebarAsync()
@@ -247,4 +324,6 @@ public sealed class MainWindowHeadlessSignedInTests
         bool IsSidebarExpanded,
         bool SidebarColumnIsAuto,
         bool ContentColumnIsStar);
+
+    private readonly record struct UnreadDividerViewSnapshot(bool IsVisible, string AutomationId);
 }

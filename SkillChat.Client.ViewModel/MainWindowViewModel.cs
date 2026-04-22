@@ -392,59 +392,27 @@ namespace SkillChat.Client.ViewModel
             {
                 try
                 {
-                    var first = Messages?.FirstOrDefault();
-                    var request = new GetMessages { ChatId = ChatId, BeforePostTime = first?.PostTime };
-
-                    // Логика выбора сообщений по id чата
-                    var result = await serviceClient.GetMessagesAsync(request);
-
-                    foreach (var item in result.Messages)
+                    var isInitialLoad = Messages.Count == 0;
+                    if (isInitialLoad)
                     {
-                        MessageViewModel ToMessageViewModel(MessageMold messageMold)
-                        {
-                            MessageViewModel messageViewModel = mapper.Map<MessageViewModel>(messageMold);
-                            messageViewModel.IsMyMessage = User.Id == messageMold.UserId;
-                            if (messageDictionary.TryGetValue(messageMold.Id, out var message))
-                            {
-                                mapper.Map(messageViewModel, message);
-                                messageViewModel = message;
-                            }
-                            else
-                            {
-                                messageDictionary[messageViewModel.Id] = messageViewModel;
-                            }
-
-                            messageViewModel.Attachments = messageMold.Attachments?
-                                .Select(s =>
-                                {
-                                    var newAttachment = new AttachmentMessageViewModel(s);
-                                    newAttachment.IsMyMessage = messageViewModel.IsMyMessage;
-                                    return newAttachment;
-                                }).ToList();
-                            return messageViewModel;
-                        }
-
-                        var newMessage = ToMessageViewModel(item);
-
-                        if (item.QuotedMessage != null)
-                        {
-                            newMessage.QuotedMessage = ToMessageViewModel(item.QuotedMessage);
-                        }
-
-                        if (Messages.Count != 0)
-                        {
-                            if (Messages.First().UserId != newMessage.UserId)
-                            {
-                                Messages.First().ShowNickname = true;
-                            }
-                        }
-
-                        Messages.Insert(0, newMessage);
-
-
+                        messageDictionary.Clear();
+                        ResetUnreadBoundaryState();
                     }
 
-                    if (Messages.Count != 0) Messages.First().ShowNickname = true;
+                    var result = await LoadMessageHistoryPageAsync(mapper, Messages?.FirstOrDefault()?.PostTime);
+
+                    if (isInitialLoad && !result.FirstUnreadMessageId.IsNullOrEmpty())
+                    {
+                        await EnsureUnreadBoundaryMessageIsLoadedAsync(mapper, result.FirstUnreadMessageId, result.HasMoreBefore);
+
+                        var unreadMessage = Messages.FirstOrDefault(message =>
+                            string.Equals(message.Id, result.FirstUnreadMessageId, StringComparison.Ordinal));
+                        if (unreadMessage != null)
+                        {
+                            unreadMessage.IsUnreadBoundary = true;
+                            InitialUnreadBoundaryMessageId = unreadMessage.Id;
+                        }
+                    }
                 }
                 catch (Exception e)
                 {
@@ -457,6 +425,7 @@ namespace SkillChat.Client.ViewModel
                 {
                     messageDictionary.Clear();
                     EndEditCommand.Execute(null); 
+                    ResetUnreadBoundaryState();
                     Messages.Clear();
                     MessageText = null;
                     Tokens = null;
@@ -564,6 +533,8 @@ namespace SkillChat.Client.ViewModel
             // Команда очищает всю историю чата для текущего пользователя.
             ICommand cleaningAllCommand = ReactiveCommand.CreateFromTask(async () =>
             {
+                messageDictionary.Clear();
+                ResetUnreadBoundaryState();
                 Messages.Clear();
                 await _hub.CleanChatForMe(ChatId);
 
@@ -777,6 +748,7 @@ namespace SkillChat.Client.ViewModel
 
         public bool KeySendMessage { get; set; }
         public bool AutoScrollWhenSendingMyMessage { get; set; }
+        public string InitialUnreadBoundaryMessageId { get; set; }
 
         public bool IsEdited => idEditMessage != null;
 
@@ -789,6 +761,7 @@ namespace SkillChat.Client.ViewModel
         public ICommand SelectedMessagesDeleteCommand { get; } 
 
         public bool windowIsFocused { get; set; }
+        public bool HasPendingInitialUnreadBoundaryPositioning => !InitialUnreadBoundaryMessageId.IsNullOrEmpty();
 
         public static ReactiveCommand<object, Unit> NotifyCommand { get; set; }
 
@@ -827,6 +800,7 @@ namespace SkillChat.Client.ViewModel
         /// Переменная для хранения Id редактируемого сообщения
         /// </summary>
         private string idEditMessage { get; set; }
+        private DateTimeOffset? lastRequestedReadMarkerTime;
 
         public bool IsEditMessage => !idEditMessage.IsNullOrEmpty();
 
@@ -949,6 +923,7 @@ namespace SkillChat.Client.ViewModel
                     SettingsViewModel.Close();
                     ProfileViewModel.ContextMenuClose();
                     ProfileViewModel.Close();
+                    ResetUnreadBoundaryState();
                     IsFirstRun = true;
                     SyncSidebarSelection();
                     break;
@@ -999,6 +974,78 @@ namespace SkillChat.Client.ViewModel
             }
         }
 
+        public void CompleteInitialUnreadBoundaryPositioning()
+        {
+            InitialUnreadBoundaryMessageId = null;
+        }
+
+        public void ResetUnreadBoundaryState()
+        {
+            ClearUnreadBoundary();
+            lastRequestedReadMarkerTime = null;
+        }
+
+        public void ClearUnreadBoundary()
+        {
+            if (Messages == null)
+            {
+                InitialUnreadBoundaryMessageId = null;
+                return;
+            }
+
+            foreach (var message in Messages)
+            {
+                message.IsUnreadBoundary = false;
+            }
+
+            InitialUnreadBoundaryMessageId = null;
+        }
+
+        public async Task TryMarkChatReadAsync()
+        {
+            if (_hub == null || ChatId.IsNullOrEmpty() || SettingsViewModel?.AutoScroll != true)
+            {
+                return;
+            }
+
+            var newestMessage = Messages.LastOrDefault();
+            DateTimeOffset requestedReadMarkerTime;
+
+            if (newestMessage == null)
+            {
+                if (HasPendingInitialUnreadBoundaryPositioning || lastRequestedReadMarkerTime.HasValue)
+                {
+                    return;
+                }
+
+                requestedReadMarkerTime = DateTimeOffset.UtcNow;
+            }
+            else
+            {
+                if (lastRequestedReadMarkerTime is DateTimeOffset lastRequested &&
+                    lastRequested >= newestMessage.PostTime)
+                {
+                    return;
+                }
+
+                requestedReadMarkerTime = newestMessage.PostTime;
+            }
+
+            try
+            {
+                await _hub.MarkChatRead(ChatId, requestedReadMarkerTime);
+                lastRequestedReadMarkerTime = requestedReadMarkerTime;
+
+                if (newestMessage != null)
+                {
+                    ClearUnreadBoundary();
+                }
+            }
+            catch
+            {
+            }
+        }
+
         public async Task OpenFileBrowserMenu()
         {
             var canOpenFileDialog = Locator.Current.GetService<ICanOpenFileDialog>();
@@ -1006,6 +1053,105 @@ namespace SkillChat.Client.ViewModel
             await AttachmentViewModel.Open(attachmentsPatch);
 
             AttachMenuVisible = false;
+        }
+
+        private async Task<MessagePage> LoadMessageHistoryPageAsync(
+            IMapper mapper,
+            DateTimeOffset? beforePostTime,
+            string? unreadBoundaryMessageId = null)
+        {
+            var request = new GetMessages
+            {
+                ChatId = ChatId,
+                BeforePostTime = beforePostTime
+            };
+
+            var result = await serviceClient.GetMessagesAsync(request);
+            var boundaryMessageId = unreadBoundaryMessageId ?? result.FirstUnreadMessageId;
+
+            foreach (var item in result.Messages)
+            {
+                var newMessage = ToMessageViewModel(mapper, item);
+                if (!boundaryMessageId.IsNullOrEmpty() &&
+                    string.Equals(item.Id, boundaryMessageId, StringComparison.Ordinal))
+                {
+                    newMessage.IsUnreadBoundary = true;
+                }
+
+                if (item.QuotedMessage != null)
+                {
+                    newMessage.QuotedMessage = ToMessageViewModel(mapper, item.QuotedMessage);
+                }
+
+                if (Messages.Count != 0 && Messages.First().UserId != newMessage.UserId)
+                {
+                    Messages.First().ShowNickname = true;
+                }
+
+                Messages.Insert(0, newMessage);
+            }
+
+            if (Messages.Count != 0)
+            {
+                Messages.First().ShowNickname = true;
+            }
+
+            return result;
+        }
+
+        private async Task EnsureUnreadBoundaryMessageIsLoadedAsync(
+            IMapper mapper,
+            string unreadBoundaryMessageId,
+            bool hasMoreBefore)
+        {
+            while (Messages.All(message => !string.Equals(message.Id, unreadBoundaryMessageId, StringComparison.Ordinal)) &&
+                   hasMoreBefore)
+            {
+                var oldestLoadedMessage = Messages.FirstOrDefault();
+                if (oldestLoadedMessage == null)
+                {
+                    return;
+                }
+
+                var previousOldestMessageId = oldestLoadedMessage.Id;
+                var result = await LoadMessageHistoryPageAsync(
+                    mapper,
+                    oldestLoadedMessage.PostTime,
+                    unreadBoundaryMessageId);
+                hasMoreBefore = result.HasMoreBefore;
+
+                var newOldestMessage = Messages.FirstOrDefault();
+                if (newOldestMessage == null ||
+                    string.Equals(newOldestMessage.Id, previousOldestMessageId, StringComparison.Ordinal))
+                {
+                    return;
+                }
+            }
+        }
+
+        private MessageViewModel ToMessageViewModel(IMapper mapper, MessageMold messageMold)
+        {
+            MessageViewModel messageViewModel = mapper.Map<MessageViewModel>(messageMold);
+            messageViewModel.IsMyMessage = User.Id == messageMold.UserId;
+            if (messageDictionary.TryGetValue(messageMold.Id, out var message))
+            {
+                mapper.Map(messageViewModel, message);
+                messageViewModel = message;
+            }
+            else
+            {
+                messageDictionary[messageViewModel.Id] = messageViewModel;
+            }
+
+            messageViewModel.Attachments = messageMold.Attachments?
+                .Select(s =>
+                {
+                    var newAttachment = new AttachmentMessageViewModel(s);
+                    newAttachment.IsMyMessage = messageViewModel.IsMyMessage;
+                    return newAttachment;
+                }).ToList();
+
+            return messageViewModel;
         }
     }
 

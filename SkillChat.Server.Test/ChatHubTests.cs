@@ -156,6 +156,86 @@ public class ChatHubTests
         await Assert.That(member.MessagesHistoryDateBegin != default(DateTimeOffset)).IsTrue();
     }
 
+    [Test]
+    public async Task MarkChatRead_UpdatesMemberReadTimeMonotonically()
+    {
+        var user = await Host.CreateUserAsync();
+        var chat = await Host.CreateChatAsync(memberIds: [user.Id]);
+        var firstMessage = await Host.CreateMessageAsync(
+            chat.Id,
+            user.Id,
+            "first",
+            postTime: DateTimeOffset.UtcNow.AddMinutes(-3));
+        var secondMessage = await Host.CreateMessageAsync(
+            chat.Id,
+            user.Id,
+            "second",
+            postTime: DateTimeOffset.UtcNow.AddMinutes(-2));
+
+        await using var connection = await Host.ConnectHubAsync(user);
+
+        await connection.Hub.MarkChatRead(chat.Id, firstMessage.PostTime.AddSeconds(30));
+        await connection.Hub.MarkChatRead(chat.Id, firstMessage.PostTime.AddMinutes(-5));
+        await connection.Hub.MarkChatRead(chat.Id, secondMessage.PostTime.AddSeconds(30));
+
+        var storedChat = await Host.LoadAsync<Chat>(chat.Id);
+        var member = storedChat!.Members.Single(m => m.UserId == user.Id);
+
+        await Assert.That(member.LastReadMessagePostTime).IsEqualTo(secondMessage.PostTime);
+    }
+
+    [Test]
+    public async Task MarkChatRead_ClampsFutureTimestampToLatestVisibleMessage()
+    {
+        var user = await Host.CreateUserAsync();
+        var chat = await Host.CreateChatAsync(memberIds: [user.Id]);
+        await Host.CreateMessageAsync(
+            chat.Id,
+            user.Id,
+            "old visible",
+            postTime: DateTimeOffset.UtcNow.AddMinutes(-5));
+        var latestVisible = await Host.CreateMessageAsync(
+            chat.Id,
+            user.Id,
+            "latest visible",
+            postTime: DateTimeOffset.UtcNow.AddMinutes(-2));
+        await Host.CreateMessageAsync(
+            chat.Id,
+            user.Id,
+            "hidden",
+            postTime: DateTimeOffset.UtcNow.AddMinutes(-1),
+            hiddenForUsers: [user.Id]);
+
+        await using var connection = await Host.ConnectHubAsync(user);
+
+        await connection.Hub.MarkChatRead(chat.Id, DateTimeOffset.UtcNow.AddDays(1));
+
+        var storedChat = await Host.LoadAsync<Chat>(chat.Id);
+        var member = storedChat!.Members.Single(m => m.UserId == user.Id);
+
+        await Assert.That(member.LastReadMessagePostTime).IsEqualTo(latestVisible.PostTime);
+    }
+
+    [Test]
+    public async Task MarkChatRead_BootstrapsReadTime_WhenChatHasNoVisibleMessages()
+    {
+        var user = await Host.CreateUserAsync();
+        var chat = await Host.CreateChatAsync(memberIds: [user.Id]);
+        await using var connection = await Host.ConnectHubAsync(user);
+
+        var beforeRequest = DateTimeOffset.UtcNow;
+        await connection.Hub.MarkChatRead(chat.Id, beforeRequest.AddMinutes(1));
+        var afterRequest = DateTimeOffset.UtcNow;
+
+        var storedChat = await Host.LoadAsync<Chat>(chat.Id);
+        var member = storedChat!.Members.Single(m => m.UserId == user.Id);
+
+        using var _ = Assert.Multiple();
+        await Assert.That(member.LastReadMessagePostTime).IsNotNull();
+        await Assert.That(member.LastReadMessagePostTime!.Value).IsGreaterThanOrEqualTo(beforeRequest.AddSeconds(-1));
+        await Assert.That(member.LastReadMessagePostTime!.Value).IsLessThanOrEqualTo(afterRequest);
+    }
+
     private static async Task<LoginResult> LoginAsync(string token)
     {
         var connection = new HubConnectionBuilder()

@@ -112,6 +112,70 @@ public static class SkillChatAppLaunchHost
         var otherUserId = "user-smoke-peer";
         var attachmentId = "attachment-smoke-team-plan";
         var now = DateTimeOffset.UtcNow;
+        var messages = new List<MessageMold>
+        {
+            new()
+            {
+                Id = "message-peer-1",
+                UserId = otherUserId,
+                UserNickName = "Alice",
+                Text = "Привет, это тестовое сообщение для смоука.",
+                PostTime = now.AddMinutes(-18),
+                ChatId = "chat-smoke-main"
+            },
+            new()
+            {
+                Id = "message-peer-attachment",
+                UserId = otherUserId,
+                UserNickName = "Alice",
+                Text = "Вложила план в чат.",
+                PostTime = now.AddMinutes(-16),
+                ChatId = "chat-smoke-main",
+                Attachments = new List<AttachmentMold>
+                {
+                    new()
+                    {
+                        Id = attachmentId,
+                        SenderId = otherUserId,
+                        FileName = Path.GetFileName(messageAttachmentPath),
+                        UploadDateTime = now.AddMinutes(-16),
+                        Hash = attachmentId,
+                        Size = new FileInfo(messageAttachmentPath).Length
+                    }
+                }
+            },
+            new()
+            {
+                Id = "message-self-quoted",
+                UserId = currentUserId,
+                UserNickName = "UI Smoke User",
+                Text = "Подтверждаю, вижу файл.",
+                PostTime = now.AddMinutes(-15),
+                ChatId = "chat-smoke-main",
+                QuotedMessage = new MessageMold
+                {
+                    Id = "message-peer-1",
+                    UserId = otherUserId,
+                    UserNickName = "Alice",
+                    Text = "Привет, это тестовое сообщение для смоука.",
+                    PostTime = now.AddMinutes(-18),
+                    ChatId = "chat-smoke-main"
+                }
+            }
+        };
+
+        for (var index = 0; index < 18; index++)
+        {
+            messages.Add(new MessageMold
+            {
+                Id = $"message-unread-{index + 1}",
+                UserId = otherUserId,
+                UserNickName = "Alice",
+                Text = $"Непрочитанное сообщение #{index + 1}",
+                PostTime = now.AddMinutes(-14).AddSeconds(index * 20),
+                ChatId = "chat-smoke-main"
+            });
+        }
 
         return new SkillChatAutomationState
         {
@@ -175,6 +239,7 @@ public static class SkillChatAppLaunchHost
             IsDarkTheme = true,
             IsSidebarExpanded = true,
             WindowWidth = 900,
+            FirstUnreadMessageId = "message-unread-1",
             FileDialogSelection = new List<string>
             {
                 pickerFilePath
@@ -183,57 +248,7 @@ public static class SkillChatAppLaunchHost
             {
                 [attachmentId] = messageAttachmentPath
             },
-            Messages = new List<MessageMold>
-            {
-                new()
-                {
-                    Id = "message-peer-1",
-                    UserId = otherUserId,
-                    UserNickName = "Alice",
-                    Text = "Привет, это тестовое сообщение для смоука.",
-                    PostTime = now.AddMinutes(-10),
-                    ChatId = "chat-smoke-main"
-                },
-                new()
-                {
-                    Id = "message-peer-attachment",
-                    UserId = otherUserId,
-                    UserNickName = "Alice",
-                    Text = "Вложила план в чат.",
-                    PostTime = now.AddMinutes(-6),
-                    ChatId = "chat-smoke-main",
-                    Attachments = new List<AttachmentMold>
-                    {
-                        new()
-                        {
-                            Id = attachmentId,
-                            SenderId = otherUserId,
-                            FileName = Path.GetFileName(messageAttachmentPath),
-                            UploadDateTime = now.AddMinutes(-6),
-                            Hash = attachmentId,
-                            Size = new FileInfo(messageAttachmentPath).Length
-                        }
-                    }
-                },
-                new()
-                {
-                    Id = "message-self-quoted",
-                    UserId = currentUserId,
-                    UserNickName = "UI Smoke User",
-                    Text = "Подтверждаю, вижу файл.",
-                    PostTime = now.AddMinutes(-3),
-                    ChatId = "chat-smoke-main",
-                    QuotedMessage = new MessageMold
-                    {
-                        Id = "message-peer-1",
-                        UserId = otherUserId,
-                        UserNickName = "Alice",
-                        Text = "Привет, это тестовое сообщение для смоука.",
-                        PostTime = now.AddMinutes(-10),
-                        ChatId = "chat-smoke-main"
-                    }
-                }
-            }
+            Messages = messages
         };
     }
 
